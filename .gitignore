@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+**/node_modules/
+backend/venv/
+venv/
+.venv/
+**/__pycache__/
+*.py[cod]
+*$py.class
+scratch/
+
+# Next.js build
+.next/
+**/frontend/.next/
+frontend/out/
+out/
+build/
+dist/
+
+# Environment files & Secrets
+.env
+.env*
+*.env
+**/.env
+**/.env*
+*.db
+*.sqlite3
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+**/.DS_Store
+.vscode/
+.idea/
+# Testing
+.pytest_cache/
+**/.pytest_cache/
+
+# Agent and LLM helper configuration
+.agents/
+**/.agents/
+AGENTS.md
+**/AGENTS.md
+CLAUDE.md
+**/CLAUDE.md
