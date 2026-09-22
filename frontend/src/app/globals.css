@@ -1,0 +1,243 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* 90% Structural Physical Materials */
+    --mat-ceramic: #090909;             /* True deep matte ceramic void */
+    --mat-steel: #141414;               /* Brushed stainless steel surfaces */
+    --mat-titanium: #1B1B1B;            /* Black titanium plates */
+    --mat-titanium-elevated: #222222;   /* Elevated hover & active layers */
+    --mat-milled: #262626;              /* Machined borders & divider insets */
+    --mat-milled-subtle: rgba(255, 255, 255, 0.08);
+    --mat-milled-border: rgba(255, 255, 255, 0.12);
+
+    /* 10% Precision Accents */
+    --accent-copper: #FF6B00;            /* Primary action trigger & progress conduits */
+    --accent-copper-hover: #E05F00;      /* Interactive hover state */
+    --accent-copper-subtle: rgba(255, 107, 0, 0.12);
+    --accent-copper-border: rgba(255, 107, 0, 0.35);
+    --accent-copper-glow: rgba(255, 107, 0, 0.25);
+    --accent-gold: #FFC857;              /* Technical coordinates & Easy tier */
+    --accent-gold-subtle: rgba(255, 200, 87, 0.12);
+    --accent-emerald: #38A169;           /* Machine status verified */
+    --accent-emerald-subtle: rgba(56, 161, 105, 0.12);
+    --accent-crimson: #E53935;           /* Hard tier & error telemetry */
+    --accent-crimson-subtle: rgba(229, 57, 53, 0.12);
+
+    /* High-Contrast Typographic Scale */
+    --text-primary: #F5F5F5;             /* Primary reading & large numerals */
+    --text-secondary: #8E8E8E;           /* Secondary annotations & labels */
+    --text-muted: #555555;               /* Coordinates & metadata chips */
+
+    /* Inertia Motion Tokens */
+    --motion-hover: 120ms cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-expand: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-page: 220ms ease-out;
+
+    /* Legacy compatibility mappings */
+    --bg-void: var(--mat-ceramic);
+    --bg-canvas: var(--mat-steel);
+    --bg-surface: var(--mat-titanium);
+    --bg-card: var(--mat-titanium);
+    --bg-card-hover: var(--mat-titanium-elevated);
+    --border-subtle: var(--mat-milled-subtle);
+    --border-bright: var(--accent-copper-border);
+    --accent-cyan: var(--accent-copper);
+    --accent-blue: var(--accent-copper);
+    --accent-amber: var(--accent-gold);
+    --accent-rose: var(--accent-crimson);
+    --accent-violet: var(--accent-gold);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--mat-ceramic);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(255, 107, 0, 0.02) 0px, transparent 40%),
+      radial-gradient(at 100% 100%, rgba(255, 200, 87, 0.015) 0px, transparent 40%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  code, pre, kbd {
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+/* Precision Physical Materials & Surface Utilities */
+.surface-ceramic {
+  background-color: var(--mat-ceramic);
+}
+
+.surface-steel {
+  background-color: var(--mat-steel);
+  border: 1px solid var(--mat-milled);
+}
+
+.surface-titanium {
+  background-color: var(--mat-titanium);
+  border: 1px solid var(--mat-milled);
+}
+
+.surface-titanium-interactive {
+  background-color: var(--mat-titanium);
+  border: 1px solid var(--mat-milled);
+  transition: all var(--motion-hover);
+}
+
+.surface-titanium-interactive:hover {
+  background-color: var(--mat-titanium-elevated);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.milled-seam {
+  border-color: var(--mat-milled);
+}
+
+.milled-seam-copper {
+  border-color: var(--accent-copper-border);
+}
+
+/* Micro Chamfers */
+.micro-chamfer-xs {
+  border-radius: 2px;
+}
+
+.micro-chamfer-sm {
+  border-radius: 4px;
+}
+
+.micro-chamfer-md {
+  border-radius: 6px;
+}
+
+.micro-chamfer-lg {
+  border-radius: 8px;
+}
+
+/* Laser-Engraved Technical Chip */
+.engraved-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background-color: #0E0E0E;
+  border: 1px solid var(--mat-milled);
+  color: var(--text-secondary);
+}
+
+/* Inertia Motion Utilities */
+.inertia-hover {
+  transition: all var(--motion-hover);
+}
+
+.inertia-expand {
+  transition: all var(--motion-expand);
+}
+
+/* Legacy Compatibility Surfaces mapped to Physical Materials */
+.glass-nav {
+  background-color: rgba(20, 20, 20, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--mat-milled);
+}
+
+.glass-card {
+  background-color: var(--mat-titanium);
+  border: 1px solid var(--mat-milled);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.glass-card-interactive {
+  background-color: var(--mat-titanium);
+  border: 1px solid var(--mat-milled);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  transition: all var(--motion-hover);
+}
+
+.glass-card-interactive:hover {
+  background-color: var(--mat-titanium-elevated);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.glass-panel {
+  background-color: var(--mat-steel);
+  border: 1px solid var(--mat-milled);
+  border-radius: 6px;
+}
+
+.glass-input {
+  background-color: #0E0E0E;
+  border: 1px solid var(--mat-milled);
+  color: var(--text-primary);
+  border-radius: 4px;
+  transition: all var(--motion-hover);
+}
+
+.glass-input:focus {
+  background-color: #121212;
+  border-color: var(--accent-copper);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--accent-copper-border);
+}
+
+/* Minimal Monochromatic Machined Scrollbars & Firefox/WebKit Standard Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #383838 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(18, 18, 18, 0.4);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3A3A3A;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #777777;
+  background-clip: padding-box;
+}
+
+/* Custom premium scrollbar utility */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #3A3A3A;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
