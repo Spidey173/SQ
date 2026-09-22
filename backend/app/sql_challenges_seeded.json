@@ -1,0 +1,137 @@
+[
+  {
+    "level_number": 1,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Select All Columns from a Table",
+    "story": "You have just joined TechCorp as a Data Analyst. The HR Operations Team needs a complete snapshot of all employee records currently stored in the company database to conduct an end-of-quarter headcount audit. Your task is to extract every record and every attribute from the employees table to ensure no team member is omitted from the audit report.",
+    "objective": "Write an SQL query to retrieve all columns and all rows from the employees table.",
+    "starter_code": "-- Problem #Basics-001: Select all columns from a table\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | first_name | last_name | email | phone_number | hire_date | job_title | salary | manager_id | department_id | age | city | gender | state\n-------------------------------------------------------------------------------------------------------------------------------------------------------\n1 | John | Doe | john.doe@email.com | 555-0101 | 2020-01-15 | Software Engineer | 85000.0 | NULL | 101 | 28 | New York | Male | NY\n2 | Jane | Smith | jane.smith@email.com | 555-0102 | 2019-03-22 | Engineering Manager | 120000.0 | NULL | 101 | 35 | New York | Female | NY\n3 | Bob | Johnson | bob.j@email.com | 555-0103 | 2021-06-01 | Sales Exec | 60000.0 | 2 | 102 | 32 | Chicago | Male | IL\n4 | Alice | Williams | alice.w@email.com | 555-0104 | 2018-11-12 | Sales Director | 110000.0 | NULL | 102 | 40 | Chicago | Female | IL\n5 | Charlie | Brown | charlie.b@email.com | 555-0105 | 2022-02-10 | Marketing Specialist | 55000.0 | 4 | 103 | 25 | San Francisco | Male | CA\n6 | Diana | Prince | diana.p@email.com | 555-0106 | 2017-08-05 | HR Lead | 75000.0 | NULL | 104 | 38 | Boston | Female | MA\n7 | Eva | Green | eva.g@email.com | 555-0107 | 2023-01-01 | Software Engineer | 90000.0 | 2 | 101 | 26 | New York | Female | NY\n8 | Frank | Miller | frank.m@email.com | 555-0108 | 2020-09-15 | Financial Analyst | 70000.0 | NULL | 105 | 30 | New York | Male | NY",
+    "hints": [
+      "SELECT tells the database that you want to retrieve data.",
+      "* (asterisk) means all columns.",
+      "FROM tells SQL where the data is stored (employees table)."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "employee_id | first_name | last_name | email | phone_number | hire_date | job_title | salary | manager_id | department_id | age | city | gender | state",
+        "hidden": false,
+        "description": "Verify all 14 columns from employees table"
+      }
+    ],
+    "explanation": "SELECT *\nFROM table_name;\n\n🔍 Query Breakdown\nLine 1: SELECT *\n- SELECT tells the database that you want to retrieve data.\n- * (asterisk) means all columns.\nInstead of writing all columns explicitly, you can simply write SELECT * because * automatically selects every column.\n\nLine 2: FROM table_name;\nFROM tells SQL where the data is stored. Here, table_name is the table name.\n\n⚙️ SQL Execution Order:\nStep 1: FROM table_name (Locate the specified table)\nStep 2: SELECT * (Retrieve every column from every row)\n\nExecution Flow:\ntable_name ──► Read every row ──► Read every column ──► Display result\n\n🚀 Alternative Solutions:\nMethod 1 (Recommended):\n```sql\nSELECT *\nFROM table_name;\n```\n\nMethod 2 (Explicit Column Names):\n```sql\nSELECT column1, column2, column3\nFROM table_name;\n```\n\n⚡ Performance Notes:\nSELECT * retrieves all columns, good for learning/debugging. In production, requesting only needed columns saves memory and bandwidth.",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-001"
+  },
+  {
+    "level_number": 2,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Select Specific Columns",
+    "story": "The Internal Communications & Security team is preparing an updated employee directory for the company intranet. For privacy and performance reasons, they strictly request only public fields (employee ID, first name, last name, job title, and salary) without exposing internal infrastructure flags or manager IDs.",
+    "objective": "Write an SQL query to display only the following columns from the employees table: employee_id, first_name, last_name, job_title, salary.",
+    "starter_code": "-- Problem #Basics-002: Select Specific Columns\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | first_name | last_name | job_title | salary\n---------------------------------------------------------------\n1 | John | Doe | Software Engineer | 85000.0\n2 | Jane | Smith | Engineering Manager | 120000.0\n3 | Bob | Johnson | Sales Exec | 60000.0\n4 | Alice | Williams | Sales Director | 110000.0\n5 | Charlie | Brown | Marketing Specialist | 55000.0\n6 | Diana | Prince | HR Lead | 75000.0\n7 | Eva | Green | Software Engineer | 90000.0\n8 | Frank | Miller | Financial Analyst | 70000.0",
+    "hints": [
+      "SELECT tells the database which columns to retrieve.",
+      "Separate column names with commas: employee_id, first_name, last_name, job_title, salary.",
+      "FROM employees specifies the source table."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "employee_id | first_name | last_name | job_title | salary",
+        "hidden": false,
+        "description": "Verify 5 selected columns from employees table"
+      }
+    ],
+    "explanation": "SELECT employee_id, first_name, last_name, job_title, salary\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT employee_id, first_name, last_name, job_title, salary\n- SELECT tells SQL that you want to retrieve data.\n- Instead of using SELECT *, we select only five specific columns:\n  - employee_id: Unique ID of the employee\n  - first_name: Employee's first name\n  - last_name: Employee's last name\n  - job_title: Employee's designation\n  - salary: Employee's salary\n\nLine 2: FROM employees;\nFROM tells SQL where to retrieve the data. Here, SQL looks inside the employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Locate the employees table)\nStep 2: SELECT columns (Retrieve only the specified columns)\n\nExecution Flow:\nemployees table ──► Read every row ──► Pick only specified columns ──► Display Result\n\n🚀 Alternative Solutions:\nMethod 1 (Recommended):\n```sql\nSELECT employee_id, first_name, last_name, job_title, salary FROM employees;\n```\n\nMethod 2 (Select All Columns):\n```sql\nSELECT * FROM employees;\n```\n\nMethod 2 also includes the required columns, but it retrieves unnecessary data and is not recommended when you only need a few columns.\n\n⚡ Performance Notes:\nMethod 1 reads only required columns, making it faster and preferred in production. Method 2 retrieves unnecessary columns, increasing memory and network usage.",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-002"
+  },
+  {
+    "level_number": 3,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Filter Rows Using WHERE",
+    "story": "The Engineering Department Lead is preparing quarterly performance bonuses specifically for staff in Department 101. To avoid pulling unrelated department data into the bonus calculations, they need a targeted list of employee records who belong exclusively to department 101.",
+    "objective": "Write an SQL query to retrieve all columns from the employees table for employees in department 101.",
+    "starter_code": "-- Problem #Basics-003: Filter Rows Using WHERE\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | first_name | last_name | email | phone_number | hire_date | job_title | salary | manager_id | department_id | age | city | gender | state\n-------------------------------------------------------------------------------------------------------------------------------------------------------\n1 | John | Doe | john.doe@email.com | 555-0101 | 2020-01-15 | Software Engineer | 85000.0 | NULL | 101 | 28 | New York | Male | NY\n2 | Jane | Smith | jane.smith@email.com | 555-0102 | 2019-03-22 | Engineering Manager | 120000.0 | NULL | 101 | 35 | New York | Female | NY\n7 | Eva | Green | eva.g@email.com | 555-0107 | 2023-01-01 | Software Engineer | 90000.0 | 2 | 101 | 26 | New York | Female | NY",
+    "hints": [
+      "SELECT * retrieves all columns.",
+      "FROM employees specifies the target table.",
+      "WHERE department_id = 101 filters rows matching department 101."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "department_id = 101",
+        "hidden": false,
+        "description": "Verify filtered rows where department_id is 101"
+      }
+    ],
+    "explanation": "SELECT *\nFROM employees\nWHERE department_id = 101;\n\n🔍 Query Breakdown\nLine 1: SELECT *\n- SELECT tells SQL to retrieve data.\n- * means return all columns.\n\nLine 2: FROM employees\nFROM tells SQL which table to read.\n\nLine 3: WHERE department_id = 101;\nWHERE filters rows. Only rows where department_id = 101 (condition TRUE) are returned.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Locate table)\nStep 2: Read every row\nStep 3: WHERE department_id = 101 (Filter matching rows)\nStep 4: SELECT * (Return all columns of remaining rows)\n\n🚀 Alternative Solutions:\nMethod 1 (Recommended):\n```sql\nSELECT *\nFROM employees\nWHERE department_id = 101;\n```\n\nMethod 2 (Specific Columns):\n```sql\nSELECT employee_id, first_name, salary\nFROM employees\nWHERE department_id = 101;\n```",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-003"
+  },
+  {
+    "level_number": 4,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Use Multiple Conditions with AND",
+    "story": "The Finance & HR Operations Team is planning senior tier bonus packages specifically for high-earning engineering team members. To qualify, an employee must work in Department 101 AND earn a salary greater than $60,000. Your task is to query the database and retrieve records for employees who meet both strict criteria.",
+    "objective": "Write an SQL query to retrieve all columns from the employees table for employees who belong to department 101 and have a salary greater than 60000.",
+    "starter_code": "-- Problem #Basics-004: Use Multiple Conditions with AND\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | first_name | last_name | email | phone_number | hire_date | job_title | salary | manager_id | department_id | age | city | gender | state\n-------------------------------------------------------------------------------------------------------------------------------------------------------\n1 | John | Doe | john.doe@email.com | 555-0101 | 2020-01-15 | Software Engineer | 85000.0 | NULL | 101 | 28 | New York | Male | NY\n2 | Jane | Smith | jane.smith@email.com | 555-0102 | 2019-03-22 | Engineering Manager | 120000.0 | NULL | 101 | 35 | New York | Female | NY\n7 | Eva | Green | eva.g@email.com | 555-0107 | 2023-01-01 | Software Engineer | 90000.0 | 2 | 101 | 26 | New York | Female | NY",
+    "hints": [
+      "SELECT * retrieves all columns from the table.",
+      "FROM employees specifies the target table.",
+      "WHERE department_id = 101 AND salary > 60000 combines both required conditions."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "department_id = 101 AND salary > 60000",
+        "hidden": false,
+        "description": "Verify filtered rows where department_id is 101 and salary is > 60000"
+      }
+    ],
+    "explanation": "SELECT *\nFROM employees\nWHERE department_id = 101\nAND salary > 60000;\n\n🔍 Query Breakdown\nLine 1: SELECT *\n- SELECT tells SQL to retrieve data.\n- * returns all columns.\n\nLine 2: FROM employees\n- FROM specifies the source table.\n\nLine 3-4: WHERE department_id = 101 AND salary > 60000;\n- WHERE filters rows based on logical conditions.\n- AND requires BOTH conditions to evaluate to TRUE for a row to be included.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Locate target table)\nStep 2: Read every row\nStep 3: Evaluate department_id = 101\nStep 4: Evaluate salary > 60000\nStep 5: SELECT * (Return matching rows where both conditions are TRUE)\n\nExecution Flow:\nemployees ──► Read every row ──► Check department_id = 101 ──► Check salary > 60000 ──► Keep if BOTH TRUE ──► Display result\n\n🚀 Alternative Solutions:\nMethod 1 (Recommended):\n```sql\nSELECT *\nFROM employees\nWHERE department_id = 101\nAND salary > 60000;\n```\n\nMethod 2 (Specific Columns):\n```sql\nSELECT employee_id, first_name, last_name, salary\nFROM employees\nWHERE department_id = 101\nAND salary > 60000;\n```\n\n⚡ Performance Notes:\nUsing AND allows SQL engines to leverage composite indexes or evaluate highly selective filters first, reducing intermediate dataset size and boosting query execution speed.",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-004"
+  },
+  {
+    "level_number": 5,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Use Multiple Conditions with OR",
+    "story": "The HR Operations Team is looking to recognize valuable team members across engineering and high-performing staff. They want to compile an employee list that includes anyone in Department 101 OR anyone with a salary greater than $60,000. If an employee satisfies either condition, their full record should be displayed in the report.",
+    "objective": "Write an SQL query to retrieve all columns from the employees table for employees who belong to department 101 OR have a salary greater than 60000.",
+    "starter_code": "-- Problem #Basics-005: Use Multiple Conditions with OR\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | first_name | last_name | email | phone_number | hire_date | job_title | salary | manager_id | department_id | age | city | gender | state\n------------------------------------------------------------------------------------------------------------------------------------------------------\n1 | John | Doe | john.doe@email.com | 555-0101 | 2020-01-15 | Software Engineer | 85000.0 | NULL | 101 | 28 | New York | Male | NY\n2 | Jane | Smith | jane.smith@email.com | 555-0102 | 2019-03-22 | Engineering Manager | 120000.0 | NULL | 101 | 35 | New York | Female | NY\n4 | Alice | Williams | alice.w@email.com | 555-0104 | 2018-11-12 | Sales Director | 110000.0 | NULL | 102 | 40 | Chicago | Female | IL\n6 | Diana | Prince | diana.p@email.com | 555-0106 | 2017-08-05 | HR Lead | 75000.0 | NULL | 104 | 38 | Boston | Female | MA\n7 | Eva | Green | eva.g@email.com | 555-0107 | 2023-01-01 | Software Engineer | 90000.0 | 2 | 101 | 26 | New York | Female | NY\n8 | Frank | Miller | frank.m@email.com | 555-0108 | 2020-09-15 | Financial Analyst | 70000.0 | NULL | 105 | 30 | New York | Male | NY",
+    "hints": [
+      "SELECT * retrieves all columns from the employees table.",
+      "WHERE department_id = 101 OR salary > 60000 combines the conditions using OR.",
+      "If either condition evaluates to TRUE, the row is returned."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "department_id = 101 OR salary > 60000",
+        "hidden": false,
+        "description": "Verify filtered rows where department_id is 101 OR salary is > 60000"
+      }
+    ],
+    "explanation": "SELECT *\nFROM employees\nWHERE department_id = 101\nOR salary > 60000;\n\n🔍 Query Breakdown\nLine 1: SELECT *\n- SELECT tells SQL to retrieve data.\n- * returns all columns.\n\nLine 2: FROM employees\n- FROM specifies the source table.\n\nLine 3-4: WHERE department_id = 101 OR salary > 60000;\n- WHERE filters rows based on logical conditions.\n- OR requires at least ONE condition to evaluate to TRUE for a row to be included.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Locate target table)\nStep 2: Read every row\nStep 3: Evaluate department_id = 101\nStep 4: If FALSE, evaluate salary > 60000\nStep 5: SELECT * (Return matching rows where either condition is TRUE)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-005"
+  }
+]
