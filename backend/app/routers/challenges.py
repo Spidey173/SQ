@@ -24,21 +24,21 @@ async def list_chapters(
 ):
     global _PUBLIC_CHAPTERS_CACHE
 
-    # Return instantly if visitor and public chapters already compiled
-    if not current_user and _PUBLIC_CHAPTERS_CACHE:
-        return _PUBLIC_CHAPTERS_CACHE
-
-    # Fetch challenges from memory cache (0.01ms) or DB once
-    if cache.is_curriculum_loaded():
-        challenges = cache.get_all_challenges()
+    # Always load fresh from DB if DB has more challenges, or use cached challenges
+    res = await db.execute(select(Challenge).order_by(Challenge.id.asc()))
+    challenges = res.scalars().all()
+    if challenges:
+        if len(challenges) != len(cache.get_all_challenges()):
+            _PUBLIC_CHAPTERS_CACHE = []
+        cache.set_challenges(challenges)
     else:
-        res = await db.execute(select(Challenge).order_by(Challenge.id.asc()))
-        challenges = res.scalars().all()
-        if challenges:
-            cache.set_challenges(challenges)
-        else:
-            cache.load_from_json_fallback()
-            challenges = cache.get_all_challenges()
+        cache.load_from_json_fallback()
+        challenges = cache.get_all_challenges()
+
+    # Return pre-computed public chapters if visitor and cache matches current challenge count
+    total_cached = sum(len(c.levels) for c in _PUBLIC_CHAPTERS_CACHE) if _PUBLIC_CHAPTERS_CACHE else 0
+    if not current_user and _PUBLIC_CHAPTERS_CACHE and total_cached == len(challenges):
+        return _PUBLIC_CHAPTERS_CACHE
 
     # Fetch user progress if user logged in
     user_progress_map = {}

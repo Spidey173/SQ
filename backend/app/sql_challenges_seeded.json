@@ -133,5 +133,816 @@
     "difficulty": "Easy",
     "track": "fundamentals",
     "code_id": "Basics-005"
+  },
+  {
+    "level_number": 6,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Sort Data Using ORDER BY",
+    "story": "The HR Compensation Committee is reviewing the company salary distribution to understand base compensation spread from lowest to highest. They need a complete list of all employee records sorted by salary in ascending order (lowest salary first).",
+    "objective": "Write an SQL query to retrieve all columns from the employees table sorted by salary in ascending order.",
+    "starter_code": "-- Problem #Basics-006: Sort Data Using ORDER BY\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | first_name | last_name | email | phone_number | hire_date | job_title | salary | manager_id | department_id | age | city | gender | state\n------------------------------------------------------------------------------------------------------------------------------------------------------\n5 | Charlie | Brown | charlie.b@email.com | 555-0105 | 2022-02-10 | Marketing Specialist | 55000.0 | 4 | 103 | 25 | San Francisco | Male | CA\n3 | Bob | Johnson | bob.j@email.com | 555-0103 | 2021-06-01 | Sales Exec | 60000.0 | 2 | 102 | 32 | Chicago | Male | IL\n8 | Frank | Miller | frank.m@email.com | 555-0108 | 2020-09-15 | Financial Analyst | 70000.0 | NULL | 105 | 30 | New York | Male | NY\n6 | Diana | Prince | diana.p@email.com | 555-0106 | 2017-08-05 | HR Lead | 75000.0 | NULL | 104 | 38 | Boston | Female | MA\n1 | John | Doe | john.doe@email.com | 555-0101 | 2020-01-15 | Software Engineer | 85000.0 | NULL | 101 | 28 | New York | Male | NY\n7 | Eva | Green | eva.g@email.com | 555-0107 | 2023-01-01 | Software Engineer | 90000.0 | 2 | 101 | 26 | New York | Female | NY\n4 | Alice | Williams | alice.w@email.com | 555-0104 | 2018-11-12 | Sales Director | 110000.0 | NULL | 102 | 40 | Chicago | Female | IL\n2 | Jane | Smith | jane.smith@email.com | 555-0102 | 2019-03-22 | Engineering Manager | 120000.0 | NULL | 101 | 35 | New York | Female | NY",
+    "hints": [
+      "Use SELECT * to retrieve all columns from the employees table.",
+      "Add ORDER BY salary to sort rows by the salary column.",
+      "SQL sorts in ascending order (ASC) by default."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "ORDER BY salary ASC",
+        "hidden": false,
+        "description": "Verify employees table sorted by salary in ascending order"
+      }
+    ],
+    "explanation": "SELECT *\nFROM employees\nORDER BY salary ASC;\n\n🔍 Query Breakdown\nLine 1: SELECT *\n- Retrieves all columns from the table.\n\nLine 2: FROM employees\n- Specifies the target employees table.\n\nLine 3: ORDER BY salary ASC;\n- ORDER BY sorts the records based on the specified column.\n- ASC means Ascending Order (smallest to largest).\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate the table\nStep 2: Read every row\nStep 3: SELECT * ── Retrieve required columns\nStep 4: ORDER BY salary ASC ── Sort the rows from lowest to highest salary\nStep 5: Display sorted result",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-006"
+  },
+  {
+    "level_number": 7,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Limit the Number of Rows (LIMIT)",
+    "story": "The HR Operations Team needs a quick sample preview of employee records for an upcoming executive presentation. Rather than returning the full workforce dataset of thousands of rows, they need only the first 5 employee records to display in the dashboard preview.",
+    "objective": "Write an SQL query to retrieve all columns for only the first 5 rows from the employees table.",
+    "starter_code": "-- Problem #Basics-007: Limit the Number of Rows (LIMIT)\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | first_name | last_name | email | phone_number | hire_date | job_title | salary | manager_id | department_id | age | city | gender | state\n-------------------------------------------------------------------------------------------------------------------------------------------------------\n1 | John | Doe | john.doe@email.com | 555-0101 | 2020-01-15 | Software Engineer | 85000.0 | NULL | 101 | 28 | New York | Male | NY\n2 | Jane | Smith | jane.smith@email.com | 555-0102 | 2019-03-22 | Engineering Manager | 120000.0 | NULL | 101 | 35 | New York | Female | NY\n3 | Bob | Johnson | bob.j@email.com | 555-0103 | 2021-06-01 | Sales Exec | 60000.0 | 2 | 102 | 32 | Chicago | Male | IL\n4 | Alice | Williams | alice.w@email.com | 555-0104 | 2018-11-12 | Sales Director | 110000.0 | NULL | 102 | 40 | Chicago | Female | IL\n5 | Charlie | Brown | charlie.b@email.com | 555-0105 | 2022-02-10 | Marketing Specialist | 55000.0 | 4 | 103 | 25 | San Francisco | Male | CA",
+    "hints": [
+      "Use SELECT * to retrieve all columns from the employees table.",
+      "Add LIMIT 5 to restrict the output to the first 5 rows.",
+      "LIMIT stops execution after returning the specified count."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "LIMIT 5",
+        "hidden": false,
+        "description": "Verify exactly 5 rows returned from employees table"
+      }
+    ],
+    "explanation": "SELECT *\nFROM employees\nLIMIT 5;\n\n🔍 Query Breakdown\nLine 1: SELECT *\n- Retrieves all columns from the table.\n\nLine 2: FROM employees\n- Specifies the target employees table.\n\nLine 3: LIMIT 5;\n- LIMIT restricts the number of rows returned to 5.\n- SQL stops reading and returning rows after reaching the limit.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate the table\nStep 2: Read rows\nStep 3: SELECT * ── Retrieve required columns\nStep 4: LIMIT 5 ── Stop after returning 5 rows\nStep 5: Display result",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-007"
+  },
+  {
+    "level_number": 8,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Find Distinct Values (DISTINCT)",
+    "story": "The HR Operations Team is building an internal department selector for employee onboarding and reporting. To populate the dropdown menu without duplicate department numbers, they need a clean list of all unique department IDs present in the organization.",
+    "objective": "Write an SQL query to display only unique (distinct) department IDs from the employees table.",
+    "starter_code": "-- Problem #Basics-008: Find Distinct Values (DISTINCT)\n-- Write your SQL query below\n\n",
+    "expected_output": "department_id\n-------------\n101\n102\n103\n104\n105",
+    "hints": [
+      "Use SELECT DISTINCT to filter out duplicate values.",
+      "Specify department_id column from the employees table.",
+      "DISTINCT returns each unique value only once."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT DISTINCT department_id",
+        "hidden": false,
+        "description": "Verify unique department IDs returned from employees table"
+      }
+    ],
+    "explanation": "SELECT DISTINCT department_id\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT DISTINCT department_id\n- SELECT retrieves column data.\n- DISTINCT removes duplicate department IDs from the output.\n\nLine 2: FROM employees;\n- Specifies the target employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate the table\nStep 2: Read every row\nStep 3: SELECT department_id ── Retrieve requested column\nStep 4: DISTINCT ── Filter out duplicate values\nStep 5: Display unique values",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-008"
+  },
+  {
+    "level_number": 9,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Count Total Records (COUNT())",
+    "story": "The Executive Leadership Team wants a quick high-level headcount report to verify the total number of employees currently registered in the company database. Rather than fetching individual employee rows, they need a single aggregated count.",
+    "objective": "Write an SQL query to count the total number of records in the employees table.",
+    "starter_code": "-- Problem #Basics-009: Count Total Records (COUNT())\n-- Write your SQL query below\n\n",
+    "expected_output": "COUNT(*)\n--------\n8",
+    "hints": [
+      "Use SELECT COUNT(*) to count all rows.",
+      "Specify FROM employees to target the employees table.",
+      "COUNT(*) returns a single total number."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT COUNT(*)",
+        "hidden": false,
+        "description": "Verify total record count from employees table"
+      }
+    ],
+    "explanation": "SELECT COUNT(*)\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT COUNT(*)\n- SELECT specifies data retrieval.\n- COUNT(*) is an aggregate function that counts every row in the table, including NULLs and duplicates.\n\nLine 2: FROM employees;\n- Specifies the target employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate table\nStep 2: Read every row\nStep 3: COUNT(*) ── Count total rows\nStep 4: Display single count number",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-009"
+  },
+  {
+    "level_number": 10,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Find the Maximum Value (MAX())",
+    "story": "The HR Compensation Committee is reviewing salary bands across the organization and needs to identify the highest compensation currently paid to an employee. Instead of viewing every individual employee, they need a query returning strictly the maximum salary value.",
+    "objective": "Write an SQL query to find the maximum (highest) salary from the employees table.",
+    "starter_code": "-- Problem #Basics-010: Find the Maximum Value (MAX())\n-- Write your SQL query below\n\n",
+    "expected_output": "MAX(salary)\n-----------\n120000.0",
+    "hints": [
+      "Use SELECT MAX(salary) to find the highest salary.",
+      "Specify FROM employees to target the employees table.",
+      "MAX() is an aggregate function that returns the largest value from a column."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT MAX(salary)",
+        "hidden": false,
+        "description": "Verify maximum salary found from employees table"
+      }
+    ],
+    "explanation": "SELECT MAX(salary)\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT MAX(salary)\n- SELECT retrieves data.\n- MAX() is an aggregate function returning the largest value from the specified column.\n\nLine 2: FROM employees;\n- Specifies the employees table to scan.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate table\nStep 2: Read every row\nStep 3: MAX(salary) ── Compare all salary values and keep the highest\nStep 4: Return single highest result",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-010"
+  },
+  {
+    "level_number": 11,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Find the Minimum Value (MIN())",
+    "story": "The HR Compensation Committee is reviewing entry-level pay scales and needs to determine the lowest compensation currently paid to an employee. Instead of viewing every individual employee, they need a query returning strictly the minimum salary value.",
+    "objective": "Write an SQL query to find the minimum (smallest) salary from the employees table.",
+    "starter_code": "-- Problem #Basics-011: Find the Minimum Value (MIN())\n-- Write your SQL query below\n\n",
+    "expected_output": "MIN(salary)\n-----------\n55000.0",
+    "hints": [
+      "Use SELECT MIN(salary) to find the lowest salary.",
+      "Specify FROM employees to target the employees table.",
+      "MIN() is an aggregate function that returns the smallest value from a column."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT MIN(salary)",
+        "hidden": false,
+        "description": "Verify minimum salary found from employees table"
+      }
+    ],
+    "explanation": "SELECT MIN(salary)\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT MIN(salary)\n- SELECT retrieves data.\n- MIN() is an aggregate function returning the smallest value from the specified column.\n\nLine 2: FROM employees;\n- Specifies the employees table to scan.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate table\nStep 2: Read every row\nStep 3: MIN(salary) ── Compare all salary values and keep the smallest\nStep 4: Return single smallest result",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-011"
+  },
+  {
+    "level_number": 12,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Find the Total Sum (SUM())",
+    "story": "The Finance and Payroll Department is preparing the monthly organizational budget forecast and needs to calculate the cumulative total salary expenditure for all active employees. Instead of calculating row-by-row manually, they need a query returning the total salary sum as a single number.",
+    "objective": "Write an SQL query to calculate the total sum of salaries from the employees table.",
+    "starter_code": "-- Problem #Basics-012: Find the Total Sum (SUM())\n-- Write your SQL query below\n\n",
+    "expected_output": "SUM(salary)\n-----------\n665000.0",
+    "hints": [
+      "Use SELECT SUM(salary) to compute the total sum.",
+      "Specify FROM employees to target the employees table.",
+      "SUM() is an aggregate function that adds all numeric values in a column, ignoring NULLs."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT SUM(salary)",
+        "hidden": false,
+        "description": "Verify total salary sum calculated from employees table"
+      }
+    ],
+    "explanation": "SELECT SUM(salary)\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT SUM(salary)\n- SELECT retrieves data.\n- SUM() is an aggregate function that adds all numeric values in the specified column.\n\nLine 2: FROM employees;\n- Specifies the employees table to scan.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate table\nStep 2: Read every row\nStep 3: SUM(salary) ── Add every salary value together (ignoring NULLs)\nStep 4: Return single total sum result",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-012"
+  },
+  {
+    "level_number": 13,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Calculate the Average (AVG())",
+    "story": "The HR Talent and Compensation Analytics team wants to evaluate company-wide salary benchmarks. They need to calculate the overall average (mean) salary across all employees to understand baseline compensation before conducting market reviews.",
+    "objective": "Write an SQL query to calculate the average (mean) salary from the employees table.",
+    "starter_code": "-- Problem #Basics-013: Calculate the Average (AVG())\n-- Write your SQL query below\n\n",
+    "expected_output": "AVG(salary)\n-----------\n83125.0",
+    "hints": [
+      "Use SELECT AVG(salary) to compute the average.",
+      "Specify FROM employees to target the employees table.",
+      "AVG() is an aggregate function that divides the sum of non-NULL values by their count."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT AVG(salary)",
+        "hidden": false,
+        "description": "Verify average salary calculated from employees table"
+      }
+    ],
+    "explanation": "SELECT AVG(salary)\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT AVG(salary)\n- SELECT retrieves data.\n- AVG() is an aggregate function that calculates the arithmetic mean (SUM(salary) / COUNT(salary)), automatically ignoring NULLs.\n\nLine 2: FROM employees;\n- Specifies the employees table to scan.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate table\nStep 2: Read every row\nStep 3: AVG(salary) ── Sum all non-NULL salaries and divide by their count\nStep 4: Return single average value result",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-013"
+  },
+  {
+    "level_number": 14,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Group Data Using GROUP BY",
+    "story": "The Human Resources department is conducting an organizational headcount audit across all operating business divisions. Instead of manually tallying headcount across all records, they need a grouped SQL report displaying each department ID alongside the total count of employees working in that department.",
+    "objective": "Write an SQL query to display department_id and the count of employees in each department using GROUP BY.",
+    "starter_code": "-- Problem #Basics-014: Group Data Using GROUP BY\n-- Write your SQL query below\n\n",
+    "expected_output": "department_id | COUNT(*)\n------------------------\n101 | 3\n102 | 2\n103 | 1\n104 | 1\n105 | 1",
+    "hints": [
+      "Use SELECT department_id, COUNT(*) to project the department and its headcount.",
+      "Specify FROM employees to target the employees table.",
+      "Use GROUP BY department_id to assemble employees into departmental buckets before counting."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id",
+        "hidden": false,
+        "description": "Verify employee count grouped by department_id"
+      }
+    ],
+    "explanation": "SELECT department_id, COUNT(*)\nFROM employees\nGROUP BY department_id;\n\n🔍 Query Breakdown\nLine 1: SELECT department_id, COUNT(*)\n- Specifies projecting department_id alongside the aggregate COUNT(*).\n\nLine 2: FROM employees\n- Identifies the target dataset.\n\nLine 3: GROUP BY department_id;\n- Collects rows sharing the same department_id into partitioned groups.\n- COUNT(*) calculates the headcount within each partitioned group separately.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Locate table\nStep 2: Read every row\nStep 3: GROUP BY department_id ── Partition rows into departmental buckets\nStep 4: COUNT(*) ── Calculate row count within each group\nStep 5: Display one row per group",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-014"
+  },
+  {
+    "level_number": 15,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Filter Groups Using HAVING",
+    "story": "The HR Operations and Management Committee is reviewing team sizes to reallocate managerial support. They only want to see departments that have more than 2 employees. Instead of filtering individual employee records, they need to filter the aggregated departmental groups using the HAVING clause.",
+    "objective": "Write an SQL query to display department_id and total_employees (COUNT(*) AS total_employees) for departments having more than 2 employees using HAVING.",
+    "starter_code": "-- Problem #Basics-015: Filter Groups Using HAVING\n-- Write your SQL query below\n\n",
+    "expected_output": "department_id | total_employees\n-------------------------------\n101 | 3",
+    "hints": [
+      "Use SELECT department_id, COUNT(*) AS total_employees.",
+      "Group the rows using GROUP BY department_id.",
+      "Filter the groups using HAVING COUNT(*) > 2."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT department_id, COUNT(*) AS total_employees FROM employees GROUP BY department_id HAVING COUNT(*) > 2",
+        "hidden": false,
+        "description": "Verify department groups filtered with HAVING COUNT(*) > 2"
+      }
+    ],
+    "explanation": "SELECT department_id, COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;\n\n🔍 Query Breakdown\nLine 1: SELECT department_id, COUNT(*) AS total_employees\n- Projects the grouping key department_id and aliased count.\n\nLine 2: FROM employees\n- Reads the employees table.\n\nLine 3: GROUP BY department_id\n- Partitions employees into departmental groups.\n\nLine 4: HAVING COUNT(*) > 2;\n- Filters the summarized groups, retaining only those where the calculated group count exceeds 2.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Read table\nStep 2: GROUP BY department_id ── Create groups\nStep 3: COUNT(*) ── Calculate count for every group\nStep 4: HAVING COUNT(*) > 2 ── Discard groups that do not satisfy condition\nStep 5: Display remaining groups",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-015"
+  },
+  {
+    "level_number": 16,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Retrieve Matching Records Using INNER JOIN",
+    "story": "The HR and Operations teams are publishing an internal corporate directory. Instead of displaying cryptic numerical department IDs, they need a clear report listing each employee's first_name alongside their official department_name by linking the employees table with the departments table on department_id.",
+    "objective": "Write an SQL query to retrieve employees.first_name and departments.department_name by joining employees with departments using INNER JOIN on department_id.",
+    "starter_code": "-- Problem #Basics-016: Retrieve Matching Records Using INNER JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | department_name\n----------------------------\nJohn | Engineering\nJane | Engineering\nBob | Sales\nAlice | Sales\nCharlie | Marketing\nDiana | HR\nEva | Engineering\nFrank | Finance",
+    "hints": [
+      "Select employees.first_name and departments.department_name.",
+      "Specify FROM employees.",
+      "Use INNER JOIN departments ON employees.department_id = departments.department_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employees.first_name, departments.department_name FROM employees INNER JOIN departments ON employees.department_id = departments.department_id",
+        "hidden": false,
+        "description": "Verify employee first_name matched with department_name using INNER JOIN"
+      }
+    ],
+    "explanation": "SELECT employees.first_name, departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;\n\n🔍 Query Breakdown\nLine 1: SELECT employees.first_name, departments.department_name\n- Specifies the exact columns to project from both tables.\n\nLine 2: FROM employees\n- Designates employees as the primary (left) table.\n\nLine 3: INNER JOIN departments\n- Connects the departments table to retrieve matching records.\n\nLine 4: ON employees.department_id = departments.department_id;\n- The join condition matching common key values between both tables.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Read rows from employees\nStep 2: INNER JOIN departments ── Read departments\nStep 3: ON employees.department_id = departments.department_id ── Match keys\nStep 4: Keep only matching rows across both tables\nStep 5: Return requested columns",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-016"
+  },
+  {
+    "level_number": 17,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Retrieve All Records from the Left Table Using LEFT JOIN",
+    "story": "The HR department needs a comprehensive employee audit. Unlike an INNER JOIN which silently drops employees if their department information is missing or unassigned, HR requires an inclusive report listing every employee (employees.first_name) along with their corresponding department name (departments.department_name), showing NULL for any department field when no match is found.",
+    "objective": "Write an SQL query to retrieve all employees (employees.first_name) along with departments.department_name using LEFT JOIN on department_id.",
+    "starter_code": "-- Problem #Basics-017: Retrieve All Records from the Left Table Using LEFT JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | department_name\n----------------------------\nJohn | Engineering\nJane | Engineering\nBob | Sales\nAlice | Sales\nCharlie | Marketing\nDiana | HR\nEva | Engineering\nFrank | Finance",
+    "hints": [
+      "Select employees.first_name and departments.department_name.",
+      "Specify FROM employees as the left table.",
+      "Use LEFT JOIN departments ON employees.department_id = departments.department_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employees.first_name, departments.department_name FROM employees LEFT JOIN departments ON employees.department_id = departments.department_id",
+        "hidden": false,
+        "description": "Verify all employees preserved with department_name using LEFT JOIN"
+      }
+    ],
+    "explanation": "SELECT employees.first_name, departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;\n\n🔍 Query Breakdown\nLine 1: SELECT employees.first_name, departments.department_name\n- Selects employee name and associated department name.\n\nLine 2: FROM employees\n- Designates employees as the preserved left table.\n\nLine 3: LEFT JOIN departments\n- Outer joins the departments table.\n\nLine 4: ON employees.department_id = departments.department_id;\n- Evaluates matching department IDs. If matched, returns department details; if no match exists, fills right columns with NULL.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Read all rows from left table\nStep 2: LEFT JOIN departments ── Read right table\nStep 3: ON employees.department_id = departments.department_id ── Match keys\nStep 4: If match exists, attach department data; if not, populate with NULL\nStep 5: Return all rows from left table with projected columns",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-017"
+  },
+  {
+    "level_number": 18,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Retrieve All Records from the Right Table Using RIGHT JOIN",
+    "story": "The Executive Leadership team is auditing company departments. They want a complete overview of all departments (departments.department_name) alongside their assigned employees (employees.first_name). Even if a department has no employees currently assigned to it, the department must still be shown with NULL for the employee details using a RIGHT JOIN (or equivalent right-preserving join).",
+    "objective": "Write an SQL query to retrieve employees.first_name and departments.department_name by joining employees with departments using RIGHT JOIN on department_id.",
+    "starter_code": "-- Problem #Basics-018: Retrieve All Records from the Right Table Using RIGHT JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | department_name\n----------------------------\nJohn | Engineering\nJane | Engineering\nBob | Sales\nAlice | Sales\nCharlie | Marketing\nDiana | HR\nEva | Engineering\nFrank | Finance",
+    "hints": [
+      "Select employees.first_name and departments.department_name.",
+      "Specify FROM employees as the left table.",
+      "Use RIGHT JOIN departments ON employees.department_id = departments.department_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employees.first_name, departments.department_name FROM employees RIGHT JOIN departments ON employees.department_id = departments.department_id",
+        "hidden": false,
+        "description": "Verify all departments preserved with employee first_name using RIGHT JOIN"
+      }
+    ],
+    "explanation": "SELECT employees.first_name, departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;\n\n🔍 Query Breakdown\nLine 1: SELECT employees.first_name, departments.department_name\n- Selects employee name and department name.\n\nLine 2: FROM employees\n- Designates employees as the left table.\n\nLine 3: RIGHT JOIN departments\n- Connects departments as the preserved right table.\n\nLine 4: ON employees.department_id = departments.department_id;\n- Evaluates matching department IDs. If matched, returns employee data; if no match exists, fills left columns with NULL.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Read left table\nStep 2: RIGHT JOIN departments ── Read right table\nStep 3: ON employees.department_id = departments.department_id ── Match keys\nStep 4: If no employee matches a department, populate employee columns with NULL\nStep 5: Return all rows from right table with projected columns",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-018"
+  },
+  {
+    "level_number": 19,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Retrieve All Records from Both Tables Using FULL OUTER JOIN",
+    "story": "The HR & Operations reconciliation team requires a complete cross-verification audit. They need a comprehensive report combining all employees (employees.first_name) and all departments (departments.department_name). If an employee has no matching department or a department has no matching employees, both records must still be retained, padded with NULL values for the missing side.",
+    "objective": "Write an SQL query to retrieve employees.first_name and departments.department_name using FULL OUTER JOIN on department_id.",
+    "starter_code": "-- Problem #Basics-019: Retrieve All Records from Both Tables Using FULL OUTER JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | department_name\n----------------------------\nJohn | Engineering\nJane | Engineering\nBob | Sales\nAlice | Sales\nCharlie | Marketing\nDiana | HR\nEva | Engineering\nFrank | Finance",
+    "hints": [
+      "Select employees.first_name and departments.department_name.",
+      "Specify FROM employees.",
+      "Use FULL OUTER JOIN departments ON employees.department_id = departments.department_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employees.first_name, departments.department_name FROM employees FULL OUTER JOIN departments ON employees.department_id = departments.department_id",
+        "hidden": false,
+        "description": "Verify all records from both tables preserved using FULL OUTER JOIN"
+      }
+    ],
+    "explanation": "SELECT employees.first_name, departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;\n\n🔍 Query Breakdown\nLine 1: SELECT employees.first_name, departments.department_name\n- Selects employee name and department name.\n\nLine 2: FROM employees\n- Designates employees as the left table.\n\nLine 3: FULL OUTER JOIN departments\n- Outer-joins departments table, preserving 100% of rows from BOTH sides.\n\nLine 4: ON employees.department_id = departments.department_id;\n- Evaluates match predicate. Combines matches and retains unmatched tuples from both tables with NULL padding.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees ── Read left table\nStep 2: FULL OUTER JOIN departments ── Read right table\nStep 3: ON employees.department_id = departments.department_id ── Match keys\nStep 4: Combine matching rows and include unmatched rows from BOTH tables padded with NULL\nStep 5: Return complete combined dataset",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-019"
+  },
+  {
+    "level_number": 20,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Join a Table with Itself Using SELF JOIN",
+    "story": "The HR department needs to map out the internal organizational hierarchy. Each employee row in the employees table contains a manager_id pointing to another employee's employee_id in the exact same table. To report each employee alongside their manager, write a SELF JOIN using table aliases e (employee) and m (manager).",
+    "objective": "Write an SQL query to retrieve e.first_name AS employee_name and m.first_name AS manager_name by performing an INNER JOIN on the employees table with itself on e.manager_id = m.employee_id.",
+    "starter_code": "-- Problem #Basics-020: Join a Table with Itself Using SELF JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_name | manager_name\n----------------------------\nBob | Jane\nCharlie | Alice\nEva | Jane",
+    "hints": [
+      "Select e.first_name AS employee_name and m.first_name AS manager_name.",
+      "Specify FROM employees AS e.",
+      "Use INNER JOIN employees AS m ON e.manager_id = m.employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.first_name AS employee_name, m.first_name AS manager_name FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id",
+        "hidden": false,
+        "description": "Verify employee and manager names retrieved using SELF JOIN"
+      }
+    ],
+    "explanation": "SELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;\n\n🔍 Query Breakdown\nLine 1: SELECT e.first_name AS employee_name, m.first_name AS manager_name\n- Projects the employee's name from alias e and manager's name from alias m.\n\nLine 2: FROM employees e\n- First logical copy of employees table representing employees.\n\nLine 3: INNER JOIN employees m\n- Second logical copy of employees table representing managers.\n\nLine 4: ON e.manager_id = m.employee_id;\n- Matches each employee's manager_id to their manager's employee_id key.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees e ── Create first logical table copy (e)\nStep 2: INNER JOIN employees m ── Create second logical table copy (m)\nStep 3: ON e.manager_id = m.employee_id ── Match key predicates\nStep 4: Filter matching rows\nStep 5: Output employee_name and manager_name",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-020"
+  },
+  {
+    "level_number": 21,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Combine Results of Two Queries Using UNION",
+    "story": "The communications team needs a single unified roster of entity labels across the organization. Write a query to select first_name from employees and combine it with department_name from departments using UNION, automatically eliminating duplicate entries.",
+    "objective": "Write an SQL query to combine first_name from employees and department_name from departments into a single result set using UNION.",
+    "starter_code": "-- Problem #Basics-021: Combine Results of Two Queries Using UNION\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name\n--------------------\nAlice\nBob\nCharlie\nDiana\nEngineering\nEva\nFinance\nFrank\nHR\nJane\nJohn\nMarketing\nSales",
+    "hints": [
+      "Select first_name FROM employees.",
+      "Use UNION.",
+      "Select department_name FROM departments."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name FROM employees UNION SELECT department_name FROM departments",
+        "hidden": false,
+        "description": "Verify unified distinct result set using UNION"
+      }
+    ],
+    "explanation": "SELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name FROM employees\n- Retrieves all employee first names.\n\nLine 2: UNION\n- Combines the two SELECT result sets into one and removes duplicate rows.\n\nLine 3: SELECT department_name FROM departments;\n- Retrieves all department names.\n\n⚙️ SQL Execution Order:\nStep 1: Execute first SELECT (employees.first_name)\nStep 2: Execute second SELECT (departments.department_name)\nStep 3: Stack both result sets into a single column\nStep 4: Perform duplicate removal (UNION sort/hash)\nStep 5: Output final unique list",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-021"
+  },
+  {
+    "level_number": 22,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Combine Results of Two Queries Using UNION ALL",
+    "story": "The auditing team needs to retain every single entry from both employees and departments without incurring performance overhead from duplicate elimination. Write a query to combine first_name from employees and department_name from departments using UNION ALL.",
+    "objective": "Write an SQL query to combine first_name from employees and department_name from departments into a single result set retaining all rows using UNION ALL.",
+    "starter_code": "-- Problem #Basics-022: Combine Results of Two Queries Using UNION ALL\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name\n--------------------\nJohn\nJane\nBob\nAlice\nCharlie\nDiana\nEva\nFrank\nEngineering\nSales\nMarketing\nHR\nFinance",
+    "hints": [
+      "Select first_name FROM employees.",
+      "Use UNION ALL.",
+      "Select department_name FROM departments."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name FROM employees UNION ALL SELECT department_name FROM departments",
+        "hidden": false,
+        "description": "Verify complete combined result set retaining all rows using UNION ALL"
+      }
+    ],
+    "explanation": "SELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name FROM employees\n- Retrieves all employee first names.\n\nLine 2: UNION ALL\n- Combines the two SELECT result sets into one WITHOUT removing duplicate rows.\n\nLine 3: SELECT department_name FROM departments;\n- Retrieves all department names.\n\n⚙️ SQL Execution Order:\nStep 1: Execute first SELECT (employees.first_name)\nStep 2: Execute second SELECT (departments.department_name)\nStep 3: Stack both result sets into a single column\nStep 4: Output all rows directly without checking for duplicates (Fast O(N+M))",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-022"
+  },
+  {
+    "level_number": 23,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Filter Records Using the LIKE Operator",
+    "story": "The HR directory team needs to list all employee first names that begin with the letter 'A' to generate filtered badge rosters. Write an SQL query to retrieve first_name from employees where first_name starts with 'A' using the LIKE operator.",
+    "objective": "Write an SQL query to filter first_name from employees matching names starting with 'A' using LIKE 'A%'.",
+    "starter_code": "-- Problem #Basics-023: Filter Records Using the LIKE Operator\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name\n--------------------\nAlice",
+    "hints": [
+      "Select first_name FROM employees.",
+      "Use WHERE first_name LIKE 'A%'.",
+      "The '%' wildcard represents zero or more characters."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name FROM employees WHERE first_name LIKE 'A%'",
+        "hidden": false,
+        "description": "Verify text pattern matching starting with letter A using LIKE"
+      }
+    ],
+    "explanation": "SELECT first_name FROM employees\nWHERE first_name LIKE 'A%';\n\n🔍 Query Breakdown\nLine 1: SELECT first_name FROM employees\n- Specifies the column and target table.\n\nLine 2: WHERE first_name LIKE 'A%'\n- Filters rows to include only first names starting with 'A'.\n- '%' matches zero or more subsequent characters.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table)\nStep 2: WHERE first_name LIKE 'A%' (Scan rows and evaluate pattern match)\nStep 3: SELECT first_name (Project matching names)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-023"
+  },
+  {
+    "level_number": 24,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Filter Records Using the IN Operator",
+    "story": "The team needs to check active employees whose names are 'John', 'Alice', or 'Bob' to assign primary shift leads. Write an SQL query to retrieve first_name from employees where first_name is in ('John', 'Alice', 'Bob') using the IN operator.",
+    "objective": "Write an SQL query to filter first_name from employees matching any name in ('John', 'Alice', 'Bob') using IN.",
+    "starter_code": "-- Problem #Basics-024: Filter Records Using the IN Operator\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name\n--------------------\nJohn\nBob\nAlice",
+    "hints": [
+      "Select first_name FROM employees.",
+      "Use WHERE first_name IN ('John', 'Alice', 'Bob').",
+      "The IN operator replaces multiple OR conditions cleanly."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob')",
+        "hidden": false,
+        "description": "Verify membership filtering using IN operator"
+      }
+    ],
+    "explanation": "SELECT first_name FROM employees\nWHERE first_name IN ('John', 'Alice', 'Bob');\n\n🔍 Query Breakdown\nLine 1: SELECT first_name FROM employees\n- Specifies target column and table.\n\nLine 2: WHERE first_name IN ('John', 'Alice', 'Bob')\n- Filters rows to include only employees matching any value in the literal list.\n- Equivalent to: WHERE first_name = 'John' OR first_name = 'Alice' OR first_name = 'Bob'.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table rows)\nStep 2: WHERE first_name IN (...) (Evaluate list membership)\nStep 3: SELECT first_name (Project matching records)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-024"
+  },
+  {
+    "level_number": 25,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Filter Records Using the BETWEEN Operator",
+    "story": "The HR analytics team needs to inspect compensation ranges for mid-tier staff. Write an SQL query to retrieve first_name from employees where salary is BETWEEN 50000 AND 100000.",
+    "objective": "Write an SQL query to filter first_name from employees with salary BETWEEN 50000 AND 100000.",
+    "starter_code": "-- Problem #Basics-025: Filter Records Using the BETWEEN Operator\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name\n--------------------\nJohn\nBob\nCharlie\nDiana\nEva\nFrank",
+    "hints": [
+      "Select first_name FROM employees.",
+      "Use WHERE salary BETWEEN 50000 AND 100000.",
+      "BETWEEN is inclusive of both boundary values."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000",
+        "hidden": false,
+        "description": "Verify range filtering using BETWEEN operator"
+      }
+    ],
+    "explanation": "SELECT first_name FROM employees\nWHERE salary BETWEEN 50000 AND 100000;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name FROM employees\n- Specifies target column and table.\n\nLine 2: WHERE salary BETWEEN 50000 AND 100000\n- Filters rows where salary is greater than or equal to 50000 AND less than or equal to 100000.\n- Equivalent to: WHERE salary >= 50000 AND salary <= 100000.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table rows)\nStep 2: WHERE salary BETWEEN 50000 AND 100000 (Evaluate inclusive range comparison)\nStep 3: SELECT first_name (Project matching records)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-025"
+  },
+  {
+    "level_number": 26,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Find Records with Missing Values Using IS NULL",
+    "story": "The organizational hierarchy audit needs a list of top-level employees who do not report to any manager (manager_id is NULL). Write an SQL query to retrieve first_name from employees where manager_id IS NULL.",
+    "objective": "Write an SQL query to filter first_name from employees where manager_id IS NULL.",
+    "starter_code": "-- Problem #Basics-026: Find Records with Missing Values Using IS NULL\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name\n--------------------\nJohn\nJane\nAlice\nDiana\nFrank",
+    "hints": [
+      "Select first_name FROM employees.",
+      "Use WHERE manager_id IS NULL.",
+      "Never use = NULL because NULL represents an unknown value."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name FROM employees WHERE manager_id IS NULL",
+        "hidden": false,
+        "description": "Verify filtering rows with missing values using IS NULL predicate"
+      }
+    ],
+    "explanation": "SELECT first_name FROM employees\nWHERE manager_id IS NULL;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name FROM employees\n- Specifies target column and table.\n\nLine 2: WHERE manager_id IS NULL\n- Filters rows where manager_id contains missing or unknown (NULL) values.\n- '=' or '!=' cannot be used with NULL in SQL three-valued logic.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table rows)\nStep 2: WHERE manager_id IS NULL (Evaluate missing value predicate)\nStep 3: SELECT first_name (Project matching records)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-026"
+  },
+  {
+    "level_number": 27,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Find Records with Non-NULL Values Using IS NOT NULL",
+    "story": "The operations management team needs to identify employees who report to an assigned manager (manager_id is NOT NULL). Write an SQL query to retrieve first_name from employees where manager_id IS NOT NULL.",
+    "objective": "Write an SQL query to filter first_name from employees where manager_id IS NOT NULL.",
+    "starter_code": "-- Problem #Basics-027: Find Records with Non-NULL Values Using IS NOT NULL\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name\n--------------------\nBob\nCharlie\nEva",
+    "hints": [
+      "Select first_name FROM employees.",
+      "Use WHERE manager_id IS NOT NULL.",
+      "Never use != NULL or <> NULL because comparisons with NULL yield UNKNOWN."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name FROM employees WHERE manager_id IS NOT NULL",
+        "hidden": false,
+        "description": "Verify filtering rows with valid stored values using IS NOT NULL predicate"
+      }
+    ],
+    "explanation": "SELECT first_name FROM employees\nWHERE manager_id IS NOT NULL;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name FROM employees\n- Specifies target column and table.\n\nLine 2: WHERE manager_id IS NOT NULL\n- Filters rows where manager_id contains valid stored values (excluding NULL).\n- '!=' or '<>' cannot be used with NULL in SQL three-valued logic.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table rows)\nStep 2: WHERE manager_id IS NOT NULL (Evaluate non-NULL predicate)\nStep 3: SELECT first_name (Project matching records)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-027"
+  },
+  {
+    "level_number": 28,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Use CASE WHEN to Display Conditional Values",
+    "story": "The HR compensation team wants to categorize employees into salary tiers based on their earnings. Write an SQL query to select first_name, salary, and a CASE expression aliased as salary_category ('High Salary' for >= 100000, 'Medium Salary' for >= 60000, and 'Low Salary' otherwise) from employees.",
+    "objective": "Write an SQL query using CASE WHEN to classify first_name and salary into salary_category.",
+    "starter_code": "-- Problem #Basics-028: Use CASE WHEN to Display Conditional Values\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | salary | salary_category\n-------------------------------------\nJohn | 85000.0 | Medium Salary\nJane | 120000.0 | High Salary\nBob | 60000.0 | Medium Salary\nAlice | 110000.0 | High Salary\nCharlie | 55000.0 | Low Salary\nDiana | 75000.0 | Medium Salary\nEva | 90000.0 | Medium Salary\nFrank | 70000.0 | Medium Salary",
+    "hints": [
+      "Select first_name, salary, and the CASE expression.",
+      "Use WHEN salary >= 100000 THEN 'High Salary'.",
+      "Use WHEN salary >= 60000 THEN 'Medium Salary' and ELSE 'Low Salary'.",
+      "Remember to add END AS salary_category."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name, salary, CASE WHEN salary >= 100000 THEN 'High Salary' WHEN salary >= 60000 THEN 'Medium Salary' ELSE 'Low Salary' END AS salary_category FROM employees",
+        "hidden": false,
+        "description": "Verify conditional value classification using CASE WHEN expression"
+      }
+    ],
+    "explanation": "SELECT first_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN 'High Salary'\n           WHEN salary >= 60000 THEN 'Medium Salary'\n           ELSE 'Low Salary'\n       END AS salary_category\nFROM employees;\n\n🔍 Query Breakdown\nLine 1-2: SELECT first_name, salary\n- Projects base employee details.\n\nLine 3-7: CASE WHEN ... END AS salary_category\n- Evaluates conditions sequentially. The first matching WHEN clause returns its THEN result.\n- ELSE provides a default fallback for unmatched rows.\n- END finishes the expression and assigns alias salary_category.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Read table rows)\nStep 2: Evaluate CASE WHEN logic per tuple\nStep 3: SELECT first_name, salary, salary_category (Project result columns)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-028"
+  },
+  {
+    "level_number": 29,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Round Decimal Values Using ROUND()",
+    "story": "The finance department requires employee salary figures formatted neatly to 2 decimal places for financial reporting. Write an SQL query to retrieve first_name, original salary, and ROUND(salary, 2) aliased as rounded_salary from employees.",
+    "objective": "Write an SQL query to display first_name, salary, and ROUND(salary, 2) AS rounded_salary from employees.",
+    "starter_code": "-- Problem #Basics-029: Round Decimal Values Using ROUND()\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | salary | rounded_salary\n------------------------------------\nJohn | 85000.0 | 85000.0\nJane | 120000.0 | 120000.0\nBob | 60000.0 | 60000.0\nAlice | 110000.0 | 110000.0\nCharlie | 55000.0 | 55000.0\nDiana | 75000.0 | 75000.0\nEva | 90000.0 | 90000.0\nFrank | 70000.0 | 70000.0",
+    "hints": [
+      "Select first_name, salary, and ROUND(salary, 2).",
+      "Alias the rounded value as rounded_salary.",
+      "ROUND(column_name, decimal_places) specifies precision."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name, salary, ROUND(salary, 2) AS rounded_salary FROM employees",
+        "hidden": false,
+        "description": "Verify rounding decimal values using ROUND() numeric function"
+      }
+    ],
+    "explanation": "SELECT first_name, salary, ROUND(salary, 2) AS rounded_salary\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name, salary, ROUND(salary, 2) AS rounded_salary\n- Retrieves name, raw salary, and rounded salary formatted to 2 decimal places.\n\nLine 2: FROM employees\n- Reads target dataset from employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Read data rows)\nStep 2: Apply ROUND(salary, 2) per row\nStep 3: Project first_name, salary, rounded_salary",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-029"
+  },
+  {
+    "level_number": 30,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Find the Length of a String Using LENGTH()",
+    "story": "The HR analytics system needs to calculate character counts of employee first names to audit database field length usage. Write an SQL query to retrieve first_name and LENGTH(first_name) aliased as name_length from employees.",
+    "objective": "Write an SQL query to display first_name and LENGTH(first_name) AS name_length from employees.",
+    "starter_code": "-- Problem #Basics-030: Find the Length of a String Using LENGTH()\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | name_length\n------------------------\nJohn | 4\nJane | 4\nBob | 3\nAlice | 5\nCharlie | 7\nDiana | 5\nEva | 3\nFrank | 5",
+    "hints": [
+      "Select first_name and LENGTH(first_name).",
+      "Alias the length expression as name_length.",
+      "LENGTH(string) returns the total number of characters including spaces."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name, LENGTH(first_name) AS name_length FROM employees",
+        "hidden": false,
+        "description": "Verify string character counting using LENGTH() function"
+      }
+    ],
+    "explanation": "SELECT first_name, LENGTH(first_name) AS name_length\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name, LENGTH(first_name) AS name_length\n- Retrieves name and character length using scalar function LENGTH().\n\nLine 2: FROM employees\n- Reads target records from employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table tuples)\nStep 2: Evaluate LENGTH(first_name) per row\nStep 3: SELECT first_name, name_length (Emit result set)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-030"
+  },
+  {
+    "level_number": 31,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Convert Text to Uppercase and Lowercase Using UPPER() and LOWER()",
+    "story": "The identity management service needs employee first names formatted in both uppercase and lowercase for standardized email matching and profile displays. Write an SQL query to retrieve first_name, UPPER(first_name) aliased as upper_name, and LOWER(first_name) aliased as lower_name from employees.",
+    "objective": "Write an SQL query to display first_name, UPPER(first_name) AS upper_name, and LOWER(first_name) AS lower_name from employees.",
+    "starter_code": "-- Problem #Basics-031: Convert Text to Uppercase and Lowercase Using UPPER() and LOWER()\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | upper_name | lower_name\n------------------------------------\nJohn | JOHN | john\nJane | JANE | jane\nBob | BOB | bob\nAlice | ALICE | alice\nCharlie | CHARLIE | charlie\nDiana | DIANA | diana\nEva | EVA | eva\nFrank | FRANK | frank",
+    "hints": [
+      "Select first_name, UPPER(first_name), and LOWER(first_name).",
+      "Alias the uppercase column as upper_name and lowercase as lower_name.",
+      "UPPER() and LOWER() are scalar string functions that alter display casing without mutating stored data."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name, UPPER(first_name) AS upper_name, LOWER(first_name) AS lower_name FROM employees",
+        "hidden": false,
+        "description": "Verify string case transformation using UPPER() and LOWER() scalar functions"
+      }
+    ],
+    "explanation": "SELECT first_name, UPPER(first_name) AS upper_name, LOWER(first_name) AS lower_name\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name, UPPER(first_name) AS upper_name, LOWER(first_name) AS lower_name\n- Retrieves name, uppercase string conversion, and lowercase string conversion.\n\nLine 2: FROM employees\n- Reads target dataset from employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table tuples)\nStep 2: Calculate UPPER(first_name) and LOWER(first_name) per row\nStep 3: SELECT first_name, upper_name, lower_name (Emit result set)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-031"
+  },
+  {
+    "level_number": 32,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Extract Part of a String Using SUBSTRING()",
+    "story": "The HR data system requires 3-character prefixes of employee first names to generate user badge codes and initials. Write an SQL query to retrieve first_name and SUBSTR(first_name, 1, 3) aliased as first_three_letters from employees.",
+    "objective": "Write an SQL query to display first_name and SUBSTR(first_name, 1, 3) AS first_three_letters from employees.",
+    "starter_code": "-- Problem #Basics-032: Extract Part of a String Using SUBSTRING()\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | first_three_letters\n--------------------------------\nJohn | Joh\nJane | Jan\nBob | Bob\nAlice | Ali\nCharlie | Cha\nDiana | Dia\nEva | Eva\nFrank | Fra",
+    "hints": [
+      "Select first_name and SUBSTR(first_name, 1, 3).",
+      "Alias the substring expression as first_three_letters.",
+      "The parameters for SUBSTR are (string, start_position, length). Remember SQL indexing starts at 1!"
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name, SUBSTR(first_name, 1, 3) AS first_three_letters FROM employees",
+        "hidden": false,
+        "description": "Verify string extraction using SUBSTR()/SUBSTRING() scalar function"
+      }
+    ],
+    "explanation": "SELECT first_name, SUBSTR(first_name, 1, 3) AS first_three_letters\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name, SUBSTR(first_name, 1, 3) AS first_three_letters\n- Extracts 3 characters starting at 1st position from first_name.\n\nLine 2: FROM employees\n- Reads target records from employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table tuples)\nStep 2: Calculate SUBSTR(first_name, 1, 3) per row\nStep 3: SELECT first_name, first_three_letters (Emit result set)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-032"
+  },
+  {
+    "level_number": 33,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Replace Part of a String Using REPLACE()",
+    "story": "The identity service is updating legacy employee names. You need to replace all occurrences of 'John' with 'Jonathan' in first names. Write an SQL query to retrieve first_name and REPLACE(first_name, 'John', 'Jonathan') aliased as updated_name from employees.",
+    "objective": "Write an SQL query to display first_name and REPLACE(first_name, 'John', 'Jonathan') AS updated_name from employees.",
+    "starter_code": "-- Problem #Basics-033: Replace Part of a String Using REPLACE()\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | updated_name\n-------------------------\nJohn | Jonathan\nJane | Jane\nBob | Bob\nAlice | Alice\nCharlie | Charlie\nDiana | Diana\nEva | Eva\nFrank | Frank",
+    "hints": [
+      "Select first_name and REPLACE(first_name, 'John', 'Jonathan').",
+      "Alias the replaced string expression as updated_name.",
+      "The parameters for REPLACE are (string, search_target, replacement_string)."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name, REPLACE(first_name, 'John', 'Jonathan') AS updated_name FROM employees",
+        "hidden": false,
+        "description": "Verify string substitution using REPLACE() scalar function"
+      }
+    ],
+    "explanation": "SELECT first_name, REPLACE(first_name, 'John', 'Jonathan') AS updated_name\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name, REPLACE(first_name, 'John', 'Jonathan') AS updated_name\n- Finds occurrences of 'John' in first_name and substitutes with 'Jonathan'.\n\nLine 2: FROM employees\n- Reads target records from employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table tuples)\nStep 2: Calculate REPLACE(first_name, 'John', 'Jonathan') per row\nStep 3: SELECT first_name, updated_name (Emit result set)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-033"
+  },
+  {
+    "level_number": 34,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Replace NULL Values Using COALESCE()",
+    "story": "The HR organizational chart needs to display employee managers cleanly. If an employee has no manager assigned (NULL), show 'No Manager'. Write an SQL query to retrieve first_name and COALESCE(CAST(manager_id AS TEXT), 'No Manager') aliased as manager from employees.",
+    "objective": "Write an SQL query to display first_name and COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager from employees.",
+    "starter_code": "-- Problem #Basics-034: Replace NULL Values Using COALESCE()\n-- Write your SQL query below\n\n",
+    "expected_output": "first_name | manager\n--------------------\nJohn | No Manager\nJane | No Manager\nBob | 2\nAlice | No Manager\nCharlie | 4\nDiana | No Manager\nEva | 2\nFrank | No Manager",
+    "hints": [
+      "Select first_name and COALESCE(CAST(manager_id AS TEXT), 'No Manager').",
+      "Alias the expression as manager.",
+      "COALESCE returns the first non-NULL expression from its argument list."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT first_name, COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager FROM employees",
+        "hidden": false,
+        "description": "Verify NULL replacement using COALESCE() scalar function"
+      }
+    ],
+    "explanation": "SELECT first_name, COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager\nFROM employees;\n\n🔍 Query Breakdown\nLine 1: SELECT first_name, COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager\n- Evaluates manager_id. If non-NULL, returns manager_id as text; if NULL, falls back to 'No Manager'.\n\nLine 2: FROM employees\n- Reads target records from employees table.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees (Access table tuples)\nStep 2: Calculate COALESCE(CAST(manager_id AS TEXT), 'No Manager') per row\nStep 3: SELECT first_name, manager (Emit result set)",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-034"
+  },
+  {
+    "level_number": 35,
+    "chapter_id": 1,
+    "chapter_title": "Module 1: Basic SQL",
+    "title": "Display the Current Date and Time",
+    "story": "System audit and logging services require recording server clock values. Write an SQL query to retrieve CURRENT_DATE aliased as current_date, CURRENT_TIME aliased as current_time, and CURRENT_TIMESTAMP aliased as current_datetime.",
+    "objective": "Write an SQL query to display CURRENT_DATE AS current_date, CURRENT_TIME AS current_time, and CURRENT_TIMESTAMP AS current_datetime.",
+    "starter_code": "-- Problem #Basics-035: Display the Current Date and Time\n-- Write your SQL query below\n\n",
+    "expected_output": "current_date | current_time | current_datetime\n----------------------------------------------\n2026-09-24 | 12:07:46 | 2026-09-24 12:07:46",
+    "hints": [
+      "Select CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP.",
+      "Use column aliases: current_date, current_time, and current_datetime.",
+      "Date and time scalar functions do not require accessing a table."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT CURRENT_DATE AS current_date, CURRENT_TIME AS current_time, CURRENT_TIMESTAMP AS current_datetime",
+        "hidden": false,
+        "description": "Verify retrieval of server system date, time, and timestamp"
+      }
+    ],
+    "explanation": "SELECT CURRENT_DATE AS current_date,\n       CURRENT_TIME AS current_time,\n       CURRENT_TIMESTAMP AS current_datetime;\n\n🔍 Query Breakdown\nLine 1: SELECT CURRENT_DATE AS current_date,\n- Returns today's date from the database server clock.\nLine 2: CURRENT_TIME AS current_time,\n- Returns current server time.\nLine 3: CURRENT_TIMESTAMP AS current_datetime;\n- Returns full date and time timestamp.\n\n⚙️ SQL Execution Order:\nStep 1: Fetch system clock parameters from database engine\nStep 2: Format projection values\nStep 3: Emit result set",
+    "difficulty": "Easy",
+    "track": "fundamentals",
+    "code_id": "Basics-035"
   }
 ]

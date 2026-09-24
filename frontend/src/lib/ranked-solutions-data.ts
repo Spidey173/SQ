@@ -22,7 +22,7 @@ export const ALL_PROBLEM_SOLUTIONS: Record<string, ProblemSolution> = {
     "code_id": "Basics-001",
     "numeric_id": 1,
     "title": "Select All Columns from a Table",
-    "code": "SELECT *\nFROM table_name;",
+    "code": "SELECT *\nFROM employees;",
     "timeComplexity": "O(N)",
     "spaceComplexity": "O(N)",
     "simplestExplanation": "The SELECT statement is used to retrieve data from a database table. The asterisk (*) selects all columns, and FROM table_name specifies the source table.",
@@ -324,841 +324,1893 @@ export const ALL_PROBLEM_SOLUTIONS: Record<string, ProblemSolution> = {
   "6": {
     "code_id": "Basics-006",
     "numeric_id": 6,
-    "title": "Use NOT",
-    "code": "SELECT * FROM employees WHERE department_id != 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use NOT.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Sort Data Using ORDER BY",
+    "code": "SELECT *\nFROM employees\nORDER BY salary ASC;",
+    "timeComplexity": "O(N log N) (Sorting Operation)",
+    "spaceComplexity": "O(N) (May vary depending on the database engine)",
+    "simplestExplanation": "ORDER BY is used to arrange rows in a specific order based on one or more columns. It never filters or removes rows; it only changes their display sequence. By default, SQL sorts in ascending order (ASC). Use DESC when you need largest-to-smallest ordering.",
+    "mentalModel": "Imagine a teacher arranging students based on marks.\n\nWithout sorting:\nJohn     85\nAlice    60\nDavid    95\nBob      70\n\nAfter sorting (Ascending):\nAlice    60\nBob      70\nJohn     85\nDavid    95\n\nAfter sorting (Descending):\nDavid    95\nJohn     85\nBob      70\nAlice    60\n\nSQL works exactly the same way.",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE department_id != 1;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT *",
+        "explanation": "Retrieves all columns from the table. You can also retrieve only the required columns (e.g. SELECT employee_id, first_name, salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "ORDER BY salary",
+        "explanation": "ORDER BY sorts the records based on the specified column. It does not filter data; it only changes the order in which rows are displayed."
+      },
+      {
+        "line": "ASC / DESC",
+        "explanation": "• ASC means Ascending Order (Smallest → Largest, A → Z, Oldest → Newest). It is the default in SQL.\n• DESC means Descending Order (Largest → Smallest, Z → A, Newest → Oldest)."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate the table.\nStep 2: Read every row.\nStep 3: SELECT * ── Retrieve required columns.\nStep 4: ORDER BY salary DESC ── Sort the retrieved rows.\nStep 5: Display the sorted result."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - Ascending):\n```sql\nSELECT *\nFROM employees\nORDER BY salary ASC;\n```\n\nMethod 2 (Specific Columns):\n```sql\nSELECT employee_id,\n       first_name,\n       salary\nFROM employees\nORDER BY salary DESC;\n```\nReturns only required columns. Preferred in production.\n\nMethod 3 (Multiple Columns):\n```sql\nSELECT *\nFROM employees\nORDER BY department_id ASC,\n         salary DESC;\n```\nFirst sorts by department, then sorts salary within each department."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nORDER BY ──► Sort Rows ──► ASC  (Small→Big, A→Z, Old→New)\n                      └──► DESC (Big→Small, Z→A, New→Old)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL (Ascending):\n```sql\nSELECT column1, column2\nFROM table_name\nORDER BY column_name ASC;\n```\n\nGeneric SQL (Descending):\n```sql\nSELECT column1, column2\nFROM table_name\nORDER BY column_name DESC;\n```\n\nProblem Solution (Ascending):\n```sql\nSELECT *\nFROM employees\nORDER BY salary ASC;\n```\n\nProblem Solution (Descending):\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Misspelling ORDER BY: SELECT * FROM employees ODER BY salary; ── Error: ODER is not a valid SQL keyword.",
+      "❌ 2. Ordering by a Non-Existing Column: SELECT * FROM employees ORDER BY salaries; ── Error: Unknown column salaries.",
+      "❌ 3. Using WHERE After ORDER BY: SELECT * FROM employees ORDER BY salary WHERE department_id = 101; ── Error: WHERE must always come before ORDER BY.",
+      "❌ 4. Forgetting DESC: Some beginners expect ORDER BY salary; to sort highest to lowest. Default is always Ascending (ASC).",
+      "❌ 5. Confusing ORDER BY with WHERE: WHERE filters rows; ORDER BY sorts rows. They perform completely different tasks."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "ORDER BY is used to arrange rows in a specific order. It never removes rows; it only changes their display order. By default, SQL sorts in ascending order (ASC). Use DESC when you need the highest values first.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is the default sorting order? Ascending (ASC).",
+      "Q2. Can ORDER BY sort text? Yes, alphabetically.",
+      "Q3. Can ORDER BY sort dates? Yes: Oldest → Newest (ASC), Newest → Oldest (DESC).",
+      "Q4. Can ORDER BY sort multiple columns? Yes (e.g. ORDER BY department_id, salary DESC;).",
+      "Q5. Does ORDER BY remove duplicate rows? No, it only changes the order."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between WHERE and ORDER BY?\n• What is the default order?\n• Can ORDER BY be used on multiple columns?\n• Does ORDER BY affect stored data?\n• Can ORDER BY sort text, numbers, and dates?",
+      "⚡ Performance Notes:\n• Recommended: SELECT employee_id, first_name, salary FROM employees ORDER BY salary DESC; (✔ Returns only required columns, ✔ Efficient, ✔ Easy to read)\n• Large Tables: Sorting millions of rows can be expensive. Creating an index on the sorting column can significantly improve performance.",
+      "🌍 Real-World Use Cases:\n• ✅ Highest-paid employees: ORDER BY salary DESC;\n• ✅ Lowest-priced products: ORDER BY price ASC;\n• ✅ Latest orders: ORDER BY order_date DESC;\n• ✅ Students ranked by marks: ORDER BY marks DESC.",
+      "🎓 Company Interview Tip: 'What is the default sorting order in SQL?' ── SQL sorts in Ascending (ASC) order by default. 'Does ORDER BY modify data stored in the database?' ── No, it only changes how results are displayed.",
+      "🔥 Pro Tip (Interview): WHERE → Filters rows. ORDER BY → Sorts rows. ASC → Small to Large / A to Z. DESC → Large to Small / Z to A. Think of ORDER BY as arranging books on a shelf—you still have the same books, you've just changed their order. 📚"
     ]
   },
   "7": {
     "code_id": "Basics-007",
     "numeric_id": 7,
-    "title": "Use BETWEEN",
-    "code": "SELECT * FROM employees WHERE salary BETWEEN 60000 AND 90000;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use BETWEEN.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Limit the Number of Rows (LIMIT)",
+    "code": "SELECT *\nFROM employees\nLIMIT 5;",
+    "timeComplexity": "O(N) (Database may stop early after reaching the limit)",
+    "spaceComplexity": "O(K) (Where K is the number of rows returned)",
+    "simplestExplanation": "LIMIT restricts the maximum number of rows returned by a query. It stops reading and materializing rows once the specified limit count is reached.",
+    "mentalModel": "Employees Table (1000 rows) ──► LIMIT 5 ──► Stop after returning first 5 rows ──► Remaining 995 rows ignored",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE salary BETWEEN 60000 AND 90000;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT *",
+        "explanation": "Retrieves all columns. You can also specify specific columns like SELECT employee_id, first_name, salary."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies the table to read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "LIMIT 5;",
+        "explanation": "LIMIT restricts the number of rows returned. It does not filter rows based on a condition; it simply stops after returning the specified count."
+      },
+      {
+        "line": "📚 Understanding LIMIT & Execution Sequence",
+        "explanation": "Execution steps:\nStep 1: FROM employees ── Locate table\nStep 2: Read rows\nStep 3: SELECT * ── Retrieve required columns\nStep 4: LIMIT 5 ── Stop after returning 5 rows\nStep 5: Display result"
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - First 5 Rows):\n```sql\nSELECT *\nFROM employees\nLIMIT 5;\n```\n\nMethod 2 (Specific Columns):\n```sql\nSELECT employee_id,\n       first_name,\n       salary\nFROM employees\nLIMIT 5;\n```\nRetrieves only required columns. Preferred in production.\n\nMethod 3 (Top 5 Highest Salaries - ORDER BY + LIMIT):\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC\nLIMIT 5;\n```\nSorts first, then returns only the top 5 rows."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nLIMIT ──► Restrict number of rows returned\n   ├── LIMIT 5 ──► First 5 rows\n   └── ORDER BY + LIMIT ──► Top N / Bottom N Records\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column1, column2\nFROM table_name\nLIMIT 5;\n```\n\nProblem Solution:\n```sql\nSELECT *\nFROM employees\nLIMIT 5;\n```\n\nTop 5 Highest Salaries:\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC\nLIMIT 5;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting LIMIT Value: SELECT * FROM employees LIMIT; ── Error: SQL expects a numeric value after LIMIT.",
+      "❌ 2. Using LIMIT Before ORDER BY: SELECT * FROM employees LIMIT 5 ORDER BY salary DESC; ── Error: ORDER BY must always come before LIMIT.",
+      "❌ 3. Assuming LIMIT Always Returns Highest Salary: SELECT * FROM employees LIMIT 5; ── Returns whichever 5 rows are read first, NOT highest paid. Use ORDER BY salary DESC LIMIT 5.",
+      "❌ 4. Negative LIMIT: LIMIT -5; ── Invalid in most SQL databases.",
+      "❌ 5. Forgetting ORDER BY: Without sorting, row selection order is not guaranteed."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LIMIT restricts the number of rows returned by a query. It is commonly used with ORDER BY to retrieve the Top N or Bottom N records. Without ORDER BY, the returned rows have no guaranteed order.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does LIMIT do? Restricts the number of rows returned.",
+      "Q2. Does LIMIT filter data? No, it only limits the number of rows displayed.",
+      "Q3. Should LIMIT be used with ORDER BY? Yes, otherwise returned rows are non-deterministic.",
+      "Q4. Can LIMIT return zero rows? Yes (e.g. LIMIT 0 returns an empty result set).",
+      "Q5. Is LIMIT supported by every database? No: MySQL, PostgreSQL & SQLite use LIMIT; SQL Server uses TOP; Oracle uses FETCH FIRST or ROWNUM."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between WHERE and LIMIT?\n• Why should ORDER BY be used with LIMIT?\n• How do you retrieve the Top 10 highest-paid employees?\n• Does LIMIT improve performance?\n• Which databases support LIMIT?",
+      "⚡ Performance Notes:\n• Recommended: SELECT employee_id, first_name, salary FROM employees ORDER BY salary DESC LIMIT 5; (✔ Returns only required columns, ✔ Returns only required rows, ✔ Faster than retrieving the entire table)\n• Large Tables: Using LIMIT with an indexed ORDER BY column allows the database to avoid full table scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Top 10 highest-paid employees: ORDER BY salary DESC LIMIT 10;\n• ✅ Latest 20 orders: ORDER BY order_date DESC LIMIT 20;\n• ✅ First 5 products: LIMIT 5;\n• ✅ Dashboard preview: Display recent records instead of full table.",
+      "🎓 Company Interview Tip: 'Does LIMIT 5 always return the same five rows?' ── No. Without an ORDER BY clause, SQL does not guarantee which five rows are returned. Always use ORDER BY when order matters.",
+      "🔥 Pro Tip (Interview): ORDER BY + LIMIT = Top N Records (Top 5 highest salaries, Top 10 selling products, Latest 20 orders). This combination is one of the most frequently asked SQL interview concepts! 🏆"
     ]
   },
   "8": {
     "code_id": "Basics-008",
     "numeric_id": 8,
-    "title": "Use IN",
-    "code": "SELECT * FROM employees WHERE department_id IN (1, 2, 3);",
-    "timeComplexity": "O(N)",
+    "title": "Find Distinct Values (DISTINCT)",
+    "code": "SELECT DISTINCT department_id\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(N log N) (Database may sort/hash to remove duplicates)",
     "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use IN.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "simplestExplanation": "DISTINCT removes duplicate values from query results, keeping only a single copy of each unique value returned by the SELECT statement.",
+    "mentalModel": "Employee Table ──► Read Department IDs ──► DISTINCT (Duplicate Remover) ──► Keep unique values only (HR, IT, Sales)",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE department_id IN (1, 2, 3);",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT DISTINCT department_id",
+        "explanation": "SELECT retrieves column data, and DISTINCT removes duplicate values so only unique department IDs are returned."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding DISTINCT",
+        "explanation": "Think of DISTINCT as a duplicate remover. Without DISTINCT, SQL returns duplicate values for every matching row. With DISTINCT, duplicate rows are removed from the final result set."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate the table.\nStep 2: Read every row.\nStep 3: SELECT department_id ── Retrieve the requested column.\nStep 4: DISTINCT ── Remove duplicate values.\nStep 5: Display only unique values."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - Single Column):\n```sql\nSELECT DISTINCT department_id\nFROM employees;\n```\n\nMethod 2 (Multiple Columns):\n```sql\nSELECT DISTINCT department_id,\n                job_title\nFROM employees;\n```\nReturns only unique combinations of department and job title.\n\nMethod 3 (Using GROUP BY):\n```sql\nSELECT department_id\nFROM employees\nGROUP BY department_id;\n```\nReturns unique department IDs, but DISTINCT is simpler when no aggregates are needed."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSELECT ──► Retrieve Column ──► DISTINCT ──► Remove Duplicates ──► Unique Values\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT DISTINCT column_name\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT DISTINCT department_id\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting DISTINCT: SELECT department_id FROM employees; ── Returns duplicate values.",
+      "❌ 2. Expecting DISTINCT to Remove Duplicate Rows Completely: SELECT DISTINCT department_id, salary FROM employees; ── DISTINCT evaluates the entire row combination, not just one column.",
+      "❌ 3. Confusing DISTINCT with UNIQUE Constraint: DISTINCT removes query duplicates; UNIQUE constraint prevents duplicate row inserts into the database table.",
+      "❌ 4. Using DISTINCT Unnecessarily: SELECT DISTINCT employee_id FROM employees; ── Doing DISTINCT on a Primary Key is redundant.",
+      "❌ 5. Assuming DISTINCT Sorts Data: SELECT DISTINCT city FROM employees; ── DISTINCT removes duplicates; it does not guarantee sorted output. Use ORDER BY for sorting."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "DISTINCT removes duplicate values from the query result. It does not modify the original table. It is commonly used for reports, filters, dashboards, and dropdown lists where only unique values are needed.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does DISTINCT do? Removes duplicate values from query results.",
+      "Q2. Does DISTINCT change data stored in the table? No, it only affects query output.",
+      "Q3. Can DISTINCT be used with multiple columns? Yes, it evaluates unique combinations.",
+      "Q4. Is DISTINCT the same as GROUP BY? No, DISTINCT only removes duplicates, whereas GROUP BY creates groups for aggregate functions.",
+      "Q5. Can DISTINCT be used with ORDER BY? Yes (e.g. SELECT DISTINCT city FROM employees ORDER BY city;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between DISTINCT and GROUP BY?\n• Does DISTINCT remove duplicate rows or duplicate values?\n• Can DISTINCT work with multiple columns?\n• Does DISTINCT affect database data?\n• When should DISTINCT be avoided?",
+      "⚡ Performance Notes:\n• Recommended: SELECT DISTINCT department_id FROM employees; (✔ Returns only unique values, ✔ Useful for reporting & UI filters)\n• Large Tables: Removing duplicates requires sorting or hashing internally. Indexes on DISTINCT columns help avoid expensive scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Show unique cities: SELECT DISTINCT city FROM customers;\n• ✅ Show available product categories: SELECT DISTINCT category FROM products;\n• ✅ Show unique departments: SELECT DISTINCT department_id FROM employees;\n• ✅ Populate filter dropdowns in UI applications.",
+      "🎓 Company Interview Tip: 'What is the difference between DISTINCT and GROUP BY?' ── DISTINCT removes duplicate values; GROUP BY creates groups and is mainly used with aggregate functions like COUNT(), SUM(), and AVG().",
+      "🔥 Pro Tip (Interview): SELECT (Retrieve Data) ➔ DISTINCT (Remove Duplicates) ➔ ORDER BY (Optional Sort Results). In interviews, when asked 'How to display all unique values?', DISTINCT is your go-to keyword! 🚀"
     ]
   },
   "9": {
     "code_id": "Basics-009",
     "numeric_id": 9,
-    "title": "Use NOT IN",
-    "code": "SELECT * FROM employees WHERE department_id NOT IN (1, 2);",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use NOT IN.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Count Total Records (COUNT())",
+    "code": "SELECT COUNT(*)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (May be optimized with indexes depending on database)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "COUNT() is an aggregate function that counts rows. COUNT(*) counts every single row in the table, including rows with NULL values and duplicate values.",
+    "mentalModel": "Employees Table ──► COUNT(*) ──► Count every row ──► Output single summary number (e.g. 10)",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE department_id NOT IN (1, 2);",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT COUNT(*)",
+        "explanation": "SELECT retrieves data, and COUNT(*) is an aggregate function that counts every row in the table (including NULLs and duplicates)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding COUNT() & Aggregation",
+        "explanation": "COUNT(*) counts all rows. COUNT(column_name) counts only non-NULL values in that column. COUNT(DISTINCT column) counts unique non-NULL values."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: COUNT(*) ── Count every row.\nStep 4: Return a single total number."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - Count All Rows):\n```sql\nSELECT COUNT(*)\nFROM employees;\n```\n\nMethod 2 (Count Specific Non-NULL Column):\n```sql\nSELECT COUNT(employee_id)\nFROM employees;\n```\nCounts non-NULL values in employee_id column.\n\nMethod 3 (Count Unique Values):\n```sql\nSELECT COUNT(DISTINCT department_id)\nFROM employees;\n```\nCounts only unique department IDs."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nCOUNT()\n  ├── COUNT(*) ──────► All Rows (Includes NULLs)\n  ├── COUNT(col) ────► Non-NULL Values Only\n  └── COUNT(DISTINCT col) ──► Unique Non-NULL Values Only\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT COUNT(*)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT COUNT(*)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using COUNT(column_name) Without Understanding NULL: SELECT COUNT(manager_id) FROM employees; ── If manager_id contains NULL values, those rows are NOT counted.",
+      "❌ 2. Confusing COUNT(*) with COUNT(column): COUNT(*) counts every row; COUNT(column_name) counts only non-NULL values.",
+      "❌ 3. Forgetting Parentheses: SELECT COUNT FROM employees; ── Error: SQL expects parentheses around parameters.",
+      "❌ 4. Expecting COUNT() to Return Detailed Rows: SELECT COUNT(*) FROM employees; ── Returns a single number (e.g., 10), NOT employee details.",
+      "❌ 5. Confusing COUNT() with SUM(): COUNT() counts rows; SUM() adds up numeric values."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "COUNT() is an aggregate function used to count rows. COUNT(*) counts every row, while COUNT(column_name) counts only non-NULL values in that column.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is COUNT()? An aggregate function that counts rows.",
+      "Q2. What is the difference between COUNT(*) and COUNT(column)? COUNT(*) counts every row; COUNT(column) counts only non-NULL values.",
+      "Q3. Does COUNT() ignore NULL? COUNT(*) does not ignore NULLs. COUNT(column) ignores NULL values.",
+      "Q4. Can COUNT() be used with DISTINCT? Yes (e.g. SELECT COUNT(DISTINCT department_id) FROM employees;).",
+      "Q5. What does COUNT(*) return for an empty table? It returns 0."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between COUNT(*) and COUNT(column)?\n• Does COUNT() count NULL values?\n• Difference between COUNT(*) and COUNT(DISTINCT)?\n• Is COUNT() an aggregate function?\n• Can COUNT() be used with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT COUNT(*) FROM employees; (✔ Easy to read, ✔ Optimized by query engines)\n• Trick Question: Suppose a table has 10 rows and manager_id has 3 NULL values ── COUNT(*) returns 10, COUNT(manager_id) returns 7!",
+      "🌍 Real-World Use Cases:\n• ✅ Count total employees: SELECT COUNT(*) FROM employees;\n• ✅ Count registered students;\n• ✅ Count total orders;\n• ✅ Dashboard statistics & analytics reports.",
+      "🎓 Company Interview Tip: 'What is the difference between COUNT(*) and COUNT(column_name)?' ── COUNT(*) counts all rows regardless of contents; COUNT(column_name) counts only rows where that column is NOT NULL.",
+      "🔥 Pro Tip (Interview Trick Question): Table with 10 rows and 3 NULL manager_ids ➔ COUNT(*) = 10, COUNT(manager_id) = 7, COUNT(DISTINCT department_id) = unique non-NULL count. This distinction is asked in almost every SQL interview! 🚀"
     ]
   },
   "10": {
     "code_id": "Basics-010",
     "numeric_id": 10,
-    "title": "Use LIKE",
-    "code": "SELECT * FROM employees WHERE first_name LIKE 'J%';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use LIKE.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Maximum Value (MAX())",
+    "code": "SELECT MAX(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (Can be optimized using indexes depending on database)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "MAX() is an aggregate function that compares every value in a column and returns only the single highest value. NULL values are automatically ignored.",
+    "mentalModel": "Employees Salaries ──► [50000, 65000, 72000, 85000, 120000, 78000] ──► MAX() Competition Judge ──► Single Winner: 120000.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE first_name LIKE 'J%';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL to retrieve data."
+      },
+      {
+        "line": "MAX(column_name)",
+        "explanation": "MAX() is an aggregate function that returns the largest value from a column (e.g., MAX(salary) returns highest salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should search (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding MAX()",
+        "explanation": "Compares every value in the column and returns strictly one value. NULL values are ignored by MAX()."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: MAX(salary) ── Compare all salary values.\nStep 4: Keep the highest value.\nStep 5: Return one single result."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT MAX(salary)\nFROM employees;\n```\n\nMethod 2 (Using ORDER BY):\n```sql\nSELECT salary\nFROM employees\nORDER BY salary DESC\nLIMIT 1;\n```\nReturns the same highest value, though MAX() is simpler and more readable.\n\nMethod 3 (Highest Employee Details):\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC\nLIMIT 1;\n```\nUseful when you need the entire employee record, not just the salary."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nMAX()\n  │\n  ▼\nCompare Values\n  │\n  ▼\nFind Highest\n  │\n  ▼\nReturn One Value\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT MAX(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT MAX(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing MAX() with COUNT(): SELECT COUNT(salary) FROM employees; counts rows; it does NOT return the highest salary.",
+      "❌ 2. Using MAX(*): SELECT MAX(*) FROM employees; ── Error: MAX() operates on a single column, never *.",
+      "❌ 3. Forgetting Parentheses: SELECT MAX FROM employees; ── Error: Function parentheses are required: SELECT MAX(salary).",
+      "❌ 4. Expecting MAX() to Return the Whole Row: SELECT MAX(salary) FROM employees; returns 120000.0, NOT the employee name or department. Use ORDER BY DESC LIMIT 1 if full row is needed.",
+      "❌ 5. Thinking MAX() Sorts the Table: MAX() only scans to find the highest value; it does NOT sort all rows."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "MAX() is an aggregate function that returns the largest value from a column. It does not return all rows or sort the table. It returns only one value (unless used with GROUP BY).",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is MAX()? An aggregate function that returns the highest value.",
+      "Q2. Can MAX() work with dates? Yes, it returns the latest date.",
+      "Q3. Can MAX() work with text? Yes, it returns the highest value according to alphabetical order.",
+      "Q4. Does MAX() ignore NULL values? Yes, NULL values are ignored.",
+      "Q5. Can MAX() be used with GROUP BY? Yes (e.g. SELECT department_id, MAX(salary) FROM employees GROUP BY department_id;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between MAX() and ORDER BY DESC LIMIT 1?\n• Does MAX() ignore NULL values?\n• Can MAX() work with dates or strings?\n• Can MAX() be combined with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT MAX(salary) FROM employees; (✔ Easy to read, ✔ Query engine optimized, ✔ Preferred in interviews)\n• Large Tables: If the column is indexed with a B-Tree, the database engine can jump straight to the maximum value in O(log N) or O(1) time!",
+      "🌍 Real-World Use Cases:\n• ✅ Highest salary: SELECT MAX(salary) FROM employees;\n• ✅ Highest exam marks: SELECT MAX(marks) FROM students;\n• ✅ Most expensive product: SELECT MAX(price) FROM products;\n• ✅ Latest order date: SELECT MAX(order_date) FROM orders;",
+      "🎓 Company Interview Tip: 'What is the difference between MAX() and ORDER BY DESC LIMIT 1?' ── MAX() returns only the highest value from a column; ORDER BY DESC LIMIT 1 returns the first row after sorting, which can include all column values if SELECT * is used.",
+      "🔥 Pro Tip (Interview Trick Question): Suppose salaries are [50000, 70000, NULL, 90000, 65000]. Query: SELECT MAX(salary) FROM employees; ➔ Answer: 90000. NULL values are completely ignored by MAX()!"
     ]
   },
   "11": {
     "code_id": "Basics-011",
     "numeric_id": 11,
-    "title": "Find records starting with a letter",
-    "code": "SELECT * FROM employees WHERE first_name LIKE 'A%';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find records starting with a letter.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Minimum Value (MIN())",
+    "code": "SELECT MIN(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (Can be optimized using indexes depending on database)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "MIN() is an aggregate function that compares every value in a column and returns only the single smallest value. NULL values are automatically ignored.",
+    "mentalModel": "Employees Salaries ──► [91000, 85000, 72000, 65000, 78000, 55000] ──► MIN() Search ──► Single Smallest: 55000.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE first_name LIKE 'A%';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL that you want to retrieve data."
+      },
+      {
+        "line": "MIN(column_name)",
+        "explanation": "MIN() is an aggregate function that returns the smallest value from a column (e.g., MIN(salary) returns lowest salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should search (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding MIN()",
+        "explanation": "Compares every value in the column and returns strictly one value. NULL values are ignored by MIN()."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: MIN(salary) ── Compare all salary values.\nStep 4: Keep the smallest value.\nStep 5: Return one single result."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT MIN(salary)\nFROM employees;\n```\n\nMethod 2 (Using ORDER BY):\n```sql\nSELECT salary\nFROM employees\nORDER BY salary ASC\nLIMIT 1;\n```\nReturns the same smallest value, though MIN() is simpler and easier to understand.\n\nMethod 3 (Lowest Employee Details):\n```sql\nSELECT *\nFROM employees\nORDER BY salary ASC\nLIMIT 1;\n```\nUseful when you need the entire employee record, not just the salary."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nMIN()\n  │\n  ▼\nCompare Values\n  │\n  ▼\nFind Smallest\n  │\n  ▼\nReturn One Value\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT MIN(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT MIN(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing MIN() with MAX(): SELECT MAX(salary) FROM employees; returns highest salary, not the lowest.",
+      "❌ 2. Using MIN(*): SELECT MIN(*) FROM employees; ── Error: MIN() works on one column, not *.",
+      "❌ 3. Forgetting Parentheses: SELECT MIN FROM employees; ── Error: SQL functions require parentheses: SELECT MIN(salary).",
+      "❌ 4. Expecting MIN() to Return the Whole Row: SELECT MIN(salary) FROM employees; returns 55000.0, NOT the employee details. Use ORDER BY ASC LIMIT 1 for full row details.",
+      "❌ 5. Thinking MIN() Sorts the Table: MIN() only finds the smallest value; it does NOT sort every row."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "MIN() is an aggregate function that returns the smallest value from a column. It returns only one value and does not sort the entire table or return complete rows.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is MIN()? An aggregate function that returns the smallest value.",
+      "Q2. Does MIN() ignore NULL values? Yes, NULL values are ignored.",
+      "Q3. Can MIN() work with dates? Yes, it returns the earliest (oldest) date.",
+      "Q4. Can MIN() work with text? Yes, it returns the first value alphabetically.",
+      "Q5. Can MIN() be used with GROUP BY? Yes (e.g. SELECT department_id, MIN(salary) FROM employees GROUP BY department_id;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between MIN() and ORDER BY ASC LIMIT 1?\n• Does MIN() ignore NULL values?\n• Can MIN() work with dates or strings?\n• Can MIN() be combined with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT MIN(salary) FROM employees; (✔ Simple, ✔ Fast, ✔ Preferred in interviews)\n• Large Tables: If the column is indexed with a B-Tree, many databases can jump directly to the first leaf node in O(log N) or O(1) time!",
+      "🌍 Real-World Use Cases:\n• ✅ Lowest salary: SELECT MIN(salary) FROM employees;\n• ✅ Lowest exam marks: SELECT MIN(marks) FROM students;\n• ✅ Cheapest product: SELECT MIN(price) FROM products;\n• ✅ Earliest joining date: SELECT MIN(hire_date) FROM employees;",
+      "🎓 Company Interview Tip: 'What is the difference between MIN() and ORDER BY ASC LIMIT 1?' ── MIN() returns only the smallest value from a column; ORDER BY ASC LIMIT 1 returns the first row after sorting, which can include all column values if SELECT * is used.",
+      "🔥 Pro Tip (Interview Trick Question): Suppose salaries are [50000, 70000, NULL, 90000, 65000]. Query: SELECT MIN(salary) FROM employees; ➔ Answer: 50000. NULL values are completely ignored by MIN()!"
     ]
   },
   "12": {
     "code_id": "Basics-012",
     "numeric_id": 12,
-    "title": "Find records ending with a letter",
-    "code": "SELECT * FROM employees WHERE last_name LIKE '%n';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find records ending with a letter.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Total Sum (SUM())",
+    "code": "SELECT SUM(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (May be optimized depending on indexes and database engine)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "SUM() is an aggregate function that adds all numeric values in a column and returns a single total. NULL values are automatically ignored.",
+    "mentalModel": "Employees Salaries ──► [50000 + 65000 + 70000 + 85000 + 90000 ...] ──► SUM() Running Accumulator ──► Total Sum: 665000.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE last_name LIKE '%n';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL to retrieve data."
+      },
+      {
+        "line": "SUM(column_name)",
+        "explanation": "SUM() is an aggregate function that adds all numeric values from a column (e.g. SUM(salary) returns total payroll expenditure)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies the table to read (e.g. FROM employees; FROM students; FROM orders;)."
+      },
+      {
+        "line": "📚 Understanding SUM()",
+        "explanation": "Adds every numeric value in the column and returns strictly one total value. NULL values are ignored by SUM()."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: SUM(salary) ── Add every salary.\nStep 4: Return one value."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT SUM(salary)\nFROM employees;\n```\n\nMethod 2 (Sum After Filtering):\n```sql\nSELECT SUM(salary)\nFROM employees\nWHERE department_id = 101;\n```\nReturns total salary only for Department 101.\n\nMethod 3 (Sum Using Alias):\n```sql\nSELECT SUM(salary) AS total_salary\nFROM employees;\n```\nProduces a more readable column header."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSUM()\n  │\n  ▼\nRead Numeric Values\n  │\n  ▼\nAdd Every Value\n  │\n  ▼\nReturn Total Sum\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT SUM(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT SUM(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using SUM(*): SELECT SUM(*) FROM employees; ── Error: SUM() works on one numeric column, never wildcard *.",
+      "❌ 2. Using SUM() on Text: SELECT SUM(first_name) FROM employees; ── Error: Text/string values cannot be added mathematically.",
+      "❌ 3. Forgetting Parentheses: SELECT SUM FROM employees; ── Error: SQL functions require parentheses: SELECT SUM(salary).",
+      "❌ 4. Confusing SUM() with COUNT(): COUNT(salary) counts rows (e.g. 10); SUM(salary) adds numeric values (e.g. 665000.0).",
+      "❌ 5. Expecting SUM() to Return Individual Rows: SELECT SUM(salary) FROM employees; returns one total number, not individual employee records."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "SUM() is an aggregate function that adds all numeric values in a column and returns a single total. NULL values are ignored.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does SUM() do? Adds all numeric values in a column.",
+      "Q2. Does SUM() ignore NULL values? Yes, NULL values are ignored.",
+      "Q3. Can SUM() work with text columns? No, only numeric columns.",
+      "Q4. Can SUM() be used with GROUP BY? Yes (e.g. SELECT department_id, SUM(salary) FROM employees GROUP BY department_id;).",
+      "Q5. What happens if all values are NULL? Most databases return NULL."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between SUM() and COUNT()?\n• Does SUM() ignore NULL values?\n• Can SUM() work on VARCHAR columns?\n• Can SUM() be combined with GROUP BY?\n• Can SUM() be used with WHERE?",
+      "⚡ Performance Notes:\n• Recommended: SELECT SUM(salary) FROM employees; (✔ Database optimized, ✔ Easy to read, ✔ Most commonly used)\n• Large Tables: Indexes help evaluate WHERE filters first before aggregation, reducing records passed to the summation accumulator.",
+      "🌍 Real-World Use Cases:\n• ✅ Total company salary: SELECT SUM(salary) FROM employees;\n• ✅ Total sales amount: SELECT SUM(amount) FROM orders;\n• ✅ Total student marks: SELECT SUM(marks) FROM students;\n• ✅ Total stock quantity: SELECT SUM(quantity) FROM products;",
+      "🎓 Company Interview Tip: 'What is the difference between COUNT() and SUM()?' ── COUNT() counts the number of rows; SUM() adds the values of a numeric column.",
+      "🔥 Pro Tip (Interview Trick Question): Salaries [50000, 70000, NULL, 90000, 65000]. Query: SELECT SUM(salary) FROM employees; ➔ Answer: 275000 (50000 + 70000 + 90000 + 65000 = 275000). NULL values are ignored by SUM()! 🚀"
     ]
   },
   "13": {
     "code_id": "Basics-013",
     "numeric_id": 13,
-    "title": "Find records containing a word",
-    "code": "SELECT * FROM products WHERE product_name LIKE '%Laptop%';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find records containing a word.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Calculate the Average (AVG())",
+    "code": "SELECT AVG(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (May be optimized depending on indexes and database engine)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "AVG() is an aggregate function that calculates the arithmetic mean of numeric values. It automatically ignores NULL values and returns a single average.",
+    "mentalModel": "Employees Salaries ──► Sum all non-NULL salaries ──► Count valid rows ──► [SUM ÷ COUNT] ──► Average: 83125.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM products WHERE product_name LIKE '%Laptop%';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL that you want to retrieve data."
+      },
+      {
+        "line": "AVG(column_name)",
+        "explanation": "AVG() is an aggregate function that calculates the arithmetic mean of numeric values (e.g. AVG(salary) returns average employee salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding AVG()",
+        "explanation": "Calculates (SUM ÷ COUNT) of all non-NULL values and returns strictly one value. NULL values are excluded from both SUM and COUNT."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: AVG(salary) ── Add non-NULL salaries.\nStep 4: Count non-NULL rows.\nStep 5: Divide SUM by COUNT.\nStep 6: Return single average value."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT AVG(salary)\nFROM employees;\n```\n\nMethod 2 (Calculate Average Manually):\n```sql\nSELECT SUM(salary) / COUNT(salary)\nFROM employees;\n```\nProduces the same result and illustrates how AVG() functions internally.\n\nMethod 3 (Average After Filtering):\n```sql\nSELECT AVG(salary)\nFROM employees\nWHERE department_id = 101;\n```\nCalculates the average salary only for Department 101."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nAVG()\n  │\n  ▼\nRead Numeric Values\n  │\n  ▼\nCalculate SUM\n  │\n  ▼\nCount Values\n  │\n  ▼\nSUM ÷ COUNT\n  │\n  ▼\nReturn Average\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT AVG(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT AVG(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using AVG(*): SELECT AVG(*) FROM employees; ── Error: AVG() works on one numeric column, never wildcard *.",
+      "❌ 2. Using AVG() on Text: SELECT AVG(first_name) FROM employees; ── Error: Text/string values cannot be averaged mathematically.",
+      "❌ 3. Forgetting Parentheses: SELECT AVG FROM employees; ── Error: SQL functions require parentheses: SELECT AVG(salary).",
+      "❌ 4. Confusing AVG() with SUM(): SUM adds all values together; AVG divides that sum by the count of values.",
+      "❌ 5. Assuming NULL Values Are Included in Denominator: NULL values are completely excluded from both the numerator and the denominator (divided by non-NULL count, not total rows)."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "AVG() is an aggregate function that calculates the average of numeric values. It automatically ignores NULL values and returns one value.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does AVG() do? Calculates the arithmetic mean.",
+      "Q2. Does AVG() ignore NULL values? Yes, NULL values are ignored.",
+      "Q3. Can AVG() work on text columns? No, only numeric columns.",
+      "Q4. Can AVG() be used with GROUP BY? Yes (e.g. SELECT department_id, AVG(salary) FROM employees GROUP BY department_id;).",
+      "Q5. How is AVG() calculated internally? Using SUM(column) / COUNT(column)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between AVG() and SUM()?\n• Does AVG() count NULL values in the denominator?\n• Can AVG() work on VARCHAR columns?\n• How is AVG() calculated internally?\n• Can AVG() be combined with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT AVG(salary) FROM employees; (✔ Database optimized, ✔ Easy to read, ✔ Preferred over manual calculation)\n• Large Tables: Scans matching rows to accumulate sum and count; indexes optimize pre-filtering with WHERE before calculation.",
+      "🌍 Real-World Use Cases:\n• ✅ Average employee salary: SELECT AVG(salary) FROM employees;\n• ✅ Average student marks: SELECT AVG(marks) FROM students;\n• ✅ Average product price: SELECT AVG(price) FROM products;\n• ✅ Average monthly sales order amount: SELECT AVG(amount) FROM orders;",
+      "🎓 Company Interview Tip: 'How does SQL calculate AVG()?' ── AVG(column) = SUM(column) / COUNT(column). Crucially, only non-NULL values are included in both the sum and the row count divisor.",
+      "🔥 Pro Tip (Interview Trick Question): Suppose salaries are [50000, 70000, NULL, 90000, 60000]. Query: SELECT AVG(salary) FROM employees; ➔ Answer: (50000 + 70000 + 90000 + 60000) / 4 = 67500. It divides by 4, NOT 5, because NULLs are excluded from the denominator! 🚀"
     ]
   },
   "14": {
     "code_id": "Basics-014",
     "numeric_id": 14,
-    "title": "Use IS NULL",
-    "code": "SELECT * FROM employees WHERE manager_id IS NULL;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use IS NULL.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Group Data Using GROUP BY",
+    "code": "SELECT department_id,\n       COUNT(*)\nFROM employees\nGROUP BY department_id;",
+    "timeComplexity": "O(N) (Without Index) / O(N log N) (Database may sort/hash while grouping)",
+    "spaceComplexity": "O(N) (Depends on number of unique groups)",
+    "simplestExplanation": "GROUP BY partitions rows having the same values into distinct groups so aggregate functions (COUNT, SUM, AVG, MAX, MIN) run separately for each group.",
+    "mentalModel": "Employees ──► Partition by department_id [101: 3, 102: 2, 103: 1, 104: 1, 105: 1] ──► Execute COUNT(*) per partition ──► Output 1 Row Per Group",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE manager_id IS NULL;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT department_id, COUNT(*)",
+        "explanation": "Specifies what to project: the grouping key (department_id) and the row count for each group."
+      },
+      {
+        "line": "COUNT(*)",
+        "explanation": "Aggregate function that counts records inside each respective departmental group rather than across the whole table."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Identifies the source dataset to scan."
+      },
+      {
+        "line": "GROUP BY department_id;",
+        "explanation": "Instructs SQL to place employees with matching department_id values into the same group. Aggregations run independently for each group."
+      },
+      {
+        "line": "📚 Understanding GROUP BY",
+        "explanation": "Think of GROUP BY like sorting students into classrooms. Students in the same class stand together, and then the teacher counts or evaluates students in each classroom."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: GROUP BY department_id ── Create partitioned groups.\nStep 4: COUNT(*) ── Calculate count inside each group.\nStep 5: Return one summarized row per group."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT department_id, COUNT(*)\nFROM employees\nGROUP BY department_id;\n```\n\nMethod 2 (Average Salary per Department):\n```sql\nSELECT department_id, AVG(salary)\nFROM employees\nGROUP BY department_id;\n```\n\nMethod 3 (Max Salary per Department):\n```sql\nSELECT department_id, MAX(salary)\nFROM employees\nGROUP BY department_id;\n```\n\nMethod 4 (Total Salary per Department):\n```sql\nSELECT department_id, SUM(salary)\nFROM employees\nGROUP BY department_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nGROUP BY\n   │\n   ▼\nCreate Groups\n   │\n   ▼\nRun Aggregate Function\n   │\n   ▼\nReturn One Row Per Group\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name, aggregate_function(column_name)\nFROM table_name\nGROUP BY column_name;\n```\n\nProblem Solution:\n```sql\nSELECT department_id, COUNT(*)\nFROM employees\nGROUP BY department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting GROUP BY: SELECT department_id, COUNT(*) FROM employees; ── Syntax error because department_id is neither aggregated nor grouped.",
+      "❌ 2. Selecting Non-Grouped Columns: SELECT department_id, first_name, COUNT(*) FROM employees GROUP BY department_id; ── Error: first_name is not in GROUP BY.",
+      "❌ 3. Thinking GROUP BY Sorts Data: GROUP BY does NOT guarantee sorting order. Use ORDER BY if a specific sort sequence is required.",
+      "❌ 4. Confusing WHERE with GROUP BY: WHERE filters individual rows before grouping; GROUP BY collects rows into summary buckets.",
+      "❌ 5. Misunderstanding Aggregation Scope: SUM(salary) with GROUP BY returns total salary per group, not the grand total for the whole table."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "GROUP BY groups rows with the same values together so aggregate functions (COUNT, SUM, AVG, MAX, MIN) can be calculated separately for each group.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does GROUP BY do? Combines rows with identical values into groups.",
+      "Q2. Which functions are commonly used with GROUP BY? COUNT(), SUM(), AVG(), MAX(), MIN().",
+      "Q3. Can GROUP BY be used without aggregate functions? Yes, but it acts similarly to DISTINCT.",
+      "Q4. Does GROUP BY sort the output? No, an explicit ORDER BY clause is required.",
+      "Q5. Can GROUP BY use multiple columns? Yes (e.g. GROUP BY department_id, city;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between GROUP BY and ORDER BY?\n• Why is GROUP BY used?\n• Can GROUP BY have multiple columns?\n• Which aggregate functions work with GROUP BY?\n• Can GROUP BY be used without COUNT()?",
+      "⚡ Performance Notes:\n• Recommended: SELECT department_id, COUNT(*) FROM employees GROUP BY department_id; (✔ Efficient, ✔ Database optimized, ✔ Most common interview solution)\n• Large Tables: Indexes on grouped columns allow the database engine to use Stream Aggregate / Index Grouping rather than Hash Aggregate or Sort Aggregate.",
+      "🌍 Real-World Use Cases:\n• ✅ Count employees per department: SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;\n• ✅ Total sales by city: SELECT city, SUM(amount) FROM orders GROUP BY city;\n• ✅ Average marks per class: SELECT class, AVG(marks) FROM students GROUP BY class;\n• ✅ Highest salary per department: SELECT department_id, MAX(salary) FROM employees GROUP BY department_id;",
+      "🎓 Company Interview Tip: 'What is the difference between GROUP BY and ORDER BY?' ── GROUP BY collapses rows with identical values into groups for aggregation; ORDER BY purely sorts the final result set.",
+      "🔥 Pro Tip (Interview Trick Question): If a query selects department_id and COUNT(*) with GROUP BY department_id, SQL returns ONE row per department (e.g., HR: 3, IT: 2), NOT one row per individual employee! 🚀"
     ]
   },
   "15": {
     "code_id": "Basics-015",
     "numeric_id": 15,
-    "title": "Use IS NOT NULL",
-    "code": "SELECT * FROM employees WHERE manager_id IS NOT NULL;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use IS NOT NULL.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Groups Using HAVING",
+    "code": "SELECT department_id,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;",
+    "timeComplexity": "O(N) (Without Index) / O(N log N) (Grouping + Filtering depending on database engine)",
+    "spaceComplexity": "O(N) (Depends on number of groups)",
+    "simplestExplanation": "HAVING filters summarized groups after GROUP BY evaluates aggregate calculations, discarding groups that do not satisfy the condition.",
+    "mentalModel": "Employees ──► GROUP BY department_id [101: 3, 102: 2, 103: 1, 104: 1, 105: 1] ──► Security Guard HAVING COUNT(*) > 2 ──► Keep Only [101: 3] ──► Output Filtered Groups",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE manager_id IS NOT NULL;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT department_id, COUNT(*) AS total_employees",
+        "explanation": "Selects the grouping key (department_id) and the aliased count of employees."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Identifies the source dataset to read."
+      },
+      {
+        "line": "GROUP BY department_id",
+        "explanation": "Creates one summary group for each distinct department_id."
+      },
+      {
+        "line": "HAVING COUNT(*) > 2;",
+        "explanation": "Post-aggregation filter: evaluates the aggregate count of each group and retains only departments with more than 2 employees."
+      },
+      {
+        "line": "📚 Understanding HAVING",
+        "explanation": "Think of HAVING as a security guard standing after the groups are created. Only groups satisfying the aggregate predicate are allowed through to the final result."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: GROUP BY department_id ── Create partitioned groups.\nStep 3: COUNT(*) ── Calculate row count for each group.\nStep 4: HAVING COUNT(*) > 2 ── Remove groups that do not satisfy condition.\nStep 5: Display surviving groups."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT department_id,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;\n```\n\nMethod 2 (Departments with High Average Salary):\n```sql\nSELECT department_id,\n       AVG(salary) AS average_salary\nFROM employees\nGROUP BY department_id\nHAVING AVG(salary) > 70000;\n```\n\nMethod 3 (Departments with Large Total Salary):\n```sql\nSELECT department_id,\n       SUM(salary) AS total_salary\nFROM employees\nGROUP BY department_id\nHAVING SUM(salary) > 300000;\n```\n\nMethod 4 (Pre-Filter Rows Then Filter Groups):\n```sql\nSELECT department_id,\n       COUNT(*) AS total_employees\nFROM employees\nWHERE salary > 30000\nGROUP BY department_id\nHAVING COUNT(*) > 2;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nFROM\n  │\n  ▼\nWHERE (Filters Rows)\n  │\n  ▼\nGROUP BY (Creates Groups)\n  │\n  ▼\nHAVING (Filters Groups)\n  │\n  ▼\nSELECT\n  │\n  ▼\nORDER BY\n  │\n  ▼\nLIMIT\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name, aggregate_function(column_name)\nFROM table_name\nGROUP BY column_name\nHAVING aggregate_function(column_name) condition;\n```\n\nProblem Solution:\n```sql\nSELECT department_id, COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using WHERE with Aggregate Functions: SELECT department_id FROM employees WHERE COUNT(*) > 2 GROUP BY department_id; ── Error: WHERE cannot use aggregates.",
+      "❌ 2. Forgetting GROUP BY: SELECT department_id FROM employees HAVING COUNT(*) > 2; ── Invalid or non-standard without grouping dimension.",
+      "❌ 3. Confusing WHERE and HAVING: WHERE filters individual row tuples before grouping; HAVING filters collapsed groups after aggregation.",
+      "❌ 4. Thinking HAVING Runs Before GROUP BY: HAVING always runs after GROUP BY and aggregate evaluation.",
+      "❌ 5. Using HAVING for Non-Aggregate Row Filters: SELECT * FROM employees HAVING salary > 50000; ── Inefficient/incorrect; use WHERE for row filtering."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "WHERE filters rows before grouping. HAVING filters groups after grouping. Aggregate functions such as COUNT(), SUM(), AVG(), MIN(), and MAX() are typically used with HAVING.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is HAVING? A clause that filters grouped records after GROUP BY.",
+      "Q2. Difference between WHERE and HAVING? WHERE filters individual rows before grouping; HAVING filters groups after aggregation.",
+      "Q3. Can HAVING be used without GROUP BY? In some SQL dialects, treating the whole table as a single group.",
+      "Q4. Which functions are commonly used with HAVING? COUNT(), SUM(), AVG(), MAX(), MIN().",
+      "Q5. Which executes first: WHERE, GROUP BY, or HAVING? Logical order is WHERE ──► GROUP BY ──► HAVING."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between WHERE and HAVING?\n• Can HAVING use aggregate functions? (Yes, WHERE cannot)\n• Which clause executes first between WHERE, GROUP BY, and HAVING?\n• Can HAVING work without GROUP BY?\n• Can WHERE use COUNT()?",
+      "⚡ Performance Notes:\n• Recommended: Filter row-level conditions with WHERE first before GROUP BY, then apply HAVING strictly for aggregate thresholds. This reduces rows entering the grouping phase.",
+      "🌍 Real-World Use Cases:\n• ✅ Departments with more than 10 employees: SELECT department_id, COUNT(*) FROM employees GROUP BY department_id HAVING COUNT(*) > 10;\n• ✅ Cities with total sales > 5,00,000: SELECT city, SUM(amount) FROM orders GROUP BY city HAVING SUM(amount) > 500000;\n• ✅ Classes with average marks > 75: SELECT class, AVG(marks) FROM students GROUP BY class HAVING AVG(marks) > 75;",
+      "🎓 Company Interview Tip: 'What is the difference between WHERE and HAVING?' ── WHERE filters rows before grouping and cannot contain aggregate functions; HAVING filters groups after aggregation and can evaluate aggregate functions.",
+      "🔥 Pro Tip (Interview Trick Question): Table with HR (3 employees), IT (2 employees), Sales (1 employee). Query with HAVING COUNT(*) >= 2 returns HR (3) and IT (2). Sales (1) is completely omitted because its group count is less than 2! 🚀"
     ]
   },
   "16": {
     "code_id": "Basics-016",
     "numeric_id": 16,
-    "title": "Sort using ORDER BY ASC",
-    "code": "SELECT * FROM employees ORDER BY salary ASC;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Sort using ORDER BY ASC.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve Matching Records Using INNER JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(1) (Streaming) / O(N) (Hash Join / Buffer depending on execution plan)",
+    "simplestExplanation": "INNER JOIN combines rows from two tables where the join condition matches in both tables, discarding any non-matching rows.",
+    "mentalModel": "Employees ──► [Intersection ∩ ON employees.department_id = departments.department_id] ◄── Departments ──► Only Matching Records Survived",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees ORDER BY salary ASC;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Specifies projecting the employee's first_name and department's department_name with qualified table prefixes to avoid ambiguity."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Identifies employees as the primary (left) table."
+      },
+      {
+        "line": "INNER JOIN departments",
+        "explanation": "Connects the departments table to retrieve matching records."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "The matching condition: pairs every employee with the department having the identical department_id."
+      },
+      {
+        "line": "📚 Understanding INNER JOIN",
+        "explanation": "Think of INNER JOIN like comparing two friend lists. Only people whose IDs match on both sides are included in the final list. Any employee without a valid department or any department without an employee is excluded."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read rows from employees.\nStep 2: INNER JOIN departments ── Read rows from departments.\nStep 3: ON employees.department_id = departments.department_id ── Compare matching keys.\nStep 4: Keep only matching rows across both tables.\nStep 5: Return selected columns."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Explicit Table Names):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred for Complex Queries):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (Multi-Table JOIN):\n```sql\nSELECT e.first_name, d.department_name, l.city\nFROM employees e\nINNER JOIN departments d ON e.department_id = d.department_id\nINNER JOIN locations l ON d.location_id = l.location_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nEmployees Table\n      │\n      ▼\nINNER JOIN\n      │\nDepartments Table\n      │\n      ▼\nCompare Matching IDs\n      │\n      ▼\nKeep Only Matches\n      │\n      ▼\nDisplay Result\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nINNER JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting the ON Clause: SELECT * FROM employees INNER JOIN departments; ── Produces a Cartesian product (Cross Join) matching every row to every row.",
+      "❌ 2. Joining on the Wrong Column: ON employees.employee_id = departments.department_id; ── Logical error comparing employee primary key to department primary key.",
+      "❌ 3. Selecting Ambiguous Columns: SELECT department_id FROM employees INNER JOIN departments ON ... ── Ambiguity error because department_id exists in both tables; qualify with employees.department_id.",
+      "❌ 4. Expecting INNER JOIN to Return Every Row: Unmatched rows from either table are omitted.",
+      "❌ 5. Confusing INNER JOIN with LEFT JOIN: INNER JOIN returns only the intersection (common matches); LEFT JOIN preserves all left table records regardless of matches."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "INNER JOIN returns only the rows where the join condition matches in both tables. Unmatched rows from either table are excluded.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is INNER JOIN? Combines rows from two tables using a matching key condition.",
+      "Q2. What happens to unmatched rows? They are completely ignored and omitted from output.",
+      "Q3. Why is the ON clause required? It specifies the predicate linking foreign and primary keys.",
+      "Q4. Can INNER JOIN join more than two tables? Yes, chains of INNER JOINs can link arbitrary numbers of tables.",
+      "Q5. Is JOIN the same as INNER JOIN? Yes, in SQL JOIN defaults to INNER JOIN."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between INNER JOIN and LEFT JOIN?\n• What happens to unmatched rows in an INNER JOIN?\n• Why do we use the ON clause?\n• Can we join more than two tables in a single query?\n• Is JOIN the exact same as INNER JOIN?",
+      "⚡ Performance Notes:\n• Recommended: Index foreign key columns (employees.department_id) to enable Index Nested Loop Join or Hash Join instead of full table scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Employees with departments: SELECT e.first_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;\n• ✅ Students with courses: SELECT s.student_name, c.course_name FROM students s INNER JOIN courses c ON s.course_id = c.course_id;\n• ✅ Orders with customers: SELECT c.customer_name, o.order_id FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id;",
+      "🎓 Company Interview Tip: 'What is the difference between INNER JOIN and LEFT JOIN?' ── INNER JOIN returns ONLY matching records between both tables. LEFT JOIN returns ALL records from the left table, padding right-side columns with NULL when no match exists.",
+      "🔥 Pro Tip (Interview Trick Question): If an employee has department_id 105 but departments table only has 101, 102, 103, 104, that employee disappears in an INNER JOIN because there is no matching record! 🚀"
     ]
   },
   "17": {
     "code_id": "Basics-017",
     "numeric_id": 17,
-    "title": "Sort using ORDER BY DESC",
-    "code": "SELECT * FROM employees ORDER BY salary DESC;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Sort using ORDER BY DESC.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve All Records from the Left Table Using LEFT JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(1) (Streaming) / O(N) (Hash Join / Buffer depending on execution plan)",
+    "simplestExplanation": "LEFT JOIN retrieves every record from the left table; when a corresponding record exists in the right table, it attaches it, and when no match exists, it fills the right table columns with NULL.",
+    "mentalModel": "Left Team (All Invited to Party) ──► Match Found? [Yes ──► Attach Dept Data, No ──► Attach NULL] ──► Output All Left Records Preserved",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees ORDER BY salary DESC;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Selects the employee's first_name and department_name with explicit table qualification."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Designates employees as the primary (left) table where every row is guaranteed to be returned."
+      },
+      {
+        "line": "LEFT JOIN departments",
+        "explanation": "Outer-joins the departments table to bring in associated department information."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "Compares department_id across both tables. If matched, displays department name; otherwise, displays NULL."
+      },
+      {
+        "line": "📚 Understanding LEFT JOIN",
+        "explanation": "Think of LEFT JOIN like inviting everyone from the left team to a party. If someone has a friend on the right team, they come together. If not, they still enter the party alone with NULL on their guest ticket."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read all rows from left table.\nStep 2: LEFT JOIN departments ── Read right table.\nStep 3: ON employees.department_id = departments.department_id ── Compare keys.\nStep 4: If match exists, attach department data; if not, populate with NULL.\nStep 5: Return all rows from left table with projected columns."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Explicit Table Names):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred in Production):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (Find Unmatched Left Records - Left Anti-Join Pattern):\n```sql\nSELECT e.first_name\nFROM employees e\nLEFT JOIN departments d ON e.department_id = d.department_id\nWHERE d.department_id IS NULL;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nLEFT TABLE\n    │\n    ▼\nLEFT JOIN\n    │\nRIGHT TABLE\n    │\n    ▼\nMatch Found?\n ┌──┴────────┐\n │           │\nYes         No\n │           │\n ▼           ▼\nData       NULL\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nLEFT JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing LEFT JOIN with INNER JOIN: INNER JOIN eliminates unmatched rows; LEFT JOIN always retains all left-table rows.",
+      "❌ 2. Forgetting the ON Clause: Missing ON clause leads to syntax errors or accidental Cartesian products.",
+      "❌ 3. Joining on Incompatible Columns: Linking employee_id with department_id instead of foreign key department_id.",
+      "❌ 4. Thinking NULL Means an Error: NULL in a LEFT JOIN simply indicates 'no matching row exists in right table' - this is expected behavior.",
+      "❌ 5. Filtering Right Table in WHERE (Accidental INNER JOIN Conversion): Placing WHERE departments.department_name = 'HR' silently converts the LEFT JOIN into an INNER JOIN because NULLs are filtered out."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LEFT JOIN returns every row from the left table. If a matching row exists in the right table, it is returned. Otherwise, SQL fills the right-side columns with NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is LEFT JOIN? Returns all rows from left table, along with matching rows from right table.",
+      "Q2. What happens when there is no match? SQL populates right table columns with NULL values.",
+      "Q3. Which table is always preserved? The left table (specified directly after FROM).",
+      "Q4. Can LEFT JOIN return unmatched rows? Yes, preserving unmatched left rows is its core purpose.",
+      "Q5. Is LEFT OUTER JOIN different? No, LEFT JOIN and LEFT OUTER JOIN are exact synonyms in SQL."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between INNER JOIN and LEFT JOIN?\n• What happens when there is no matching record in the right table?\n• Why are NULL values returned in a LEFT JOIN?\n• Which table is always preserved in a LEFT JOIN?\n• Is LEFT JOIN identical to LEFT OUTER JOIN?",
+      "⚡ Performance Notes:\n• Recommended: Index the right table's foreign key column so the optimizer can perform quick index lookups for each row of the preserved left table.",
+      "🌍 Real-World Use Cases:\n• ✅ Show every employee, even if unassigned to a department: SELECT e.first_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id;\n• ✅ Show every customer, even if they have placed no orders: SELECT c.customer_name, o.order_id FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id;\n• ✅ Show every student, even if they have not enrolled in courses: SELECT s.student_name, c.course_name FROM students s LEFT JOIN courses c ON s.course_id = c.course_id;",
+      "🎓 Company Interview Tip: 'What is the difference between INNER JOIN and LEFT JOIN?' ── INNER JOIN returns only matching rows and excludes non-matches; LEFT JOIN returns all rows from the left table, padding right-side columns with NULL when no match exists.",
+      "🔥 Pro Tip (Interview Trick Question): If an employee table has Bob with department_id 105, and departments table only has 101, 102, 103, 104, a LEFT JOIN still outputs Bob with department_name NULL! 🚀"
     ]
   },
   "18": {
     "code_id": "Basics-018",
     "numeric_id": 18,
-    "title": "Retrieve top N records (LIMIT/TOP)",
-    "code": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Retrieve top N records (LIMIT/TOP).",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve All Records from the Right Table Using RIGHT JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(1) (Streaming) / O(N) (Hash Join / Buffer depending on execution plan)",
+    "simplestExplanation": "RIGHT JOIN preserves all records from the right table; if an employee matches the department, employee data is attached, otherwise employee columns are filled with NULL.",
+    "mentalModel": "Right Table (All Departments Invited) ──► Match Found? [Yes ──► Attach Employee Data, No ──► Attach NULL] ──► Output All Right Records Preserved",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Selects the employee's first_name and department's department_name."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Designates employees as the left table."
+      },
+      {
+        "line": "RIGHT JOIN departments",
+        "explanation": "Right-joins the departments table. Every department row is guaranteed to appear in the output."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "Join condition matching department_id. Unmatched departments receive NULL for employee columns."
+      },
+      {
+        "line": "📚 Understanding RIGHT JOIN",
+        "explanation": "Think of RIGHT JOIN like inviting everyone from the right table (departments) to a meeting. If they have a matching record in the left table, they come together. If not, they still attend alone with NULL for the left fields."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read left table.\nStep 2: RIGHT JOIN departments ── Read right table.\nStep 3: ON employees.department_id = departments.department_id ── Match keys.\nStep 4: If no employee matches a department, populate employee columns with NULL.\nStep 5: Return all rows from right table with projected columns."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Explicit Table Names):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred in Production):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (Equivalent LEFT JOIN Swapping Table Order - Universal Dialect Pattern):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM departments d\nLEFT JOIN employees e\nON d.department_id = e.department_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nRIGHT TABLE\n    │\n    ▼\nRIGHT JOIN\n    │\nLEFT TABLE\n    │\n    ▼\nMatch Found?\n ┌──┴────────┐\n │           │\nYes         No\n │           │\n ▼           ▼\nData       NULL\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nRIGHT JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing LEFT JOIN and RIGHT JOIN: LEFT JOIN preserves the left table (FROM table); RIGHT JOIN preserves the right table (JOINed table).",
+      "❌ 2. Forgetting the ON Clause: Omitting the ON clause leads to syntax errors or accidental Cartesian products.",
+      "❌ 3. Assuming RIGHT JOIN Is Supported Universally: SQLite historically lacked RIGHT JOIN prior to version 3.39.0; you can always replace RIGHT JOIN by swapping the tables and using LEFT JOIN.",
+      "❌ 4. Thinking NULL Means an Error: NULL simply indicates there is no matching employee assigned to that department.",
+      "❌ 5. Joining on Incompatible Columns: Linking employee_id with department_id instead of common foreign key department_id."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "RIGHT JOIN returns every row from the right table. If a matching row exists in the left table, it is returned. Otherwise, SQL fills the left-side columns with NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is RIGHT JOIN? Returns all rows from the right table and matching rows from the left table.",
+      "Q2. Which table is always preserved? The right table (specified directly after RIGHT JOIN).",
+      "Q3. What happens if there is no match? The left table columns become NULL.",
+      "Q4. Can RIGHT JOIN always be replaced with LEFT JOIN? Yes, by simply reversing the order of the tables.",
+      "Q5. Is RIGHT JOIN the same as RIGHT OUTER JOIN? Yes, RIGHT JOIN and RIGHT OUTER JOIN are exact synonyms."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between LEFT JOIN and RIGHT JOIN?\n• Which table is always preserved in a RIGHT JOIN?\n• Why do NULL values appear in left table columns?\n• Does SQLite support RIGHT JOIN? (Supported in SQLite 3.39+, but historically swapped to LEFT JOIN)\n• Can a RIGHT JOIN always be written as a LEFT JOIN?",
+      "⚡ Performance Notes:\n• Recommended: Index the left table's foreign key so the query planner can execute an efficient index lookup for each right table row.",
+      "🌍 Real-World Use Cases:\n• ✅ Show every department, even if it has no employees: SELECT e.first_name, d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;\n• ✅ Show every course, even if no students are enrolled: SELECT s.student_name, c.course_name FROM students s RIGHT JOIN courses c ON s.course_id = c.course_id;\n• ✅ Show every product, even if never ordered: SELECT o.order_id, p.product_name FROM orders o RIGHT JOIN products p ON o.product_id = p.product_id;",
+      "🎓 Company Interview Tip: 'Can RIGHT JOIN always be replaced?' ── Yes! Most database style guides prefer LEFT JOIN consistently for code readability; swapping table order in FROM / LEFT JOIN yields identical results.",
+      "🔥 Pro Tip (Interview Trick Question): If departments table has Finance (104), but employees table has no employee with department_id 104, a RIGHT JOIN outputs Finance with employee first_name as NULL! 🚀"
     ]
   },
   "19": {
     "code_id": "Basics-019",
     "numeric_id": 19,
-    "title": "Remove duplicates using DISTINCT",
-    "code": "SELECT DISTINCT job_title FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Remove duplicates using DISTINCT.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve All Records from Both Tables Using FULL OUTER JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(N) (Buffer for matching and tracking unmatched records across both relations)",
+    "simplestExplanation": "FULL OUTER JOIN retrieves all records from both tables: matching tuples are combined, unmatched left-table records appear with NULL right columns, and unmatched right-table records appear with NULL left columns.",
+    "mentalModel": "Everyone Invited (Both Left & Right Teams) ──► Match Found? [Yes ──► Combine Pair, Left Only ──► Attach NULL Right, Right Only ──► Attach NULL Left] ──► Complete Set Union",
     "lineByLine": [
       {
-        "line": "SELECT DISTINCT job_title FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Selects employee name and department name from both tables."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Starts from the employees (left) table."
+      },
+      {
+        "line": "FULL OUTER JOIN departments",
+        "explanation": "Full outer-joins the departments (right) table, preserving 100% of rows from both sides."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "Join predicate comparing department_id. Fills missing values with NULL on either side when unmatched."
+      },
+      {
+        "line": "📚 Understanding FULL OUTER JOIN",
+        "explanation": "Think of FULL OUTER JOIN as inviting everyone from both teams to a party. If two people know each other, they stand together. If someone comes alone from either team, they still stay in the result with NULL."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read left table.\nStep 2: FULL OUTER JOIN departments ── Read right table.\nStep 3: Compare department_id matching keys.\nStep 4: Combine matching rows.\nStep 5: Include unmatched rows from BOTH tables.\nStep 6: Fill missing values with NULL."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Standard Standard ANSI SQL):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred in Production):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees e\nFULL OUTER JOIN departments d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (MySQL / Legacy SQLite Simulation using UNION):\n```sql\nSELECT employees.first_name, departments.department_name\nFROM employees\nLEFT JOIN departments ON employees.department_id = departments.department_id\nUNION\nSELECT employees.first_name, departments.department_name\nFROM departments\nLEFT JOIN employees ON departments.department_id = employees.department_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nLEFT TABLE\n    │\n    ▼\nFULL OUTER JOIN\n    │\nRIGHT TABLE\n    │\n    ▼\nMatching Rows + Left Only Rows + Right Only Rows\n    │\n    ▼\nFinal Result Set\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nFULL OUTER JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing FULL OUTER JOIN with INNER JOIN: INNER JOIN only returns matching rows; FULL OUTER JOIN returns everything from both tables.",
+      "❌ 2. Assuming MySQL Native Support: MySQL does NOT natively support FULL OUTER JOIN syntax; it must be simulated using LEFT JOIN + UNION + RIGHT JOIN (or swapped LEFT JOIN).",
+      "❌ 3. Forgetting the ON Clause: Omitting the ON clause leads to syntax errors or accidental Cartesian products.",
+      "❌ 4. Thinking NULL Means an Error: NULL values on either side simply indicate that no corresponding record exists in that table.",
+      "❌ 5. Confusing UNION with UNION ALL in Simulation: Using UNION ALL instead of UNION in the simulation duplicates the matching rows that appeared in both LEFT JOIN queries!"
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "FULL OUTER JOIN returns every row from both tables. Matching rows are combined, and unmatched rows from either table are included with NULL values for the missing side.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is FULL OUTER JOIN? Returns all rows from both tables, matching pairs where available and NULL for missing sides.",
+      "Q2. What happens to unmatched rows? Unmatched rows from both left and right tables are included with NULL padding.",
+      "Q3. Does MySQL natively support FULL OUTER JOIN? No. In MySQL, simulate using LEFT JOIN + UNION + RIGHT JOIN.",
+      "Q4. Which tables are preserved? BOTH tables are 100% preserved.",
+      "Q5. Can FULL OUTER JOIN return NULL values? Yes, whenever a row in one table has no match in the other."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between INNER, LEFT, RIGHT, and FULL OUTER JOIN?\n• How do you simulate FULL OUTER JOIN in databases like MySQL that lack native support?\n• Why are NULL values returned on both sides of a FULL OUTER JOIN?\n• Which tables are preserved in a FULL OUTER JOIN?\n• What is the difference between UNION and UNION ALL when simulating FULL OUTER JOIN?",
+      "⚡ Performance Notes:\n• Recommended: FULL OUTER JOIN requires scanning both relations completely. Ensure join columns are indexed on both tables to minimize nested loop lookup overhead.",
+      "🌍 Real-World Use Cases:\n• ✅ Show every employee and every department: SELECT e.first_name, d.department_name FROM employees e FULL OUTER JOIN departments d ON e.department_id = d.department_id;\n• ✅ Show every customer and every order: SELECT c.customer_name, o.order_id FROM customers c FULL OUTER JOIN orders o ON c.customer_id = o.customer_id;\n• ✅ Show every student and every course: SELECT s.student_name, c.course_name FROM students s FULL OUTER JOIN courses c ON s.course_id = c.course_id;",
+      "🎓 Company Interview Tip: 'Which JOIN returns all rows from both tables?' ── FULL OUTER JOIN! If asked how MySQL executes it, explain the LEFT JOIN UNION RIGHT JOIN pattern.",
+      "🔥 Pro Tip (Interview Trick Question): If employee Bob has department 105 (no dept 105 in departments) and department Finance 104 exists (no employees in 104), FULL OUTER JOIN outputs BOTH Bob ──► NULL and NULL ──► Finance! 🚀"
     ]
   },
   "20": {
     "code_id": "Basics-020",
     "numeric_id": 20,
-    "title": "Alias columns using AS",
-    "code": "SELECT first_name AS name, salary AS annual_pay FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Alias columns using AS.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Join a Table with Itself Using SELF JOIN",
+    "code": "SELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;",
+    "timeComplexity": "O(N²) (Without Index) / O(N log N) (With Proper Index on manager_id and employee_id)",
+    "spaceComplexity": "O(1) (Streaming Output)",
+    "simplestExplanation": "SELF JOIN treats a single physical table as two distinct logical copies using table aliases (e for employee, m for manager), comparing e.manager_id to m.employee_id.",
+    "mentalModel": "Single Table ──► Duplicate into 2 Logical Copies (e = Employee, m = Manager) ──► Match e.manager_id = m.employee_id ──► Return Employee + Manager Names",
     "lineByLine": [
       {
-        "line": "SELECT first_name AS name, salary AS annual_pay FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT e.first_name AS employee_name, m.first_name AS manager_name",
+        "explanation": "Selects the employee's name from table alias e and the manager's name from table alias m."
+      },
+      {
+        "line": "FROM employees e",
+        "explanation": "Assigns alias e to represent the employee role in the first copy of employees table."
+      },
+      {
+        "line": "INNER JOIN employees m",
+        "explanation": "Assigns alias m to represent the manager role in the second copy of employees table."
+      },
+      {
+        "line": "ON e.manager_id = m.employee_id;",
+        "explanation": "Join predicate comparing employee's manager_id against manager's employee_id key."
+      },
+      {
+        "line": "📚 Understanding SELF JOIN",
+        "explanation": "Think of SELF JOIN as one person wearing two hats. Copy 'e' wears the Employee hat, and copy 'm' wears the Manager hat. Both point to records in the same physical employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees e ── Create first logical table copy.\nStep 2: INNER JOIN employees m ── Create second logical table copy.\nStep 3: ON e.manager_id = m.employee_id ── Match key predicates.\nStep 4: Filter matching tuples.\nStep 5: Output employee_name and manager_name."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended INNER SELF JOIN):\n```sql\nSELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;\n```\n\nMethod 2 (LEFT SELF JOIN - Preserves Top-Level Executives/CEOs with NULL Managers):\n```sql\nSELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nLEFT JOIN employees m\nON e.manager_id = m.employee_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nEmployees Table (Single Physical Storage)\n       │\n       ▼\nCreate Copy 1 (Alias e = Employee)\n       │\n       ▼\nCreate Copy 2 (Alias m = Manager)\n       │\n       ▼\nMatch e.manager_id = m.employee_id\n       │\n       ▼\nDisplay Employee + Manager Pair\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT t1.column_name, t2.column_name\nFROM table_name AS t1\nJOIN table_name AS t2\nON t1.common_column = t2.primary_key;\n```\n\nProblem Solution:\n```sql\nSELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting Table Aliases: SQL cannot distinguish between columns from the same table without distinct table aliases (e, m).",
+      "❌ 2. Joining on the Wrong Column (Self Match): Writing ON e.employee_id = m.employee_id matches every employee with themselves rather than their manager!",
+      "❌ 3. Thinking SELF JOIN Uses Two Physical Tables: There is only ONE physical table stored on disk; SQL creates two logical copies in memory.",
+      "❌ 4. Forgetting Top Managers with NULL manager_id: Top executives (CEOs) have manager_id IS NULL; INNER JOIN drops them while LEFT JOIN preserves them.",
+      "❌ 5. Reusing the Same Alias: Writing FROM employees e JOIN employees e produces a syntax error because aliases must be unique."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "A SELF JOIN joins a table with itself. Different table aliases are required so SQL can treat the single physical table as two separate logical tables.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is a SELF JOIN? Joining a single table with itself using distinct table aliases.",
+      "Q2. Why are aliases required in a SELF JOIN? To disambiguate column references between the two logical table copies.",
+      "Q3. Is SELF JOIN a distinct keyword in SQL? No, it uses standard JOIN syntax (INNER JOIN, LEFT JOIN) with the same table referenced twice.",
+      "Q4. Where is SELF JOIN commonly applied? Employee-manager hierarchies, parent-child trees, student-mentor pairings, and friend networks.",
+      "Q5. How do you include top-level executives without managers? Use LEFT JOIN instead of INNER JOIN."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is a SELF JOIN and why do we use aliases?\n• What happens when manager_id is NULL in an INNER SELF JOIN vs LEFT SELF JOIN?\n• Can a table be joined with itself multiple times for multi-level hierarchies?\n• Why can't we write JOIN employees without aliases?\n• Give 3 real-world examples where SELF JOIN is required.",
+      "⚡ Performance Notes:\n• Recommended: Create B-Tree indexes on both primary key (employee_id) and foreign key (manager_id) to avoid O(N²) full table scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Employee & Manager: SELECT e.first_name, m.first_name FROM employees e JOIN employees m ON e.manager_id = m.employee_id;\n• ✅ Student & Mentor: SELECT s.student_name, m.student_name AS mentor FROM students s JOIN students m ON s.mentor_id = m.student_id;\n• ✅ Parent & Child: SELECT c.name, p.name FROM family c JOIN family p ON c.parent_id = p.person_id;",
+      "🎓 Company Interview Tip: 'Why can't we write JOIN employees without aliases?' ── Because SQL cannot resolve ambiguous column names without explicit aliases for each logical copy!",
+      "🔥 Pro Tip (Interview Trick Question): In an organization with CEO John (manager_id = NULL), INNER JOIN drops John, but LEFT JOIN outputs John ──► NULL! 🚀"
     ]
   },
   "21": {
     "code_id": "Basics-021",
     "numeric_id": 21,
-    "title": "Count total rows",
-    "code": "SELECT COUNT(*) AS total_employees FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Count total rows.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Combine Results of Two Queries Using UNION",
+    "code": "SELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;",
+    "timeComplexity": "O(N + M) (Reading both result sets) / O((N + M) log(N + M)) (Deduplication via sorting/hashing)",
+    "spaceComplexity": "O(N + M) (Buffer for combined result set and hash table for duplicate elimination)",
+    "simplestExplanation": "UNION stacks the result rows of multiple SELECT queries into a single vertical result set and automatically removes duplicate values across queries.",
+    "mentalModel": "List 1 (Employees) + List 2 (Departments) ──► Stack Vertically ──► Hash Deduplication ──► Output Unique Rows",
     "lineByLine": [
       {
-        "line": "SELECT COUNT(*) AS total_employees FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Executes first query to retrieve first_name values from employees table."
+      },
+      {
+        "line": "UNION",
+        "explanation": "Combines rows from both queries and automatically eliminates duplicate rows."
+      },
+      {
+        "line": "SELECT department_name FROM departments;",
+        "explanation": "Executes second query to retrieve department_name values from departments table."
+      },
+      {
+        "line": "📚 Understanding UNION",
+        "explanation": "Think of UNION like merging two party guest lists into a single document. If Alice appears on both the employee list and manager list, UNION keeps Alice only once."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: Execute 1st query (SELECT first_name FROM employees).\nStep 2: Execute 2nd query (SELECT department_name FROM departments).\nStep 3: Combine both result sets vertically.\nStep 4: Remove duplicate rows.\nStep 5: Output final result set."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Standard UNION - Removes Duplicates):\n```sql\nSELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;\n```\n\nMethod 2 (Using UNION ALL - Preserves Duplicates & Executes Faster):\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSELECT 1 (Query A)\n       │\n       ▼\n    UNION\n       ▲\n       │\nSELECT 2 (Query B)\n       │\n       ▼\nMerge Rows Vertically\n       │\n       ▼\nRemove Duplicate Rows\n       │\n       ▼\nFinal Unique Result Set\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table1\nUNION\nSELECT column_name FROM table2;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Different Number of Columns: Both SELECT queries MUST return the exact same number of columns.",
+      "❌ 2. Mismatched Data Types: Combining incompatible column data types (e.g. VARCHAR and INT) causes type conversion errors.",
+      "❌ 3. Expecting UNION to Keep Duplicates: Plain UNION always deduplicates; use UNION ALL if duplicate retention is required.",
+      "❌ 4. Confusing UNION with JOIN: JOIN combines COLUMNS horizontally using ON; UNION combines ROWS vertically without ON.",
+      "❌ 5. Ordering Individual Queries: Placing ORDER BY inside individual SELECT statements is invalid; place a single ORDER BY at the very end of the final query."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "UNION combines rows from multiple SELECT statements into a single result set and automatically removes duplicate rows.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is UNION? Combines row results from multiple SELECT queries into one result set.",
+      "Q2. Does UNION remove duplicates? Yes, automatically.",
+      "Q3. What is the difference between UNION and UNION ALL? UNION removes duplicates (slower); UNION ALL retains duplicates (faster).",
+      "Q4. What is the main structural requirement for UNION? Both queries must return the exact same number of columns with compatible data types.",
+      "Q5. How does UNION differ from JOIN? JOIN combines columns horizontally; UNION combines rows vertically."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between UNION and UNION ALL?\n• What are the mandatory rules for using UNION?\n• How does UNION differ from JOIN in relational operations?\n• Why is UNION ALL faster than UNION?\n• Where should the ORDER BY clause be placed in a UNION query?",
+      "⚡ Performance Notes:\n• Recommended: Use UNION ALL when you know result sets are disjoint or duplicates are acceptable, as it avoids expensive sorting/hashing.",
+      "🌍 Real-World Use Cases:\n• ✅ Unified Address Book: SELECT name FROM customers UNION SELECT name FROM suppliers;\n• ✅ Cross-Category Product Roster: SELECT title FROM books UNION SELECT title FROM electronics;\n• ✅ Consolidated Entity Names: SELECT first_name FROM employees UNION SELECT department_name FROM departments;",
+      "🎓 Company Interview Tip: 'How do JOIN and UNION differ?' ── JOIN combines COLUMNS horizontally using matching keys; UNION combines ROWS vertically into one list!",
+      "🔥 Pro Tip (Interview Trick Question): If Alice appears in both query sets, standard UNION outputs Alice ONCE, while UNION ALL outputs Alice TWICE! 🚀"
     ]
   },
   "22": {
     "code_id": "Basics-022",
     "numeric_id": 22,
-    "title": "Count distinct values",
-    "code": "SELECT COUNT(DISTINCT department_id) AS total_depts FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Count distinct values.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Combine Results of Two Queries Using UNION ALL",
+    "code": "SELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;",
+    "timeComplexity": "O(N + M) (Direct streaming concatenation without duplicate checking)",
+    "spaceComplexity": "O(N + M) (Buffer for combined result set)",
+    "simplestExplanation": "UNION ALL stacks the result rows of multiple SELECT queries into a single vertical result set WITHOUT removing duplicate values across queries.",
+    "mentalModel": "List 1 (Employees) + List 2 (Departments) ──► Direct Vertical Concatenation ──► Output All Rows (Including Duplicates)",
     "lineByLine": [
       {
-        "line": "SELECT COUNT(DISTINCT department_id) AS total_depts FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Executes first query to retrieve first_name values from employees table."
+      },
+      {
+        "line": "UNION ALL",
+        "explanation": "Combines rows from both queries and retains all duplicate rows without performing expensive deduplication."
+      },
+      {
+        "line": "SELECT department_name FROM departments;",
+        "explanation": "Executes second query to retrieve department_name values from departments table."
+      },
+      {
+        "line": "📚 Understanding UNION ALL",
+        "explanation": "Think of UNION ALL like stacking two physical paper sheets together. Every row from sheet 1 sits on top of sheet 2, retaining every entry even if names match."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: Execute 1st query (SELECT first_name FROM employees).\nStep 2: Execute 2nd query (SELECT department_name FROM departments).\nStep 3: Concatenate both result sets vertically.\nStep 4: Stream output directly without duplicate checking pass."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Recommended Fast UNION ALL - Keeps Duplicates):\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;\n```\n\nMethod 2 (Multiple Chained Queries):\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments\nUNION ALL\nSELECT manager_id FROM employees;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSELECT 1 (Query A)\n       │\n       ▼\n   UNION ALL\n       ▲\n       │\nSELECT 2 (Query B)\n       │\n       ▼\nConcatenate Rows Vertically\n       │\n       ▼\nSkip Duplicate Checking\n       │\n       ▼\nFinal Complete Result Set\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table1\nUNION ALL\nSELECT column_name FROM table2;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing UNION and UNION ALL: UNION removes duplicates; UNION ALL preserves all duplicate rows.",
+      "❌ 2. Different Number of Columns: Both SELECT queries MUST return the exact same number of columns.",
+      "❌ 3. Mismatched Data Types: Combining incompatible column data types causes type conversion errors.",
+      "❌ 4. Thinking UNION ALL Removes Duplicates: UNION ALL NEVER deduplicates results.",
+      "❌ 5. ORDER BY in Wrong Location: Placing ORDER BY inside subqueries causes syntax errors; place a single ORDER BY at the very end."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "UNION ALL combines rows from multiple SELECT statements into a single result set without removing duplicate rows, making it faster than UNION.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is UNION ALL? Combines row results from multiple SELECT queries into one result set, keeping duplicates.",
+      "Q2. Does UNION ALL remove duplicates? No, all duplicate rows are retained.",
+      "Q3. Why is UNION ALL faster than UNION? Because SQL skips duplicate checking (no sort/hash deduplication pass).",
+      "Q4. When should you prefer UNION ALL over UNION? When you know result sets are disjoint or when keeping duplicate records is required (e.g. log aggregation).",
+      "Q5. Which takes less memory? UNION ALL, because it does not maintain a hash table for duplicate tracking."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between UNION and UNION ALL?\n• Which operator is faster and why?\n• Does UNION ALL check for duplicate rows?\n• When is UNION ALL preferred in production pipelines?\n• Can UNION ALL combine results from different tables?",
+      "⚡ Performance Notes:\n• Recommended: Always default to UNION ALL unless duplicate elimination is explicitly required, to avoid O(N log N) deduplication overhead.",
+      "🌍 Real-World Use Cases:\n• ✅ Aggregating Multi-Server System Logs: SELECT msg FROM server1_logs UNION ALL SELECT msg FROM server2_logs;\n• ✅ Multi-Store Transaction Feeds: SELECT sale_id FROM store1_sales UNION ALL SELECT sale_id FROM store2_sales;\n• ✅ Audit Roster Concatenation: SELECT first_name FROM employees UNION ALL SELECT department_name FROM departments;",
+      "🎓 Company Interview Tip: 'Which is faster: UNION or UNION ALL?' ── UNION ALL! Because it skips the expensive sort/hash duplicate elimination step.",
+      "🔥 Pro Tip (Interview Trick Question): If Alice is present in both tables, UNION returns Alice 1 time, but UNION ALL returns Alice 2 times! 🚀"
     ]
   },
   "23": {
     "code_id": "Basics-023",
     "numeric_id": 23,
-    "title": "Find maximum salary",
-    "code": "SELECT MAX(salary) AS max_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find maximum salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Records Using the LIKE Operator",
+    "code": "SELECT first_name FROM employees WHERE first_name LIKE 'A%';",
+    "timeComplexity": "O(N) (Full table scan without B-Tree index) / O(log N) (Prefix search 'A%' can use B-Tree index)",
+    "spaceComplexity": "O(1) (Constant memory auxiliary space)",
+    "simplestExplanation": "LIKE filters rows using text pattern matching where '%' represents zero or more characters and '_' represents exactly one character.",
+    "mentalModel": "Scan Employees ──► Compare first_name against 'A%' ──► Match Starts-With 'A' ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT MAX(salary) AS max_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies output column first_name and target table employees."
+      },
+      {
+        "line": "WHERE first_name LIKE 'A%';",
+        "explanation": "Filters rows to return only names starting with uppercase 'A'. '%' matches any trailing characters."
+      },
+      {
+        "line": "📚 Understanding LIKE Patterns",
+        "explanation": "• LIKE 'A%' ── Starts with 'A'\n• LIKE '%n' ── Ends with 'n'\n• LIKE '%an%' ── Contains 'an'\n• LIKE '_a%' ── Second letter is 'a'"
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE first_name LIKE 'A%' (Evaluate pattern predicate).\nStep 3: SELECT first_name (Project matching names)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Starts With 'A%'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE 'A%';\n```\n\nMethod 2 (Contains '%an%'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE '%an%';\n```\n\nMethod 3 (Ends With '%n'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE '%n';\n```\n\nMethod 4 (Single Character Match '_a%'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE '_a%';\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\n'A%'   ──► Starts with A\n'%A'   ──► Ends with A\n'%A%'  ──► Contains A\n'_A%'  ──► Second letter is A\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name LIKE 'pattern';\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE 'A%';\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting Quotes around Pattern: Writing WHERE col LIKE A% instead of WHERE col LIKE 'A%' causes a syntax error.",
+      "❌ 2. Confusing % and _: % matches 0 or more characters; _ matches EXACTLY ONE character.",
+      "❌ 3. Using = Instead of LIKE: Writing WHERE col = 'A%' searches for the literal string 'A%' rather than executing a pattern match.",
+      "❌ 4. Omitting Wildcards: Writing WHERE col LIKE 'A' matches ONLY the single-letter string 'A'.",
+      "❌ 5. Index Invalidation via Leading Wildcard: WHERE col LIKE '%A%' forces a full table scan, bypassing B-Tree index lookup."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LIKE is used for pattern matching in SQL. '%' matches zero or more characters, while '_' matches exactly one character.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is LIKE? Pattern matching predicate operator in SQL.",
+      "Q2. What does '%' mean? Matches zero or more characters.",
+      "Q3. What does '_' mean? Matches exactly one character.",
+      "Q4. Difference between '=' and 'LIKE'? '=' performs exact scalar equality; 'LIKE' performs wildcard pattern matching.",
+      "Q5. Can a B-Tree index optimize LIKE? Yes, for prefix searches like 'A%', but NOT for leading wildcards like '%A%'."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between % and _?\n• How does LIKE 'A%' differ from LIKE '%A%'\n• Why is LIKE '%A%' slow on large production tables?\n• What is the difference between = and LIKE?\n• How do you match a string whose second letter is 'a'?",
+      "⚡ Performance Notes:\n• Prefix patterns ('A%') can utilize B-Tree range scans (sargable).\n• Leading wildcard patterns ('%A%') force full table scans (non-sargable).",
+      "🌍 Real-World Use Cases:\n• ✅ Email Provider Filtering: WHERE email LIKE '%@gmail.com';\n• ✅ E-Commerce Product Search: WHERE title LIKE '%Laptop%';\n• ✅ Customer Name Prefix Search: WHERE name LIKE 'S%';",
+      "🎓 Company Interview Tip: 'What is the difference between % and _?' ── % matches any number of characters (0 to N); _ matches EXACTLY 1 character!",
+      "🔥 Pro Tip (Interview Trick Question): `%` can match 0 characters, so `LIKE 'A%'` matches the single-letter name `'A'`! 🚀"
     ]
   },
   "24": {
     "code_id": "Basics-024",
     "numeric_id": 24,
-    "title": "Find minimum salary",
-    "code": "SELECT MIN(salary) AS min_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find minimum salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Records Using the IN Operator",
+    "code": "SELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');",
+    "timeComplexity": "O(N) (Without index) / O(K log N) (With B-Tree index lookup for K list values)",
+    "spaceComplexity": "O(1) (Constant memory auxiliary space)",
+    "simplestExplanation": "IN evaluates whether a column value matches any item inside a specified literal list or subquery, cleanly eliminating verbose OR chains.",
+    "mentalModel": "Value ──► Check Membership in ('John', 'Alice', 'Bob') ──► Match Found? ──► Project Record",
     "lineByLine": [
       {
-        "line": "SELECT MIN(salary) AS min_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target output column first_name and target table employees."
+      },
+      {
+        "line": "WHERE first_name IN ('John', 'Alice', 'Bob');",
+        "explanation": "Filters rows to return only employees whose first_name matches 'John', 'Alice', or 'Bob'."
+      },
+      {
+        "line": "📚 Understanding IN vs OR",
+        "explanation": "WHERE first_name IN ('John', 'Alice', 'Bob') is logically identical to:\nWHERE first_name = 'John' OR first_name = 'Alice' OR first_name = 'Bob'."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE first_name IN (...) (Evaluate membership predicate).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended IN Operator):\n```sql\nSELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');\n```\n\nMethod 2 (Multiple OR Conditions):\n```sql\nSELECT first_name FROM employees WHERE first_name = 'John' OR first_name = 'Alice' OR first_name = 'Bob';\n```\n\nMethod 3 (Subquery Membership):\n```sql\nSELECT first_name FROM employees WHERE first_name IN (SELECT name FROM shift_leads);\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSingle Value   ──►  WHERE col = 'John'\nMultiple List  ──►  WHERE col IN ('John', 'Alice', 'Bob')\nSubquery List  ──►  WHERE col IN (SELECT name FROM leads)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name IN (value1, value2, value3);\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting Parentheses: Writing WHERE col IN 'HR', 'IT' instead of WHERE col IN ('HR', 'IT') causes a syntax error.",
+      "❌ 2. Forgetting Quotes around String Literals: Writing WHERE col IN (HR, IT) treats HR and IT as unquoted column names.",
+      "❌ 3. Using = with List Tuples: Writing WHERE col = ('HR', 'IT') results in a syntax or type error.",
+      "❌ 4. Using IN for Single Values: Writing WHERE col IN ('HR') is redundant; prefer scalar equality WHERE col = 'HR'.",
+      "❌ 5. Mixing Incompatible Data Types: Comparing string columns to unquoted integers causes implicit casting overhead."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "IN checks whether a value exists in a specified list of values. It is cleaner and more readable than writing multiple OR conditions.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is the IN operator? Checks if a value exists in a specified list or subquery result.",
+      "Q2. Is IN equivalent to multiple OR conditions? Yes, IN ('A', 'B') is logically identical to col = 'A' OR col = 'B'.",
+      "Q3. Why use IN over OR? IN is cleaner, more readable, easier to maintain, and concise.",
+      "Q4. Can IN be used with numbers? Yes! e.g., WHERE employee_id IN (101, 102, 103).",
+      "Q5. Can IN be used with subqueries? Yes! e.g., WHERE dept_id IN (SELECT id FROM depts WHERE loc = 'Bangalore')."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between IN and multiple OR conditions?\n• Why is IN preferred over multiple OR statements?\n• Can IN be used with a subquery?\n• Is IN faster than multiple OR conditions in SQL optimizers?\n• How does IN handle NULL values inside the list?",
+      "⚡ Performance Notes:\n• Modern query optimizers transform IN (val1, val2, val3) into multiple B-Tree index lookups (In-List iterator), making it highly performant.",
+      "🌍 Real-World Use Cases:\n• ✅ Customer Location Search: WHERE city IN ('Bangalore', 'Mumbai', 'Delhi');\n• ✅ Category Filtering: WHERE category IN ('Electronics', 'Furniture');\n• ✅ Multi-ID Lookup: WHERE employee_id IN (101, 103, 110);",
+      "🎓 Company Interview Tip: 'Which is more readable: multiple OR conditions or IN?' ── IN! It reduces code complexity and prevents operator precedence bugs.",
+      "🔥 Pro Tip (Interview Trick Question): `=` matches ONE value; `IN` matches MANY values! 🚀"
     ]
   },
   "25": {
     "code_id": "Basics-025",
     "numeric_id": 25,
-    "title": "Find average salary",
-    "code": "SELECT AVG(salary) AS avg_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find average salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Records Using the BETWEEN Operator",
+    "code": "SELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;",
+    "timeComplexity": "O(N) (Without index) / O(log N) (With B-Tree range index scan)",
+    "spaceComplexity": "O(1) (Constant auxiliary memory)",
+    "simplestExplanation": "BETWEEN filters values within an inclusive range (low <= value <= high), including both boundary endpoints.",
+    "mentalModel": "Scan Rows ──► Check low_bound <= salary <= high_bound ──► Both Inclusive ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT AVG(salary) AS avg_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target output column first_name and table employees."
+      },
+      {
+        "line": "WHERE salary BETWEEN 50000 AND 100000;",
+        "explanation": "Filters rows where salary is >= 50000 AND <= 100000."
+      },
+      {
+        "line": "📚 Understanding Range Bounds",
+        "explanation": "WHERE salary BETWEEN 50000 AND 100000 is logically equivalent to:\nWHERE salary >= 50000 AND salary <= 100000."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE salary BETWEEN 50000 AND 100000 (Evaluate inclusive range comparison).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended BETWEEN Operator):\n```sql\nSELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;\n```\n\nMethod 2 (Using Explicit Comparison Operators):\n```sql\nSELECT first_name FROM employees WHERE salary >= 50000 AND salary <= 100000;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nIN       ──► Checks specific discrete list (Val1, Val2, Val3)\nBETWEEN  ──► Checks continuous inclusive range [Low, High]\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name BETWEEN low AND high;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking BETWEEN Excludes Boundary Values: BETWEEN is fully INCLUSIVE of both starting (low) and ending (high) bounds.",
+      "❌ 2. Reversing Range Limits: Writing BETWEEN 100000 AND 50000 evaluates to empty results because low > high.",
+      "❌ 3. Forgetting the AND Keyword: Writing BETWEEN 50000 100000 without AND causes a syntax error.",
+      "❌ 4. Quoting Numeric Literals unnecessarily: Writing BETWEEN '50000' AND '100000' relies on implicit type conversion.",
+      "❌ 5. Confusing BETWEEN and IN: IN checks discrete sets; BETWEEN checks continuous intervals."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "BETWEEN filters values within a range and includes both the starting and ending values.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is BETWEEN? Filters rows within a specified range.",
+      "Q2. Does BETWEEN include boundary values? YES! Both lower and upper limits are included.",
+      "Q3. Is BETWEEN identical to >= and <=? Yes, salary BETWEEN 50000 AND 100000 is identical to salary >= 50000 AND salary <= 100000.",
+      "Q4. Can BETWEEN be used with dates? Yes! e.g., order_date BETWEEN '2026-01-01' AND '2026-12-31'.",
+      "Q5. Can BETWEEN be used with text? Yes! Alphabetically matches text ranges, e.g. name BETWEEN 'A' AND 'M'."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Does BETWEEN include boundary values?\n• What happens if you reverse values in BETWEEN (high AND low)?\n• What is the difference between BETWEEN and IN?\n• Can BETWEEN be used with dates and strings?\n• Is BETWEEN faster than >= AND <= in execution plans?",
+      "⚡ Performance Notes:\n• Relational engines convert BETWEEN low AND high into index range scans on B-Tree indexed columns, yielding O(log N) performance.",
+      "🌍 Real-World Use Cases:\n• ✅ Salary Range Filtering: WHERE salary BETWEEN 50000 AND 100000;\n• ✅ Date Range Reporting: WHERE order_date BETWEEN '2026-01-01' AND '2026-12-31';\n• ✅ Price Range Search: WHERE price BETWEEN 10.00 AND 50.00;",
+      "🎓 Company Interview Tip: 'Does BETWEEN include both values?' ── YES! Both boundary endpoints are included in the result set.",
+      "🔥 Pro Tip (Interview Trick Question): `IN` is for specific values; `BETWEEN` is for a continuous range! 🚀"
     ]
   },
   "26": {
     "code_id": "Basics-026",
     "numeric_id": 26,
-    "title": "Find total salary",
-    "code": "SELECT SUM(salary) AS total_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find total salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find Records with Missing Values Using IS NULL",
+    "code": "SELECT first_name FROM employees WHERE manager_id IS NULL;",
+    "timeComplexity": "O(N) (Without index) / O(log N) (With B-Tree index scan on nullable column)",
+    "spaceComplexity": "O(1) (Constant auxiliary memory)",
+    "simplestExplanation": "IS NULL checks whether a column value is missing or unknown. Standard equality (= NULL) always returns UNKNOWN in SQL three-valued logic.",
+    "mentalModel": "Scan Employees ──► Inspect manager_id ──► State is Missing/NULL? ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT SUM(salary) AS total_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target column first_name and table employees."
+      },
+      {
+        "line": "WHERE manager_id IS NULL;",
+        "explanation": "Filters rows where manager_id has no value stored (missing/unknown)."
+      },
+      {
+        "line": "📚 Understanding NULL Semantics",
+        "explanation": "• NULL represents missing/unknown data.\n• NULL is NOT equal to 0, empty string (''), or space (' ').\n• Always use IS NULL / IS NOT NULL."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE manager_id IS NULL (Evaluate missing value predicate).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Find Missing Values - IS NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NULL;\n```\n\nMethod 2 (Find Existing Values - IS NOT NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NOT NULL;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nCheck Missing Value    ──►  WHERE col IS NULL     ✅\nCheck Existing Value   ──►  WHERE col IS NOT NULL ✅\nScalar Equality Trap   ──►  WHERE col = NULL      ❌ (Returns 0 rows)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name IS NULL;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NULL;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using = NULL: Writing WHERE col = NULL returns ZERO rows because comparison with NULL yields UNKNOWN.",
+      "❌ 2. Using != NULL: Writing WHERE col != NULL also returns ZERO rows; use IS NOT NULL instead.",
+      "❌ 3. Equating NULL with Zero (0): NULL is missing data; 0 is a known numeric value.",
+      "❌ 4. Equating NULL with Empty String (''): An empty string is a valid 0-length string; NULL is absence of a value.",
+      "❌ 5. Omitting IS: Writing WHERE col NULL causes a syntax error."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "NULL represents missing or unknown data. Always use IS NULL or IS NOT NULL. Never use = or != with NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is NULL? NULL represents missing or unknown data in a relational database.",
+      "Q2. Can we use = NULL? NO! Scalar comparison with NULL evaluates to UNKNOWN. You must use IS NULL.",
+      "Q3. How do you find non-null records? Use IS NOT NULL predicate.",
+      "Q4. Is NULL equal to 0? No, 0 is a known numeric value; NULL is missing information.",
+      "Q5. Is NULL equal to empty string ('')? No, '' is a defined zero-length string value."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is NULL in SQL?\n• Why does WHERE col = NULL fail to return matching rows?\n• What is three-valued logic in SQL (TRUE, FALSE, UNKNOWN)?\n• What is the difference between NULL, 0, and ''?\n• How does IS NOT NULL differ from != NULL?",
+      "⚡ Performance Notes:\n• Database engines can index NULL values (B-Tree or Bitmap index), allowing fast O(log N) lookup for IS NULL / IS NOT NULL queries.",
+      "🌍 Real-World Use Cases:\n• ✅ Top-Level Hierarchy: WHERE manager_id IS NULL;\n• ✅ Missing Contact Info: WHERE phone_number IS NULL;\n• ✅ Unassigned Categorization: WHERE category_id IS NULL;",
+      "🎓 Company Interview Tip: 'Why doesn't = NULL work?' ── Because NULL represents UNKNOWN, and UNKNOWN = UNKNOWN evaluates to UNKNOWN (FALSE in WHERE clause filtering)!",
+      "🔥 Pro Tip (Interview Trick Question): `IS NULL` ✅ works; `= NULL` ❌ NEVER works! 🚀"
     ]
   },
   "27": {
     "code_id": "Basics-027",
     "numeric_id": 27,
-    "title": "Find average marks",
-    "code": "SELECT AVG(marks) AS avg_marks FROM students;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find average marks.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find Records with Non-NULL Values Using IS NOT NULL",
+    "code": "SELECT first_name FROM employees WHERE manager_id IS NOT NULL;",
+    "timeComplexity": "O(N) (Without index) / O(log N) (With B-Tree index scan)",
+    "spaceComplexity": "O(1) (Constant auxiliary memory)",
+    "simplestExplanation": "IS NOT NULL retrieves rows where a column contains a valid, existing value (excluding NULLs).",
+    "mentalModel": "Scan Employees ──► Inspect manager_id ──► Contains Valid Value? ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT AVG(marks) AS avg_marks FROM students;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target column first_name and table employees."
+      },
+      {
+        "line": "WHERE manager_id IS NOT NULL;",
+        "explanation": "Filters rows where manager_id contains an actual stored value (not missing)."
+      },
+      {
+        "line": "📚 Understanding IS NOT NULL",
+        "explanation": "• Asks: 'Does this column contain a valid, non-missing value?'\n• Excludes all rows where manager_id is NULL.\n• Never use != NULL or <> NULL."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE manager_id IS NOT NULL (Evaluate non-NULL predicate).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Find Non-NULL Values - IS NOT NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NOT NULL;\n```\n\nMethod 2 (Find Missing Values - IS NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NULL;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nFind Existing Values ──► WHERE col IS NOT NULL ✅\nFind Missing Values  ──► WHERE col IS NULL     ✅\nInequality Trap      ──► WHERE col != NULL     ❌ (Returns 0 rows)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name IS NOT NULL;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NOT NULL;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using != NULL: Writing WHERE col != NULL returns ZERO rows because inequality with NULL evaluates to UNKNOWN.",
+      "❌ 2. Using <> NULL: Writing WHERE col <> NULL also evaluates to UNKNOWN and returns ZERO rows.",
+      "❌ 3. Equating NULL with Zero (0): 0 is a valid number; NULL is missing data.",
+      "❌ 4. Equating NULL with Empty String (''): An empty string is a stored value; NULL is absence of data.",
+      "❌ 5. Omitting IS: Writing WHERE col NOT NULL causes a syntax error."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "IS NOT NULL returns rows where a column contains an actual value. Never use != NULL or <> NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is IS NOT NULL? It retrieves rows where a column contains a valid, non-missing value.",
+      "Q2. Can we use != NULL? NO! Inequality comparison with NULL evaluates to UNKNOWN and returns 0 rows.",
+      "Q3. What is the opposite of IS NULL? IS NOT NULL.",
+      "Q4. Is NULL equal to 0? No, zero is a valid numeric value.",
+      "Q5. Is NULL equal to empty string ('')? No, empty string is a valid string of length zero."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between IS NULL and IS NOT NULL?\n• Why doesn't WHERE col != NULL work?\n• Can NULL be compared using = or !=?\n• What does NULL represent in SQL?\n• Give a real-world example of IS NOT NULL.",
+      "⚡ Performance Notes:\n• Databases can optimize IS NOT NULL using B-Tree range scans or bitmap indexes on non-null values.",
+      "🌍 Real-World Use Cases:\n• ✅ Employees with Managers: WHERE manager_id IS NOT NULL;\n• ✅ Customers with Phone Numbers: WHERE phone_number IS NOT NULL;\n• ✅ Students with Email: WHERE email IS NOT NULL;\n• ✅ Products with Category: WHERE category_id IS NOT NULL;",
+      "🎓 Company Interview Tip: 'What is the difference between IS NULL and IS NOT NULL?' ── IS NULL finds missing values; IS NOT NULL finds existing valid values!",
+      "🔥 Pro Tip (Interview Trick Question): `IS NOT NULL` ✅ works; `!= NULL` or `<> NULL` ❌ NEVER works! 🚀"
     ]
   },
   "28": {
     "code_id": "Basics-028",
     "numeric_id": 28,
-    "title": "Sum sales",
-    "code": "SELECT SUM(sale_amount) AS total_sales FROM sales;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Sum sales.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Use CASE WHEN to Display Conditional Values",
+    "code": "SELECT first_name, salary, CASE WHEN salary >= 100000 THEN 'High Salary' WHEN salary >= 60000 THEN 'Medium Salary' ELSE 'Low Salary' END AS salary_category FROM employees;",
+    "timeComplexity": "O(N) (Linear row scan evaluating expressions)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "CASE WHEN adds conditional logic directly inside SQL queries, evaluating expressions like an if-elif-else statement.",
+    "mentalModel": "Scan Employee ──► Check >= 100k? ──(No)──► Check >= 60k? ──(No)──► Default Low Salary",
     "lineByLine": [
       {
-        "line": "SELECT SUM(sale_amount) AS total_sales FROM sales;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name, salary,",
+        "explanation": "Retrieves the employee name and base salary."
+      },
+      {
+        "line": "CASE",
+        "explanation": "Initiates conditional evaluation block."
+      },
+      {
+        "line": "WHEN salary >= 100000 THEN 'High Salary'",
+        "explanation": "First specific condition: returns 'High Salary' for earnings >= 100000."
+      },
+      {
+        "line": "WHEN salary >= 60000 THEN 'Medium Salary'",
+        "explanation": "Second condition: returns 'Medium Salary' for earnings >= 60000."
+      },
+      {
+        "line": "ELSE 'Low Salary'",
+        "explanation": "Fallback condition: returns 'Low Salary' for unmatched rows."
+      },
+      {
+        "line": "END AS salary_category",
+        "explanation": "Terminates the CASE expression and assigns alias salary_category."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting END: Omitting END causes a syntax error.",
+      "❌ 2. Incorrect Condition Order: Placing broader conditions before specific ones (e.g. >= 60000 before >= 100000) causes early matching and incorrect results.",
+      "❌ 3. Forgetting ELSE: Without ELSE, unmatched rows evaluate to NULL.",
+      "❌ 4. Missing Column Alias: Omitting AS alias_name creates messy auto-generated column headers.",
+      "❌ 5. Confusing CASE with WHERE: CASE creates new conditional values; WHERE filters rows."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "CASE WHEN enables conditional logic inside SQL queries. Always order conditions from most specific to least specific.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is CASE WHEN? Inline conditional expression in SQL.",
+      "Q2. Is CASE similar to if-else? Yes, it maps directly to if-elif-else.",
+      "Q3. Is ELSE mandatory? No, but without it unmatched rows evaluate to NULL.",
+      "Q4. Can CASE be used in ORDER BY / GROUP BY? Yes, CASE works in SELECT, WHERE, ORDER BY, GROUP BY, and HAVING.",
+      "Q5. How does SQL evaluate multiple WHEN clauses? Sequentially from top to bottom, stopping at the first TRUE match."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is CASE WHEN and how does it work?\n• What programming concept is similar to CASE?\n• Why is condition order critical in CASE statements?\n• What happens if ELSE is omitted?\n• Can CASE be used in ORDER BY or GROUP BY?",
+      "⚡ Performance Notes:\n• CASE expressions evaluate per row in memory with negligible CPU overhead.",
+      "🌍 Real-World Use Cases:\n• ✅ Tiered Salary Classification: High / Medium / Low\n• ✅ Student Grading: Marks >= 90 'A', >= 75 'B', else 'C'\n• ✅ Order Fulfillment Status: Shipped date NULL -> 'Pending', else 'Delivered'",
+      "🎓 Company Interview Tip: 'What programming concept is similar to CASE?' ── if → elif → else!",
+      "🔥 Pro Tip (Interview Trick Question): SQL stops evaluating after the FIRST matching `WHEN`. Order matters! 🚀"
     ]
   },
   "29": {
     "code_id": "Basics-029",
     "numeric_id": 29,
-    "title": "Count employees in each department",
-    "code": "SELECT department_id, COUNT(*) AS emp_count FROM employees GROUP BY department_id;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Count employees in each department.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Round Decimal Values Using ROUND()",
+    "code": "SELECT first_name, salary, ROUND(salary, 2) AS rounded_salary FROM employees;",
+    "timeComplexity": "O(N) (Linear row scan applying numeric rounding)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "ROUND(column, decimal_places) rounds numeric values to the specified decimal precision.",
+    "mentalModel": "Scan Employee ──► Read Salary (e.g., 45678.456) ──► Apply ROUND(x, 2) ──► Output 45678.46",
     "lineByLine": [
       {
-        "line": "SELECT department_id, COUNT(*) AS emp_count FROM employees GROUP BY department_id;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name, salary,",
+        "explanation": "Retrieves employee name and raw original salary."
+      },
+      {
+        "line": "ROUND(salary, 2) AS rounded_salary",
+        "explanation": "Rounds salary to 2 decimal places and assigns alias rounded_salary."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads data from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Read data rows).\nStep 2: Apply ROUND(salary, 2) per row.\nStep 3: SELECT first_name, salary, rounded_salary (Project output)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nROUND(12.678, 2) ──► 12.68  (2 Decimal Places)\nROUND(12.678)    ──► 13     (Whole Integer)\nROUND(45678, -2) ──► 45700  (Nearest Hundred)\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Omitting Decimal Places: ROUND(salary) rounds to whole integers instead of decimals.",
+      "❌ 2. Confusing ROUND() with TRUNCATE(): ROUND performs mathematical rounding (5 or more rounds up); TRUNCATE simply cuts off digits without rounding.",
+      "❌ 3. Misunderstanding Negative Decimal Places: ROUND(x, -1) rounds to the nearest ten; ROUND(x, -2) rounds to nearest hundred.",
+      "❌ 4. Forgetting Column Alias: Omitting AS rounded_salary produces raw functional column headers.",
+      "❌ 5. Expecting ROUND to change stored database values: ROUND only formats the projected query result set."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "ROUND(value, decimal_places) rounds numeric values. Omitted decimal places round to the nearest whole integer.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does ROUND() do? Rounds a numeric value to specified decimal places.",
+      "Q2. What does the 2nd argument represent? Number of decimal places to keep.",
+      "Q3. What if 2nd argument is omitted? Rounds to nearest whole integer.",
+      "Q4. Can ROUND take negative decimal arguments? Yes! Negative values round to tens, hundreds, thousands, etc.",
+      "Q5. Difference between ROUND and TRUNCATE? ROUND rounds mathematically; TRUNCATE cuts off digits."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What does ROUND() do in SQL?\n• Difference between ROUND and TRUNCATE?\n• What is ROUND(15.567, 1)? (Answer: 15.6)\n• What happens when negative numbers are passed as the 2nd argument?\n• What is the difference between ROUND(12.345, 2) and ROUND(12.345)?",
+      "⚡ Performance Notes:\n• Fast inline mathematical scalar function evaluated per row during projection.",
+      "🌍 Real-World Use Cases:\n• ✅ Product Pricing: ROUND(price, 2)\n• ✅ Average Salary Display: ROUND(AVG(salary), 2)\n• ✅ Student GPA: ROUND(gpa, 2)\n• ✅ Product Ratings: ROUND(rating, 1)",
+      "🎓 Company Interview Tip: 'What is the difference between ROUND(12.345, 2) and ROUND(12.345)?' ── ROUND(12.345, 2) = 12.35, whereas ROUND(12.345) = 12!",
+      "🔥 Pro Tip (Interview Trick Question): 5 or more rounds UP, less than 5 rounds DOWN! 🚀"
     ]
   },
   "30": {
     "code_id": "Basics-030",
     "numeric_id": 30,
-    "title": "Find department with highest salary",
-    "code": "SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id ORDER BY max_salary DESC LIMIT 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find department with highest salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Length of a String Using LENGTH()",
+    "code": "SELECT first_name, LENGTH(first_name) AS name_length FROM employees;",
+    "timeComplexity": "O(N) (N = String length character iteration)",
+    "spaceComplexity": "O(1) (Constant space complexity)",
+    "simplestExplanation": "LENGTH() calculates the number of characters in a string value.",
+    "mentalModel": "Scan Employee Name ('Christopher') ──► Count Characters (11) ──► Output 11",
     "lineByLine": [
       {
-        "line": "SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id ORDER BY max_salary DESC LIMIT 1;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves the employee first_name column."
+      },
+      {
+        "line": "LENGTH(first_name) AS name_length",
+        "explanation": "Counts total characters in first_name (including whitespace) and assigns alias name_length."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Read table rows).\nStep 2: Calculate LENGTH(first_name) per row.\nStep 3: SELECT first_name, name_length (Project result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\n'John'        ──► LENGTH('John') = 4\n'Christopher' ──► LENGTH('Christopher') = 11\n'John Doe'    ──► LENGTH('John Doe') = 8 (Includes space!)\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Wrong Function Name per Dialect: Using LENGTH() in SQL Server instead of LEN(), or LEN() in MySQL/Postgres instead of LENGTH().",
+      "❌ 2. Forgetting Parentheses: Writing LENGTH employee_name instead of LENGTH(employee_name).",
+      "❌ 3. Expecting LENGTH to Count Words: LENGTH counts characters (letters + spaces + symbols), not words.",
+      "❌ 4. Confusing LENGTH() with COUNT(): COUNT() counts table rows; LENGTH() counts characters in a string.",
+      "❌ 5. Forgetting Column Alias: Omitting AS name_length leaves unreadable raw function headers."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LENGTH() counts characters in a string. In SQL Server, use LEN().",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does LENGTH() do? Returns the total number of characters in a string.",
+      "Q2. What is the SQL Server equivalent? LEN().",
+      "Q3. Does LENGTH count spaces? Yes! Letters + spaces + symbols are all counted.",
+      "Q4. Difference between LENGTH and COUNT? LENGTH counts characters in a string; COUNT counts rows in a dataset.",
+      "Q5. Can LENGTH be used in WHERE clause? Yes! WHERE LENGTH(username) >= 8 filters rows by character length."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What does LENGTH() do?\n• Difference between COUNT() and LENGTH()?\n• What is the SQL Server equivalent of LENGTH()?\n• Does LENGTH() count spaces?\n• Can LENGTH() be used inside WHERE?",
+      "⚡ Performance Notes:\n• Fast scalar string function evaluated per row during projection or filtering.",
+      "🌍 Real-World Use Cases:\n• ✅ Validate Username Length: WHERE LENGTH(username) >= 8\n• ✅ Password Strength Audit: WHERE LENGTH(password) >= 8\n• ✅ Truncation Safeguard: WHERE LENGTH(title) > 50",
+      "🎓 Company Interview Tip: 'What is the difference between COUNT() and LENGTH()?' ── COUNT() counts rows; LENGTH() counts characters in a string!",
+      "🔥 Pro Tip (Interview Trick Question): `LENGTH()` counts SPACES as characters! 'John Doe' = 8! 🚀"
     ]
   },
   "31": {
     "code_id": "Basics-031",
     "numeric_id": 31,
-    "title": "Find department with lowest salary",
-    "code": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find department with lowest salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Convert Text to Uppercase and Lowercase Using UPPER() and LOWER()",
+    "code": "SELECT first_name, UPPER(first_name) AS upper_name, LOWER(first_name) AS lower_name FROM employees;",
+    "timeComplexity": "O(N * M) (N = Row count, M = String length)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "UPPER() converts text characters to uppercase; LOWER() converts text characters to lowercase.",
+    "mentalModel": "Scan Employee Name ('John') ──► UPPER() ──► 'JOHN' | LOWER() ──► 'john'",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves original employee first_name column."
+      },
+      {
+        "line": "UPPER(first_name) AS upper_name,",
+        "explanation": "Converts all characters of first_name to uppercase and assigns alias upper_name."
+      },
+      {
+        "line": "LOWER(first_name) AS lower_name",
+        "explanation": "Converts all characters of first_name to lowercase and assigns alias lower_name."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads data records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Apply UPPER(first_name) and LOWER(first_name) per row.\nStep 3: SELECT first_name, upper_name, lower_name (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\n'John' ──► UPPER('John') = 'JOHN' | LOWER('John') = 'john'\nCase-Insensitive Search: WHERE LOWER(email) = LOWER('User@Email.com')\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking UPPER()/LOWER() Mutates Stored Table Data: Scalar functions alter display results only, not persisted table values.",
+      "❌ 2. Confusing UPPER() with UPDATE: UPPER() formats SELECT results; UPDATE modifies table records on disk.",
+      "❌ 3. Forgetting Parentheses: Writing UPPER first_name instead of UPPER(first_name).",
+      "❌ 4. Forgetting Column Aliases: Omitting AS upper_name / AS lower_name leaves unreadable query output headers.",
+      "❌ 5. Missing Index Awareness in WHERE: Wrapping indexed columns in LOWER(col) can bypass standard B-Tree index scans unless a expression/functional index exists."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "UPPER() and LOWER() alter text display casing without modifying stored database values. Crucial for case-insensitive searches.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does UPPER() do? Converts string text to uppercase.",
+      "Q2. What does LOWER() do? Converts string text to lowercase.",
+      "Q3. Does UPPER/LOWER modify table data? No! Only query projection results change.",
+      "Q4. Why use LOWER() in WHERE clauses? To perform case-insensitive text matching.",
+      "Q5. Can UPPER and LOWER be combined in the same query? Yes! Multiple scalar functions can be used together."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between UPPER() and LOWER()?\n• Does UPPER() update the stored database records?\n• How do you write a case-insensitive WHERE clause in SQL?\n• Can scalar functions in WHERE break index usage?\n• What is the difference between UPPER() and UPDATE?",
+      "⚡ Performance Notes:\n• Fast scalar string conversion per row. Be careful applying functions on indexed WHERE columns.",
+      "🌍 Real-World Use Cases:\n• ✅ Display Uppercase Names: UPPER(employee_name)\n• ✅ Standardize Email Input: LOWER(email)\n• ✅ Case-Insensitive User Search: WHERE LOWER(username) = 'john'\n• ✅ Compare Cross-System Data: WHERE LOWER(a.email) = LOWER(b.email)",
+      "🎓 Company Interview Tip: 'How do you make a case-insensitive string comparison in SQL?' ── Wrap both sides in LOWER(): WHERE LOWER(col) = LOWER('input')!",
+      "🔥 Pro Tip (Interview Trick Question): UPPER() and LOWER() change PROJECTION, not PERSISTENCE! 🚀"
     ]
   },
   "32": {
     "code_id": "Basics-032",
     "numeric_id": 32,
-    "title": "Average salary by department",
-    "code": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Average salary by department.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Extract Part of a String Using SUBSTRING()",
+    "code": "SELECT first_name, SUBSTR(first_name, 1, 3) AS first_three_letters FROM employees;",
+    "timeComplexity": "O(N * M) (N = Row count, M = Extracted substring length)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "SUBSTRING(str, start, length) extracts a specified slice of text starting at position 'start' for 'length' characters.",
+    "mentalModel": "Word 'Christopher' ──► Start at 1 ──► Slice 3 chars ──► 'Chr'",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves the original first_name column."
+      },
+      {
+        "line": "SUBSTR(first_name, 1, 3) AS first_three_letters",
+        "explanation": "Extracts 3 characters starting from position 1 (SQL 1-based indexing) and assigns alias first_three_letters."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Apply SUBSTR(first_name, 1, 3) per row.\nStep 3: SELECT first_name, first_three_letters (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSUBSTRING(text, start_pos, character_length)\n'Christopher' ──► SUBSTRING('Christopher', 1, 5) = 'Chris'\n'Christopher' ──► SUBSTRING('Christopher', 2, 4) = 'hris'\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Starting at 0 Instead of 1: SQL uses 1-based indexing! Starting at 0 can produce unexpected results or empty outputs in some DBs.",
+      "❌ 2. Confusing Length with End Position: SUBSTRING(name, 2, 4) means start at 2 and take 4 characters, NOT slice from position 2 to position 4!",
+      "❌ 3. Dialect Mismatch (SUBSTRING vs SUBSTR): Oracle & SQLite use SUBSTR(); MySQL, PostgreSQL, & SQL Server support SUBSTRING().",
+      "❌ 4. Forgetting Column Alias: Omitting AS first_three_letters results in raw unreadable function headers.",
+      "❌ 5. Misusing SUBSTRING for Wildcard Searches: Use LIKE 'J%' for pattern matching instead of WHERE SUBSTRING(name, 1, 1) = 'J' for better indexing."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "SUBSTRING() extracts substring slices using (column, start_position, length) with 1-based indexing.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does SUBSTRING() do? Extracts a specific slice of characters from a string.",
+      "Q2. Does SQL start counting from 0 or 1? SQL start positions count from 1!",
+      "Q3. What is the difference between SUBSTRING() and SUBSTR()? Functionality is identical; naming depends on database dialect.",
+      "Q4. What does the 3rd parameter represent? Number of characters to extract (length), NOT end position index.",
+      "Q5. Can SUBSTRING extract from middle of string? Yes! Specify any valid start position, e.g. SUBSTRING(name, 3, 5)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What do the three parameters of SUBSTRING(col, A, B) mean?\n• Does SQL count positions from 0 or 1?\n• What does SUBSTRING('Christopher', 2, 4) return? (Answer: 'hris')\n• Difference between SUBSTRING and SUBSTR?\n• Can SUBSTRING be used inside WHERE clauses?",
+      "⚡ Performance Notes:\n• Fast scalar string slice. In WHERE predicates, prefers expression indexes to prevent full scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Employee Initials / Badges: SUBSTRING(name, 1, 1)\n• ✅ Product SKUs / Serial Codes: SUBSTRING(code, 1, 4)\n• ✅ Area Code Extraction: SUBSTRING(phone, 1, 3)\n• ✅ Masking Sensitive Data: SUBSTRING(card_no, 13, 4)",
+      "🎓 Company Interview Tip: 'What does SUBSTRING(name, 2, 4) mean?' ── Start at position 2 and take the next 4 characters!",
+      "🔥 Pro Tip (Interview Trick Question): 3rd parameter is LENGTH, NOT ending position index! 🚀"
     ]
   },
   "33": {
     "code_id": "Basics-033",
     "numeric_id": 33,
-    "title": "Maximum marks by class",
-    "code": "SELECT class, AVG(marks) AS avg_mark FROM students GROUP BY class;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Maximum marks by class.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Replace Part of a String Using REPLACE()",
+    "code": "SELECT first_name, REPLACE(first_name, 'John', 'Jonathan') AS updated_name FROM employees;",
+    "timeComplexity": "O(N * M) (N = Row count, M = String length)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "REPLACE(string, search_target, replacement) searches for matching substrings and substitutes every occurrence with replacement text.",
+    "mentalModel": "Find & Replace: Scan 'John Smith' ──► Find 'John' ──► Substitute 'Jonathan' ──► Result 'Jonathan Smith'",
     "lineByLine": [
       {
-        "line": "SELECT class, AVG(marks) AS avg_mark FROM students GROUP BY class;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves original employee first_name column."
+      },
+      {
+        "line": "REPLACE(first_name, 'John', 'Jonathan') AS updated_name",
+        "explanation": "Searches for 'John' in first_name and replaces with 'Jonathan', aliasing output as updated_name."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Apply REPLACE(first_name, 'John', 'Jonathan') per row.\nStep 3: SELECT first_name, updated_name (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nREPLACE(column, old_text, new_text)\nRemove Spaces: REPLACE(name, ' ', '')\nReplace Spaces with Underscores: REPLACE(name, ' ', '_')\nRemove Dashes: REPLACE(phone, '-', '')\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking REPLACE() Modifies Table Data: SELECT REPLACE() only alters query projection output. Use UPDATE to persist changes.",
+      "❌ 2. Forgetting String Quotes: Writing REPLACE(name, John, Jonathan) without quotes results in invalid column reference errors.",
+      "❌ 3. Confusing REPLACE() Function with UPDATE DML: REPLACE() is a scalar string function; UPDATE is a DML statement.",
+      "❌ 4. Assuming Wildcard/Regex Support: Standard REPLACE() matches exact literal strings, not regex or wildcard patterns.",
+      "❌ 5. Forgetting Column Aliases: Omitting AS updated_name outputs unreadable raw function headers."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "REPLACE() performs literal substring replacement across string columns, altering output projection unless bound to UPDATE.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does REPLACE() do? Replaces all occurrences of a specified substring with new text.",
+      "Q2. Does REPLACE() modify original database records? No! Only SELECT query projection results change.",
+      "Q3. How do you remove all spaces from a string? Use REPLACE(col, ' ', '').",
+      "Q4. Does REPLACE() substitute all occurrences or only the first? Every matching occurrence in the string is replaced!",
+      "Q5. Can REPLACE() be used inside an UPDATE statement? Yes! UPDATE tbl SET col = REPLACE(col, 'old', 'new')."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What do the three parameters of REPLACE(col, A, B) mean?\n• Does REPLACE() alter persisted table data on disk?\n• How do you remove all spaces or dashes from a string in SQL?\n• Difference between REPLACE() and UPDATE?\n• Does REPLACE() replace one occurrence or all occurrences?",
+      "⚡ Performance Notes:\n• Fast scalar string substitution. On large text blobs, string scanning incurs minor O(M) overhead per row.",
+      "🌍 Real-World Use Cases:\n• ✅ Remove Phone Dashes: REPLACE(phone, '-', '')\n• ✅ Rebrand Company Names: REPLACE(company, 'Facebook', 'Meta')\n• ✅ Format Usernames: REPLACE(username, ' ', '_')\n• ✅ Clean CSV Imports: REPLACE(product, '  ', ' ')",
+      "🎓 Company Interview Tip: 'How do you remove all spaces from a string in SQL?' ── REPLACE(column_name, ' ', '')!",
+      "🔥 Pro Tip (Interview Trick Question): REPLACE() replaces ALL matching occurrences in the string! 🚀"
     ]
   },
   "34": {
     "code_id": "Basics-034",
     "numeric_id": 34,
-    "title": "Minimum sales by region",
-    "code": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Minimum sales by region.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Replace NULL Values Using COALESCE()",
+    "code": "SELECT first_name, COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager FROM employees;",
+    "timeComplexity": "O(N) (Linear row evaluation)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "COALESCE(e1, e2, ... eN) evaluates arguments from left to right and returns the very first non-NULL expression.",
+    "mentalModel": "Backup Value Provider: Check manager_id ──► Non-NULL? Return ID ──► NULL? Fallback to 'No Manager'",
     "lineByLine": [
       {
-        "line": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves employee first_name column."
+      },
+      {
+        "line": "COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager",
+        "explanation": "Casts manager_id to TEXT and returns it if non-NULL; defaults to 'No Manager' if NULL, aliasing result as manager."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Evaluate COALESCE(CAST(manager_id AS TEXT), 'No Manager') per row.\nStep 3: SELECT first_name, manager (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nCOALESCE(val1, val2, val3, ...)\nCOALESCE(NULL, NULL, 100, 200) ──► 100\nCOALESCE(salary, 0) ──► Returns salary or 0 if NULL\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking COALESCE() Modifies Table Data: SELECT COALESCE() replaces NULL values in display output only, not stored database values.",
+      "❌ 2. Data Type Mismatch Traps: Combining numbers and strings without CAST (e.g. COALESCE(manager_id, 'No Manager')) triggers data type conversion errors in strict DB engines.",
+      "❌ 3. Confusing COALESCE() with IS NULL: IS NULL is a boolean comparison operator (WHERE col IS NULL); COALESCE() is a value replacement function.",
+      "❌ 4. Assuming COALESCE() Accepts Only 2 Arguments: COALESCE() accepts arbitrary parameters: COALESCE(col1, col2, col3, 'Default').",
+      "❌ 5. Using Vendor-Specific IFNULL()/ISNULL(): Prefer ANSI SQL standard COALESCE() for cross-database portability (Postgres, Oracle, MySQL, SQL Server, SQLite)."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "COALESCE() provides ANSI standard NULL replacement by returning the first non-NULL argument.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does COALESCE() do? Returns the first non-NULL expression from left to right.",
+      "Q2. Is COALESCE() ANSI SQL compliant? Yes! Native across MySQL, Postgres, Oracle, SQL Server, SQLite.",
+      "Q3. Can COALESCE() take more than 2 arguments? Yes! Accepts an arbitrary list of expressions.",
+      "Q4. What is the difference between COALESCE() and IFNULL()? COALESCE() is ANSI SQL with N arguments; IFNULL() is vendor-specific (MySQL/SQLite) with 2 arguments.",
+      "Q5. Does COALESCE() change database table data? No! Only alters query output projection."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What does COALESCE() return when given COALESCE(NULL, NULL, 50, 100)? (Answer: 50)\n• Difference between COALESCE() and IFNULL()/ISNULL()?\n• Why do we need CAST() when replacing numeric NULLs with text defaults?\n• Difference between IS NULL and COALESCE()?\n• Is COALESCE() ANSI SQL standard?",
+      "⚡ Performance Notes:\n• Ultra-fast short-circuit evaluation. Stops scanning arguments as soon as it hits the first non-NULL value.",
+      "🌍 Real-World Use Cases:\n• ✅ Default Salary/Bonus: COALESCE(salary, 0)\n• ✅ Fallback Contact Info: COALESCE(mobile_phone, work_phone, 'Not Provided')\n• ✅ Missing Manager Label: COALESCE(CAST(manager_id AS TEXT), 'No Manager')\n• ✅ Missing Address/City: COALESCE(city, 'Unknown')",
+      "🎓 Company Interview Tip: 'Why prefer COALESCE over IFNULL/ISNULL?' ── COALESCE is ANSI standard and handles N fallback parameters!",
+      "🔥 Pro Tip (Interview Trick Question): Short-circuits at the FIRST non-NULL argument! 🚀"
     ]
   },
   "35": {
     "code_id": "Basics-035",
     "numeric_id": 35,
-    "title": "Total revenue by month",
-    "code": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Total revenue by month.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Display the Current Date and Time",
+    "code": "SELECT CURRENT_DATE AS current_date, CURRENT_TIME AS current_time, CURRENT_TIMESTAMP AS current_datetime;",
+    "timeComplexity": "O(1) (Constant system clock lookup)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP query the database engine's system clock directly without reading table data.",
+    "mentalModel": "System Clock Query: Read DB Server Clock ──► Emit Current Date (YYYY-MM-DD), Time (HH:MM:SS), and Timestamp",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT CURRENT_DATE AS current_date,",
+        "explanation": "Fetches system date from database server clock."
+      },
+      {
+        "line": "CURRENT_TIME AS current_time,",
+        "explanation": "Fetches current system time."
+      },
+      {
+        "line": "CURRENT_TIMESTAMP AS current_datetime;",
+        "explanation": "Fetches full date and time timestamp from system clock."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: Read system clock parameters from DB server.\nStep 2: Format projection values.\nStep 3: Emit result set tuple (No FROM table scanning required)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nANSI SQL: CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP\nMySQL: CURDATE(), CURTIME(), NOW()\nSQL Server: GETDATE()\nOracle: SYSDATE, SYSTIMESTAMP FROM dual\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Writing Unnecessary FROM Clauses: Writing SELECT CURRENT_DATE FROM employees executes the system clock function N times (once per row) instead of once without a FROM clause.",
+      "❌ 2. Confusing Client Clock with DB Server Clock: Date/time functions retrieve the database server clock time, NOT the local user device time.",
+      "❌ 3. Confusing CURRENT_DATE with CURRENT_TIMESTAMP: CURRENT_DATE returns only date (YYYY-MM-DD); CURRENT_TIMESTAMP returns date + time.",
+      "❌ 4. Ignoring Vendor Dialect Differences: Using MySQL NOW() in SQL Server (which uses GETDATE()) or Oracle (which uses SYSDATE/SYSTIMESTAMP FROM dual).",
+      "❌ 5. Expecting SELECT CURRENT_DATE to Persist Data: SELECT only displays clock values. Use INSERT INTO audit_logs(created_at) VALUES (CURRENT_TIMESTAMP) to store data."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "System date and time functions query the database server clock in O(1) time and do not require table references.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is CURRENT_DATE? ANSI SQL scalar function that returns the current database server date.",
+      "Q2. What is CURRENT_TIMESTAMP? Returns combined date and time from system clock.",
+      "Q3. Do date/time functions require a FROM clause? No! Evaluates directly without table references.",
+      "Q4. What is NOW() in MySQL? MySQL-specific function equivalent to CURRENT_TIMESTAMP.",
+      "Q5. What is GETDATE() in SQL Server? SQL Server-specific function equivalent to CURRENT_TIMESTAMP."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between CURRENT_DATE and CURRENT_TIMESTAMP?\n• What is NOW() in MySQL and GETDATE() in SQL Server?\n• Does SELECT CURRENT_DATE require a FROM clause?\n• Whose system clock is returned: client device or DB server?\n• How do you auto-populate creation timestamps on INSERT?",
+      "⚡ Performance Notes:\n• O(1) constant time execution. No table scan or disk I/O involved.",
+      "🌍 Real-World Use Cases:\n• ✅ Order Creation Timestamps: INSERT INTO orders(order_date) VALUES (CURRENT_DATE)\n• ✅ User Login Auditing: INSERT INTO login_logs(login_time) VALUES (CURRENT_TIMESTAMP)\n• ✅ Attendance Tracking: INSERT INTO attendance(check_in) VALUES (CURRENT_TIMESTAMP)\n• ✅ Financial Transaction Logs: Stamping exact transaction execution times",
+      "🎓 Company Interview Tip: 'Whose time does CURRENT_TIMESTAMP return?' ── Always the Database Server Clock, not the client machine!",
+      "🔥 Pro Tip (Interview Trick Question): No FROM clause needed in ANSI SQL / MySQL / Postgres / SQLite! 🚀"
     ]
   },
   "36": {
@@ -14185,7 +15237,7 @@ export const ALL_PROBLEM_SOLUTIONS: Record<string, ProblemSolution> = {
     "code_id": "Basics-001",
     "numeric_id": 1,
     "title": "Select All Columns from a Table",
-    "code": "SELECT *\nFROM table_name;",
+    "code": "SELECT *\nFROM employees;",
     "timeComplexity": "O(N)",
     "spaceComplexity": "O(N)",
     "simplestExplanation": "The SELECT statement is used to retrieve data from a database table. The asterisk (*) selects all columns, and FROM table_name specifies the source table.",
@@ -14487,841 +15539,1893 @@ export const ALL_PROBLEM_SOLUTIONS: Record<string, ProblemSolution> = {
   "Basics-006": {
     "code_id": "Basics-006",
     "numeric_id": 6,
-    "title": "Use NOT",
-    "code": "SELECT * FROM employees WHERE department_id != 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use NOT.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Sort Data Using ORDER BY",
+    "code": "SELECT *\nFROM employees\nORDER BY salary ASC;",
+    "timeComplexity": "O(N log N) (Sorting Operation)",
+    "spaceComplexity": "O(N) (May vary depending on the database engine)",
+    "simplestExplanation": "ORDER BY is used to arrange rows in a specific order based on one or more columns. It never filters or removes rows; it only changes their display sequence. By default, SQL sorts in ascending order (ASC). Use DESC when you need largest-to-smallest ordering.",
+    "mentalModel": "Imagine a teacher arranging students based on marks.\n\nWithout sorting:\nJohn     85\nAlice    60\nDavid    95\nBob      70\n\nAfter sorting (Ascending):\nAlice    60\nBob      70\nJohn     85\nDavid    95\n\nAfter sorting (Descending):\nDavid    95\nJohn     85\nBob      70\nAlice    60\n\nSQL works exactly the same way.",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE department_id != 1;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT *",
+        "explanation": "Retrieves all columns from the table. You can also retrieve only the required columns (e.g. SELECT employee_id, first_name, salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "ORDER BY salary",
+        "explanation": "ORDER BY sorts the records based on the specified column. It does not filter data; it only changes the order in which rows are displayed."
+      },
+      {
+        "line": "ASC / DESC",
+        "explanation": "• ASC means Ascending Order (Smallest → Largest, A → Z, Oldest → Newest). It is the default in SQL.\n• DESC means Descending Order (Largest → Smallest, Z → A, Newest → Oldest)."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate the table.\nStep 2: Read every row.\nStep 3: SELECT * ── Retrieve required columns.\nStep 4: ORDER BY salary DESC ── Sort the retrieved rows.\nStep 5: Display the sorted result."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - Ascending):\n```sql\nSELECT *\nFROM employees\nORDER BY salary ASC;\n```\n\nMethod 2 (Specific Columns):\n```sql\nSELECT employee_id,\n       first_name,\n       salary\nFROM employees\nORDER BY salary DESC;\n```\nReturns only required columns. Preferred in production.\n\nMethod 3 (Multiple Columns):\n```sql\nSELECT *\nFROM employees\nORDER BY department_id ASC,\n         salary DESC;\n```\nFirst sorts by department, then sorts salary within each department."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nORDER BY ──► Sort Rows ──► ASC  (Small→Big, A→Z, Old→New)\n                      └──► DESC (Big→Small, Z→A, New→Old)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL (Ascending):\n```sql\nSELECT column1, column2\nFROM table_name\nORDER BY column_name ASC;\n```\n\nGeneric SQL (Descending):\n```sql\nSELECT column1, column2\nFROM table_name\nORDER BY column_name DESC;\n```\n\nProblem Solution (Ascending):\n```sql\nSELECT *\nFROM employees\nORDER BY salary ASC;\n```\n\nProblem Solution (Descending):\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Misspelling ORDER BY: SELECT * FROM employees ODER BY salary; ── Error: ODER is not a valid SQL keyword.",
+      "❌ 2. Ordering by a Non-Existing Column: SELECT * FROM employees ORDER BY salaries; ── Error: Unknown column salaries.",
+      "❌ 3. Using WHERE After ORDER BY: SELECT * FROM employees ORDER BY salary WHERE department_id = 101; ── Error: WHERE must always come before ORDER BY.",
+      "❌ 4. Forgetting DESC: Some beginners expect ORDER BY salary; to sort highest to lowest. Default is always Ascending (ASC).",
+      "❌ 5. Confusing ORDER BY with WHERE: WHERE filters rows; ORDER BY sorts rows. They perform completely different tasks."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "ORDER BY is used to arrange rows in a specific order. It never removes rows; it only changes their display order. By default, SQL sorts in ascending order (ASC). Use DESC when you need the highest values first.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is the default sorting order? Ascending (ASC).",
+      "Q2. Can ORDER BY sort text? Yes, alphabetically.",
+      "Q3. Can ORDER BY sort dates? Yes: Oldest → Newest (ASC), Newest → Oldest (DESC).",
+      "Q4. Can ORDER BY sort multiple columns? Yes (e.g. ORDER BY department_id, salary DESC;).",
+      "Q5. Does ORDER BY remove duplicate rows? No, it only changes the order."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between WHERE and ORDER BY?\n• What is the default order?\n• Can ORDER BY be used on multiple columns?\n• Does ORDER BY affect stored data?\n• Can ORDER BY sort text, numbers, and dates?",
+      "⚡ Performance Notes:\n• Recommended: SELECT employee_id, first_name, salary FROM employees ORDER BY salary DESC; (✔ Returns only required columns, ✔ Efficient, ✔ Easy to read)\n• Large Tables: Sorting millions of rows can be expensive. Creating an index on the sorting column can significantly improve performance.",
+      "🌍 Real-World Use Cases:\n• ✅ Highest-paid employees: ORDER BY salary DESC;\n• ✅ Lowest-priced products: ORDER BY price ASC;\n• ✅ Latest orders: ORDER BY order_date DESC;\n• ✅ Students ranked by marks: ORDER BY marks DESC.",
+      "🎓 Company Interview Tip: 'What is the default sorting order in SQL?' ── SQL sorts in Ascending (ASC) order by default. 'Does ORDER BY modify data stored in the database?' ── No, it only changes how results are displayed.",
+      "🔥 Pro Tip (Interview): WHERE → Filters rows. ORDER BY → Sorts rows. ASC → Small to Large / A to Z. DESC → Large to Small / Z to A. Think of ORDER BY as arranging books on a shelf—you still have the same books, you've just changed their order. 📚"
     ]
   },
   "Basics-007": {
     "code_id": "Basics-007",
     "numeric_id": 7,
-    "title": "Use BETWEEN",
-    "code": "SELECT * FROM employees WHERE salary BETWEEN 60000 AND 90000;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use BETWEEN.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Limit the Number of Rows (LIMIT)",
+    "code": "SELECT *\nFROM employees\nLIMIT 5;",
+    "timeComplexity": "O(N) (Database may stop early after reaching the limit)",
+    "spaceComplexity": "O(K) (Where K is the number of rows returned)",
+    "simplestExplanation": "LIMIT restricts the maximum number of rows returned by a query. It stops reading and materializing rows once the specified limit count is reached.",
+    "mentalModel": "Employees Table (1000 rows) ──► LIMIT 5 ──► Stop after returning first 5 rows ──► Remaining 995 rows ignored",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE salary BETWEEN 60000 AND 90000;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT *",
+        "explanation": "Retrieves all columns. You can also specify specific columns like SELECT employee_id, first_name, salary."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies the table to read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "LIMIT 5;",
+        "explanation": "LIMIT restricts the number of rows returned. It does not filter rows based on a condition; it simply stops after returning the specified count."
+      },
+      {
+        "line": "📚 Understanding LIMIT & Execution Sequence",
+        "explanation": "Execution steps:\nStep 1: FROM employees ── Locate table\nStep 2: Read rows\nStep 3: SELECT * ── Retrieve required columns\nStep 4: LIMIT 5 ── Stop after returning 5 rows\nStep 5: Display result"
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - First 5 Rows):\n```sql\nSELECT *\nFROM employees\nLIMIT 5;\n```\n\nMethod 2 (Specific Columns):\n```sql\nSELECT employee_id,\n       first_name,\n       salary\nFROM employees\nLIMIT 5;\n```\nRetrieves only required columns. Preferred in production.\n\nMethod 3 (Top 5 Highest Salaries - ORDER BY + LIMIT):\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC\nLIMIT 5;\n```\nSorts first, then returns only the top 5 rows."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nLIMIT ──► Restrict number of rows returned\n   ├── LIMIT 5 ──► First 5 rows\n   └── ORDER BY + LIMIT ──► Top N / Bottom N Records\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column1, column2\nFROM table_name\nLIMIT 5;\n```\n\nProblem Solution:\n```sql\nSELECT *\nFROM employees\nLIMIT 5;\n```\n\nTop 5 Highest Salaries:\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC\nLIMIT 5;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting LIMIT Value: SELECT * FROM employees LIMIT; ── Error: SQL expects a numeric value after LIMIT.",
+      "❌ 2. Using LIMIT Before ORDER BY: SELECT * FROM employees LIMIT 5 ORDER BY salary DESC; ── Error: ORDER BY must always come before LIMIT.",
+      "❌ 3. Assuming LIMIT Always Returns Highest Salary: SELECT * FROM employees LIMIT 5; ── Returns whichever 5 rows are read first, NOT highest paid. Use ORDER BY salary DESC LIMIT 5.",
+      "❌ 4. Negative LIMIT: LIMIT -5; ── Invalid in most SQL databases.",
+      "❌ 5. Forgetting ORDER BY: Without sorting, row selection order is not guaranteed."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LIMIT restricts the number of rows returned by a query. It is commonly used with ORDER BY to retrieve the Top N or Bottom N records. Without ORDER BY, the returned rows have no guaranteed order.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does LIMIT do? Restricts the number of rows returned.",
+      "Q2. Does LIMIT filter data? No, it only limits the number of rows displayed.",
+      "Q3. Should LIMIT be used with ORDER BY? Yes, otherwise returned rows are non-deterministic.",
+      "Q4. Can LIMIT return zero rows? Yes (e.g. LIMIT 0 returns an empty result set).",
+      "Q5. Is LIMIT supported by every database? No: MySQL, PostgreSQL & SQLite use LIMIT; SQL Server uses TOP; Oracle uses FETCH FIRST or ROWNUM."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between WHERE and LIMIT?\n• Why should ORDER BY be used with LIMIT?\n• How do you retrieve the Top 10 highest-paid employees?\n• Does LIMIT improve performance?\n• Which databases support LIMIT?",
+      "⚡ Performance Notes:\n• Recommended: SELECT employee_id, first_name, salary FROM employees ORDER BY salary DESC LIMIT 5; (✔ Returns only required columns, ✔ Returns only required rows, ✔ Faster than retrieving the entire table)\n• Large Tables: Using LIMIT with an indexed ORDER BY column allows the database to avoid full table scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Top 10 highest-paid employees: ORDER BY salary DESC LIMIT 10;\n• ✅ Latest 20 orders: ORDER BY order_date DESC LIMIT 20;\n• ✅ First 5 products: LIMIT 5;\n• ✅ Dashboard preview: Display recent records instead of full table.",
+      "🎓 Company Interview Tip: 'Does LIMIT 5 always return the same five rows?' ── No. Without an ORDER BY clause, SQL does not guarantee which five rows are returned. Always use ORDER BY when order matters.",
+      "🔥 Pro Tip (Interview): ORDER BY + LIMIT = Top N Records (Top 5 highest salaries, Top 10 selling products, Latest 20 orders). This combination is one of the most frequently asked SQL interview concepts! 🏆"
     ]
   },
   "Basics-008": {
     "code_id": "Basics-008",
     "numeric_id": 8,
-    "title": "Use IN",
-    "code": "SELECT * FROM employees WHERE department_id IN (1, 2, 3);",
-    "timeComplexity": "O(N)",
+    "title": "Find Distinct Values (DISTINCT)",
+    "code": "SELECT DISTINCT department_id\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(N log N) (Database may sort/hash to remove duplicates)",
     "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use IN.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "simplestExplanation": "DISTINCT removes duplicate values from query results, keeping only a single copy of each unique value returned by the SELECT statement.",
+    "mentalModel": "Employee Table ──► Read Department IDs ──► DISTINCT (Duplicate Remover) ──► Keep unique values only (HR, IT, Sales)",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE department_id IN (1, 2, 3);",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT DISTINCT department_id",
+        "explanation": "SELECT retrieves column data, and DISTINCT removes duplicate values so only unique department IDs are returned."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding DISTINCT",
+        "explanation": "Think of DISTINCT as a duplicate remover. Without DISTINCT, SQL returns duplicate values for every matching row. With DISTINCT, duplicate rows are removed from the final result set."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate the table.\nStep 2: Read every row.\nStep 3: SELECT department_id ── Retrieve the requested column.\nStep 4: DISTINCT ── Remove duplicate values.\nStep 5: Display only unique values."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - Single Column):\n```sql\nSELECT DISTINCT department_id\nFROM employees;\n```\n\nMethod 2 (Multiple Columns):\n```sql\nSELECT DISTINCT department_id,\n                job_title\nFROM employees;\n```\nReturns only unique combinations of department and job title.\n\nMethod 3 (Using GROUP BY):\n```sql\nSELECT department_id\nFROM employees\nGROUP BY department_id;\n```\nReturns unique department IDs, but DISTINCT is simpler when no aggregates are needed."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSELECT ──► Retrieve Column ──► DISTINCT ──► Remove Duplicates ──► Unique Values\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT DISTINCT column_name\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT DISTINCT department_id\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting DISTINCT: SELECT department_id FROM employees; ── Returns duplicate values.",
+      "❌ 2. Expecting DISTINCT to Remove Duplicate Rows Completely: SELECT DISTINCT department_id, salary FROM employees; ── DISTINCT evaluates the entire row combination, not just one column.",
+      "❌ 3. Confusing DISTINCT with UNIQUE Constraint: DISTINCT removes query duplicates; UNIQUE constraint prevents duplicate row inserts into the database table.",
+      "❌ 4. Using DISTINCT Unnecessarily: SELECT DISTINCT employee_id FROM employees; ── Doing DISTINCT on a Primary Key is redundant.",
+      "❌ 5. Assuming DISTINCT Sorts Data: SELECT DISTINCT city FROM employees; ── DISTINCT removes duplicates; it does not guarantee sorted output. Use ORDER BY for sorting."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "DISTINCT removes duplicate values from the query result. It does not modify the original table. It is commonly used for reports, filters, dashboards, and dropdown lists where only unique values are needed.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does DISTINCT do? Removes duplicate values from query results.",
+      "Q2. Does DISTINCT change data stored in the table? No, it only affects query output.",
+      "Q3. Can DISTINCT be used with multiple columns? Yes, it evaluates unique combinations.",
+      "Q4. Is DISTINCT the same as GROUP BY? No, DISTINCT only removes duplicates, whereas GROUP BY creates groups for aggregate functions.",
+      "Q5. Can DISTINCT be used with ORDER BY? Yes (e.g. SELECT DISTINCT city FROM employees ORDER BY city;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between DISTINCT and GROUP BY?\n• Does DISTINCT remove duplicate rows or duplicate values?\n• Can DISTINCT work with multiple columns?\n• Does DISTINCT affect database data?\n• When should DISTINCT be avoided?",
+      "⚡ Performance Notes:\n• Recommended: SELECT DISTINCT department_id FROM employees; (✔ Returns only unique values, ✔ Useful for reporting & UI filters)\n• Large Tables: Removing duplicates requires sorting or hashing internally. Indexes on DISTINCT columns help avoid expensive scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Show unique cities: SELECT DISTINCT city FROM customers;\n• ✅ Show available product categories: SELECT DISTINCT category FROM products;\n• ✅ Show unique departments: SELECT DISTINCT department_id FROM employees;\n• ✅ Populate filter dropdowns in UI applications.",
+      "🎓 Company Interview Tip: 'What is the difference between DISTINCT and GROUP BY?' ── DISTINCT removes duplicate values; GROUP BY creates groups and is mainly used with aggregate functions like COUNT(), SUM(), and AVG().",
+      "🔥 Pro Tip (Interview): SELECT (Retrieve Data) ➔ DISTINCT (Remove Duplicates) ➔ ORDER BY (Optional Sort Results). In interviews, when asked 'How to display all unique values?', DISTINCT is your go-to keyword! 🚀"
     ]
   },
   "Basics-009": {
     "code_id": "Basics-009",
     "numeric_id": 9,
-    "title": "Use NOT IN",
-    "code": "SELECT * FROM employees WHERE department_id NOT IN (1, 2);",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use NOT IN.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Count Total Records (COUNT())",
+    "code": "SELECT COUNT(*)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (May be optimized with indexes depending on database)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "COUNT() is an aggregate function that counts rows. COUNT(*) counts every single row in the table, including rows with NULL values and duplicate values.",
+    "mentalModel": "Employees Table ──► COUNT(*) ──► Count every row ──► Output single summary number (e.g. 10)",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE department_id NOT IN (1, 2);",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT COUNT(*)",
+        "explanation": "SELECT retrieves data, and COUNT(*) is an aggregate function that counts every row in the table (including NULLs and duplicates)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding COUNT() & Aggregation",
+        "explanation": "COUNT(*) counts all rows. COUNT(column_name) counts only non-NULL values in that column. COUNT(DISTINCT column) counts unique non-NULL values."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: COUNT(*) ── Count every row.\nStep 4: Return a single total number."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended - Count All Rows):\n```sql\nSELECT COUNT(*)\nFROM employees;\n```\n\nMethod 2 (Count Specific Non-NULL Column):\n```sql\nSELECT COUNT(employee_id)\nFROM employees;\n```\nCounts non-NULL values in employee_id column.\n\nMethod 3 (Count Unique Values):\n```sql\nSELECT COUNT(DISTINCT department_id)\nFROM employees;\n```\nCounts only unique department IDs."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nCOUNT()\n  ├── COUNT(*) ──────► All Rows (Includes NULLs)\n  ├── COUNT(col) ────► Non-NULL Values Only\n  └── COUNT(DISTINCT col) ──► Unique Non-NULL Values Only\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT COUNT(*)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT COUNT(*)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using COUNT(column_name) Without Understanding NULL: SELECT COUNT(manager_id) FROM employees; ── If manager_id contains NULL values, those rows are NOT counted.",
+      "❌ 2. Confusing COUNT(*) with COUNT(column): COUNT(*) counts every row; COUNT(column_name) counts only non-NULL values.",
+      "❌ 3. Forgetting Parentheses: SELECT COUNT FROM employees; ── Error: SQL expects parentheses around parameters.",
+      "❌ 4. Expecting COUNT() to Return Detailed Rows: SELECT COUNT(*) FROM employees; ── Returns a single number (e.g., 10), NOT employee details.",
+      "❌ 5. Confusing COUNT() with SUM(): COUNT() counts rows; SUM() adds up numeric values."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "COUNT() is an aggregate function used to count rows. COUNT(*) counts every row, while COUNT(column_name) counts only non-NULL values in that column.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is COUNT()? An aggregate function that counts rows.",
+      "Q2. What is the difference between COUNT(*) and COUNT(column)? COUNT(*) counts every row; COUNT(column) counts only non-NULL values.",
+      "Q3. Does COUNT() ignore NULL? COUNT(*) does not ignore NULLs. COUNT(column) ignores NULL values.",
+      "Q4. Can COUNT() be used with DISTINCT? Yes (e.g. SELECT COUNT(DISTINCT department_id) FROM employees;).",
+      "Q5. What does COUNT(*) return for an empty table? It returns 0."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between COUNT(*) and COUNT(column)?\n• Does COUNT() count NULL values?\n• Difference between COUNT(*) and COUNT(DISTINCT)?\n• Is COUNT() an aggregate function?\n• Can COUNT() be used with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT COUNT(*) FROM employees; (✔ Easy to read, ✔ Optimized by query engines)\n• Trick Question: Suppose a table has 10 rows and manager_id has 3 NULL values ── COUNT(*) returns 10, COUNT(manager_id) returns 7!",
+      "🌍 Real-World Use Cases:\n• ✅ Count total employees: SELECT COUNT(*) FROM employees;\n• ✅ Count registered students;\n• ✅ Count total orders;\n• ✅ Dashboard statistics & analytics reports.",
+      "🎓 Company Interview Tip: 'What is the difference between COUNT(*) and COUNT(column_name)?' ── COUNT(*) counts all rows regardless of contents; COUNT(column_name) counts only rows where that column is NOT NULL.",
+      "🔥 Pro Tip (Interview Trick Question): Table with 10 rows and 3 NULL manager_ids ➔ COUNT(*) = 10, COUNT(manager_id) = 7, COUNT(DISTINCT department_id) = unique non-NULL count. This distinction is asked in almost every SQL interview! 🚀"
     ]
   },
   "Basics-010": {
     "code_id": "Basics-010",
     "numeric_id": 10,
-    "title": "Use LIKE",
-    "code": "SELECT * FROM employees WHERE first_name LIKE 'J%';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use LIKE.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Maximum Value (MAX())",
+    "code": "SELECT MAX(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (Can be optimized using indexes depending on database)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "MAX() is an aggregate function that compares every value in a column and returns only the single highest value. NULL values are automatically ignored.",
+    "mentalModel": "Employees Salaries ──► [50000, 65000, 72000, 85000, 120000, 78000] ──► MAX() Competition Judge ──► Single Winner: 120000.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE first_name LIKE 'J%';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL to retrieve data."
+      },
+      {
+        "line": "MAX(column_name)",
+        "explanation": "MAX() is an aggregate function that returns the largest value from a column (e.g., MAX(salary) returns highest salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should search (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding MAX()",
+        "explanation": "Compares every value in the column and returns strictly one value. NULL values are ignored by MAX()."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: MAX(salary) ── Compare all salary values.\nStep 4: Keep the highest value.\nStep 5: Return one single result."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT MAX(salary)\nFROM employees;\n```\n\nMethod 2 (Using ORDER BY):\n```sql\nSELECT salary\nFROM employees\nORDER BY salary DESC\nLIMIT 1;\n```\nReturns the same highest value, though MAX() is simpler and more readable.\n\nMethod 3 (Highest Employee Details):\n```sql\nSELECT *\nFROM employees\nORDER BY salary DESC\nLIMIT 1;\n```\nUseful when you need the entire employee record, not just the salary."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nMAX()\n  │\n  ▼\nCompare Values\n  │\n  ▼\nFind Highest\n  │\n  ▼\nReturn One Value\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT MAX(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT MAX(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing MAX() with COUNT(): SELECT COUNT(salary) FROM employees; counts rows; it does NOT return the highest salary.",
+      "❌ 2. Using MAX(*): SELECT MAX(*) FROM employees; ── Error: MAX() operates on a single column, never *.",
+      "❌ 3. Forgetting Parentheses: SELECT MAX FROM employees; ── Error: Function parentheses are required: SELECT MAX(salary).",
+      "❌ 4. Expecting MAX() to Return the Whole Row: SELECT MAX(salary) FROM employees; returns 120000.0, NOT the employee name or department. Use ORDER BY DESC LIMIT 1 if full row is needed.",
+      "❌ 5. Thinking MAX() Sorts the Table: MAX() only scans to find the highest value; it does NOT sort all rows."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "MAX() is an aggregate function that returns the largest value from a column. It does not return all rows or sort the table. It returns only one value (unless used with GROUP BY).",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is MAX()? An aggregate function that returns the highest value.",
+      "Q2. Can MAX() work with dates? Yes, it returns the latest date.",
+      "Q3. Can MAX() work with text? Yes, it returns the highest value according to alphabetical order.",
+      "Q4. Does MAX() ignore NULL values? Yes, NULL values are ignored.",
+      "Q5. Can MAX() be used with GROUP BY? Yes (e.g. SELECT department_id, MAX(salary) FROM employees GROUP BY department_id;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between MAX() and ORDER BY DESC LIMIT 1?\n• Does MAX() ignore NULL values?\n• Can MAX() work with dates or strings?\n• Can MAX() be combined with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT MAX(salary) FROM employees; (✔ Easy to read, ✔ Query engine optimized, ✔ Preferred in interviews)\n• Large Tables: If the column is indexed with a B-Tree, the database engine can jump straight to the maximum value in O(log N) or O(1) time!",
+      "🌍 Real-World Use Cases:\n• ✅ Highest salary: SELECT MAX(salary) FROM employees;\n• ✅ Highest exam marks: SELECT MAX(marks) FROM students;\n• ✅ Most expensive product: SELECT MAX(price) FROM products;\n• ✅ Latest order date: SELECT MAX(order_date) FROM orders;",
+      "🎓 Company Interview Tip: 'What is the difference between MAX() and ORDER BY DESC LIMIT 1?' ── MAX() returns only the highest value from a column; ORDER BY DESC LIMIT 1 returns the first row after sorting, which can include all column values if SELECT * is used.",
+      "🔥 Pro Tip (Interview Trick Question): Suppose salaries are [50000, 70000, NULL, 90000, 65000]. Query: SELECT MAX(salary) FROM employees; ➔ Answer: 90000. NULL values are completely ignored by MAX()!"
     ]
   },
   "Basics-011": {
     "code_id": "Basics-011",
     "numeric_id": 11,
-    "title": "Find records starting with a letter",
-    "code": "SELECT * FROM employees WHERE first_name LIKE 'A%';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find records starting with a letter.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Minimum Value (MIN())",
+    "code": "SELECT MIN(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (Can be optimized using indexes depending on database)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "MIN() is an aggregate function that compares every value in a column and returns only the single smallest value. NULL values are automatically ignored.",
+    "mentalModel": "Employees Salaries ──► [91000, 85000, 72000, 65000, 78000, 55000] ──► MIN() Search ──► Single Smallest: 55000.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE first_name LIKE 'A%';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL that you want to retrieve data."
+      },
+      {
+        "line": "MIN(column_name)",
+        "explanation": "MIN() is an aggregate function that returns the smallest value from a column (e.g., MIN(salary) returns lowest salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should search (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding MIN()",
+        "explanation": "Compares every value in the column and returns strictly one value. NULL values are ignored by MIN()."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: MIN(salary) ── Compare all salary values.\nStep 4: Keep the smallest value.\nStep 5: Return one single result."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT MIN(salary)\nFROM employees;\n```\n\nMethod 2 (Using ORDER BY):\n```sql\nSELECT salary\nFROM employees\nORDER BY salary ASC\nLIMIT 1;\n```\nReturns the same smallest value, though MIN() is simpler and easier to understand.\n\nMethod 3 (Lowest Employee Details):\n```sql\nSELECT *\nFROM employees\nORDER BY salary ASC\nLIMIT 1;\n```\nUseful when you need the entire employee record, not just the salary."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nMIN()\n  │\n  ▼\nCompare Values\n  │\n  ▼\nFind Smallest\n  │\n  ▼\nReturn One Value\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT MIN(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT MIN(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing MIN() with MAX(): SELECT MAX(salary) FROM employees; returns highest salary, not the lowest.",
+      "❌ 2. Using MIN(*): SELECT MIN(*) FROM employees; ── Error: MIN() works on one column, not *.",
+      "❌ 3. Forgetting Parentheses: SELECT MIN FROM employees; ── Error: SQL functions require parentheses: SELECT MIN(salary).",
+      "❌ 4. Expecting MIN() to Return the Whole Row: SELECT MIN(salary) FROM employees; returns 55000.0, NOT the employee details. Use ORDER BY ASC LIMIT 1 for full row details.",
+      "❌ 5. Thinking MIN() Sorts the Table: MIN() only finds the smallest value; it does NOT sort every row."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "MIN() is an aggregate function that returns the smallest value from a column. It returns only one value and does not sort the entire table or return complete rows.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is MIN()? An aggregate function that returns the smallest value.",
+      "Q2. Does MIN() ignore NULL values? Yes, NULL values are ignored.",
+      "Q3. Can MIN() work with dates? Yes, it returns the earliest (oldest) date.",
+      "Q4. Can MIN() work with text? Yes, it returns the first value alphabetically.",
+      "Q5. Can MIN() be used with GROUP BY? Yes (e.g. SELECT department_id, MIN(salary) FROM employees GROUP BY department_id;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between MIN() and ORDER BY ASC LIMIT 1?\n• Does MIN() ignore NULL values?\n• Can MIN() work with dates or strings?\n• Can MIN() be combined with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT MIN(salary) FROM employees; (✔ Simple, ✔ Fast, ✔ Preferred in interviews)\n• Large Tables: If the column is indexed with a B-Tree, many databases can jump directly to the first leaf node in O(log N) or O(1) time!",
+      "🌍 Real-World Use Cases:\n• ✅ Lowest salary: SELECT MIN(salary) FROM employees;\n• ✅ Lowest exam marks: SELECT MIN(marks) FROM students;\n• ✅ Cheapest product: SELECT MIN(price) FROM products;\n• ✅ Earliest joining date: SELECT MIN(hire_date) FROM employees;",
+      "🎓 Company Interview Tip: 'What is the difference between MIN() and ORDER BY ASC LIMIT 1?' ── MIN() returns only the smallest value from a column; ORDER BY ASC LIMIT 1 returns the first row after sorting, which can include all column values if SELECT * is used.",
+      "🔥 Pro Tip (Interview Trick Question): Suppose salaries are [50000, 70000, NULL, 90000, 65000]. Query: SELECT MIN(salary) FROM employees; ➔ Answer: 50000. NULL values are completely ignored by MIN()!"
     ]
   },
   "Basics-012": {
     "code_id": "Basics-012",
     "numeric_id": 12,
-    "title": "Find records ending with a letter",
-    "code": "SELECT * FROM employees WHERE last_name LIKE '%n';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find records ending with a letter.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Total Sum (SUM())",
+    "code": "SELECT SUM(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (May be optimized depending on indexes and database engine)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "SUM() is an aggregate function that adds all numeric values in a column and returns a single total. NULL values are automatically ignored.",
+    "mentalModel": "Employees Salaries ──► [50000 + 65000 + 70000 + 85000 + 90000 ...] ──► SUM() Running Accumulator ──► Total Sum: 665000.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE last_name LIKE '%n';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL to retrieve data."
+      },
+      {
+        "line": "SUM(column_name)",
+        "explanation": "SUM() is an aggregate function that adds all numeric values from a column (e.g. SUM(salary) returns total payroll expenditure)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies the table to read (e.g. FROM employees; FROM students; FROM orders;)."
+      },
+      {
+        "line": "📚 Understanding SUM()",
+        "explanation": "Adds every numeric value in the column and returns strictly one total value. NULL values are ignored by SUM()."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: SUM(salary) ── Add every salary.\nStep 4: Return one value."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT SUM(salary)\nFROM employees;\n```\n\nMethod 2 (Sum After Filtering):\n```sql\nSELECT SUM(salary)\nFROM employees\nWHERE department_id = 101;\n```\nReturns total salary only for Department 101.\n\nMethod 3 (Sum Using Alias):\n```sql\nSELECT SUM(salary) AS total_salary\nFROM employees;\n```\nProduces a more readable column header."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSUM()\n  │\n  ▼\nRead Numeric Values\n  │\n  ▼\nAdd Every Value\n  │\n  ▼\nReturn Total Sum\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT SUM(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT SUM(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using SUM(*): SELECT SUM(*) FROM employees; ── Error: SUM() works on one numeric column, never wildcard *.",
+      "❌ 2. Using SUM() on Text: SELECT SUM(first_name) FROM employees; ── Error: Text/string values cannot be added mathematically.",
+      "❌ 3. Forgetting Parentheses: SELECT SUM FROM employees; ── Error: SQL functions require parentheses: SELECT SUM(salary).",
+      "❌ 4. Confusing SUM() with COUNT(): COUNT(salary) counts rows (e.g. 10); SUM(salary) adds numeric values (e.g. 665000.0).",
+      "❌ 5. Expecting SUM() to Return Individual Rows: SELECT SUM(salary) FROM employees; returns one total number, not individual employee records."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "SUM() is an aggregate function that adds all numeric values in a column and returns a single total. NULL values are ignored.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does SUM() do? Adds all numeric values in a column.",
+      "Q2. Does SUM() ignore NULL values? Yes, NULL values are ignored.",
+      "Q3. Can SUM() work with text columns? No, only numeric columns.",
+      "Q4. Can SUM() be used with GROUP BY? Yes (e.g. SELECT department_id, SUM(salary) FROM employees GROUP BY department_id;).",
+      "Q5. What happens if all values are NULL? Most databases return NULL."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between SUM() and COUNT()?\n• Does SUM() ignore NULL values?\n• Can SUM() work on VARCHAR columns?\n• Can SUM() be combined with GROUP BY?\n• Can SUM() be used with WHERE?",
+      "⚡ Performance Notes:\n• Recommended: SELECT SUM(salary) FROM employees; (✔ Database optimized, ✔ Easy to read, ✔ Most commonly used)\n• Large Tables: Indexes help evaluate WHERE filters first before aggregation, reducing records passed to the summation accumulator.",
+      "🌍 Real-World Use Cases:\n• ✅ Total company salary: SELECT SUM(salary) FROM employees;\n• ✅ Total sales amount: SELECT SUM(amount) FROM orders;\n• ✅ Total student marks: SELECT SUM(marks) FROM students;\n• ✅ Total stock quantity: SELECT SUM(quantity) FROM products;",
+      "🎓 Company Interview Tip: 'What is the difference between COUNT() and SUM()?' ── COUNT() counts the number of rows; SUM() adds the values of a numeric column.",
+      "🔥 Pro Tip (Interview Trick Question): Salaries [50000, 70000, NULL, 90000, 65000]. Query: SELECT SUM(salary) FROM employees; ➔ Answer: 275000 (50000 + 70000 + 90000 + 65000 = 275000). NULL values are ignored by SUM()! 🚀"
     ]
   },
   "Basics-013": {
     "code_id": "Basics-013",
     "numeric_id": 13,
-    "title": "Find records containing a word",
-    "code": "SELECT * FROM products WHERE product_name LIKE '%Laptop%';",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find records containing a word.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Calculate the Average (AVG())",
+    "code": "SELECT AVG(salary)\nFROM employees;",
+    "timeComplexity": "O(N) (Without Index) / O(log N) (May be optimized depending on indexes and database engine)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "AVG() is an aggregate function that calculates the arithmetic mean of numeric values. It automatically ignores NULL values and returns a single average.",
+    "mentalModel": "Employees Salaries ──► Sum all non-NULL salaries ──► Count valid rows ──► [SUM ÷ COUNT] ──► Average: 83125.0",
     "lineByLine": [
       {
-        "line": "SELECT * FROM products WHERE product_name LIKE '%Laptop%';",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT",
+        "explanation": "Tells SQL that you want to retrieve data."
+      },
+      {
+        "line": "AVG(column_name)",
+        "explanation": "AVG() is an aggregate function that calculates the arithmetic mean of numeric values (e.g. AVG(salary) returns average employee salary)."
+      },
+      {
+        "line": "FROM table_name",
+        "explanation": "Specifies which table SQL should read (e.g. FROM employees; FROM students; FROM products;)."
+      },
+      {
+        "line": "📚 Understanding AVG()",
+        "explanation": "Calculates (SUM ÷ COUNT) of all non-NULL values and returns strictly one value. NULL values are excluded from both SUM and COUNT."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: AVG(salary) ── Add non-NULL salaries.\nStep 4: Count non-NULL rows.\nStep 5: Divide SUM by COUNT.\nStep 6: Return single average value."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT AVG(salary)\nFROM employees;\n```\n\nMethod 2 (Calculate Average Manually):\n```sql\nSELECT SUM(salary) / COUNT(salary)\nFROM employees;\n```\nProduces the same result and illustrates how AVG() functions internally.\n\nMethod 3 (Average After Filtering):\n```sql\nSELECT AVG(salary)\nFROM employees\nWHERE department_id = 101;\n```\nCalculates the average salary only for Department 101."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nAVG()\n  │\n  ▼\nRead Numeric Values\n  │\n  ▼\nCalculate SUM\n  │\n  ▼\nCount Values\n  │\n  ▼\nSUM ÷ COUNT\n  │\n  ▼\nReturn Average\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT AVG(column_name)\nFROM table_name;\n```\n\nProblem Solution:\n```sql\nSELECT AVG(salary)\nFROM employees;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using AVG(*): SELECT AVG(*) FROM employees; ── Error: AVG() works on one numeric column, never wildcard *.",
+      "❌ 2. Using AVG() on Text: SELECT AVG(first_name) FROM employees; ── Error: Text/string values cannot be averaged mathematically.",
+      "❌ 3. Forgetting Parentheses: SELECT AVG FROM employees; ── Error: SQL functions require parentheses: SELECT AVG(salary).",
+      "❌ 4. Confusing AVG() with SUM(): SUM adds all values together; AVG divides that sum by the count of values.",
+      "❌ 5. Assuming NULL Values Are Included in Denominator: NULL values are completely excluded from both the numerator and the denominator (divided by non-NULL count, not total rows)."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "AVG() is an aggregate function that calculates the average of numeric values. It automatically ignores NULL values and returns one value.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does AVG() do? Calculates the arithmetic mean.",
+      "Q2. Does AVG() ignore NULL values? Yes, NULL values are ignored.",
+      "Q3. Can AVG() work on text columns? No, only numeric columns.",
+      "Q4. Can AVG() be used with GROUP BY? Yes (e.g. SELECT department_id, AVG(salary) FROM employees GROUP BY department_id;).",
+      "Q5. How is AVG() calculated internally? Using SUM(column) / COUNT(column)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between AVG() and SUM()?\n• Does AVG() count NULL values in the denominator?\n• Can AVG() work on VARCHAR columns?\n• How is AVG() calculated internally?\n• Can AVG() be combined with GROUP BY?",
+      "⚡ Performance Notes:\n• Recommended: SELECT AVG(salary) FROM employees; (✔ Database optimized, ✔ Easy to read, ✔ Preferred over manual calculation)\n• Large Tables: Scans matching rows to accumulate sum and count; indexes optimize pre-filtering with WHERE before calculation.",
+      "🌍 Real-World Use Cases:\n• ✅ Average employee salary: SELECT AVG(salary) FROM employees;\n• ✅ Average student marks: SELECT AVG(marks) FROM students;\n• ✅ Average product price: SELECT AVG(price) FROM products;\n• ✅ Average monthly sales order amount: SELECT AVG(amount) FROM orders;",
+      "🎓 Company Interview Tip: 'How does SQL calculate AVG()?' ── AVG(column) = SUM(column) / COUNT(column). Crucially, only non-NULL values are included in both the sum and the row count divisor.",
+      "🔥 Pro Tip (Interview Trick Question): Suppose salaries are [50000, 70000, NULL, 90000, 60000]. Query: SELECT AVG(salary) FROM employees; ➔ Answer: (50000 + 70000 + 90000 + 60000) / 4 = 67500. It divides by 4, NOT 5, because NULLs are excluded from the denominator! 🚀"
     ]
   },
   "Basics-014": {
     "code_id": "Basics-014",
     "numeric_id": 14,
-    "title": "Use IS NULL",
-    "code": "SELECT * FROM employees WHERE manager_id IS NULL;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use IS NULL.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Group Data Using GROUP BY",
+    "code": "SELECT department_id,\n       COUNT(*)\nFROM employees\nGROUP BY department_id;",
+    "timeComplexity": "O(N) (Without Index) / O(N log N) (Database may sort/hash while grouping)",
+    "spaceComplexity": "O(N) (Depends on number of unique groups)",
+    "simplestExplanation": "GROUP BY partitions rows having the same values into distinct groups so aggregate functions (COUNT, SUM, AVG, MAX, MIN) run separately for each group.",
+    "mentalModel": "Employees ──► Partition by department_id [101: 3, 102: 2, 103: 1, 104: 1, 105: 1] ──► Execute COUNT(*) per partition ──► Output 1 Row Per Group",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE manager_id IS NULL;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT department_id, COUNT(*)",
+        "explanation": "Specifies what to project: the grouping key (department_id) and the row count for each group."
+      },
+      {
+        "line": "COUNT(*)",
+        "explanation": "Aggregate function that counts records inside each respective departmental group rather than across the whole table."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Identifies the source dataset to scan."
+      },
+      {
+        "line": "GROUP BY department_id;",
+        "explanation": "Instructs SQL to place employees with matching department_id values into the same group. Aggregations run independently for each group."
+      },
+      {
+        "line": "📚 Understanding GROUP BY",
+        "explanation": "Think of GROUP BY like sorting students into classrooms. Students in the same class stand together, and then the teacher counts or evaluates students in each classroom."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: Read every row.\nStep 3: GROUP BY department_id ── Create partitioned groups.\nStep 4: COUNT(*) ── Calculate count inside each group.\nStep 5: Return one summarized row per group."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT department_id, COUNT(*)\nFROM employees\nGROUP BY department_id;\n```\n\nMethod 2 (Average Salary per Department):\n```sql\nSELECT department_id, AVG(salary)\nFROM employees\nGROUP BY department_id;\n```\n\nMethod 3 (Max Salary per Department):\n```sql\nSELECT department_id, MAX(salary)\nFROM employees\nGROUP BY department_id;\n```\n\nMethod 4 (Total Salary per Department):\n```sql\nSELECT department_id, SUM(salary)\nFROM employees\nGROUP BY department_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nGROUP BY\n   │\n   ▼\nCreate Groups\n   │\n   ▼\nRun Aggregate Function\n   │\n   ▼\nReturn One Row Per Group\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name, aggregate_function(column_name)\nFROM table_name\nGROUP BY column_name;\n```\n\nProblem Solution:\n```sql\nSELECT department_id, COUNT(*)\nFROM employees\nGROUP BY department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting GROUP BY: SELECT department_id, COUNT(*) FROM employees; ── Syntax error because department_id is neither aggregated nor grouped.",
+      "❌ 2. Selecting Non-Grouped Columns: SELECT department_id, first_name, COUNT(*) FROM employees GROUP BY department_id; ── Error: first_name is not in GROUP BY.",
+      "❌ 3. Thinking GROUP BY Sorts Data: GROUP BY does NOT guarantee sorting order. Use ORDER BY if a specific sort sequence is required.",
+      "❌ 4. Confusing WHERE with GROUP BY: WHERE filters individual rows before grouping; GROUP BY collects rows into summary buckets.",
+      "❌ 5. Misunderstanding Aggregation Scope: SUM(salary) with GROUP BY returns total salary per group, not the grand total for the whole table."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "GROUP BY groups rows with the same values together so aggregate functions (COUNT, SUM, AVG, MAX, MIN) can be calculated separately for each group.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does GROUP BY do? Combines rows with identical values into groups.",
+      "Q2. Which functions are commonly used with GROUP BY? COUNT(), SUM(), AVG(), MAX(), MIN().",
+      "Q3. Can GROUP BY be used without aggregate functions? Yes, but it acts similarly to DISTINCT.",
+      "Q4. Does GROUP BY sort the output? No, an explicit ORDER BY clause is required.",
+      "Q5. Can GROUP BY use multiple columns? Yes (e.g. GROUP BY department_id, city;)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between GROUP BY and ORDER BY?\n• Why is GROUP BY used?\n• Can GROUP BY have multiple columns?\n• Which aggregate functions work with GROUP BY?\n• Can GROUP BY be used without COUNT()?",
+      "⚡ Performance Notes:\n• Recommended: SELECT department_id, COUNT(*) FROM employees GROUP BY department_id; (✔ Efficient, ✔ Database optimized, ✔ Most common interview solution)\n• Large Tables: Indexes on grouped columns allow the database engine to use Stream Aggregate / Index Grouping rather than Hash Aggregate or Sort Aggregate.",
+      "🌍 Real-World Use Cases:\n• ✅ Count employees per department: SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;\n• ✅ Total sales by city: SELECT city, SUM(amount) FROM orders GROUP BY city;\n• ✅ Average marks per class: SELECT class, AVG(marks) FROM students GROUP BY class;\n• ✅ Highest salary per department: SELECT department_id, MAX(salary) FROM employees GROUP BY department_id;",
+      "🎓 Company Interview Tip: 'What is the difference between GROUP BY and ORDER BY?' ── GROUP BY collapses rows with identical values into groups for aggregation; ORDER BY purely sorts the final result set.",
+      "🔥 Pro Tip (Interview Trick Question): If a query selects department_id and COUNT(*) with GROUP BY department_id, SQL returns ONE row per department (e.g., HR: 3, IT: 2), NOT one row per individual employee! 🚀"
     ]
   },
   "Basics-015": {
     "code_id": "Basics-015",
     "numeric_id": 15,
-    "title": "Use IS NOT NULL",
-    "code": "SELECT * FROM employees WHERE manager_id IS NOT NULL;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Use IS NOT NULL.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Groups Using HAVING",
+    "code": "SELECT department_id,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;",
+    "timeComplexity": "O(N) (Without Index) / O(N log N) (Grouping + Filtering depending on database engine)",
+    "spaceComplexity": "O(N) (Depends on number of groups)",
+    "simplestExplanation": "HAVING filters summarized groups after GROUP BY evaluates aggregate calculations, discarding groups that do not satisfy the condition.",
+    "mentalModel": "Employees ──► GROUP BY department_id [101: 3, 102: 2, 103: 1, 104: 1, 105: 1] ──► Security Guard HAVING COUNT(*) > 2 ──► Keep Only [101: 3] ──► Output Filtered Groups",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees WHERE manager_id IS NOT NULL;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT department_id, COUNT(*) AS total_employees",
+        "explanation": "Selects the grouping key (department_id) and the aliased count of employees."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Identifies the source dataset to read."
+      },
+      {
+        "line": "GROUP BY department_id",
+        "explanation": "Creates one summary group for each distinct department_id."
+      },
+      {
+        "line": "HAVING COUNT(*) > 2;",
+        "explanation": "Post-aggregation filter: evaluates the aggregate count of each group and retains only departments with more than 2 employees."
+      },
+      {
+        "line": "📚 Understanding HAVING",
+        "explanation": "Think of HAVING as a security guard standing after the groups are created. Only groups satisfying the aggregate predicate are allowed through to the final result."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Locate table.\nStep 2: GROUP BY department_id ── Create partitioned groups.\nStep 3: COUNT(*) ── Calculate row count for each group.\nStep 4: HAVING COUNT(*) > 2 ── Remove groups that do not satisfy condition.\nStep 5: Display surviving groups."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended):\n```sql\nSELECT department_id,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;\n```\n\nMethod 2 (Departments with High Average Salary):\n```sql\nSELECT department_id,\n       AVG(salary) AS average_salary\nFROM employees\nGROUP BY department_id\nHAVING AVG(salary) > 70000;\n```\n\nMethod 3 (Departments with Large Total Salary):\n```sql\nSELECT department_id,\n       SUM(salary) AS total_salary\nFROM employees\nGROUP BY department_id\nHAVING SUM(salary) > 300000;\n```\n\nMethod 4 (Pre-Filter Rows Then Filter Groups):\n```sql\nSELECT department_id,\n       COUNT(*) AS total_employees\nFROM employees\nWHERE salary > 30000\nGROUP BY department_id\nHAVING COUNT(*) > 2;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nFROM\n  │\n  ▼\nWHERE (Filters Rows)\n  │\n  ▼\nGROUP BY (Creates Groups)\n  │\n  ▼\nHAVING (Filters Groups)\n  │\n  ▼\nSELECT\n  │\n  ▼\nORDER BY\n  │\n  ▼\nLIMIT\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name, aggregate_function(column_name)\nFROM table_name\nGROUP BY column_name\nHAVING aggregate_function(column_name) condition;\n```\n\nProblem Solution:\n```sql\nSELECT department_id, COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using WHERE with Aggregate Functions: SELECT department_id FROM employees WHERE COUNT(*) > 2 GROUP BY department_id; ── Error: WHERE cannot use aggregates.",
+      "❌ 2. Forgetting GROUP BY: SELECT department_id FROM employees HAVING COUNT(*) > 2; ── Invalid or non-standard without grouping dimension.",
+      "❌ 3. Confusing WHERE and HAVING: WHERE filters individual row tuples before grouping; HAVING filters collapsed groups after aggregation.",
+      "❌ 4. Thinking HAVING Runs Before GROUP BY: HAVING always runs after GROUP BY and aggregate evaluation.",
+      "❌ 5. Using HAVING for Non-Aggregate Row Filters: SELECT * FROM employees HAVING salary > 50000; ── Inefficient/incorrect; use WHERE for row filtering."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "WHERE filters rows before grouping. HAVING filters groups after grouping. Aggregate functions such as COUNT(), SUM(), AVG(), MIN(), and MAX() are typically used with HAVING.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is HAVING? A clause that filters grouped records after GROUP BY.",
+      "Q2. Difference between WHERE and HAVING? WHERE filters individual rows before grouping; HAVING filters groups after aggregation.",
+      "Q3. Can HAVING be used without GROUP BY? In some SQL dialects, treating the whole table as a single group.",
+      "Q4. Which functions are commonly used with HAVING? COUNT(), SUM(), AVG(), MAX(), MIN().",
+      "Q5. Which executes first: WHERE, GROUP BY, or HAVING? Logical order is WHERE ──► GROUP BY ──► HAVING."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between WHERE and HAVING?\n• Can HAVING use aggregate functions? (Yes, WHERE cannot)\n• Which clause executes first between WHERE, GROUP BY, and HAVING?\n• Can HAVING work without GROUP BY?\n• Can WHERE use COUNT()?",
+      "⚡ Performance Notes:\n• Recommended: Filter row-level conditions with WHERE first before GROUP BY, then apply HAVING strictly for aggregate thresholds. This reduces rows entering the grouping phase.",
+      "🌍 Real-World Use Cases:\n• ✅ Departments with more than 10 employees: SELECT department_id, COUNT(*) FROM employees GROUP BY department_id HAVING COUNT(*) > 10;\n• ✅ Cities with total sales > 5,00,000: SELECT city, SUM(amount) FROM orders GROUP BY city HAVING SUM(amount) > 500000;\n• ✅ Classes with average marks > 75: SELECT class, AVG(marks) FROM students GROUP BY class HAVING AVG(marks) > 75;",
+      "🎓 Company Interview Tip: 'What is the difference between WHERE and HAVING?' ── WHERE filters rows before grouping and cannot contain aggregate functions; HAVING filters groups after aggregation and can evaluate aggregate functions.",
+      "🔥 Pro Tip (Interview Trick Question): Table with HR (3 employees), IT (2 employees), Sales (1 employee). Query with HAVING COUNT(*) >= 2 returns HR (3) and IT (2). Sales (1) is completely omitted because its group count is less than 2! 🚀"
     ]
   },
   "Basics-016": {
     "code_id": "Basics-016",
     "numeric_id": 16,
-    "title": "Sort using ORDER BY ASC",
-    "code": "SELECT * FROM employees ORDER BY salary ASC;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Sort using ORDER BY ASC.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve Matching Records Using INNER JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(1) (Streaming) / O(N) (Hash Join / Buffer depending on execution plan)",
+    "simplestExplanation": "INNER JOIN combines rows from two tables where the join condition matches in both tables, discarding any non-matching rows.",
+    "mentalModel": "Employees ──► [Intersection ∩ ON employees.department_id = departments.department_id] ◄── Departments ──► Only Matching Records Survived",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees ORDER BY salary ASC;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Specifies projecting the employee's first_name and department's department_name with qualified table prefixes to avoid ambiguity."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Identifies employees as the primary (left) table."
+      },
+      {
+        "line": "INNER JOIN departments",
+        "explanation": "Connects the departments table to retrieve matching records."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "The matching condition: pairs every employee with the department having the identical department_id."
+      },
+      {
+        "line": "📚 Understanding INNER JOIN",
+        "explanation": "Think of INNER JOIN like comparing two friend lists. Only people whose IDs match on both sides are included in the final list. Any employee without a valid department or any department without an employee is excluded."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read rows from employees.\nStep 2: INNER JOIN departments ── Read rows from departments.\nStep 3: ON employees.department_id = departments.department_id ── Compare matching keys.\nStep 4: Keep only matching rows across both tables.\nStep 5: Return selected columns."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Explicit Table Names):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred for Complex Queries):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (Multi-Table JOIN):\n```sql\nSELECT e.first_name, d.department_name, l.city\nFROM employees e\nINNER JOIN departments d ON e.department_id = d.department_id\nINNER JOIN locations l ON d.location_id = l.location_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nEmployees Table\n      │\n      ▼\nINNER JOIN\n      │\nDepartments Table\n      │\n      ▼\nCompare Matching IDs\n      │\n      ▼\nKeep Only Matches\n      │\n      ▼\nDisplay Result\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nINNER JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting the ON Clause: SELECT * FROM employees INNER JOIN departments; ── Produces a Cartesian product (Cross Join) matching every row to every row.",
+      "❌ 2. Joining on the Wrong Column: ON employees.employee_id = departments.department_id; ── Logical error comparing employee primary key to department primary key.",
+      "❌ 3. Selecting Ambiguous Columns: SELECT department_id FROM employees INNER JOIN departments ON ... ── Ambiguity error because department_id exists in both tables; qualify with employees.department_id.",
+      "❌ 4. Expecting INNER JOIN to Return Every Row: Unmatched rows from either table are omitted.",
+      "❌ 5. Confusing INNER JOIN with LEFT JOIN: INNER JOIN returns only the intersection (common matches); LEFT JOIN preserves all left table records regardless of matches."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "INNER JOIN returns only the rows where the join condition matches in both tables. Unmatched rows from either table are excluded.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is INNER JOIN? Combines rows from two tables using a matching key condition.",
+      "Q2. What happens to unmatched rows? They are completely ignored and omitted from output.",
+      "Q3. Why is the ON clause required? It specifies the predicate linking foreign and primary keys.",
+      "Q4. Can INNER JOIN join more than two tables? Yes, chains of INNER JOINs can link arbitrary numbers of tables.",
+      "Q5. Is JOIN the same as INNER JOIN? Yes, in SQL JOIN defaults to INNER JOIN."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between INNER JOIN and LEFT JOIN?\n• What happens to unmatched rows in an INNER JOIN?\n• Why do we use the ON clause?\n• Can we join more than two tables in a single query?\n• Is JOIN the exact same as INNER JOIN?",
+      "⚡ Performance Notes:\n• Recommended: Index foreign key columns (employees.department_id) to enable Index Nested Loop Join or Hash Join instead of full table scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Employees with departments: SELECT e.first_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;\n• ✅ Students with courses: SELECT s.student_name, c.course_name FROM students s INNER JOIN courses c ON s.course_id = c.course_id;\n• ✅ Orders with customers: SELECT c.customer_name, o.order_id FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id;",
+      "🎓 Company Interview Tip: 'What is the difference between INNER JOIN and LEFT JOIN?' ── INNER JOIN returns ONLY matching records between both tables. LEFT JOIN returns ALL records from the left table, padding right-side columns with NULL when no match exists.",
+      "🔥 Pro Tip (Interview Trick Question): If an employee has department_id 105 but departments table only has 101, 102, 103, 104, that employee disappears in an INNER JOIN because there is no matching record! 🚀"
     ]
   },
   "Basics-017": {
     "code_id": "Basics-017",
     "numeric_id": 17,
-    "title": "Sort using ORDER BY DESC",
-    "code": "SELECT * FROM employees ORDER BY salary DESC;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Sort using ORDER BY DESC.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve All Records from the Left Table Using LEFT JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(1) (Streaming) / O(N) (Hash Join / Buffer depending on execution plan)",
+    "simplestExplanation": "LEFT JOIN retrieves every record from the left table; when a corresponding record exists in the right table, it attaches it, and when no match exists, it fills the right table columns with NULL.",
+    "mentalModel": "Left Team (All Invited to Party) ──► Match Found? [Yes ──► Attach Dept Data, No ──► Attach NULL] ──► Output All Left Records Preserved",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees ORDER BY salary DESC;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Selects the employee's first_name and department_name with explicit table qualification."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Designates employees as the primary (left) table where every row is guaranteed to be returned."
+      },
+      {
+        "line": "LEFT JOIN departments",
+        "explanation": "Outer-joins the departments table to bring in associated department information."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "Compares department_id across both tables. If matched, displays department name; otherwise, displays NULL."
+      },
+      {
+        "line": "📚 Understanding LEFT JOIN",
+        "explanation": "Think of LEFT JOIN like inviting everyone from the left team to a party. If someone has a friend on the right team, they come together. If not, they still enter the party alone with NULL on their guest ticket."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read all rows from left table.\nStep 2: LEFT JOIN departments ── Read right table.\nStep 3: ON employees.department_id = departments.department_id ── Compare keys.\nStep 4: If match exists, attach department data; if not, populate with NULL.\nStep 5: Return all rows from left table with projected columns."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Explicit Table Names):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred in Production):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (Find Unmatched Left Records - Left Anti-Join Pattern):\n```sql\nSELECT e.first_name\nFROM employees e\nLEFT JOIN departments d ON e.department_id = d.department_id\nWHERE d.department_id IS NULL;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nLEFT TABLE\n    │\n    ▼\nLEFT JOIN\n    │\nRIGHT TABLE\n    │\n    ▼\nMatch Found?\n ┌──┴────────┐\n │           │\nYes         No\n │           │\n ▼           ▼\nData       NULL\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nLEFT JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing LEFT JOIN with INNER JOIN: INNER JOIN eliminates unmatched rows; LEFT JOIN always retains all left-table rows.",
+      "❌ 2. Forgetting the ON Clause: Missing ON clause leads to syntax errors or accidental Cartesian products.",
+      "❌ 3. Joining on Incompatible Columns: Linking employee_id with department_id instead of foreign key department_id.",
+      "❌ 4. Thinking NULL Means an Error: NULL in a LEFT JOIN simply indicates 'no matching row exists in right table' - this is expected behavior.",
+      "❌ 5. Filtering Right Table in WHERE (Accidental INNER JOIN Conversion): Placing WHERE departments.department_name = 'HR' silently converts the LEFT JOIN into an INNER JOIN because NULLs are filtered out."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LEFT JOIN returns every row from the left table. If a matching row exists in the right table, it is returned. Otherwise, SQL fills the right-side columns with NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is LEFT JOIN? Returns all rows from left table, along with matching rows from right table.",
+      "Q2. What happens when there is no match? SQL populates right table columns with NULL values.",
+      "Q3. Which table is always preserved? The left table (specified directly after FROM).",
+      "Q4. Can LEFT JOIN return unmatched rows? Yes, preserving unmatched left rows is its core purpose.",
+      "Q5. Is LEFT OUTER JOIN different? No, LEFT JOIN and LEFT OUTER JOIN are exact synonyms in SQL."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between INNER JOIN and LEFT JOIN?\n• What happens when there is no matching record in the right table?\n• Why are NULL values returned in a LEFT JOIN?\n• Which table is always preserved in a LEFT JOIN?\n• Is LEFT JOIN identical to LEFT OUTER JOIN?",
+      "⚡ Performance Notes:\n• Recommended: Index the right table's foreign key column so the optimizer can perform quick index lookups for each row of the preserved left table.",
+      "🌍 Real-World Use Cases:\n• ✅ Show every employee, even if unassigned to a department: SELECT e.first_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id;\n• ✅ Show every customer, even if they have placed no orders: SELECT c.customer_name, o.order_id FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id;\n• ✅ Show every student, even if they have not enrolled in courses: SELECT s.student_name, c.course_name FROM students s LEFT JOIN courses c ON s.course_id = c.course_id;",
+      "🎓 Company Interview Tip: 'What is the difference between INNER JOIN and LEFT JOIN?' ── INNER JOIN returns only matching rows and excludes non-matches; LEFT JOIN returns all rows from the left table, padding right-side columns with NULL when no match exists.",
+      "🔥 Pro Tip (Interview Trick Question): If an employee table has Bob with department_id 105, and departments table only has 101, 102, 103, 104, a LEFT JOIN still outputs Bob with department_name NULL! 🚀"
     ]
   },
   "Basics-018": {
     "code_id": "Basics-018",
     "numeric_id": 18,
-    "title": "Retrieve top N records (LIMIT/TOP)",
-    "code": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Retrieve top N records (LIMIT/TOP).",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve All Records from the Right Table Using RIGHT JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(1) (Streaming) / O(N) (Hash Join / Buffer depending on execution plan)",
+    "simplestExplanation": "RIGHT JOIN preserves all records from the right table; if an employee matches the department, employee data is attached, otherwise employee columns are filled with NULL.",
+    "mentalModel": "Right Table (All Departments Invited) ──► Match Found? [Yes ──► Attach Employee Data, No ──► Attach NULL] ──► Output All Right Records Preserved",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Selects the employee's first_name and department's department_name."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Designates employees as the left table."
+      },
+      {
+        "line": "RIGHT JOIN departments",
+        "explanation": "Right-joins the departments table. Every department row is guaranteed to appear in the output."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "Join condition matching department_id. Unmatched departments receive NULL for employee columns."
+      },
+      {
+        "line": "📚 Understanding RIGHT JOIN",
+        "explanation": "Think of RIGHT JOIN like inviting everyone from the right table (departments) to a meeting. If they have a matching record in the left table, they come together. If not, they still attend alone with NULL for the left fields."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read left table.\nStep 2: RIGHT JOIN departments ── Read right table.\nStep 3: ON employees.department_id = departments.department_id ── Match keys.\nStep 4: If no employee matches a department, populate employee columns with NULL.\nStep 5: Return all rows from right table with projected columns."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Explicit Table Names):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred in Production):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (Equivalent LEFT JOIN Swapping Table Order - Universal Dialect Pattern):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM departments d\nLEFT JOIN employees e\nON d.department_id = e.department_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nRIGHT TABLE\n    │\n    ▼\nRIGHT JOIN\n    │\nLEFT TABLE\n    │\n    ▼\nMatch Found?\n ┌──┴────────┐\n │           │\nYes         No\n │           │\n ▼           ▼\nData       NULL\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nRIGHT JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing LEFT JOIN and RIGHT JOIN: LEFT JOIN preserves the left table (FROM table); RIGHT JOIN preserves the right table (JOINed table).",
+      "❌ 2. Forgetting the ON Clause: Omitting the ON clause leads to syntax errors or accidental Cartesian products.",
+      "❌ 3. Assuming RIGHT JOIN Is Supported Universally: SQLite historically lacked RIGHT JOIN prior to version 3.39.0; you can always replace RIGHT JOIN by swapping the tables and using LEFT JOIN.",
+      "❌ 4. Thinking NULL Means an Error: NULL simply indicates there is no matching employee assigned to that department.",
+      "❌ 5. Joining on Incompatible Columns: Linking employee_id with department_id instead of common foreign key department_id."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "RIGHT JOIN returns every row from the right table. If a matching row exists in the left table, it is returned. Otherwise, SQL fills the left-side columns with NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is RIGHT JOIN? Returns all rows from the right table and matching rows from the left table.",
+      "Q2. Which table is always preserved? The right table (specified directly after RIGHT JOIN).",
+      "Q3. What happens if there is no match? The left table columns become NULL.",
+      "Q4. Can RIGHT JOIN always be replaced with LEFT JOIN? Yes, by simply reversing the order of the tables.",
+      "Q5. Is RIGHT JOIN the same as RIGHT OUTER JOIN? Yes, RIGHT JOIN and RIGHT OUTER JOIN are exact synonyms."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between LEFT JOIN and RIGHT JOIN?\n• Which table is always preserved in a RIGHT JOIN?\n• Why do NULL values appear in left table columns?\n• Does SQLite support RIGHT JOIN? (Supported in SQLite 3.39+, but historically swapped to LEFT JOIN)\n• Can a RIGHT JOIN always be written as a LEFT JOIN?",
+      "⚡ Performance Notes:\n• Recommended: Index the left table's foreign key so the query planner can execute an efficient index lookup for each right table row.",
+      "🌍 Real-World Use Cases:\n• ✅ Show every department, even if it has no employees: SELECT e.first_name, d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;\n• ✅ Show every course, even if no students are enrolled: SELECT s.student_name, c.course_name FROM students s RIGHT JOIN courses c ON s.course_id = c.course_id;\n• ✅ Show every product, even if never ordered: SELECT o.order_id, p.product_name FROM orders o RIGHT JOIN products p ON o.product_id = p.product_id;",
+      "🎓 Company Interview Tip: 'Can RIGHT JOIN always be replaced?' ── Yes! Most database style guides prefer LEFT JOIN consistently for code readability; swapping table order in FROM / LEFT JOIN yields identical results.",
+      "🔥 Pro Tip (Interview Trick Question): If departments table has Finance (104), but employees table has no employee with department_id 104, a RIGHT JOIN outputs Finance with employee first_name as NULL! 🚀"
     ]
   },
   "Basics-019": {
     "code_id": "Basics-019",
     "numeric_id": 19,
-    "title": "Remove duplicates using DISTINCT",
-    "code": "SELECT DISTINCT job_title FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Remove duplicates using DISTINCT.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Retrieve All Records from Both Tables Using FULL OUTER JOIN",
+    "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;",
+    "timeComplexity": "O(N × M) (Without Index) / O(N log M) (With Proper Indexes)",
+    "spaceComplexity": "O(N) (Buffer for matching and tracking unmatched records across both relations)",
+    "simplestExplanation": "FULL OUTER JOIN retrieves all records from both tables: matching tuples are combined, unmatched left-table records appear with NULL right columns, and unmatched right-table records appear with NULL left columns.",
+    "mentalModel": "Everyone Invited (Both Left & Right Teams) ──► Match Found? [Yes ──► Combine Pair, Left Only ──► Attach NULL Right, Right Only ──► Attach NULL Left] ──► Complete Set Union",
     "lineByLine": [
       {
-        "line": "SELECT DISTINCT job_title FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT employees.first_name, departments.department_name",
+        "explanation": "Selects employee name and department name from both tables."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Starts from the employees (left) table."
+      },
+      {
+        "line": "FULL OUTER JOIN departments",
+        "explanation": "Full outer-joins the departments (right) table, preserving 100% of rows from both sides."
+      },
+      {
+        "line": "ON employees.department_id = departments.department_id;",
+        "explanation": "Join predicate comparing department_id. Fills missing values with NULL on either side when unmatched."
+      },
+      {
+        "line": "📚 Understanding FULL OUTER JOIN",
+        "explanation": "Think of FULL OUTER JOIN as inviting everyone from both teams to a party. If two people know each other, they stand together. If someone comes alone from either team, they still stay in the result with NULL."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees ── Read left table.\nStep 2: FULL OUTER JOIN departments ── Read right table.\nStep 3: Compare department_id matching keys.\nStep 4: Combine matching rows.\nStep 5: Include unmatched rows from BOTH tables.\nStep 6: Fill missing values with NULL."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Standard Standard ANSI SQL):\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;\n```\n\nMethod 2 (Using Table Aliases - Preferred in Production):\n```sql\nSELECT e.first_name,\n       d.department_name\nFROM employees e\nFULL OUTER JOIN departments d\nON e.department_id = d.department_id;\n```\n\nMethod 3 (MySQL / Legacy SQLite Simulation using UNION):\n```sql\nSELECT employees.first_name, departments.department_name\nFROM employees\nLEFT JOIN departments ON employees.department_id = departments.department_id\nUNION\nSELECT employees.first_name, departments.department_name\nFROM departments\nLEFT JOIN employees ON departments.department_id = employees.department_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nLEFT TABLE\n    │\n    ▼\nFULL OUTER JOIN\n    │\nRIGHT TABLE\n    │\n    ▼\nMatching Rows + Left Only Rows + Right Only Rows\n    │\n    ▼\nFinal Result Set\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT table1.column_name, table2.column_name\nFROM table1\nFULL OUTER JOIN table2\nON table1.common_column = table2.common_column;\n```\n\nProblem Solution:\n```sql\nSELECT employees.first_name,\n       departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing FULL OUTER JOIN with INNER JOIN: INNER JOIN only returns matching rows; FULL OUTER JOIN returns everything from both tables.",
+      "❌ 2. Assuming MySQL Native Support: MySQL does NOT natively support FULL OUTER JOIN syntax; it must be simulated using LEFT JOIN + UNION + RIGHT JOIN (or swapped LEFT JOIN).",
+      "❌ 3. Forgetting the ON Clause: Omitting the ON clause leads to syntax errors or accidental Cartesian products.",
+      "❌ 4. Thinking NULL Means an Error: NULL values on either side simply indicate that no corresponding record exists in that table.",
+      "❌ 5. Confusing UNION with UNION ALL in Simulation: Using UNION ALL instead of UNION in the simulation duplicates the matching rows that appeared in both LEFT JOIN queries!"
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "FULL OUTER JOIN returns every row from both tables. Matching rows are combined, and unmatched rows from either table are included with NULL values for the missing side.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is FULL OUTER JOIN? Returns all rows from both tables, matching pairs where available and NULL for missing sides.",
+      "Q2. What happens to unmatched rows? Unmatched rows from both left and right tables are included with NULL padding.",
+      "Q3. Does MySQL natively support FULL OUTER JOIN? No. In MySQL, simulate using LEFT JOIN + UNION + RIGHT JOIN.",
+      "Q4. Which tables are preserved? BOTH tables are 100% preserved.",
+      "Q5. Can FULL OUTER JOIN return NULL values? Yes, whenever a row in one table has no match in the other."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between INNER, LEFT, RIGHT, and FULL OUTER JOIN?\n• How do you simulate FULL OUTER JOIN in databases like MySQL that lack native support?\n• Why are NULL values returned on both sides of a FULL OUTER JOIN?\n• Which tables are preserved in a FULL OUTER JOIN?\n• What is the difference between UNION and UNION ALL when simulating FULL OUTER JOIN?",
+      "⚡ Performance Notes:\n• Recommended: FULL OUTER JOIN requires scanning both relations completely. Ensure join columns are indexed on both tables to minimize nested loop lookup overhead.",
+      "🌍 Real-World Use Cases:\n• ✅ Show every employee and every department: SELECT e.first_name, d.department_name FROM employees e FULL OUTER JOIN departments d ON e.department_id = d.department_id;\n• ✅ Show every customer and every order: SELECT c.customer_name, o.order_id FROM customers c FULL OUTER JOIN orders o ON c.customer_id = o.customer_id;\n• ✅ Show every student and every course: SELECT s.student_name, c.course_name FROM students s FULL OUTER JOIN courses c ON s.course_id = c.course_id;",
+      "🎓 Company Interview Tip: 'Which JOIN returns all rows from both tables?' ── FULL OUTER JOIN! If asked how MySQL executes it, explain the LEFT JOIN UNION RIGHT JOIN pattern.",
+      "🔥 Pro Tip (Interview Trick Question): If employee Bob has department 105 (no dept 105 in departments) and department Finance 104 exists (no employees in 104), FULL OUTER JOIN outputs BOTH Bob ──► NULL and NULL ──► Finance! 🚀"
     ]
   },
   "Basics-020": {
     "code_id": "Basics-020",
     "numeric_id": 20,
-    "title": "Alias columns using AS",
-    "code": "SELECT first_name AS name, salary AS annual_pay FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Alias columns using AS.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Join a Table with Itself Using SELF JOIN",
+    "code": "SELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;",
+    "timeComplexity": "O(N²) (Without Index) / O(N log N) (With Proper Index on manager_id and employee_id)",
+    "spaceComplexity": "O(1) (Streaming Output)",
+    "simplestExplanation": "SELF JOIN treats a single physical table as two distinct logical copies using table aliases (e for employee, m for manager), comparing e.manager_id to m.employee_id.",
+    "mentalModel": "Single Table ──► Duplicate into 2 Logical Copies (e = Employee, m = Manager) ──► Match e.manager_id = m.employee_id ──► Return Employee + Manager Names",
     "lineByLine": [
       {
-        "line": "SELECT first_name AS name, salary AS annual_pay FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT e.first_name AS employee_name, m.first_name AS manager_name",
+        "explanation": "Selects the employee's name from table alias e and the manager's name from table alias m."
+      },
+      {
+        "line": "FROM employees e",
+        "explanation": "Assigns alias e to represent the employee role in the first copy of employees table."
+      },
+      {
+        "line": "INNER JOIN employees m",
+        "explanation": "Assigns alias m to represent the manager role in the second copy of employees table."
+      },
+      {
+        "line": "ON e.manager_id = m.employee_id;",
+        "explanation": "Join predicate comparing employee's manager_id against manager's employee_id key."
+      },
+      {
+        "line": "📚 Understanding SELF JOIN",
+        "explanation": "Think of SELF JOIN as one person wearing two hats. Copy 'e' wears the Employee hat, and copy 'm' wears the Manager hat. Both point to records in the same physical employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees e ── Create first logical table copy.\nStep 2: INNER JOIN employees m ── Create second logical table copy.\nStep 3: ON e.manager_id = m.employee_id ── Match key predicates.\nStep 4: Filter matching tuples.\nStep 5: Output employee_name and manager_name."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended INNER SELF JOIN):\n```sql\nSELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;\n```\n\nMethod 2 (LEFT SELF JOIN - Preserves Top-Level Executives/CEOs with NULL Managers):\n```sql\nSELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nLEFT JOIN employees m\nON e.manager_id = m.employee_id;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nEmployees Table (Single Physical Storage)\n       │\n       ▼\nCreate Copy 1 (Alias e = Employee)\n       │\n       ▼\nCreate Copy 2 (Alias m = Manager)\n       │\n       ▼\nMatch e.manager_id = m.employee_id\n       │\n       ▼\nDisplay Employee + Manager Pair\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT t1.column_name, t2.column_name\nFROM table_name AS t1\nJOIN table_name AS t2\nON t1.common_column = t2.primary_key;\n```\n\nProblem Solution:\n```sql\nSELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting Table Aliases: SQL cannot distinguish between columns from the same table without distinct table aliases (e, m).",
+      "❌ 2. Joining on the Wrong Column (Self Match): Writing ON e.employee_id = m.employee_id matches every employee with themselves rather than their manager!",
+      "❌ 3. Thinking SELF JOIN Uses Two Physical Tables: There is only ONE physical table stored on disk; SQL creates two logical copies in memory.",
+      "❌ 4. Forgetting Top Managers with NULL manager_id: Top executives (CEOs) have manager_id IS NULL; INNER JOIN drops them while LEFT JOIN preserves them.",
+      "❌ 5. Reusing the Same Alias: Writing FROM employees e JOIN employees e produces a syntax error because aliases must be unique."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "A SELF JOIN joins a table with itself. Different table aliases are required so SQL can treat the single physical table as two separate logical tables.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is a SELF JOIN? Joining a single table with itself using distinct table aliases.",
+      "Q2. Why are aliases required in a SELF JOIN? To disambiguate column references between the two logical table copies.",
+      "Q3. Is SELF JOIN a distinct keyword in SQL? No, it uses standard JOIN syntax (INNER JOIN, LEFT JOIN) with the same table referenced twice.",
+      "Q4. Where is SELF JOIN commonly applied? Employee-manager hierarchies, parent-child trees, student-mentor pairings, and friend networks.",
+      "Q5. How do you include top-level executives without managers? Use LEFT JOIN instead of INNER JOIN."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is a SELF JOIN and why do we use aliases?\n• What happens when manager_id is NULL in an INNER SELF JOIN vs LEFT SELF JOIN?\n• Can a table be joined with itself multiple times for multi-level hierarchies?\n• Why can't we write JOIN employees without aliases?\n• Give 3 real-world examples where SELF JOIN is required.",
+      "⚡ Performance Notes:\n• Recommended: Create B-Tree indexes on both primary key (employee_id) and foreign key (manager_id) to avoid O(N²) full table scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Employee & Manager: SELECT e.first_name, m.first_name FROM employees e JOIN employees m ON e.manager_id = m.employee_id;\n• ✅ Student & Mentor: SELECT s.student_name, m.student_name AS mentor FROM students s JOIN students m ON s.mentor_id = m.student_id;\n• ✅ Parent & Child: SELECT c.name, p.name FROM family c JOIN family p ON c.parent_id = p.person_id;",
+      "🎓 Company Interview Tip: 'Why can't we write JOIN employees without aliases?' ── Because SQL cannot resolve ambiguous column names without explicit aliases for each logical copy!",
+      "🔥 Pro Tip (Interview Trick Question): In an organization with CEO John (manager_id = NULL), INNER JOIN drops John, but LEFT JOIN outputs John ──► NULL! 🚀"
     ]
   },
   "Basics-021": {
     "code_id": "Basics-021",
     "numeric_id": 21,
-    "title": "Count total rows",
-    "code": "SELECT COUNT(*) AS total_employees FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Count total rows.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Combine Results of Two Queries Using UNION",
+    "code": "SELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;",
+    "timeComplexity": "O(N + M) (Reading both result sets) / O((N + M) log(N + M)) (Deduplication via sorting/hashing)",
+    "spaceComplexity": "O(N + M) (Buffer for combined result set and hash table for duplicate elimination)",
+    "simplestExplanation": "UNION stacks the result rows of multiple SELECT queries into a single vertical result set and automatically removes duplicate values across queries.",
+    "mentalModel": "List 1 (Employees) + List 2 (Departments) ──► Stack Vertically ──► Hash Deduplication ──► Output Unique Rows",
     "lineByLine": [
       {
-        "line": "SELECT COUNT(*) AS total_employees FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Executes first query to retrieve first_name values from employees table."
+      },
+      {
+        "line": "UNION",
+        "explanation": "Combines rows from both queries and automatically eliminates duplicate rows."
+      },
+      {
+        "line": "SELECT department_name FROM departments;",
+        "explanation": "Executes second query to retrieve department_name values from departments table."
+      },
+      {
+        "line": "📚 Understanding UNION",
+        "explanation": "Think of UNION like merging two party guest lists into a single document. If Alice appears on both the employee list and manager list, UNION keeps Alice only once."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: Execute 1st query (SELECT first_name FROM employees).\nStep 2: Execute 2nd query (SELECT department_name FROM departments).\nStep 3: Combine both result sets vertically.\nStep 4: Remove duplicate rows.\nStep 5: Output final result set."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Standard UNION - Removes Duplicates):\n```sql\nSELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;\n```\n\nMethod 2 (Using UNION ALL - Preserves Duplicates & Executes Faster):\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSELECT 1 (Query A)\n       │\n       ▼\n    UNION\n       ▲\n       │\nSELECT 2 (Query B)\n       │\n       ▼\nMerge Rows Vertically\n       │\n       ▼\nRemove Duplicate Rows\n       │\n       ▼\nFinal Unique Result Set\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table1\nUNION\nSELECT column_name FROM table2;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Different Number of Columns: Both SELECT queries MUST return the exact same number of columns.",
+      "❌ 2. Mismatched Data Types: Combining incompatible column data types (e.g. VARCHAR and INT) causes type conversion errors.",
+      "❌ 3. Expecting UNION to Keep Duplicates: Plain UNION always deduplicates; use UNION ALL if duplicate retention is required.",
+      "❌ 4. Confusing UNION with JOIN: JOIN combines COLUMNS horizontally using ON; UNION combines ROWS vertically without ON.",
+      "❌ 5. Ordering Individual Queries: Placing ORDER BY inside individual SELECT statements is invalid; place a single ORDER BY at the very end of the final query."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "UNION combines rows from multiple SELECT statements into a single result set and automatically removes duplicate rows.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is UNION? Combines row results from multiple SELECT queries into one result set.",
+      "Q2. Does UNION remove duplicates? Yes, automatically.",
+      "Q3. What is the difference between UNION and UNION ALL? UNION removes duplicates (slower); UNION ALL retains duplicates (faster).",
+      "Q4. What is the main structural requirement for UNION? Both queries must return the exact same number of columns with compatible data types.",
+      "Q5. How does UNION differ from JOIN? JOIN combines columns horizontally; UNION combines rows vertically."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between UNION and UNION ALL?\n• What are the mandatory rules for using UNION?\n• How does UNION differ from JOIN in relational operations?\n• Why is UNION ALL faster than UNION?\n• Where should the ORDER BY clause be placed in a UNION query?",
+      "⚡ Performance Notes:\n• Recommended: Use UNION ALL when you know result sets are disjoint or duplicates are acceptable, as it avoids expensive sorting/hashing.",
+      "🌍 Real-World Use Cases:\n• ✅ Unified Address Book: SELECT name FROM customers UNION SELECT name FROM suppliers;\n• ✅ Cross-Category Product Roster: SELECT title FROM books UNION SELECT title FROM electronics;\n• ✅ Consolidated Entity Names: SELECT first_name FROM employees UNION SELECT department_name FROM departments;",
+      "🎓 Company Interview Tip: 'How do JOIN and UNION differ?' ── JOIN combines COLUMNS horizontally using matching keys; UNION combines ROWS vertically into one list!",
+      "🔥 Pro Tip (Interview Trick Question): If Alice appears in both query sets, standard UNION outputs Alice ONCE, while UNION ALL outputs Alice TWICE! 🚀"
     ]
   },
   "Basics-022": {
     "code_id": "Basics-022",
     "numeric_id": 22,
-    "title": "Count distinct values",
-    "code": "SELECT COUNT(DISTINCT department_id) AS total_depts FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Count distinct values.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Combine Results of Two Queries Using UNION ALL",
+    "code": "SELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;",
+    "timeComplexity": "O(N + M) (Direct streaming concatenation without duplicate checking)",
+    "spaceComplexity": "O(N + M) (Buffer for combined result set)",
+    "simplestExplanation": "UNION ALL stacks the result rows of multiple SELECT queries into a single vertical result set WITHOUT removing duplicate values across queries.",
+    "mentalModel": "List 1 (Employees) + List 2 (Departments) ──► Direct Vertical Concatenation ──► Output All Rows (Including Duplicates)",
     "lineByLine": [
       {
-        "line": "SELECT COUNT(DISTINCT department_id) AS total_depts FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Executes first query to retrieve first_name values from employees table."
+      },
+      {
+        "line": "UNION ALL",
+        "explanation": "Combines rows from both queries and retains all duplicate rows without performing expensive deduplication."
+      },
+      {
+        "line": "SELECT department_name FROM departments;",
+        "explanation": "Executes second query to retrieve department_name values from departments table."
+      },
+      {
+        "line": "📚 Understanding UNION ALL",
+        "explanation": "Think of UNION ALL like stacking two physical paper sheets together. Every row from sheet 1 sits on top of sheet 2, retaining every entry even if names match."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: Execute 1st query (SELECT first_name FROM employees).\nStep 2: Execute 2nd query (SELECT department_name FROM departments).\nStep 3: Concatenate both result sets vertically.\nStep 4: Stream output directly without duplicate checking pass."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended Recommended Fast UNION ALL - Keeps Duplicates):\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;\n```\n\nMethod 2 (Multiple Chained Queries):\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments\nUNION ALL\nSELECT manager_id FROM employees;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSELECT 1 (Query A)\n       │\n       ▼\n   UNION ALL\n       ▲\n       │\nSELECT 2 (Query B)\n       │\n       ▼\nConcatenate Rows Vertically\n       │\n       ▼\nSkip Duplicate Checking\n       │\n       ▼\nFinal Complete Result Set\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table1\nUNION ALL\nSELECT column_name FROM table2;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Confusing UNION and UNION ALL: UNION removes duplicates; UNION ALL preserves all duplicate rows.",
+      "❌ 2. Different Number of Columns: Both SELECT queries MUST return the exact same number of columns.",
+      "❌ 3. Mismatched Data Types: Combining incompatible column data types causes type conversion errors.",
+      "❌ 4. Thinking UNION ALL Removes Duplicates: UNION ALL NEVER deduplicates results.",
+      "❌ 5. ORDER BY in Wrong Location: Placing ORDER BY inside subqueries causes syntax errors; place a single ORDER BY at the very end."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "UNION ALL combines rows from multiple SELECT statements into a single result set without removing duplicate rows, making it faster than UNION.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is UNION ALL? Combines row results from multiple SELECT queries into one result set, keeping duplicates.",
+      "Q2. Does UNION ALL remove duplicates? No, all duplicate rows are retained.",
+      "Q3. Why is UNION ALL faster than UNION? Because SQL skips duplicate checking (no sort/hash deduplication pass).",
+      "Q4. When should you prefer UNION ALL over UNION? When you know result sets are disjoint or when keeping duplicate records is required (e.g. log aggregation).",
+      "Q5. Which takes less memory? UNION ALL, because it does not maintain a hash table for duplicate tracking."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between UNION and UNION ALL?\n• Which operator is faster and why?\n• Does UNION ALL check for duplicate rows?\n• When is UNION ALL preferred in production pipelines?\n• Can UNION ALL combine results from different tables?",
+      "⚡ Performance Notes:\n• Recommended: Always default to UNION ALL unless duplicate elimination is explicitly required, to avoid O(N log N) deduplication overhead.",
+      "🌍 Real-World Use Cases:\n• ✅ Aggregating Multi-Server System Logs: SELECT msg FROM server1_logs UNION ALL SELECT msg FROM server2_logs;\n• ✅ Multi-Store Transaction Feeds: SELECT sale_id FROM store1_sales UNION ALL SELECT sale_id FROM store2_sales;\n• ✅ Audit Roster Concatenation: SELECT first_name FROM employees UNION ALL SELECT department_name FROM departments;",
+      "🎓 Company Interview Tip: 'Which is faster: UNION or UNION ALL?' ── UNION ALL! Because it skips the expensive sort/hash duplicate elimination step.",
+      "🔥 Pro Tip (Interview Trick Question): If Alice is present in both tables, UNION returns Alice 1 time, but UNION ALL returns Alice 2 times! 🚀"
     ]
   },
   "Basics-023": {
     "code_id": "Basics-023",
     "numeric_id": 23,
-    "title": "Find maximum salary",
-    "code": "SELECT MAX(salary) AS max_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find maximum salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Records Using the LIKE Operator",
+    "code": "SELECT first_name FROM employees WHERE first_name LIKE 'A%';",
+    "timeComplexity": "O(N) (Full table scan without B-Tree index) / O(log N) (Prefix search 'A%' can use B-Tree index)",
+    "spaceComplexity": "O(1) (Constant memory auxiliary space)",
+    "simplestExplanation": "LIKE filters rows using text pattern matching where '%' represents zero or more characters and '_' represents exactly one character.",
+    "mentalModel": "Scan Employees ──► Compare first_name against 'A%' ──► Match Starts-With 'A' ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT MAX(salary) AS max_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies output column first_name and target table employees."
+      },
+      {
+        "line": "WHERE first_name LIKE 'A%';",
+        "explanation": "Filters rows to return only names starting with uppercase 'A'. '%' matches any trailing characters."
+      },
+      {
+        "line": "📚 Understanding LIKE Patterns",
+        "explanation": "• LIKE 'A%' ── Starts with 'A'\n• LIKE '%n' ── Ends with 'n'\n• LIKE '%an%' ── Contains 'an'\n• LIKE '_a%' ── Second letter is 'a'"
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE first_name LIKE 'A%' (Evaluate pattern predicate).\nStep 3: SELECT first_name (Project matching names)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Starts With 'A%'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE 'A%';\n```\n\nMethod 2 (Contains '%an%'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE '%an%';\n```\n\nMethod 3 (Ends With '%n'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE '%n';\n```\n\nMethod 4 (Single Character Match '_a%'):\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE '_a%';\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\n'A%'   ──► Starts with A\n'%A'   ──► Ends with A\n'%A%'  ──► Contains A\n'_A%'  ──► Second letter is A\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name LIKE 'pattern';\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE first_name LIKE 'A%';\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting Quotes around Pattern: Writing WHERE col LIKE A% instead of WHERE col LIKE 'A%' causes a syntax error.",
+      "❌ 2. Confusing % and _: % matches 0 or more characters; _ matches EXACTLY ONE character.",
+      "❌ 3. Using = Instead of LIKE: Writing WHERE col = 'A%' searches for the literal string 'A%' rather than executing a pattern match.",
+      "❌ 4. Omitting Wildcards: Writing WHERE col LIKE 'A' matches ONLY the single-letter string 'A'.",
+      "❌ 5. Index Invalidation via Leading Wildcard: WHERE col LIKE '%A%' forces a full table scan, bypassing B-Tree index lookup."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LIKE is used for pattern matching in SQL. '%' matches zero or more characters, while '_' matches exactly one character.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is LIKE? Pattern matching predicate operator in SQL.",
+      "Q2. What does '%' mean? Matches zero or more characters.",
+      "Q3. What does '_' mean? Matches exactly one character.",
+      "Q4. Difference between '=' and 'LIKE'? '=' performs exact scalar equality; 'LIKE' performs wildcard pattern matching.",
+      "Q5. Can a B-Tree index optimize LIKE? Yes, for prefix searches like 'A%', but NOT for leading wildcards like '%A%'."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between % and _?\n• How does LIKE 'A%' differ from LIKE '%A%'\n• Why is LIKE '%A%' slow on large production tables?\n• What is the difference between = and LIKE?\n• How do you match a string whose second letter is 'a'?",
+      "⚡ Performance Notes:\n• Prefix patterns ('A%') can utilize B-Tree range scans (sargable).\n• Leading wildcard patterns ('%A%') force full table scans (non-sargable).",
+      "🌍 Real-World Use Cases:\n• ✅ Email Provider Filtering: WHERE email LIKE '%@gmail.com';\n• ✅ E-Commerce Product Search: WHERE title LIKE '%Laptop%';\n• ✅ Customer Name Prefix Search: WHERE name LIKE 'S%';",
+      "🎓 Company Interview Tip: 'What is the difference between % and _?' ── % matches any number of characters (0 to N); _ matches EXACTLY 1 character!",
+      "🔥 Pro Tip (Interview Trick Question): `%` can match 0 characters, so `LIKE 'A%'` matches the single-letter name `'A'`! 🚀"
     ]
   },
   "Basics-024": {
     "code_id": "Basics-024",
     "numeric_id": 24,
-    "title": "Find minimum salary",
-    "code": "SELECT MIN(salary) AS min_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find minimum salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Records Using the IN Operator",
+    "code": "SELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');",
+    "timeComplexity": "O(N) (Without index) / O(K log N) (With B-Tree index lookup for K list values)",
+    "spaceComplexity": "O(1) (Constant memory auxiliary space)",
+    "simplestExplanation": "IN evaluates whether a column value matches any item inside a specified literal list or subquery, cleanly eliminating verbose OR chains.",
+    "mentalModel": "Value ──► Check Membership in ('John', 'Alice', 'Bob') ──► Match Found? ──► Project Record",
     "lineByLine": [
       {
-        "line": "SELECT MIN(salary) AS min_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target output column first_name and target table employees."
+      },
+      {
+        "line": "WHERE first_name IN ('John', 'Alice', 'Bob');",
+        "explanation": "Filters rows to return only employees whose first_name matches 'John', 'Alice', or 'Bob'."
+      },
+      {
+        "line": "📚 Understanding IN vs OR",
+        "explanation": "WHERE first_name IN ('John', 'Alice', 'Bob') is logically identical to:\nWHERE first_name = 'John' OR first_name = 'Alice' OR first_name = 'Bob'."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE first_name IN (...) (Evaluate membership predicate).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended IN Operator):\n```sql\nSELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');\n```\n\nMethod 2 (Multiple OR Conditions):\n```sql\nSELECT first_name FROM employees WHERE first_name = 'John' OR first_name = 'Alice' OR first_name = 'Bob';\n```\n\nMethod 3 (Subquery Membership):\n```sql\nSELECT first_name FROM employees WHERE first_name IN (SELECT name FROM shift_leads);\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSingle Value   ──►  WHERE col = 'John'\nMultiple List  ──►  WHERE col IN ('John', 'Alice', 'Bob')\nSubquery List  ──►  WHERE col IN (SELECT name FROM leads)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name IN (value1, value2, value3);\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting Parentheses: Writing WHERE col IN 'HR', 'IT' instead of WHERE col IN ('HR', 'IT') causes a syntax error.",
+      "❌ 2. Forgetting Quotes around String Literals: Writing WHERE col IN (HR, IT) treats HR and IT as unquoted column names.",
+      "❌ 3. Using = with List Tuples: Writing WHERE col = ('HR', 'IT') results in a syntax or type error.",
+      "❌ 4. Using IN for Single Values: Writing WHERE col IN ('HR') is redundant; prefer scalar equality WHERE col = 'HR'.",
+      "❌ 5. Mixing Incompatible Data Types: Comparing string columns to unquoted integers causes implicit casting overhead."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "IN checks whether a value exists in a specified list of values. It is cleaner and more readable than writing multiple OR conditions.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is the IN operator? Checks if a value exists in a specified list or subquery result.",
+      "Q2. Is IN equivalent to multiple OR conditions? Yes, IN ('A', 'B') is logically identical to col = 'A' OR col = 'B'.",
+      "Q3. Why use IN over OR? IN is cleaner, more readable, easier to maintain, and concise.",
+      "Q4. Can IN be used with numbers? Yes! e.g., WHERE employee_id IN (101, 102, 103).",
+      "Q5. Can IN be used with subqueries? Yes! e.g., WHERE dept_id IN (SELECT id FROM depts WHERE loc = 'Bangalore')."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between IN and multiple OR conditions?\n• Why is IN preferred over multiple OR statements?\n• Can IN be used with a subquery?\n• Is IN faster than multiple OR conditions in SQL optimizers?\n• How does IN handle NULL values inside the list?",
+      "⚡ Performance Notes:\n• Modern query optimizers transform IN (val1, val2, val3) into multiple B-Tree index lookups (In-List iterator), making it highly performant.",
+      "🌍 Real-World Use Cases:\n• ✅ Customer Location Search: WHERE city IN ('Bangalore', 'Mumbai', 'Delhi');\n• ✅ Category Filtering: WHERE category IN ('Electronics', 'Furniture');\n• ✅ Multi-ID Lookup: WHERE employee_id IN (101, 103, 110);",
+      "🎓 Company Interview Tip: 'Which is more readable: multiple OR conditions or IN?' ── IN! It reduces code complexity and prevents operator precedence bugs.",
+      "🔥 Pro Tip (Interview Trick Question): `=` matches ONE value; `IN` matches MANY values! 🚀"
     ]
   },
   "Basics-025": {
     "code_id": "Basics-025",
     "numeric_id": 25,
-    "title": "Find average salary",
-    "code": "SELECT AVG(salary) AS avg_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find average salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Filter Records Using the BETWEEN Operator",
+    "code": "SELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;",
+    "timeComplexity": "O(N) (Without index) / O(log N) (With B-Tree range index scan)",
+    "spaceComplexity": "O(1) (Constant auxiliary memory)",
+    "simplestExplanation": "BETWEEN filters values within an inclusive range (low <= value <= high), including both boundary endpoints.",
+    "mentalModel": "Scan Rows ──► Check low_bound <= salary <= high_bound ──► Both Inclusive ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT AVG(salary) AS avg_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target output column first_name and table employees."
+      },
+      {
+        "line": "WHERE salary BETWEEN 50000 AND 100000;",
+        "explanation": "Filters rows where salary is >= 50000 AND <= 100000."
+      },
+      {
+        "line": "📚 Understanding Range Bounds",
+        "explanation": "WHERE salary BETWEEN 50000 AND 100000 is logically equivalent to:\nWHERE salary >= 50000 AND salary <= 100000."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE salary BETWEEN 50000 AND 100000 (Evaluate inclusive range comparison).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Recommended BETWEEN Operator):\n```sql\nSELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;\n```\n\nMethod 2 (Using Explicit Comparison Operators):\n```sql\nSELECT first_name FROM employees WHERE salary >= 50000 AND salary <= 100000;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nIN       ──► Checks specific discrete list (Val1, Val2, Val3)\nBETWEEN  ──► Checks continuous inclusive range [Low, High]\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name BETWEEN low AND high;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking BETWEEN Excludes Boundary Values: BETWEEN is fully INCLUSIVE of both starting (low) and ending (high) bounds.",
+      "❌ 2. Reversing Range Limits: Writing BETWEEN 100000 AND 50000 evaluates to empty results because low > high.",
+      "❌ 3. Forgetting the AND Keyword: Writing BETWEEN 50000 100000 without AND causes a syntax error.",
+      "❌ 4. Quoting Numeric Literals unnecessarily: Writing BETWEEN '50000' AND '100000' relies on implicit type conversion.",
+      "❌ 5. Confusing BETWEEN and IN: IN checks discrete sets; BETWEEN checks continuous intervals."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "BETWEEN filters values within a range and includes both the starting and ending values.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is BETWEEN? Filters rows within a specified range.",
+      "Q2. Does BETWEEN include boundary values? YES! Both lower and upper limits are included.",
+      "Q3. Is BETWEEN identical to >= and <=? Yes, salary BETWEEN 50000 AND 100000 is identical to salary >= 50000 AND salary <= 100000.",
+      "Q4. Can BETWEEN be used with dates? Yes! e.g., order_date BETWEEN '2026-01-01' AND '2026-12-31'.",
+      "Q5. Can BETWEEN be used with text? Yes! Alphabetically matches text ranges, e.g. name BETWEEN 'A' AND 'M'."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Does BETWEEN include boundary values?\n• What happens if you reverse values in BETWEEN (high AND low)?\n• What is the difference between BETWEEN and IN?\n• Can BETWEEN be used with dates and strings?\n• Is BETWEEN faster than >= AND <= in execution plans?",
+      "⚡ Performance Notes:\n• Relational engines convert BETWEEN low AND high into index range scans on B-Tree indexed columns, yielding O(log N) performance.",
+      "🌍 Real-World Use Cases:\n• ✅ Salary Range Filtering: WHERE salary BETWEEN 50000 AND 100000;\n• ✅ Date Range Reporting: WHERE order_date BETWEEN '2026-01-01' AND '2026-12-31';\n• ✅ Price Range Search: WHERE price BETWEEN 10.00 AND 50.00;",
+      "🎓 Company Interview Tip: 'Does BETWEEN include both values?' ── YES! Both boundary endpoints are included in the result set.",
+      "🔥 Pro Tip (Interview Trick Question): `IN` is for specific values; `BETWEEN` is for a continuous range! 🚀"
     ]
   },
   "Basics-026": {
     "code_id": "Basics-026",
     "numeric_id": 26,
-    "title": "Find total salary",
-    "code": "SELECT SUM(salary) AS total_salary FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find total salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find Records with Missing Values Using IS NULL",
+    "code": "SELECT first_name FROM employees WHERE manager_id IS NULL;",
+    "timeComplexity": "O(N) (Without index) / O(log N) (With B-Tree index scan on nullable column)",
+    "spaceComplexity": "O(1) (Constant auxiliary memory)",
+    "simplestExplanation": "IS NULL checks whether a column value is missing or unknown. Standard equality (= NULL) always returns UNKNOWN in SQL three-valued logic.",
+    "mentalModel": "Scan Employees ──► Inspect manager_id ──► State is Missing/NULL? ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT SUM(salary) AS total_salary FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target column first_name and table employees."
+      },
+      {
+        "line": "WHERE manager_id IS NULL;",
+        "explanation": "Filters rows where manager_id has no value stored (missing/unknown)."
+      },
+      {
+        "line": "📚 Understanding NULL Semantics",
+        "explanation": "• NULL represents missing/unknown data.\n• NULL is NOT equal to 0, empty string (''), or space (' ').\n• Always use IS NULL / IS NOT NULL."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE manager_id IS NULL (Evaluate missing value predicate).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Find Missing Values - IS NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NULL;\n```\n\nMethod 2 (Find Existing Values - IS NOT NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NOT NULL;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nCheck Missing Value    ──►  WHERE col IS NULL     ✅\nCheck Existing Value   ──►  WHERE col IS NOT NULL ✅\nScalar Equality Trap   ──►  WHERE col = NULL      ❌ (Returns 0 rows)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name IS NULL;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NULL;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using = NULL: Writing WHERE col = NULL returns ZERO rows because comparison with NULL yields UNKNOWN.",
+      "❌ 2. Using != NULL: Writing WHERE col != NULL also returns ZERO rows; use IS NOT NULL instead.",
+      "❌ 3. Equating NULL with Zero (0): NULL is missing data; 0 is a known numeric value.",
+      "❌ 4. Equating NULL with Empty String (''): An empty string is a valid 0-length string; NULL is absence of a value.",
+      "❌ 5. Omitting IS: Writing WHERE col NULL causes a syntax error."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "NULL represents missing or unknown data. Always use IS NULL or IS NOT NULL. Never use = or != with NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is NULL? NULL represents missing or unknown data in a relational database.",
+      "Q2. Can we use = NULL? NO! Scalar comparison with NULL evaluates to UNKNOWN. You must use IS NULL.",
+      "Q3. How do you find non-null records? Use IS NOT NULL predicate.",
+      "Q4. Is NULL equal to 0? No, 0 is a known numeric value; NULL is missing information.",
+      "Q5. Is NULL equal to empty string ('')? No, '' is a defined zero-length string value."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is NULL in SQL?\n• Why does WHERE col = NULL fail to return matching rows?\n• What is three-valued logic in SQL (TRUE, FALSE, UNKNOWN)?\n• What is the difference between NULL, 0, and ''?\n• How does IS NOT NULL differ from != NULL?",
+      "⚡ Performance Notes:\n• Database engines can index NULL values (B-Tree or Bitmap index), allowing fast O(log N) lookup for IS NULL / IS NOT NULL queries.",
+      "🌍 Real-World Use Cases:\n• ✅ Top-Level Hierarchy: WHERE manager_id IS NULL;\n• ✅ Missing Contact Info: WHERE phone_number IS NULL;\n• ✅ Unassigned Categorization: WHERE category_id IS NULL;",
+      "🎓 Company Interview Tip: 'Why doesn't = NULL work?' ── Because NULL represents UNKNOWN, and UNKNOWN = UNKNOWN evaluates to UNKNOWN (FALSE in WHERE clause filtering)!",
+      "🔥 Pro Tip (Interview Trick Question): `IS NULL` ✅ works; `= NULL` ❌ NEVER works! 🚀"
     ]
   },
   "Basics-027": {
     "code_id": "Basics-027",
     "numeric_id": 27,
-    "title": "Find average marks",
-    "code": "SELECT AVG(marks) AS avg_marks FROM students;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find average marks.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find Records with Non-NULL Values Using IS NOT NULL",
+    "code": "SELECT first_name FROM employees WHERE manager_id IS NOT NULL;",
+    "timeComplexity": "O(N) (Without index) / O(log N) (With B-Tree index scan)",
+    "spaceComplexity": "O(1) (Constant auxiliary memory)",
+    "simplestExplanation": "IS NOT NULL retrieves rows where a column contains a valid, existing value (excluding NULLs).",
+    "mentalModel": "Scan Employees ──► Inspect manager_id ──► Contains Valid Value? ──► Project Output",
     "lineByLine": [
       {
-        "line": "SELECT AVG(marks) AS avg_marks FROM students;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name FROM employees",
+        "explanation": "Specifies target column first_name and table employees."
+      },
+      {
+        "line": "WHERE manager_id IS NOT NULL;",
+        "explanation": "Filters rows where manager_id contains an actual stored value (not missing)."
+      },
+      {
+        "line": "📚 Understanding IS NOT NULL",
+        "explanation": "• Asks: 'Does this column contain a valid, non-missing value?'\n• Excludes all rows where manager_id is NULL.\n• Never use != NULL or <> NULL."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: WHERE manager_id IS NOT NULL (Evaluate non-NULL predicate).\nStep 3: SELECT first_name (Project matching records)."
+      },
+      {
+        "line": "🚀 ALTERNATIVE SOLUTIONS",
+        "explanation": "✅ Method 1 (Find Non-NULL Values - IS NOT NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NOT NULL;\n```\n\nMethod 2 (Find Missing Values - IS NULL):\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NULL;\n```"
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nFind Existing Values ──► WHERE col IS NOT NULL ✅\nFind Missing Values  ──► WHERE col IS NULL     ✅\nInequality Trap      ──► WHERE col != NULL     ❌ (Returns 0 rows)\n```"
+      },
+      {
+        "line": "⭐ FINAL QUERY",
+        "explanation": "Generic SQL:\n```sql\nSELECT column_name FROM table_name WHERE column_name IS NOT NULL;\n```\n\nProblem Solution:\n```sql\nSELECT first_name FROM employees WHERE manager_id IS NOT NULL;\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Using != NULL: Writing WHERE col != NULL returns ZERO rows because inequality with NULL evaluates to UNKNOWN.",
+      "❌ 2. Using <> NULL: Writing WHERE col <> NULL also evaluates to UNKNOWN and returns ZERO rows.",
+      "❌ 3. Equating NULL with Zero (0): 0 is a valid number; NULL is missing data.",
+      "❌ 4. Equating NULL with Empty String (''): An empty string is a stored value; NULL is absence of data.",
+      "❌ 5. Omitting IS: Writing WHERE col NOT NULL causes a syntax error."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "IS NOT NULL returns rows where a column contains an actual value. Never use != NULL or <> NULL.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is IS NOT NULL? It retrieves rows where a column contains a valid, non-missing value.",
+      "Q2. Can we use != NULL? NO! Inequality comparison with NULL evaluates to UNKNOWN and returns 0 rows.",
+      "Q3. What is the opposite of IS NULL? IS NOT NULL.",
+      "Q4. Is NULL equal to 0? No, zero is a valid numeric value.",
+      "Q5. Is NULL equal to empty string ('')? No, empty string is a valid string of length zero."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between IS NULL and IS NOT NULL?\n• Why doesn't WHERE col != NULL work?\n• Can NULL be compared using = or !=?\n• What does NULL represent in SQL?\n• Give a real-world example of IS NOT NULL.",
+      "⚡ Performance Notes:\n• Databases can optimize IS NOT NULL using B-Tree range scans or bitmap indexes on non-null values.",
+      "🌍 Real-World Use Cases:\n• ✅ Employees with Managers: WHERE manager_id IS NOT NULL;\n• ✅ Customers with Phone Numbers: WHERE phone_number IS NOT NULL;\n• ✅ Students with Email: WHERE email IS NOT NULL;\n• ✅ Products with Category: WHERE category_id IS NOT NULL;",
+      "🎓 Company Interview Tip: 'What is the difference between IS NULL and IS NOT NULL?' ── IS NULL finds missing values; IS NOT NULL finds existing valid values!",
+      "🔥 Pro Tip (Interview Trick Question): `IS NOT NULL` ✅ works; `!= NULL` or `<> NULL` ❌ NEVER works! 🚀"
     ]
   },
   "Basics-028": {
     "code_id": "Basics-028",
     "numeric_id": 28,
-    "title": "Sum sales",
-    "code": "SELECT SUM(sale_amount) AS total_sales FROM sales;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Sum sales.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Use CASE WHEN to Display Conditional Values",
+    "code": "SELECT first_name, salary, CASE WHEN salary >= 100000 THEN 'High Salary' WHEN salary >= 60000 THEN 'Medium Salary' ELSE 'Low Salary' END AS salary_category FROM employees;",
+    "timeComplexity": "O(N) (Linear row scan evaluating expressions)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "CASE WHEN adds conditional logic directly inside SQL queries, evaluating expressions like an if-elif-else statement.",
+    "mentalModel": "Scan Employee ──► Check >= 100k? ──(No)──► Check >= 60k? ──(No)──► Default Low Salary",
     "lineByLine": [
       {
-        "line": "SELECT SUM(sale_amount) AS total_sales FROM sales;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name, salary,",
+        "explanation": "Retrieves the employee name and base salary."
+      },
+      {
+        "line": "CASE",
+        "explanation": "Initiates conditional evaluation block."
+      },
+      {
+        "line": "WHEN salary >= 100000 THEN 'High Salary'",
+        "explanation": "First specific condition: returns 'High Salary' for earnings >= 100000."
+      },
+      {
+        "line": "WHEN salary >= 60000 THEN 'Medium Salary'",
+        "explanation": "Second condition: returns 'Medium Salary' for earnings >= 60000."
+      },
+      {
+        "line": "ELSE 'Low Salary'",
+        "explanation": "Fallback condition: returns 'Low Salary' for unmatched rows."
+      },
+      {
+        "line": "END AS salary_category",
+        "explanation": "Terminates the CASE expression and assigns alias salary_category."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Forgetting END: Omitting END causes a syntax error.",
+      "❌ 2. Incorrect Condition Order: Placing broader conditions before specific ones (e.g. >= 60000 before >= 100000) causes early matching and incorrect results.",
+      "❌ 3. Forgetting ELSE: Without ELSE, unmatched rows evaluate to NULL.",
+      "❌ 4. Missing Column Alias: Omitting AS alias_name creates messy auto-generated column headers.",
+      "❌ 5. Confusing CASE with WHERE: CASE creates new conditional values; WHERE filters rows."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "CASE WHEN enables conditional logic inside SQL queries. Always order conditions from most specific to least specific.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is CASE WHEN? Inline conditional expression in SQL.",
+      "Q2. Is CASE similar to if-else? Yes, it maps directly to if-elif-else.",
+      "Q3. Is ELSE mandatory? No, but without it unmatched rows evaluate to NULL.",
+      "Q4. Can CASE be used in ORDER BY / GROUP BY? Yes, CASE works in SELECT, WHERE, ORDER BY, GROUP BY, and HAVING.",
+      "Q5. How does SQL evaluate multiple WHEN clauses? Sequentially from top to bottom, stopping at the first TRUE match."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What is CASE WHEN and how does it work?\n• What programming concept is similar to CASE?\n• Why is condition order critical in CASE statements?\n• What happens if ELSE is omitted?\n• Can CASE be used in ORDER BY or GROUP BY?",
+      "⚡ Performance Notes:\n• CASE expressions evaluate per row in memory with negligible CPU overhead.",
+      "🌍 Real-World Use Cases:\n• ✅ Tiered Salary Classification: High / Medium / Low\n• ✅ Student Grading: Marks >= 90 'A', >= 75 'B', else 'C'\n• ✅ Order Fulfillment Status: Shipped date NULL -> 'Pending', else 'Delivered'",
+      "🎓 Company Interview Tip: 'What programming concept is similar to CASE?' ── if → elif → else!",
+      "🔥 Pro Tip (Interview Trick Question): SQL stops evaluating after the FIRST matching `WHEN`. Order matters! 🚀"
     ]
   },
   "Basics-029": {
     "code_id": "Basics-029",
     "numeric_id": 29,
-    "title": "Count employees in each department",
-    "code": "SELECT department_id, COUNT(*) AS emp_count FROM employees GROUP BY department_id;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Count employees in each department.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Round Decimal Values Using ROUND()",
+    "code": "SELECT first_name, salary, ROUND(salary, 2) AS rounded_salary FROM employees;",
+    "timeComplexity": "O(N) (Linear row scan applying numeric rounding)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "ROUND(column, decimal_places) rounds numeric values to the specified decimal precision.",
+    "mentalModel": "Scan Employee ──► Read Salary (e.g., 45678.456) ──► Apply ROUND(x, 2) ──► Output 45678.46",
     "lineByLine": [
       {
-        "line": "SELECT department_id, COUNT(*) AS emp_count FROM employees GROUP BY department_id;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name, salary,",
+        "explanation": "Retrieves employee name and raw original salary."
+      },
+      {
+        "line": "ROUND(salary, 2) AS rounded_salary",
+        "explanation": "Rounds salary to 2 decimal places and assigns alias rounded_salary."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads data from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Read data rows).\nStep 2: Apply ROUND(salary, 2) per row.\nStep 3: SELECT first_name, salary, rounded_salary (Project output)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nROUND(12.678, 2) ──► 12.68  (2 Decimal Places)\nROUND(12.678)    ──► 13     (Whole Integer)\nROUND(45678, -2) ──► 45700  (Nearest Hundred)\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Omitting Decimal Places: ROUND(salary) rounds to whole integers instead of decimals.",
+      "❌ 2. Confusing ROUND() with TRUNCATE(): ROUND performs mathematical rounding (5 or more rounds up); TRUNCATE simply cuts off digits without rounding.",
+      "❌ 3. Misunderstanding Negative Decimal Places: ROUND(x, -1) rounds to the nearest ten; ROUND(x, -2) rounds to nearest hundred.",
+      "❌ 4. Forgetting Column Alias: Omitting AS rounded_salary produces raw functional column headers.",
+      "❌ 5. Expecting ROUND to change stored database values: ROUND only formats the projected query result set."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "ROUND(value, decimal_places) rounds numeric values. Omitted decimal places round to the nearest whole integer.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does ROUND() do? Rounds a numeric value to specified decimal places.",
+      "Q2. What does the 2nd argument represent? Number of decimal places to keep.",
+      "Q3. What if 2nd argument is omitted? Rounds to nearest whole integer.",
+      "Q4. Can ROUND take negative decimal arguments? Yes! Negative values round to tens, hundreds, thousands, etc.",
+      "Q5. Difference between ROUND and TRUNCATE? ROUND rounds mathematically; TRUNCATE cuts off digits."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What does ROUND() do in SQL?\n• Difference between ROUND and TRUNCATE?\n• What is ROUND(15.567, 1)? (Answer: 15.6)\n• What happens when negative numbers are passed as the 2nd argument?\n• What is the difference between ROUND(12.345, 2) and ROUND(12.345)?",
+      "⚡ Performance Notes:\n• Fast inline mathematical scalar function evaluated per row during projection.",
+      "🌍 Real-World Use Cases:\n• ✅ Product Pricing: ROUND(price, 2)\n• ✅ Average Salary Display: ROUND(AVG(salary), 2)\n• ✅ Student GPA: ROUND(gpa, 2)\n• ✅ Product Ratings: ROUND(rating, 1)",
+      "🎓 Company Interview Tip: 'What is the difference between ROUND(12.345, 2) and ROUND(12.345)?' ── ROUND(12.345, 2) = 12.35, whereas ROUND(12.345) = 12!",
+      "🔥 Pro Tip (Interview Trick Question): 5 or more rounds UP, less than 5 rounds DOWN! 🚀"
     ]
   },
   "Basics-030": {
     "code_id": "Basics-030",
     "numeric_id": 30,
-    "title": "Find department with highest salary",
-    "code": "SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id ORDER BY max_salary DESC LIMIT 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find department with highest salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Find the Length of a String Using LENGTH()",
+    "code": "SELECT first_name, LENGTH(first_name) AS name_length FROM employees;",
+    "timeComplexity": "O(N) (N = String length character iteration)",
+    "spaceComplexity": "O(1) (Constant space complexity)",
+    "simplestExplanation": "LENGTH() calculates the number of characters in a string value.",
+    "mentalModel": "Scan Employee Name ('Christopher') ──► Count Characters (11) ──► Output 11",
     "lineByLine": [
       {
-        "line": "SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id ORDER BY max_salary DESC LIMIT 1;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves the employee first_name column."
+      },
+      {
+        "line": "LENGTH(first_name) AS name_length",
+        "explanation": "Counts total characters in first_name (including whitespace) and assigns alias name_length."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Read table rows).\nStep 2: Calculate LENGTH(first_name) per row.\nStep 3: SELECT first_name, name_length (Project result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\n'John'        ──► LENGTH('John') = 4\n'Christopher' ──► LENGTH('Christopher') = 11\n'John Doe'    ──► LENGTH('John Doe') = 8 (Includes space!)\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Wrong Function Name per Dialect: Using LENGTH() in SQL Server instead of LEN(), or LEN() in MySQL/Postgres instead of LENGTH().",
+      "❌ 2. Forgetting Parentheses: Writing LENGTH employee_name instead of LENGTH(employee_name).",
+      "❌ 3. Expecting LENGTH to Count Words: LENGTH counts characters (letters + spaces + symbols), not words.",
+      "❌ 4. Confusing LENGTH() with COUNT(): COUNT() counts table rows; LENGTH() counts characters in a string.",
+      "❌ 5. Forgetting Column Alias: Omitting AS name_length leaves unreadable raw function headers."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "LENGTH() counts characters in a string. In SQL Server, use LEN().",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does LENGTH() do? Returns the total number of characters in a string.",
+      "Q2. What is the SQL Server equivalent? LEN().",
+      "Q3. Does LENGTH count spaces? Yes! Letters + spaces + symbols are all counted.",
+      "Q4. Difference between LENGTH and COUNT? LENGTH counts characters in a string; COUNT counts rows in a dataset.",
+      "Q5. Can LENGTH be used in WHERE clause? Yes! WHERE LENGTH(username) >= 8 filters rows by character length."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What does LENGTH() do?\n• Difference between COUNT() and LENGTH()?\n• What is the SQL Server equivalent of LENGTH()?\n• Does LENGTH() count spaces?\n• Can LENGTH() be used inside WHERE?",
+      "⚡ Performance Notes:\n• Fast scalar string function evaluated per row during projection or filtering.",
+      "🌍 Real-World Use Cases:\n• ✅ Validate Username Length: WHERE LENGTH(username) >= 8\n• ✅ Password Strength Audit: WHERE LENGTH(password) >= 8\n• ✅ Truncation Safeguard: WHERE LENGTH(title) > 50",
+      "🎓 Company Interview Tip: 'What is the difference between COUNT() and LENGTH()?' ── COUNT() counts rows; LENGTH() counts characters in a string!",
+      "🔥 Pro Tip (Interview Trick Question): `LENGTH()` counts SPACES as characters! 'John Doe' = 8! 🚀"
     ]
   },
   "Basics-031": {
     "code_id": "Basics-031",
     "numeric_id": 31,
-    "title": "Find department with lowest salary",
-    "code": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Find department with lowest salary.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Convert Text to Uppercase and Lowercase Using UPPER() and LOWER()",
+    "code": "SELECT first_name, UPPER(first_name) AS upper_name, LOWER(first_name) AS lower_name FROM employees;",
+    "timeComplexity": "O(N * M) (N = Row count, M = String length)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "UPPER() converts text characters to uppercase; LOWER() converts text characters to lowercase.",
+    "mentalModel": "Scan Employee Name ('John') ──► UPPER() ──► 'JOHN' | LOWER() ──► 'john'",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves original employee first_name column."
+      },
+      {
+        "line": "UPPER(first_name) AS upper_name,",
+        "explanation": "Converts all characters of first_name to uppercase and assigns alias upper_name."
+      },
+      {
+        "line": "LOWER(first_name) AS lower_name",
+        "explanation": "Converts all characters of first_name to lowercase and assigns alias lower_name."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads data records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Apply UPPER(first_name) and LOWER(first_name) per row.\nStep 3: SELECT first_name, upper_name, lower_name (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\n'John' ──► UPPER('John') = 'JOHN' | LOWER('John') = 'john'\nCase-Insensitive Search: WHERE LOWER(email) = LOWER('User@Email.com')\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking UPPER()/LOWER() Mutates Stored Table Data: Scalar functions alter display results only, not persisted table values.",
+      "❌ 2. Confusing UPPER() with UPDATE: UPPER() formats SELECT results; UPDATE modifies table records on disk.",
+      "❌ 3. Forgetting Parentheses: Writing UPPER first_name instead of UPPER(first_name).",
+      "❌ 4. Forgetting Column Aliases: Omitting AS upper_name / AS lower_name leaves unreadable query output headers.",
+      "❌ 5. Missing Index Awareness in WHERE: Wrapping indexed columns in LOWER(col) can bypass standard B-Tree index scans unless a expression/functional index exists."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "UPPER() and LOWER() alter text display casing without modifying stored database values. Crucial for case-insensitive searches.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does UPPER() do? Converts string text to uppercase.",
+      "Q2. What does LOWER() do? Converts string text to lowercase.",
+      "Q3. Does UPPER/LOWER modify table data? No! Only query projection results change.",
+      "Q4. Why use LOWER() in WHERE clauses? To perform case-insensitive text matching.",
+      "Q5. Can UPPER and LOWER be combined in the same query? Yes! Multiple scalar functions can be used together."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between UPPER() and LOWER()?\n• Does UPPER() update the stored database records?\n• How do you write a case-insensitive WHERE clause in SQL?\n• Can scalar functions in WHERE break index usage?\n• What is the difference between UPPER() and UPDATE?",
+      "⚡ Performance Notes:\n• Fast scalar string conversion per row. Be careful applying functions on indexed WHERE columns.",
+      "🌍 Real-World Use Cases:\n• ✅ Display Uppercase Names: UPPER(employee_name)\n• ✅ Standardize Email Input: LOWER(email)\n• ✅ Case-Insensitive User Search: WHERE LOWER(username) = 'john'\n• ✅ Compare Cross-System Data: WHERE LOWER(a.email) = LOWER(b.email)",
+      "🎓 Company Interview Tip: 'How do you make a case-insensitive string comparison in SQL?' ── Wrap both sides in LOWER(): WHERE LOWER(col) = LOWER('input')!",
+      "🔥 Pro Tip (Interview Trick Question): UPPER() and LOWER() change PROJECTION, not PERSISTENCE! 🚀"
     ]
   },
   "Basics-032": {
     "code_id": "Basics-032",
     "numeric_id": 32,
-    "title": "Average salary by department",
-    "code": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Average salary by department.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Extract Part of a String Using SUBSTRING()",
+    "code": "SELECT first_name, SUBSTR(first_name, 1, 3) AS first_three_letters FROM employees;",
+    "timeComplexity": "O(N * M) (N = Row count, M = Extracted substring length)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "SUBSTRING(str, start, length) extracts a specified slice of text starting at position 'start' for 'length' characters.",
+    "mentalModel": "Word 'Christopher' ──► Start at 1 ──► Slice 3 chars ──► 'Chr'",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves the original first_name column."
+      },
+      {
+        "line": "SUBSTR(first_name, 1, 3) AS first_three_letters",
+        "explanation": "Extracts 3 characters starting from position 1 (SQL 1-based indexing) and assigns alias first_three_letters."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Apply SUBSTR(first_name, 1, 3) per row.\nStep 3: SELECT first_name, first_three_letters (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nSUBSTRING(text, start_pos, character_length)\n'Christopher' ──► SUBSTRING('Christopher', 1, 5) = 'Chris'\n'Christopher' ──► SUBSTRING('Christopher', 2, 4) = 'hris'\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Starting at 0 Instead of 1: SQL uses 1-based indexing! Starting at 0 can produce unexpected results or empty outputs in some DBs.",
+      "❌ 2. Confusing Length with End Position: SUBSTRING(name, 2, 4) means start at 2 and take 4 characters, NOT slice from position 2 to position 4!",
+      "❌ 3. Dialect Mismatch (SUBSTRING vs SUBSTR): Oracle & SQLite use SUBSTR(); MySQL, PostgreSQL, & SQL Server support SUBSTRING().",
+      "❌ 4. Forgetting Column Alias: Omitting AS first_three_letters results in raw unreadable function headers.",
+      "❌ 5. Misusing SUBSTRING for Wildcard Searches: Use LIKE 'J%' for pattern matching instead of WHERE SUBSTRING(name, 1, 1) = 'J' for better indexing."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "SUBSTRING() extracts substring slices using (column, start_position, length) with 1-based indexing.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does SUBSTRING() do? Extracts a specific slice of characters from a string.",
+      "Q2. Does SQL start counting from 0 or 1? SQL start positions count from 1!",
+      "Q3. What is the difference between SUBSTRING() and SUBSTR()? Functionality is identical; naming depends on database dialect.",
+      "Q4. What does the 3rd parameter represent? Number of characters to extract (length), NOT end position index.",
+      "Q5. Can SUBSTRING extract from middle of string? Yes! Specify any valid start position, e.g. SUBSTRING(name, 3, 5)."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What do the three parameters of SUBSTRING(col, A, B) mean?\n• Does SQL count positions from 0 or 1?\n• What does SUBSTRING('Christopher', 2, 4) return? (Answer: 'hris')\n• Difference between SUBSTRING and SUBSTR?\n• Can SUBSTRING be used inside WHERE clauses?",
+      "⚡ Performance Notes:\n• Fast scalar string slice. In WHERE predicates, prefers expression indexes to prevent full scans.",
+      "🌍 Real-World Use Cases:\n• ✅ Employee Initials / Badges: SUBSTRING(name, 1, 1)\n• ✅ Product SKUs / Serial Codes: SUBSTRING(code, 1, 4)\n• ✅ Area Code Extraction: SUBSTRING(phone, 1, 3)\n• ✅ Masking Sensitive Data: SUBSTRING(card_no, 13, 4)",
+      "🎓 Company Interview Tip: 'What does SUBSTRING(name, 2, 4) mean?' ── Start at position 2 and take the next 4 characters!",
+      "🔥 Pro Tip (Interview Trick Question): 3rd parameter is LENGTH, NOT ending position index! 🚀"
     ]
   },
   "Basics-033": {
     "code_id": "Basics-033",
     "numeric_id": 33,
-    "title": "Maximum marks by class",
-    "code": "SELECT class, AVG(marks) AS avg_mark FROM students GROUP BY class;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Maximum marks by class.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Replace Part of a String Using REPLACE()",
+    "code": "SELECT first_name, REPLACE(first_name, 'John', 'Jonathan') AS updated_name FROM employees;",
+    "timeComplexity": "O(N * M) (N = Row count, M = String length)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "REPLACE(string, search_target, replacement) searches for matching substrings and substitutes every occurrence with replacement text.",
+    "mentalModel": "Find & Replace: Scan 'John Smith' ──► Find 'John' ──► Substitute 'Jonathan' ──► Result 'Jonathan Smith'",
     "lineByLine": [
       {
-        "line": "SELECT class, AVG(marks) AS avg_mark FROM students GROUP BY class;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves original employee first_name column."
+      },
+      {
+        "line": "REPLACE(first_name, 'John', 'Jonathan') AS updated_name",
+        "explanation": "Searches for 'John' in first_name and replaces with 'Jonathan', aliasing output as updated_name."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Apply REPLACE(first_name, 'John', 'Jonathan') per row.\nStep 3: SELECT first_name, updated_name (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nREPLACE(column, old_text, new_text)\nRemove Spaces: REPLACE(name, ' ', '')\nReplace Spaces with Underscores: REPLACE(name, ' ', '_')\nRemove Dashes: REPLACE(phone, '-', '')\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking REPLACE() Modifies Table Data: SELECT REPLACE() only alters query projection output. Use UPDATE to persist changes.",
+      "❌ 2. Forgetting String Quotes: Writing REPLACE(name, John, Jonathan) without quotes results in invalid column reference errors.",
+      "❌ 3. Confusing REPLACE() Function with UPDATE DML: REPLACE() is a scalar string function; UPDATE is a DML statement.",
+      "❌ 4. Assuming Wildcard/Regex Support: Standard REPLACE() matches exact literal strings, not regex or wildcard patterns.",
+      "❌ 5. Forgetting Column Aliases: Omitting AS updated_name outputs unreadable raw function headers."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "REPLACE() performs literal substring replacement across string columns, altering output projection unless bound to UPDATE.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does REPLACE() do? Replaces all occurrences of a specified substring with new text.",
+      "Q2. Does REPLACE() modify original database records? No! Only SELECT query projection results change.",
+      "Q3. How do you remove all spaces from a string? Use REPLACE(col, ' ', '').",
+      "Q4. Does REPLACE() substitute all occurrences or only the first? Every matching occurrence in the string is replaced!",
+      "Q5. Can REPLACE() be used inside an UPDATE statement? Yes! UPDATE tbl SET col = REPLACE(col, 'old', 'new')."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What do the three parameters of REPLACE(col, A, B) mean?\n• Does REPLACE() alter persisted table data on disk?\n• How do you remove all spaces or dashes from a string in SQL?\n• Difference between REPLACE() and UPDATE?\n• Does REPLACE() replace one occurrence or all occurrences?",
+      "⚡ Performance Notes:\n• Fast scalar string substitution. On large text blobs, string scanning incurs minor O(M) overhead per row.",
+      "🌍 Real-World Use Cases:\n• ✅ Remove Phone Dashes: REPLACE(phone, '-', '')\n• ✅ Rebrand Company Names: REPLACE(company, 'Facebook', 'Meta')\n• ✅ Format Usernames: REPLACE(username, ' ', '_')\n• ✅ Clean CSV Imports: REPLACE(product, '  ', ' ')",
+      "🎓 Company Interview Tip: 'How do you remove all spaces from a string in SQL?' ── REPLACE(column_name, ' ', '')!",
+      "🔥 Pro Tip (Interview Trick Question): REPLACE() replaces ALL matching occurrences in the string! 🚀"
     ]
   },
   "Basics-034": {
     "code_id": "Basics-034",
     "numeric_id": 34,
-    "title": "Minimum sales by region",
-    "code": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Minimum sales by region.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Replace NULL Values Using COALESCE()",
+    "code": "SELECT first_name, COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager FROM employees;",
+    "timeComplexity": "O(N) (Linear row evaluation)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "COALESCE(e1, e2, ... eN) evaluates arguments from left to right and returns the very first non-NULL expression.",
+    "mentalModel": "Backup Value Provider: Check manager_id ──► Non-NULL? Return ID ──► NULL? Fallback to 'No Manager'",
     "lineByLine": [
       {
-        "line": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT first_name,",
+        "explanation": "Retrieves employee first_name column."
+      },
+      {
+        "line": "COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager",
+        "explanation": "Casts manager_id to TEXT and returns it if non-NULL; defaults to 'No Manager' if NULL, aliasing result as manager."
+      },
+      {
+        "line": "FROM employees;",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: FROM employees (Access table rows).\nStep 2: Evaluate COALESCE(CAST(manager_id AS TEXT), 'No Manager') per row.\nStep 3: SELECT first_name, manager (Emit result set)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nCOALESCE(val1, val2, val3, ...)\nCOALESCE(NULL, NULL, 100, 200) ──► 100\nCOALESCE(salary, 0) ──► Returns salary or 0 if NULL\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Thinking COALESCE() Modifies Table Data: SELECT COALESCE() replaces NULL values in display output only, not stored database values.",
+      "❌ 2. Data Type Mismatch Traps: Combining numbers and strings without CAST (e.g. COALESCE(manager_id, 'No Manager')) triggers data type conversion errors in strict DB engines.",
+      "❌ 3. Confusing COALESCE() with IS NULL: IS NULL is a boolean comparison operator (WHERE col IS NULL); COALESCE() is a value replacement function.",
+      "❌ 4. Assuming COALESCE() Accepts Only 2 Arguments: COALESCE() accepts arbitrary parameters: COALESCE(col1, col2, col3, 'Default').",
+      "❌ 5. Using Vendor-Specific IFNULL()/ISNULL(): Prefer ANSI SQL standard COALESCE() for cross-database portability (Postgres, Oracle, MySQL, SQL Server, SQLite)."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "COALESCE() provides ANSI standard NULL replacement by returning the first non-NULL argument.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What does COALESCE() do? Returns the first non-NULL expression from left to right.",
+      "Q2. Is COALESCE() ANSI SQL compliant? Yes! Native across MySQL, Postgres, Oracle, SQL Server, SQLite.",
+      "Q3. Can COALESCE() take more than 2 arguments? Yes! Accepts an arbitrary list of expressions.",
+      "Q4. What is the difference between COALESCE() and IFNULL()? COALESCE() is ANSI SQL with N arguments; IFNULL() is vendor-specific (MySQL/SQLite) with 2 arguments.",
+      "Q5. Does COALESCE() change database table data? No! Only alters query output projection."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• What does COALESCE() return when given COALESCE(NULL, NULL, 50, 100)? (Answer: 50)\n• Difference between COALESCE() and IFNULL()/ISNULL()?\n• Why do we need CAST() when replacing numeric NULLs with text defaults?\n• Difference between IS NULL and COALESCE()?\n• Is COALESCE() ANSI SQL standard?",
+      "⚡ Performance Notes:\n• Ultra-fast short-circuit evaluation. Stops scanning arguments as soon as it hits the first non-NULL value.",
+      "🌍 Real-World Use Cases:\n• ✅ Default Salary/Bonus: COALESCE(salary, 0)\n• ✅ Fallback Contact Info: COALESCE(mobile_phone, work_phone, 'Not Provided')\n• ✅ Missing Manager Label: COALESCE(CAST(manager_id AS TEXT), 'No Manager')\n• ✅ Missing Address/City: COALESCE(city, 'Unknown')",
+      "🎓 Company Interview Tip: 'Why prefer COALESCE over IFNULL/ISNULL?' ── COALESCE is ANSI standard and handles N fallback parameters!",
+      "🔥 Pro Tip (Interview Trick Question): Short-circuits at the FIRST non-NULL argument! 🚀"
     ]
   },
   "Basics-035": {
     "code_id": "Basics-035",
     "numeric_id": 35,
-    "title": "Total revenue by month",
-    "code": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Total revenue by month.",
-    "mentalModel": "Filter -> Group -> Project relation pipeline",
+    "title": "Display the Current Date and Time",
+    "code": "SELECT CURRENT_DATE AS current_date, CURRENT_TIME AS current_time, CURRENT_TIMESTAMP AS current_datetime;",
+    "timeComplexity": "O(1) (Constant system clock lookup)",
+    "spaceComplexity": "O(1) (Constant memory overhead)",
+    "simplestExplanation": "CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP query the database engine's system clock directly without reading table data.",
+    "mentalModel": "System Clock Query: Read DB Server Clock ──► Emit Current Date (YYYY-MM-DD), Time (HH:MM:SS), and Timestamp",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT CURRENT_DATE AS current_date,",
+        "explanation": "Fetches system date from database server clock."
+      },
+      {
+        "line": "CURRENT_TIME AS current_time,",
+        "explanation": "Fetches current system time."
+      },
+      {
+        "line": "CURRENT_TIMESTAMP AS current_datetime;",
+        "explanation": "Fetches full date and time timestamp from system clock."
+      },
+      {
+        "line": "⚙️ SQL EXECUTION ORDER",
+        "explanation": "Step 1: Read system clock parameters from DB server.\nStep 2: Format projection values.\nStep 3: Emit result set tuple (No FROM table scanning required)."
+      },
+      {
+        "line": "📝 QUICK REVISION BOX",
+        "explanation": "```text\nANSI SQL: CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP\nMySQL: CURDATE(), CURTIME(), NOW()\nSQL Server: GETDATE()\nOracle: SYSDATE, SYSTIMESTAMP FROM dual\n```"
       }
     ],
     "beginnerTraps": [
-      "Forgetting index optimization",
-      "Missing NULL handling"
+      "❌ 1. Writing Unnecessary FROM Clauses: Writing SELECT CURRENT_DATE FROM employees executes the system clock function N times (once per row) instead of once without a FROM clause.",
+      "❌ 2. Confusing Client Clock with DB Server Clock: Date/time functions retrieve the database server clock time, NOT the local user device time.",
+      "❌ 3. Confusing CURRENT_DATE with CURRENT_TIMESTAMP: CURRENT_DATE returns only date (YYYY-MM-DD); CURRENT_TIMESTAMP returns date + time.",
+      "❌ 4. Ignoring Vendor Dialect Differences: Using MySQL NOW() in SQL Server (which uses GETDATE()) or Oracle (which uses SYSDATE/SYSTIMESTAMP FROM dual).",
+      "❌ 5. Expecting SELECT CURRENT_DATE to Persist Data: SELECT only displays clock values. Use INSERT INTO audit_logs(created_at) VALUES (CURRENT_TIMESTAMP) to store data."
     ],
-    "keyTakeaway": "Always select explicit columns in production queries for memory efficiency.",
+    "keyTakeaway": "System date and time functions query the database server clock in O(1) time and do not require table references.",
     "interviewPros": [
-      "Direct ANSI standard syntax",
-      "Easily optimized by B-Tree index scan"
+      "Q1. What is CURRENT_DATE? ANSI SQL scalar function that returns the current database server date.",
+      "Q2. What is CURRENT_TIMESTAMP? Returns combined date and time from system clock.",
+      "Q3. Do date/time functions require a FROM clause? No! Evaluates directly without table references.",
+      "Q4. What is NOW() in MySQL? MySQL-specific function equivalent to CURRENT_TIMESTAMP.",
+      "Q5. What is GETDATE() in SQL Server? SQL Server-specific function equivalent to CURRENT_TIMESTAMP."
     ],
     "interviewCons": [
-      "Requires clear understanding of table schema"
+      "⭐ Questions Interviewers Will Ask:\n• Difference between CURRENT_DATE and CURRENT_TIMESTAMP?\n• What is NOW() in MySQL and GETDATE() in SQL Server?\n• Does SELECT CURRENT_DATE require a FROM clause?\n• Whose system clock is returned: client device or DB server?\n• How do you auto-populate creation timestamps on INSERT?",
+      "⚡ Performance Notes:\n• O(1) constant time execution. No table scan or disk I/O involved.",
+      "🌍 Real-World Use Cases:\n• ✅ Order Creation Timestamps: INSERT INTO orders(order_date) VALUES (CURRENT_DATE)\n• ✅ User Login Auditing: INSERT INTO login_logs(login_time) VALUES (CURRENT_TIMESTAMP)\n• ✅ Attendance Tracking: INSERT INTO attendance(check_in) VALUES (CURRENT_TIMESTAMP)\n• ✅ Financial Transaction Logs: Stamping exact transaction execution times",
+      "🎓 Company Interview Tip: 'Whose time does CURRENT_TIMESTAMP return?' ── Always the Database Server Clock, not the client machine!",
+      "🔥 Pro Tip (Interview Trick Question): No FROM clause needed in ANSI SQL / MySQL / Postgres / SQLite! 🚀"
     ]
   },
   "SQL-001": {

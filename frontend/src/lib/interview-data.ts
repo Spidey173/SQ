@@ -785,2853 +785,7317 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
   },
   "5": {
     "id": "sql-5",
-    "title": "Use multiple conditions with OR",
+    "title": "Use Multiple Conditions with OR",
     "levelNumber": 5,
     "problemId": 5,
-    "problemTitle": "Use multiple conditions with OR",
+    "problemTitle": "Use Multiple Conditions with OR",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
-      "Google",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "Google",
+      "Oracle",
+      "IBM",
+      "Infosys",
+      "TCS",
+      "Accenture"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE department_id = 1 OR salary > 100000;",
+      "code": "SELECT *\nFROM employees\nWHERE department_id = 101\nOR salary > 60000;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use multiple conditions with OR' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "WHERE department_id = 101",
+            "Action": "Evaluate Condition 1"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL inspects department_id = 101. If TRUE, the row is immediately accepted and sent to result output without evaluating further conditions."
         },
         {
           "step": 3,
+          "lineNumber": 4,
+          "vars": {
+            "Step": "OR salary > 60000",
+            "Action": "Evaluate Condition 2 (if Condition 1 was FALSE)"
+          },
+          "explanation": "If Condition 1 was FALSE, SQL checks salary > 60000. If TRUE, the row is accepted. Only if BOTH conditions are FALSE is the row discarded."
+        },
+        {
+          "step": 4,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "SELECT *",
+            "Action": "Project result rows"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL projects all columns (*) for accepted rows matching either condition."
         }
       ]
     },
     "qas": [
       {
         "id": "q-5-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use multiple conditions with OR' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use multiple conditions with OR', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE department_id = 1 OR salary > 100000;"
+        "category": "💡 Interview Notes",
+        "question": "What does the OR operator do in SQL?",
+        "whatInterviewerChecks": "Understanding disjunctive logical evaluation in relational databases.",
+        "bestReplyScript": "The OR operator combines multiple conditions in a WHERE clause. If AT LEAST ONE condition evaluates to TRUE for a given row, the row is included in the output result set.",
+        "commonMistakesToAvoid": "Thinking OR requires both conditions to be TRUE.",
+        "keyPoints": ["Disjunctive Logic", "At Least One Condition TRUE", "Inclusive Row Filter"],
+        "codeSnippet": "WHERE department_id = 101 OR salary > 60000;"
+      },
+      {
+        "id": "q-5-2",
+        "category": "💡 Interview Notes",
+        "question": "Which operator returns more rows: AND or OR?",
+        "whatInterviewerChecks": "Understanding selectivity and logical operator restrictiveness.",
+        "bestReplyScript": "OR returns more rows because satisfying ANY single condition is sufficient for a row to be included. AND is more restrictive and returns fewer rows because ALL conditions must be TRUE.",
+        "commonMistakesToAvoid": "Saying AND returns more rows.",
+        "keyPoints": ["OR = Inclusive/More Rows", "AND = Restrictive/Fewer Rows"],
+        "codeSnippet": "OR ➔ Broader Result Set | AND ➔ Narrower Result Set"
+      },
+      {
+        "id": "q-5-3",
+        "category": "💡 Interview Notes",
+        "question": "When is a row rejected by an OR clause?",
+        "whatInterviewerChecks": "Truth table evaluation for OR logic.",
+        "bestReplyScript": "A row is rejected by an OR clause ONLY when ALL connected conditions evaluate to FALSE (or UNKNOWN). If even one condition is TRUE, the row is returned.",
+        "commonMistakesToAvoid": "Thinking a row is rejected if only one condition is FALSE.",
+        "keyPoints": ["FALSE + FALSE = Reject", "Single TRUE = Accept Row"],
+        "codeSnippet": "FALSE OR FALSE ➔ Discard Row"
+      },
+      {
+        "id": "q-5-4",
+        "category": "💡 Interview Notes",
+        "question": "What is operator precedence when mixing AND and OR?",
+        "whatInterviewerChecks": "Knowledge of SQL operator hierarchy (AND > OR).",
+        "bestReplyScript": "AND has higher operator precedence than OR in SQL. This means SQL evaluates AND expressions before OR expressions unless explicitly grouped using parentheses.",
+        "commonMistakesToAvoid": "Assuming SQL evaluates left-to-right regardless of operator.",
+        "keyPoints": ["AND before OR", "Parentheses Override Precedence"],
+        "codeSnippet": "WHERE dept = 101 OR (salary > 60000 AND city = 'Bangalore');"
+      },
+      {
+        "id": "q-5-5",
+        "category": "💡 Interview Notes",
+        "question": "Why should we use parentheses with complex OR conditions?",
+        "whatInterviewerChecks": "Writing bug-free production SQL with explicit evaluation grouping.",
+        "bestReplyScript": "Parentheses make intent explicit and prevent subtle logical bugs caused by default AND-over-OR precedence. They ensure the database evaluates logical conditions in the exact order intended by the business requirement.",
+        "commonMistakesToAvoid": "Leaving mixed AND/OR queries unparenthesized.",
+        "keyPoints": ["Explicit Logical Intent", "Avoid Precedence Bugs"],
+        "codeSnippet": "(condition1 OR condition2) AND condition3"
       }
     ],
     "questions": [
       {
         "id": "q-5-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use multiple conditions with OR' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use multiple conditions with OR', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE department_id = 1 OR salary > 100000;"
+        "category": "💡 Interview Notes",
+        "question": "What does the OR operator do in SQL?",
+        "whatInterviewerChecks": "Understanding disjunctive logical evaluation in relational databases.",
+        "bestReplyScript": "The OR operator combines multiple conditions in a WHERE clause. If AT LEAST ONE condition evaluates to TRUE for a given row, the row is included in the output result set.",
+        "commonMistakesToAvoid": "Thinking OR requires both conditions to be TRUE.",
+        "keyPoints": ["Disjunctive Logic", "At Least One Condition TRUE", "Inclusive Row Filter"],
+        "codeSnippet": "WHERE department_id = 101 OR salary > 60000;"
+      },
+      {
+        "id": "q-5-2",
+        "category": "💡 Interview Notes",
+        "question": "Which operator returns more rows: AND or OR?",
+        "whatInterviewerChecks": "Understanding selectivity and logical operator restrictiveness.",
+        "bestReplyScript": "OR returns more rows because satisfying ANY single condition is sufficient for a row to be included. AND is more restrictive and returns fewer rows because ALL conditions must be TRUE.",
+        "commonMistakesToAvoid": "Saying AND returns more rows.",
+        "keyPoints": ["OR = Inclusive/More Rows", "AND = Restrictive/Fewer Rows"],
+        "codeSnippet": "OR ➔ Broader Result Set | AND ➔ Narrower Result Set"
+      },
+      {
+        "id": "q-5-3",
+        "category": "💡 Interview Notes",
+        "question": "When is a row rejected by an OR clause?",
+        "whatInterviewerChecks": "Truth table evaluation for OR logic.",
+        "bestReplyScript": "A row is rejected by an OR clause ONLY when ALL connected conditions evaluate to FALSE (or UNKNOWN). If even one condition is TRUE, the row is returned.",
+        "commonMistakesToAvoid": "Thinking a row is rejected if only one condition is FALSE.",
+        "keyPoints": ["FALSE + FALSE = Reject", "Single TRUE = Accept Row"],
+        "codeSnippet": "FALSE OR FALSE ➔ Discard Row"
+      },
+      {
+        "id": "q-5-4",
+        "category": "💡 Interview Notes",
+        "question": "What is operator precedence when mixing AND and OR?",
+        "whatInterviewerChecks": "Knowledge of SQL operator hierarchy (AND > OR).",
+        "bestReplyScript": "AND has higher operator precedence than OR in SQL. This means SQL evaluates AND expressions before OR expressions unless explicitly grouped using parentheses.",
+        "commonMistakesToAvoid": "Assuming SQL evaluates left-to-right regardless of operator.",
+        "keyPoints": ["AND before OR", "Parentheses Override Precedence"],
+        "codeSnippet": "WHERE dept = 101 OR (salary > 60000 AND city = 'Bangalore');"
+      },
+      {
+        "id": "q-5-5",
+        "category": "💡 Interview Notes",
+        "question": "Why should we use parentheses with complex OR conditions?",
+        "whatInterviewerChecks": "Writing bug-free production SQL with explicit evaluation grouping.",
+        "bestReplyScript": "Parentheses make intent explicit and prevent subtle logical bugs caused by default AND-over-OR precedence. They ensure the database evaluates logical conditions in the exact order intended by the business requirement.",
+        "commonMistakesToAvoid": "Leaving mixed AND/OR queries unparenthesized.",
+        "keyPoints": ["Explicit Logical Intent", "Avoid Precedence Bugs"],
+        "codeSnippet": "(condition1 OR condition2) AND condition3"
       }
     ],
     "mistakes": [
       {
         "id": "m-5-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using AND when OR is required",
+        "description": "Using AND instead of OR when requiring matching of either condition.",
+        "badSnippet": "SELECT * FROM employees WHERE department_id = 101 AND salary > 60000;",
+        "failingInput": "Employees in dept 101 with salary <= 60000",
+        "consequence": "❌ Returns 0 rows for valid dept 101 employees earning less than 60000.",
+        "howToFix": "Use OR to accept either condition: WHERE department_id = 101 OR salary > 60000;",
+        "mistake": "Using AND instead of OR",
+        "whyItHappens": "Confusing 'both can apply' requirement with 'either can apply'."
+      },
+      {
+        "id": "m-5-2",
+        "title": "2. Forgetting WHERE keyword with OR",
+        "description": "Placing OR clause without initializing WHERE clause.",
+        "badSnippet": "SELECT * FROM employees OR salary > 60000;",
+        "failingInput": "SELECT * FROM employees OR salary > 60000;",
+        "consequence": "❌ Syntax Error: Unexpected OR keyword.",
+        "howToFix": "Add WHERE keyword before first condition: SELECT * FROM employees WHERE department_id = 101 OR salary > 60000;",
+        "mistake": "Missing WHERE clause",
+        "whyItHappens": "Forgetting WHERE clause requirement."
+      },
+      {
+        "id": "m-5-3",
+        "title": "3. Using comma instead of OR",
+        "description": "Attempting to separate OR conditions with commas.",
+        "badSnippet": "SELECT * FROM employees WHERE department_id = 101, salary > 60000;",
+        "failingInput": "WHERE department_id = 101, salary > 60000;",
+        "consequence": "❌ Syntax Error near comma.",
+        "howToFix": "Use explicit OR keyword: WHERE department_id = 101 OR salary > 60000;",
+        "mistake": "Using comma operator between predicates",
+        "whyItHappens": "Confusing column lists with logical conditions."
+      },
+      {
+        "id": "m-5-4",
+        "title": "4. Omitting quotes around string literals with OR",
+        "description": "Comparing string values in OR clause without single quotes.",
+        "badSnippet": "WHERE city = Bangalore OR salary > 60000;",
+        "failingInput": "WHERE city = Bangalore OR salary > 60000;",
+        "consequence": "❌ Error: no such column: Bangalore",
+        "howToFix": "Enclose string literal in single quotes: WHERE city = 'Bangalore' OR salary > 60000;",
+        "mistake": "Unquoted string value",
+        "whyItHappens": "Treating string value as identifier."
       }
     ]
   },
   "6": {
     "id": "sql-6",
-    "title": "Use NOT",
+    "title": "Sort Data Using ORDER BY",
     "levelNumber": 6,
     "problemId": 6,
-    "problemTitle": "Use NOT",
+    "problemTitle": "Sort Data Using ORDER BY",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
-      "Google",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "Google",
+      "Oracle",
+      "IBM",
+      "Infosys",
+      "TCS",
+      "Accenture"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE NOT (department_id = 1);",
+      "code": "SELECT *\nFROM employees\nORDER BY salary ASC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use NOT' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "SELECT *",
+            "Action": "Retrieve columns"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL retrieves all required columns (*) for matching records."
         },
         {
           "step": 3,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "ORDER BY salary ASC",
+            "Action": "Sort result set"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL sorts the retrieved rows based on the salary column in ascending order (smallest value first)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 3,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output sorted dataset"
+          },
+          "explanation": "SQL displays the final sorted dataset to the caller."
         }
       ]
     },
     "qas": [
       {
         "id": "q-6-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use NOT' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use NOT', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE NOT (department_id = 1);"
+        "category": "💡 Interview Notes",
+        "question": "What is the default sorting order in ORDER BY?",
+        "whatInterviewerChecks": "Core SQL default sorting direction.",
+        "bestReplyScript": "Ascending order (ASC) is the default sorting direction in SQL. If you write ORDER BY column_name without specifying ASC or DESC, SQL automatically sorts in ascending order.",
+        "commonMistakesToAvoid": "Assuming DESC is default.",
+        "keyPoints": ["ASC is Default", "Smallest First", "Alphabetical A-Z"],
+        "codeSnippet": "ORDER BY salary ASC;"
+      },
+      {
+        "id": "q-6-2",
+        "category": "💡 Interview Notes",
+        "question": "Does ORDER BY modify data stored in the database table?",
+        "whatInterviewerChecks": "Understanding relational data storage vs result set projection.",
+        "bestReplyScript": "No. ORDER BY never modifies or rearranges the physical data stored in database files. It only changes the order in which rows are presented in the query result set.",
+        "commonMistakesToAvoid": "Thinking ORDER BY permanently changes physical row order on disk.",
+        "keyPoints": ["Result Set Only", "No Physical Data Mutation"],
+        "codeSnippet": "Display Order Only"
+      },
+      {
+        "id": "q-6-3",
+        "category": "💡 Interview Notes",
+        "question": "Can ORDER BY sort text and date columns?",
+        "whatInterviewerChecks": "Sorting capabilities across SQL data types.",
+        "bestReplyScript": "Yes. ORDER BY can sort numbers (1➔100), text (A➔Z for ASC, Z➔A for DESC), and dates (Oldest➔Newest for ASC, Newest➔Oldest for DESC).",
+        "commonMistakesToAvoid": "Limiting ORDER BY to numeric columns only.",
+        "keyPoints": ["Numbers (1-100)", "Text (A-Z)", "Dates (Oldest-Newest)"],
+        "codeSnippet": "ORDER BY order_date DESC;"
+      },
+      {
+        "id": "q-6-4",
+        "category": "💡 Interview Notes",
+        "question": "Can ORDER BY sort by multiple columns?",
+        "whatInterviewerChecks": "Multi-column tie-breaker sorting syntax.",
+        "bestReplyScript": "Yes. You can specify multiple columns separated by commas (e.g. ORDER BY department_id ASC, salary DESC;). SQL first sorts by department_id, and within each department tie, sorts by salary in descending order.",
+        "commonMistakesToAvoid": "Thinking ORDER BY supports only one column.",
+        "keyPoints": ["Primary & Secondary Sort", "Tie-Breaker Column"],
+        "codeSnippet": "ORDER BY department_id ASC, salary DESC;"
+      },
+      {
+        "id": "q-6-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of ORDER BY relative to WHERE and SELECT?",
+        "whatInterviewerChecks": "Logical query execution pipeline sequence.",
+        "bestReplyScript": "The execution sequence is FROM ➔ WHERE ➔ SELECT ➔ ORDER BY. ORDER BY executes after SELECT projection, which is why ORDER BY can use column aliases defined in SELECT.",
+        "commonMistakesToAvoid": "Thinking ORDER BY executes before WHERE.",
+        "keyPoints": ["FROM ➔ WHERE ➔ SELECT ➔ ORDER BY", "Can use SELECT aliases"],
+        "codeSnippet": "FROM ──► WHERE ──► SELECT ──► ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-6-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use NOT' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use NOT', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE NOT (department_id = 1);"
+        "category": "💡 Interview Notes",
+        "question": "What is the default sorting order in ORDER BY?",
+        "whatInterviewerChecks": "Core SQL default sorting direction.",
+        "bestReplyScript": "Ascending order (ASC) is the default sorting direction in SQL. If you write ORDER BY column_name without specifying ASC or DESC, SQL automatically sorts in ascending order.",
+        "commonMistakesToAvoid": "Assuming DESC is default.",
+        "keyPoints": ["ASC is Default", "Smallest First", "Alphabetical A-Z"],
+        "codeSnippet": "ORDER BY salary ASC;"
+      },
+      {
+        "id": "q-6-2",
+        "category": "💡 Interview Notes",
+        "question": "Does ORDER BY modify data stored in the database table?",
+        "whatInterviewerChecks": "Understanding relational data storage vs result set projection.",
+        "bestReplyScript": "No. ORDER BY never modifies or rearranges the physical data stored in database files. It only changes the order in which rows are presented in the query result set.",
+        "commonMistakesToAvoid": "Thinking ORDER BY permanently changes physical row order on disk.",
+        "keyPoints": ["Result Set Only", "No Physical Data Mutation"],
+        "codeSnippet": "Display Order Only"
+      },
+      {
+        "id": "q-6-3",
+        "category": "💡 Interview Notes",
+        "question": "Can ORDER BY sort text and date columns?",
+        "whatInterviewerChecks": "Sorting capabilities across SQL data types.",
+        "bestReplyScript": "Yes. ORDER BY can sort numbers (1➔100), text (A➔Z for ASC, Z➔A for DESC), and dates (Oldest➔Newest for ASC, Newest➔Oldest for DESC).",
+        "commonMistakesToAvoid": "Limiting ORDER BY to numeric columns only.",
+        "keyPoints": ["Numbers (1-100)", "Text (A-Z)", "Dates (Oldest-Newest)"],
+        "codeSnippet": "ORDER BY order_date DESC;"
+      },
+      {
+        "id": "q-6-4",
+        "category": "💡 Interview Notes",
+        "question": "Can ORDER BY sort by multiple columns?",
+        "whatInterviewerChecks": "Multi-column tie-breaker sorting syntax.",
+        "bestReplyScript": "Yes. You can specify multiple columns separated by commas (e.g. ORDER BY department_id ASC, salary DESC;). SQL first sorts by department_id, and within each department tie, sorts by salary in descending order.",
+        "commonMistakesToAvoid": "Thinking ORDER BY supports only one column.",
+        "keyPoints": ["Primary & Secondary Sort", "Tie-Breaker Column"],
+        "codeSnippet": "ORDER BY department_id ASC, salary DESC;"
+      },
+      {
+        "id": "q-6-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of ORDER BY relative to WHERE and SELECT?",
+        "whatInterviewerChecks": "Logical query execution pipeline sequence.",
+        "bestReplyScript": "The execution sequence is FROM ➔ WHERE ➔ SELECT ➔ ORDER BY. ORDER BY executes after SELECT projection, which is why ORDER BY can use column aliases defined in SELECT.",
+        "commonMistakesToAvoid": "Thinking ORDER BY executes before WHERE.",
+        "keyPoints": ["FROM ➔ WHERE ➔ SELECT ➔ ORDER BY", "Can use SELECT aliases"],
+        "codeSnippet": "FROM ──► WHERE ──► SELECT ──► ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-6-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Misspelling ORDER BY",
+        "description": "Typing ODER BY instead of ORDER BY.",
+        "badSnippet": "SELECT * FROM employees ODER BY salary;",
+        "failingInput": "SELECT * FROM employees ODER BY salary;",
+        "consequence": "❌ Syntax Error: ODER is not a valid SQL keyword.",
+        "howToFix": "Correct spelling to ORDER BY: SELECT * FROM employees ORDER BY salary;",
+        "mistake": "Typo in ORDER BY keyword",
+        "whyItHappens": "Fast typing typo."
+      },
+      {
+        "id": "m-6-2",
+        "title": "2. Ordering by a non-existing column",
+        "description": "Pluralizing or misspelling sorting column name.",
+        "badSnippet": "SELECT * FROM employees ORDER BY salaries;",
+        "failingInput": "ORDER BY salaries",
+        "consequence": "❌ Error: Unknown column salaries.",
+        "howToFix": "Check table schema column names: ORDER BY salary;",
+        "mistake": "Misspelled column name",
+        "whyItHappens": "Pluralizing column name."
+      },
+      {
+        "id": "m-6-3",
+        "title": "3. Placing WHERE after ORDER BY",
+        "description": "Putting ORDER BY clause before WHERE clause.",
+        "badSnippet": "SELECT * FROM employees ORDER BY salary WHERE department_id = 101;",
+        "failingInput": "ORDER BY salary WHERE department_id = 101;",
+        "consequence": "❌ Syntax Error near WHERE.",
+        "howToFix": "Place WHERE before ORDER BY: SELECT * FROM employees WHERE department_id = 101 ORDER BY salary;",
+        "mistake": "Incorrect clause ordering",
+        "whyItHappens": "Not knowing clause execution order."
+      },
+      {
+        "id": "m-6-4",
+        "title": "4. Forgetting DESC for highest-first sorting",
+        "description": "Omitting DESC when highest/newest values are required first.",
+        "badSnippet": "SELECT * FROM employees ORDER BY salary; -- Expecting highest first",
+        "failingInput": "ORDER BY salary",
+        "consequence": "Returns lowest salary first because ASC is default.",
+        "howToFix": "Add explicit DESC keyword: ORDER BY salary DESC;",
+        "mistake": "Forgetting DESC direction",
+        "whyItHappens": "Expecting default sorting to be descending."
       }
     ]
   },
   "7": {
     "id": "sql-7",
-    "title": "Use BETWEEN",
+    "title": "Limit the Number of Rows (LIMIT)",
     "levelNumber": 7,
     "problemId": 7,
-    "problemTitle": "Use BETWEEN",
+    "problemTitle": "Limit the Number of Rows (LIMIT)",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
-      "Google",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "Google",
+      "Oracle",
+      "IBM",
+      "Infosys",
+      "TCS",
+      "Accenture"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE salary BETWEEN 60000 AND 90000;",
+      "code": "SELECT *\nFROM employees\nLIMIT 5;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use BETWEEN' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "SELECT *",
+            "Action": "Retrieve columns"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL retrieves all required columns (*) for matching records."
         },
         {
           "step": 3,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "LIMIT 5",
+            "Action": "Truncate result stream"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL stops reading after 5 rows are fetched and closes the result stream."
+        },
+        {
+          "step": 4,
+          "lineNumber": 3,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output 5 rows"
+          },
+          "explanation": "SQL displays the 5 retrieved rows to the caller."
         }
       ]
     },
     "qas": [
       {
         "id": "q-7-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use BETWEEN' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use BETWEEN', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE salary BETWEEN 60000 AND 90000;"
+        "category": "💡 Interview Notes",
+        "question": "What does the LIMIT clause do in SQL?",
+        "whatInterviewerChecks": "Understanding result set truncation in SQL queries.",
+        "bestReplyScript": "The LIMIT clause restricts the maximum number of rows returned by a query. It tells the database engine to stop materializing and returning rows after the specified count is reached.",
+        "commonMistakesToAvoid": "Thinking LIMIT filters rows based on column values.",
+        "keyPoints": ["Row Count Restriction", "Early Stop", "Prevents Over-fetching"],
+        "codeSnippet": "SELECT * FROM employees LIMIT 5;"
+      },
+      {
+        "id": "q-7-2",
+        "category": "💡 Interview Notes",
+        "question": "Does LIMIT filter data like WHERE?",
+        "whatInterviewerChecks": "Selection vs row count truncation distinction.",
+        "bestReplyScript": "No. WHERE evaluates boolean predicate conditions to filter rows, whereas LIMIT simply cuts off the output result stream after returning a specified number of rows.",
+        "commonMistakesToAvoid": "Confusing row filtering (WHERE) with result count truncation (LIMIT).",
+        "keyPoints": ["WHERE = Predicate Filter", "LIMIT = Result Count Truncation"],
+        "codeSnippet": "WHERE (Filter) vs LIMIT (Count Cutoff)"
+      },
+      {
+        "id": "q-7-3",
+        "category": "💡 Interview Notes",
+        "question": "Why should LIMIT be paired with ORDER BY?",
+        "whatInterviewerChecks": "Understanding non-deterministic query execution without ORDER BY.",
+        "bestReplyScript": "Without ORDER BY, the database does not guarantee which specific rows are returned by LIMIT. Pairing ORDER BY with LIMIT ensures deterministic results (e.g. Top 5 highest salaries via ORDER BY salary DESC LIMIT 5).",
+        "commonMistakesToAvoid": "Expecting consistent Top N results without ORDER BY.",
+        "keyPoints": ["Deterministic Results", "ORDER BY + LIMIT = Top N", "Prevents Random Selection"],
+        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;"
+      },
+      {
+        "id": "q-7-4",
+        "category": "💡 Interview Notes",
+        "question": "Does LIMIT 5 always return the exact same 5 rows?",
+        "whatInterviewerChecks": "Knowledge of relational table unordered set property.",
+        "bestReplyScript": "No. In relational databases, tables are unordered sets of rows. Without an ORDER BY clause, the database may return different rows depending on query optimization plans or physical storage changes.",
+        "commonMistakesToAvoid": "Assuming relational tables have an inherent default row order.",
+        "keyPoints": ["Unordered Set", "Must use ORDER BY for stability"],
+        "codeSnippet": "No ORDER BY = Non-Deterministic"
+      },
+      {
+        "id": "q-7-5",
+        "category": "💡 Interview Notes",
+        "question": "Is LIMIT supported across all SQL databases?",
+        "whatInterviewerChecks": "Cross-database SQL dialect knowledge.",
+        "bestReplyScript": "No. LIMIT is supported by MySQL, PostgreSQL, and SQLite. Microsoft SQL Server uses TOP (e.g. SELECT TOP 5 *), and Oracle uses FETCH FIRST 5 ROWS ONLY or ROWNUM.",
+        "commonMistakesToAvoid": "Assuming LIMIT works in T-SQL or PL/SQL.",
+        "keyPoints": ["MySQL/Postgres/SQLite = LIMIT", "SQL Server = TOP", "Oracle = FETCH FIRST"],
+        "codeSnippet": "LIMIT (MySQL/PG) vs TOP (MSSQL) vs FETCH FIRST (Oracle)"
       }
     ],
     "questions": [
       {
         "id": "q-7-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use BETWEEN' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use BETWEEN', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE salary BETWEEN 60000 AND 90000;"
+        "category": "💡 Interview Notes",
+        "question": "What does the LIMIT clause do in SQL?",
+        "whatInterviewerChecks": "Understanding result set truncation in SQL queries.",
+        "bestReplyScript": "The LIMIT clause restricts the maximum number of rows returned by a query. It tells the database engine to stop materializing and returning rows after the specified count is reached.",
+        "commonMistakesToAvoid": "Thinking LIMIT filters rows based on column values.",
+        "keyPoints": ["Row Count Restriction", "Early Stop", "Prevents Over-fetching"],
+        "codeSnippet": "SELECT * FROM employees LIMIT 5;"
+      },
+      {
+        "id": "q-7-2",
+        "category": "💡 Interview Notes",
+        "question": "Does LIMIT filter data like WHERE?",
+        "whatInterviewerChecks": "Selection vs row count truncation distinction.",
+        "bestReplyScript": "No. WHERE evaluates boolean predicate conditions to filter rows, whereas LIMIT simply cuts off the output result stream after returning a specified number of rows.",
+        "commonMistakesToAvoid": "Confusing row filtering (WHERE) with result count truncation (LIMIT).",
+        "keyPoints": ["WHERE = Predicate Filter", "LIMIT = Result Count Truncation"],
+        "codeSnippet": "WHERE (Filter) vs LIMIT (Count Cutoff)"
+      },
+      {
+        "id": "q-7-3",
+        "category": "💡 Interview Notes",
+        "question": "Why should LIMIT be paired with ORDER BY?",
+        "whatInterviewerChecks": "Understanding non-deterministic query execution without ORDER BY.",
+        "bestReplyScript": "Without ORDER BY, the database does not guarantee which specific rows are returned by LIMIT. Pairing ORDER BY with LIMIT ensures deterministic results (e.g. Top 5 highest salaries via ORDER BY salary DESC LIMIT 5).",
+        "commonMistakesToAvoid": "Expecting consistent Top N results without ORDER BY.",
+        "keyPoints": ["Deterministic Results", "ORDER BY + LIMIT = Top N", "Prevents Random Selection"],
+        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;"
+      },
+      {
+        "id": "q-7-4",
+        "category": "💡 Interview Notes",
+        "question": "Does LIMIT 5 always return the exact same 5 rows?",
+        "whatInterviewerChecks": "Knowledge of relational table unordered set property.",
+        "bestReplyScript": "No. In relational databases, tables are unordered sets of rows. Without an ORDER BY clause, the database may return different rows depending on query optimization plans or physical storage changes.",
+        "commonMistakesToAvoid": "Assuming relational tables have an inherent default row order.",
+        "keyPoints": ["Unordered Set", "Must use ORDER BY for stability"],
+        "codeSnippet": "No ORDER BY = Non-Deterministic"
+      },
+      {
+        "id": "q-7-5",
+        "category": "💡 Interview Notes",
+        "question": "Is LIMIT supported across all SQL databases?",
+        "whatInterviewerChecks": "Cross-database SQL dialect knowledge.",
+        "bestReplyScript": "No. LIMIT is supported by MySQL, PostgreSQL, and SQLite. Microsoft SQL Server uses TOP (e.g. SELECT TOP 5 *), and Oracle uses FETCH FIRST 5 ROWS ONLY or ROWNUM.",
+        "commonMistakesToAvoid": "Assuming LIMIT works in T-SQL or PL/SQL.",
+        "keyPoints": ["MySQL/Postgres/SQLite = LIMIT", "SQL Server = TOP", "Oracle = FETCH FIRST"],
+        "codeSnippet": "LIMIT (MySQL/PG) vs TOP (MSSQL) vs FETCH FIRST (Oracle)"
       }
     ],
     "mistakes": [
       {
         "id": "m-7-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting LIMIT value",
+        "description": "Writing LIMIT keyword without specifying a numeric count.",
+        "badSnippet": "SELECT * FROM employees LIMIT;",
+        "failingInput": "SELECT * FROM employees LIMIT;",
+        "consequence": "❌ Syntax Error: Expected numeric value after LIMIT.",
+        "howToFix": "Provide a numeric row limit: SELECT * FROM employees LIMIT 5;",
+        "mistake": "Missing numeric parameter",
+        "whyItHappens": "Forgetting that LIMIT requires an integer parameter."
+      },
+      {
+        "id": "m-7-2",
+        "title": "2. Using LIMIT before ORDER BY",
+        "description": "Placing LIMIT clause before ORDER BY clause.",
+        "badSnippet": "SELECT * FROM employees LIMIT 5 ORDER BY salary DESC;",
+        "failingInput": "LIMIT 5 ORDER BY salary DESC;",
+        "consequence": "❌ Syntax Error: ORDER BY must come before LIMIT.",
+        "howToFix": "Place ORDER BY before LIMIT: SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
+        "mistake": "Incorrect clause ordering",
+        "whyItHappens": "Not knowing SQL clause execution hierarchy."
+      },
+      {
+        "id": "m-7-3",
+        "title": "3. Expecting Top N without ORDER BY",
+        "description": "Assuming LIMIT 5 returns the highest values without ORDER BY.",
+        "badSnippet": "SELECT * FROM employees LIMIT 5; -- Expecting top 5 salaries",
+        "failingInput": "SELECT * FROM employees LIMIT 5;",
+        "consequence": "Returns arbitrary 5 rows based on disk read order, NOT top salaries.",
+        "howToFix": "Combine ORDER BY with LIMIT: SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
+        "mistake": "Omitting ORDER BY when order matters",
+        "whyItHappens": "Thinking LIMIT automatically sorts data."
+      },
+      {
+        "id": "m-7-4",
+        "title": "4. Negative LIMIT value",
+        "description": "Passing negative number to LIMIT.",
+        "badSnippet": "SELECT * FROM employees LIMIT -5;",
+        "failingInput": "LIMIT -5;",
+        "consequence": "❌ Database error: LIMIT count must be non-negative.",
+        "howToFix": "Pass positive integer value: LIMIT 5;",
+        "mistake": "Negative limit value",
+        "whyItHappens": "Logic error in dynamic parameter building."
       }
     ]
   },
   "8": {
     "id": "sql-8",
-    "title": "Use IN",
+    "title": "Find Distinct Values (DISTINCT)",
     "levelNumber": 8,
     "problemId": 8,
-    "problemTitle": "Use IN",
+    "problemTitle": "Find Distinct Values (DISTINCT)",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
-      "Google",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "Google",
+      "Oracle",
+      "IBM",
+      "Infosys",
+      "TCS",
+      "Accenture"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE department_id IN (1, 2, 3);",
+      "code": "SELECT DISTINCT department_id\nFROM employees;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use IN' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "SELECT department_id",
+            "Action": "Read target column"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL extracts the department_id values from every row in the table."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "DISTINCT",
+            "Action": "Remove duplicate values"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL performs a deduplication step (via hash set or sort) to filter out duplicate department_id values."
+        },
+        {
+          "step": 4,
+          "lineNumber": 1,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output unique values"
+          },
+          "explanation": "SQL returns only the unique department_id records to the caller."
         }
       ]
     },
     "qas": [
       {
         "id": "q-8-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use IN' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use IN', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE department_id IN (1, 2, 3);"
+        "category": "💡 Interview Notes",
+        "question": "What does DISTINCT do in SQL?",
+        "whatInterviewerChecks": "Understanding duplicate elimination in query projection.",
+        "bestReplyScript": "DISTINCT removes duplicate values from query results. It returns each unique value or combination of values only once in the final result set.",
+        "commonMistakesToAvoid": "Thinking DISTINCT modifies stored data in the database.",
+        "keyPoints": ["Remove Duplicates", "Unique Output Set", "Projection Phase"],
+        "codeSnippet": "SELECT DISTINCT department_id FROM employees;"
+      },
+      {
+        "id": "q-8-2",
+        "category": "💡 Interview Notes",
+        "question": "Does DISTINCT modify data stored in the database table?",
+        "whatInterviewerChecks": "Distinction between query-level formatting and data mutation.",
+        "bestReplyScript": "No. DISTINCT only affects the output of the query result set. It never alters, updates, or deletes data stored inside database tables.",
+        "commonMistakesToAvoid": "Thinking DISTINCT deletes duplicate records from disk.",
+        "keyPoints": ["Query Output Only", "No Table Mutation"],
+        "codeSnippet": "Query Output Transformation"
+      },
+      {
+        "id": "q-8-3",
+        "category": "💡 Interview Notes",
+        "question": "Can DISTINCT be used with multiple columns?",
+        "whatInterviewerChecks": "Multi-attribute DISTINCT tuple matching.",
+        "bestReplyScript": "Yes. When used with multiple columns (e.g. SELECT DISTINCT department_id, job_title FROM employees;), DISTINCT evaluates the combination of all listed columns and returns unique row combinations.",
+        "commonMistakesToAvoid": "Assuming DISTINCT applies to only the first column listed.",
+        "keyPoints": ["Multi-column Tuples", "Unique Combinations"],
+        "codeSnippet": "SELECT DISTINCT department_id, job_title FROM employees;"
+      },
+      {
+        "id": "q-8-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between DISTINCT and GROUP BY?",
+        "whatInterviewerChecks": "Comparing DISTINCT vs GROUP BY aggregate evaluation.",
+        "bestReplyScript": "DISTINCT is designed specifically to eliminate duplicate rows from the result set. GROUP BY groups rows together and is primarily used alongside aggregate functions like COUNT(), SUM(), or AVG().",
+        "commonMistakesToAvoid": "Using GROUP BY without aggregate functions when DISTINCT is simpler.",
+        "keyPoints": ["DISTINCT = Duplicate Filter", "GROUP BY = Grouping + Aggregation"],
+        "codeSnippet": "DISTINCT (Deduplicate) vs GROUP BY (Group & Aggregate)"
+      },
+      {
+        "id": "q-8-5",
+        "category": "💡 Interview Notes",
+        "question": "Does DISTINCT guarantee sorted output order?",
+        "whatInterviewerChecks": "Understanding output ordering requirement for DISTINCT.",
+        "bestReplyScript": "No. DISTINCT removes duplicates, but it does not guarantee that unique values will be sorted alphabetically or numerically. To guarantee sorting, explicitly append an ORDER BY clause.",
+        "commonMistakesToAvoid": "Assuming DISTINCT automatically sorts output.",
+        "keyPoints": ["Unordered Output", "Must use ORDER BY for sorting"],
+        "codeSnippet": "SELECT DISTINCT city FROM employees ORDER BY city;"
       }
     ],
     "questions": [
       {
         "id": "q-8-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use IN' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use IN', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE department_id IN (1, 2, 3);"
+        "category": "💡 Interview Notes",
+        "question": "What does DISTINCT do in SQL?",
+        "whatInterviewerChecks": "Understanding duplicate elimination in query projection.",
+        "bestReplyScript": "DISTINCT removes duplicate values from query results. It returns each unique value or combination of values only once in the final result set.",
+        "commonMistakesToAvoid": "Thinking DISTINCT modifies stored data in the database.",
+        "keyPoints": ["Remove Duplicates", "Unique Output Set", "Projection Phase"],
+        "codeSnippet": "SELECT DISTINCT department_id FROM employees;"
+      },
+      {
+        "id": "q-8-2",
+        "category": "💡 Interview Notes",
+        "question": "Does DISTINCT modify data stored in the database table?",
+        "whatInterviewerChecks": "Distinction between query-level formatting and data mutation.",
+        "bestReplyScript": "No. DISTINCT only affects the output of the query result set. It never alters, updates, or deletes data stored inside database tables.",
+        "commonMistakesToAvoid": "Thinking DISTINCT deletes duplicate records from disk.",
+        "keyPoints": ["Query Output Only", "No Table Mutation"],
+        "codeSnippet": "Query Output Transformation"
+      },
+      {
+        "id": "q-8-3",
+        "category": "💡 Interview Notes",
+        "question": "Can DISTINCT be used with multiple columns?",
+        "whatInterviewerChecks": "Multi-attribute DISTINCT tuple matching.",
+        "bestReplyScript": "Yes. When used with multiple columns (e.g. SELECT DISTINCT department_id, job_title FROM employees;), DISTINCT evaluates the combination of all listed columns and returns unique row combinations.",
+        "commonMistakesToAvoid": "Assuming DISTINCT applies to only the first column listed.",
+        "keyPoints": ["Multi-column Tuples", "Unique Combinations"],
+        "codeSnippet": "SELECT DISTINCT department_id, job_title FROM employees;"
+      },
+      {
+        "id": "q-8-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between DISTINCT and GROUP BY?",
+        "whatInterviewerChecks": "Comparing DISTINCT vs GROUP BY aggregate evaluation.",
+        "bestReplyScript": "DISTINCT is designed specifically to eliminate duplicate rows from the result set. GROUP BY groups rows together and is primarily used alongside aggregate functions like COUNT(), SUM(), or AVG().",
+        "commonMistakesToAvoid": "Using GROUP BY without aggregate functions when DISTINCT is simpler.",
+        "keyPoints": ["DISTINCT = Duplicate Filter", "GROUP BY = Grouping + Aggregation"],
+        "codeSnippet": "DISTINCT (Deduplicate) vs GROUP BY (Group & Aggregate)"
+      },
+      {
+        "id": "q-8-5",
+        "category": "💡 Interview Notes",
+        "question": "Does DISTINCT guarantee sorted output order?",
+        "whatInterviewerChecks": "Understanding output ordering requirement for DISTINCT.",
+        "bestReplyScript": "No. DISTINCT removes duplicates, but it does not guarantee that unique values will be sorted alphabetically or numerically. To guarantee sorting, explicitly append an ORDER BY clause.",
+        "commonMistakesToAvoid": "Assuming DISTINCT automatically sorts output.",
+        "keyPoints": ["Unordered Output", "Must use ORDER BY for sorting"],
+        "codeSnippet": "SELECT DISTINCT city FROM employees ORDER BY city;"
       }
     ],
     "mistakes": [
       {
         "id": "m-8-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting DISTINCT",
+        "description": "Writing SELECT department_id without DISTINCT when unique list is required.",
+        "badSnippet": "SELECT department_id FROM employees;",
+        "failingInput": "SELECT department_id FROM employees;",
+        "consequence": "Returns repetitive duplicate department IDs.",
+        "howToFix": "Add DISTINCT keyword: SELECT DISTINCT department_id FROM employees;",
+        "mistake": "Omitting DISTINCT keyword",
+        "whyItHappens": "Forgetting that standard SELECT returns duplicates."
+      },
+      {
+        "id": "m-8-2",
+        "title": "2. Expecting DISTINCT to affect only one column in multi-column SELECT",
+        "description": "Expecting SELECT DISTINCT department_id, salary to deduplicate only department_id.",
+        "badSnippet": "SELECT DISTINCT department_id, salary FROM employees;",
+        "failingInput": "SELECT DISTINCT department_id, salary FROM employees;",
+        "consequence": "Evaluates full row combination (department_id + salary) for uniqueness.",
+        "howToFix": "Select only department_id if deduplicating by department alone.",
+        "mistake": "Misunderstanding multi-column DISTINCT scope",
+        "whyItHappens": "Thinking DISTINCT applies only to first column."
+      },
+      {
+        "id": "m-8-3",
+        "title": "3. Confusing DISTINCT with UNIQUE constraint",
+        "description": "Confusing query keyword DISTINCT with DDL constraint UNIQUE.",
+        "badSnippet": "CREATE TABLE employees (department_id DISTINCT);",
+        "failingInput": "DDL Table Creation",
+        "consequence": "❌ Syntax error in table DDL.",
+        "howToFix": "Use UNIQUE constraint in table DDL, and DISTINCT keyword in DML queries.",
+        "mistake": "Mixing DML DISTINCT with DDL UNIQUE",
+        "whyItHappens": "Terminological confusion."
+      },
+      {
+        "id": "m-8-4",
+        "title": "4. Using DISTINCT unnecessarily on Primary Keys",
+        "description": "Using DISTINCT on Primary Key or unique columns.",
+        "badSnippet": "SELECT DISTINCT employee_id FROM employees;",
+        "failingInput": "Primary Key Column",
+        "consequence": "Unnecessary computational overhead for sorting/hashing already unique data.",
+        "howToFix": "Omit DISTINCT when querying Primary Keys.",
+        "mistake": "Redundant DISTINCT on unique columns",
+        "whyItHappens": "Overusing DISTINCT out of habit."
+      },
+      {
+        "id": "m-8-5",
+        "title": "5. Assuming DISTINCT sorts output automatically",
+        "description": "Expecting DISTINCT output to be sorted without ORDER BY.",
+        "badSnippet": "SELECT DISTINCT city FROM employees; -- Expecting A-Z order",
+        "failingInput": "SELECT DISTINCT city FROM employees;",
+        "consequence": "Output order is non-deterministic.",
+        "howToFix": "Add explicit ORDER BY: SELECT DISTINCT city FROM employees ORDER BY city;",
+        "mistake": "Expecting automatic sorting from DISTINCT",
+        "whyItHappens": "Confusing deduplication with sorting."
       }
     ]
   },
   "9": {
     "id": "sql-9",
-    "title": "Use NOT IN",
+    "title": "Count Total Records (COUNT())",
     "levelNumber": 9,
     "problemId": 9,
-    "problemTitle": "Use NOT IN",
+    "problemTitle": "Count Total Records (COUNT())",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
-      "Google",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "Google",
+      "Oracle",
+      "IBM",
+      "Infosys",
+      "TCS",
+      "Accenture"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE department_id NOT IN (1, 2);",
+      "code": "SELECT COUNT(*)\nFROM employees;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use NOT IN' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Read rows",
+            "Action": "Iterate records"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL reads rows from disk/buffer pool for aggregate evaluation."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "COUNT(*)",
+            "Action": "Increment row accumulator"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL increments an internal counter for every single row scanned, including NULLs and duplicates."
+        },
+        {
+          "step": 4,
+          "lineNumber": 1,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output single summary count"
+          },
+          "explanation": "SQL returns a single row containing the total count summary (e.g. 10)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-9-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use NOT IN' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use NOT IN', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE department_id NOT IN (1, 2);"
+        "category": "💡 Interview Notes",
+        "question": "What is COUNT() in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate function fundamentals.",
+        "bestReplyScript": "COUNT() is an aggregate function used to count rows. COUNT(*) counts every single row in a table, regardless of column contents, NULL values, or duplicates.",
+        "commonMistakesToAvoid": "Thinking COUNT() evaluates individual rows iteratively into multi-row outputs.",
+        "keyPoints": ["Aggregate Function", "Row Counter", "Single Number Summary"],
+        "codeSnippet": "SELECT COUNT(*) FROM employees;"
+      },
+      {
+        "id": "q-9-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(column_name)?",
+        "whatInterviewerChecks": "Understanding NULL handling in aggregate functions.",
+        "bestReplyScript": "COUNT(*) counts ALL rows in the table (including NULLs). COUNT(column_name) counts only rows where that specific column is NOT NULL.",
+        "commonMistakesToAvoid": "Assuming COUNT(column_name) counts NULL values.",
+        "keyPoints": ["COUNT(*) = All Rows", "COUNT(col) = Non-NULL Only"],
+        "codeSnippet": "COUNT(*) vs COUNT(column_name)"
+      },
+      {
+        "id": "q-9-3",
+        "category": "💡 Interview Notes",
+        "question": "Does COUNT(*) ignore NULL values?",
+        "whatInterviewerChecks": "Specific behavior of wildcard COUNT(*).",
+        "bestReplyScript": "No. COUNT(*) does NOT ignore NULL values—it counts every row in the table. Only COUNT(column_name) ignores NULL values in that specific column.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) skips NULL rows.",
+        "keyPoints": ["COUNT(*) Includes NULLs", "COUNT(col) Skips NULLs"],
+        "codeSnippet": "COUNT(*) Includes Everything"
+      },
+      {
+        "id": "q-9-4",
+        "category": "💡 Interview Notes",
+        "question": "Can COUNT() be combined with DISTINCT?",
+        "whatInterviewerChecks": "Understanding distinct aggregation counting.",
+        "bestReplyScript": "Yes. SELECT COUNT(DISTINCT department_id) FROM employees; counts only the unique, non-NULL department IDs present in the table.",
+        "commonMistakesToAvoid": "Writing COUNT(DISTINCT *) which is invalid SQL syntax.",
+        "keyPoints": ["COUNT(DISTINCT col)", "Unique Non-NULL Count"],
+        "codeSnippet": "SELECT COUNT(DISTINCT department_id) FROM employees;"
+      },
+      {
+        "id": "q-9-5",
+        "category": "💡 Interview Notes",
+        "question": "What does COUNT(*) return when executed on an empty table?",
+        "whatInterviewerChecks": "Empty set aggregate return behavior.",
+        "bestReplyScript": "COUNT(*) returns 0 when executed on an empty table. It never returns NULL or throws an error.",
+        "commonMistakesToAvoid": "Expecting NULL or an empty set for 0-row tables.",
+        "keyPoints": ["Returns 0", "Never NULL"],
+        "codeSnippet": "Returns 0 for empty table"
       }
     ],
     "questions": [
       {
         "id": "q-9-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use NOT IN' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use NOT IN', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE department_id NOT IN (1, 2);"
+        "category": "💡 Interview Notes",
+        "question": "What is COUNT() in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate function fundamentals.",
+        "bestReplyScript": "COUNT() is an aggregate function used to count rows. COUNT(*) counts every single row in a table, regardless of column contents, NULL values, or duplicates.",
+        "commonMistakesToAvoid": "Thinking COUNT() evaluates individual rows iteratively into multi-row outputs.",
+        "keyPoints": ["Aggregate Function", "Row Counter", "Single Number Summary"],
+        "codeSnippet": "SELECT COUNT(*) FROM employees;"
+      },
+      {
+        "id": "q-9-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(column_name)?",
+        "whatInterviewerChecks": "Understanding NULL handling in aggregate functions.",
+        "bestReplyScript": "COUNT(*) counts ALL rows in the table (including NULLs). COUNT(column_name) counts only rows where that specific column is NOT NULL.",
+        "commonMistakesToAvoid": "Assuming COUNT(column_name) counts NULL values.",
+        "keyPoints": ["COUNT(*) = All Rows", "COUNT(col) = Non-NULL Only"],
+        "codeSnippet": "COUNT(*) vs COUNT(column_name)"
+      },
+      {
+        "id": "q-9-3",
+        "category": "💡 Interview Notes",
+        "question": "Does COUNT(*) ignore NULL values?",
+        "whatInterviewerChecks": "Specific behavior of wildcard COUNT(*).",
+        "bestReplyScript": "No. COUNT(*) does NOT ignore NULL values—it counts every row in the table. Only COUNT(column_name) ignores NULL values in that specific column.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) skips NULL rows.",
+        "keyPoints": ["COUNT(*) Includes NULLs", "COUNT(col) Skips NULLs"],
+        "codeSnippet": "COUNT(*) Includes Everything"
+      },
+      {
+        "id": "q-9-4",
+        "category": "💡 Interview Notes",
+        "question": "Can COUNT() be combined with DISTINCT?",
+        "whatInterviewerChecks": "Understanding distinct aggregation counting.",
+        "bestReplyScript": "Yes. SELECT COUNT(DISTINCT department_id) FROM employees; counts only the unique, non-NULL department IDs present in the table.",
+        "commonMistakesToAvoid": "Writing COUNT(DISTINCT *) which is invalid SQL syntax.",
+        "keyPoints": ["COUNT(DISTINCT col)", "Unique Non-NULL Count"],
+        "codeSnippet": "SELECT COUNT(DISTINCT department_id) FROM employees;"
+      },
+      {
+        "id": "q-9-5",
+        "category": "💡 Interview Notes",
+        "question": "What does COUNT(*) return when executed on an empty table?",
+        "whatInterviewerChecks": "Empty set aggregate return behavior.",
+        "bestReplyScript": "COUNT(*) returns 0 when executed on an empty table. It never returns NULL or throws an error.",
+        "commonMistakesToAvoid": "Expecting NULL or an empty set for 0-row tables.",
+        "keyPoints": ["Returns 0", "Never NULL"],
+        "codeSnippet": "Returns 0 for empty table"
       }
     ],
     "mistakes": [
       {
         "id": "m-9-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using COUNT(column_name) without understanding NULLs",
+        "description": "Counting a column containing NULLs when total row count was intended.",
+        "badSnippet": "SELECT COUNT(manager_id) FROM employees;",
+        "failingInput": "Table with 10 rows and 3 NULL manager_ids",
+        "consequence": "Returns 7 instead of 10 because NULLs are excluded.",
+        "howToFix": "Use COUNT(*) for total row count: SELECT COUNT(*) FROM employees;",
+        "mistake": "Unintended NULL exclusion",
+        "whyItHappens": "Not knowing COUNT(column) ignores NULL values."
+      },
+      {
+        "id": "m-9-2",
+        "title": "2. Forgetting parentheses around COUNT parameter",
+        "description": "Writing COUNT without parentheses.",
+        "badSnippet": "SELECT COUNT FROM employees;",
+        "failingInput": "SELECT COUNT FROM employees;",
+        "consequence": "❌ Syntax Error: SQL expects parentheses after aggregate functions.",
+        "howToFix": "Enclose asterisk or column name in parentheses: SELECT COUNT(*) FROM employees;",
+        "mistake": "Missing function parentheses",
+        "whyItHappens": "Typing error."
+      },
+      {
+        "id": "m-9-3",
+        "title": "3. Expecting COUNT() to return individual row details",
+        "description": "Expecting names or IDs alongside un-grouped COUNT(*).",
+        "badSnippet": "SELECT first_name, COUNT(*) FROM employees;",
+        "failingInput": "SELECT first_name, COUNT(*) FROM employees;",
+        "consequence": "❌ SQL Error or non-deterministic first_name value returned without GROUP BY.",
+        "howToFix": "Use GROUP BY first_name if counting per name, or SELECT COUNT(*) alone for total count.",
+        "mistake": "Mixing un-grouped column with aggregate COUNT()",
+        "whyItHappens": "Forgetting aggregate function grouping rules."
+      },
+      {
+        "id": "m-9-4",
+        "title": "4. Confusing COUNT() with SUM()",
+        "description": "Using COUNT(salary) when total money sum was intended.",
+        "badSnippet": "SELECT COUNT(salary) FROM employees; -- Expecting total payroll cost",
+        "failingInput": "SELECT COUNT(salary) FROM employees;",
+        "consequence": "Returns row count (e.g. 10) instead of total sum of salaries (e.g. 750000).",
+        "howToFix": "Use SUM(salary) for total sum: SELECT SUM(salary) FROM employees;",
+        "mistake": "Confusing row counting with numeric summation",
+        "whyItHappens": "Confusing COUNT() and SUM() aggregate functions."
+      },
+      {
+        "id": "m-9-5",
+        "title": "5. Writing COUNT(DISTINCT *)",
+        "description": "Attempting to pass wildcard * to COUNT(DISTINCT).",
+        "badSnippet": "SELECT COUNT(DISTINCT *) FROM employees;",
+        "failingInput": "SELECT COUNT(DISTINCT *) FROM employees;",
+        "consequence": "❌ Syntax Error in most SQL dialects.",
+        "howToFix": "Pass specific column name to COUNT(DISTINCT column_name).",
+        "mistake": "Invalid COUNT(DISTINCT *) syntax",
+        "whyItHappens": "Assuming DISTINCT * works inside COUNT()."
       }
     ]
   },
   "10": {
     "id": "sql-10",
-    "title": "Use LIKE",
+    "title": "Find the Maximum Value (MAX())",
     "levelNumber": 10,
     "problemId": 10,
-    "problemTitle": "Use LIKE",
+    "problemTitle": "Find the Maximum Value (MAX())",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE first_name LIKE 'J%';",
+      "code": "SELECT MAX(salary)\nFROM employees;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use LIKE' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Read rows",
+            "Action": "Iterate records"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL scans rows from disk/buffer pool, extracting the salary column values."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "MAX(salary)",
+            "Action": "Compare and track maximum"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL compares each salary value against the running maximum, ignoring NULLs, and keeps the highest value (120000.0)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 1,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output single maximum value"
+          },
+          "explanation": "SQL returns a single row containing the maximum salary value (120000.0)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-10-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use LIKE' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use LIKE', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE first_name LIKE 'J%';"
+        "category": "💡 Interview Notes",
+        "question": "What is MAX() in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate functions and single-value return semantics.",
+        "bestReplyScript": "MAX() is an aggregate function that scans all non-NULL values in a specified column and returns the single largest value.",
+        "commonMistakesToAvoid": "Thinking MAX() returns an entire row or table instead of a single scalar value.",
+        "keyPoints": ["Aggregate Function", "Highest Value", "Returns Single Scalar"],
+        "codeSnippet": "SELECT MAX(salary) FROM employees;"
+      },
+      {
+        "id": "q-10-2",
+        "category": "💡 Interview Notes",
+        "question": "Can MAX() work with dates and strings?",
+        "whatInterviewerChecks": "Knowledge of collation and data type compatibility in SQL aggregates.",
+        "bestReplyScript": "Yes. When used on dates, MAX() returns the most recent (latest) date. When used on text/strings, MAX() returns the highest value according to alphabetical collation order.",
+        "commonMistakesToAvoid": "Assuming MAX() only works on numeric data types.",
+        "keyPoints": ["Dates: Latest Date", "Strings: Alphabetical Order", "Polymorphic Aggregate"],
+        "codeSnippet": "SELECT MAX(hire_date), MAX(first_name) FROM employees;"
+      },
+      {
+        "id": "q-10-3",
+        "category": "💡 Interview Notes",
+        "question": "Does MAX() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in aggregate functions.",
+        "bestReplyScript": "Yes. MAX() automatically ignores NULL values during its evaluation. If a column contains numbers and NULLs, it evaluates only the non-NULL values.",
+        "commonMistakesToAvoid": "Assuming NULL causes an error or evaluates as zero.",
+        "keyPoints": ["Ignores NULLs", "No Error on NULL"],
+        "codeSnippet": "NULL values are ignored by MAX()"
+      },
+      {
+        "id": "q-10-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between MAX() and ORDER BY DESC LIMIT 1?",
+        "whatInterviewerChecks": "Knowing when to return a single aggregate metric versus a full record tuple.",
+        "bestReplyScript": "MAX(column) returns only the highest value from that specific column as an aggregate. ORDER BY column DESC LIMIT 1 sorts the dataset and returns the first complete record tuple, allowing you to select all employee details (SELECT *) alongside the highest value.",
+        "commonMistakesToAvoid": "Using SELECT * with MAX() expecting it to return the row corresponding to the maximum value.",
+        "keyPoints": ["MAX() = Scalar Metric", "ORDER BY DESC LIMIT 1 = Full Row Tuple"],
+        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC LIMIT 1;"
+      },
+      {
+        "id": "q-10-5",
+        "category": "💡 Interview Notes",
+        "question": "Can MAX() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, MAX() returns the highest value for each distinct group (e.g. SELECT department_id, MAX(salary) FROM employees GROUP BY department_id; returns the highest salary within each department).",
+        "commonMistakesToAvoid": "Forgetting that un-grouped columns must be listed in GROUP BY.",
+        "keyPoints": ["Per-Group Maxima", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, MAX(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "questions": [
       {
         "id": "q-10-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use LIKE' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use LIKE', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE first_name LIKE 'J%';"
+        "category": "💡 Interview Notes",
+        "question": "What is MAX() in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate functions and single-value return semantics.",
+        "bestReplyScript": "MAX() is an aggregate function that scans all non-NULL values in a specified column and returns the single largest value.",
+        "commonMistakesToAvoid": "Thinking MAX() returns an entire row or table instead of a single scalar value.",
+        "keyPoints": ["Aggregate Function", "Highest Value", "Returns Single Scalar"],
+        "codeSnippet": "SELECT MAX(salary) FROM employees;"
+      },
+      {
+        "id": "q-10-2",
+        "category": "💡 Interview Notes",
+        "question": "Can MAX() work with dates and strings?",
+        "whatInterviewerChecks": "Knowledge of collation and data type compatibility in SQL aggregates.",
+        "bestReplyScript": "Yes. When used on dates, MAX() returns the most recent (latest) date. When used on text/strings, MAX() returns the highest value according to alphabetical collation order.",
+        "commonMistakesToAvoid": "Assuming MAX() only works on numeric data types.",
+        "keyPoints": ["Dates: Latest Date", "Strings: Alphabetical Order", "Polymorphic Aggregate"],
+        "codeSnippet": "SELECT MAX(hire_date), MAX(first_name) FROM employees;"
+      },
+      {
+        "id": "q-10-3",
+        "category": "💡 Interview Notes",
+        "question": "Does MAX() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in aggregate functions.",
+        "bestReplyScript": "Yes. MAX() automatically ignores NULL values during its evaluation. If a column contains numbers and NULLs, it evaluates only the non-NULL values.",
+        "commonMistakesToAvoid": "Assuming NULL causes an error or evaluates as zero.",
+        "keyPoints": ["Ignores NULLs", "No Error on NULL"],
+        "codeSnippet": "NULL values are ignored by MAX()"
+      },
+      {
+        "id": "q-10-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between MAX() and ORDER BY DESC LIMIT 1?",
+        "whatInterviewerChecks": "Knowing when to return a single aggregate metric versus a full record tuple.",
+        "bestReplyScript": "MAX(column) returns only the highest value from that specific column as an aggregate. ORDER BY column DESC LIMIT 1 sorts the dataset and returns the first complete record tuple, allowing you to select all employee details (SELECT *) alongside the highest value.",
+        "commonMistakesToAvoid": "Using SELECT * with MAX() expecting it to return the row corresponding to the maximum value.",
+        "keyPoints": ["MAX() = Scalar Metric", "ORDER BY DESC LIMIT 1 = Full Row Tuple"],
+        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC LIMIT 1;"
+      },
+      {
+        "id": "q-10-5",
+        "category": "💡 Interview Notes",
+        "question": "Can MAX() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, MAX() returns the highest value for each distinct group (e.g. SELECT department_id, MAX(salary) FROM employees GROUP BY department_id; returns the highest salary within each department).",
+        "commonMistakesToAvoid": "Forgetting that un-grouped columns must be listed in GROUP BY.",
+        "keyPoints": ["Per-Group Maxima", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, MAX(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "mistakes": [
       {
         "id": "m-10-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Confusing MAX() with COUNT()",
+        "description": "Writing COUNT(salary) when looking for the maximum salary value.",
+        "badSnippet": "SELECT COUNT(salary) FROM employees;",
+        "failingInput": "SELECT COUNT(salary) FROM employees;",
+        "consequence": "Returns row count (e.g., 10) instead of highest value (e.g., 120000.0).",
+        "howToFix": "Use MAX(salary) to find the largest value.",
+        "mistake": "Confusing aggregate functions",
+        "whyItHappens": "Mixing up aggregate functions."
+      },
+      {
+        "id": "m-10-2",
+        "title": "2. Using MAX(*) with Wildcard Asterisk",
+        "description": "Attempting to pass wildcard * to MAX().",
+        "badSnippet": "SELECT MAX(*) FROM employees;",
+        "failingInput": "SELECT MAX(*) FROM employees;",
+        "consequence": "❌ Syntax Error: MAX() operates strictly on a single column, never on *.",
+        "howToFix": "Specify target column name: SELECT MAX(salary) FROM employees;",
+        "mistake": "Invalid MAX(*) syntax",
+        "whyItHappens": "Confusing MAX() with COUNT(*)."
+      },
+      {
+        "id": "m-10-3",
+        "title": "3. Forgetting Parentheses Around Function Argument",
+        "description": "Writing MAX without parentheses.",
+        "badSnippet": "SELECT MAX FROM employees;",
+        "failingInput": "SELECT MAX FROM employees;",
+        "consequence": "❌ Syntax Error: SQL expects parentheses after aggregate functions.",
+        "howToFix": "Enclose column name in parentheses: SELECT MAX(salary) FROM employees;",
+        "mistake": "Missing function parentheses",
+        "whyItHappens": "Typing error."
+      },
+      {
+        "id": "m-10-4",
+        "title": "4. Expecting MAX() to Return Entire Employee Row",
+        "description": "Expecting MAX(salary) to automatically include employee name and job title.",
+        "badSnippet": "SELECT first_name, MAX(salary) FROM employees; -- Without GROUP BY",
+        "failingInput": "SELECT first_name, MAX(salary) FROM employees;",
+        "consequence": "Returns highest salary but first_name may be non-deterministic or cause SQL standard aggregate error.",
+        "howToFix": "Use ORDER BY salary DESC LIMIT 1 if full employee row is needed.",
+        "mistake": "Mixing un-grouped column with aggregate MAX()",
+        "whyItHappens": "Expecting scalar aggregate to preserve individual row identity."
+      },
+      {
+        "id": "m-10-5",
+        "title": "5. Thinking MAX() Sorts the Whole Table",
+        "description": "Assuming MAX() sorts table records in descending order.",
+        "badSnippet": "SELECT MAX(salary) FROM employees; -- Expecting all sorted salaries",
+        "failingInput": "SELECT MAX(salary) FROM employees;",
+        "consequence": "Returns only a single number, not sorted rows.",
+        "howToFix": "Use ORDER BY salary DESC if sorting records is desired.",
+        "mistake": "Confusing scalar aggregation with sorting",
+        "whyItHappens": "Misunderstanding MAX() scope."
       }
     ]
   },
   "11": {
     "id": "sql-11",
-    "title": "Find records starting with a letter",
+    "title": "Find the Minimum Value (MIN())",
     "levelNumber": 11,
     "problemId": 11,
-    "problemTitle": "Find records starting with a letter",
+    "problemTitle": "Find the Minimum Value (MIN())",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE first_name LIKE 'A%';",
+      "code": "SELECT MIN(salary)\nFROM employees;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find records starting with a letter' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Read rows",
+            "Action": "Iterate records"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL scans rows from disk/buffer pool, extracting the salary column values."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "MIN(salary)",
+            "Action": "Compare and track minimum"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL compares each salary value against the running minimum, ignoring NULLs, and keeps the smallest value (55000.0)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 1,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output single minimum value"
+          },
+          "explanation": "SQL returns a single row containing the minimum salary value (55000.0)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-11-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find records starting with a letter' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find records starting with a letter', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE first_name LIKE 'A%';"
+        "category": "💡 Interview Notes",
+        "question": "What is MIN() in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate functions and scalar single-value return semantics.",
+        "bestReplyScript": "MIN() is an aggregate function that scans all non-NULL values in a specified column and returns the single smallest value.",
+        "commonMistakesToAvoid": "Thinking MIN() returns an entire row or table instead of a single scalar value.",
+        "keyPoints": ["Aggregate Function", "Smallest Value", "Returns Single Scalar"],
+        "codeSnippet": "SELECT MIN(salary) FROM employees;"
+      },
+      {
+        "id": "q-11-2",
+        "category": "💡 Interview Notes",
+        "question": "Does MIN() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in aggregate functions.",
+        "bestReplyScript": "Yes. MIN() automatically ignores NULL values during its evaluation. If a column contains numbers and NULLs, it evaluates only the non-NULL values.",
+        "commonMistakesToAvoid": "Assuming NULL causes an error or evaluates as zero.",
+        "keyPoints": ["Ignores NULLs", "No Error on NULL"],
+        "codeSnippet": "NULL values are ignored by MIN()"
+      },
+      {
+        "id": "q-11-3",
+        "category": "💡 Interview Notes",
+        "question": "Can MIN() work with dates?",
+        "whatInterviewerChecks": "Knowledge of collation and temporal data types in aggregate functions.",
+        "bestReplyScript": "Yes. When used on dates or timestamps, MIN() returns the earliest (oldest) chronological date.",
+        "commonMistakesToAvoid": "Assuming MIN() only works on numeric columns.",
+        "keyPoints": ["Dates: Earliest Date", "Temporal Aggregation"],
+        "codeSnippet": "SELECT MIN(hire_date) FROM employees;"
+      },
+      {
+        "id": "q-11-4",
+        "category": "💡 Interview Notes",
+        "question": "Can MIN() work with text/strings?",
+        "whatInterviewerChecks": "Understanding string collation and alphabetical sorting in aggregates.",
+        "bestReplyScript": "Yes. When applied to string/varchar columns, MIN() returns the first value alphabetically based on character collation rules.",
+        "commonMistakesToAvoid": "Thinking MIN() returns the shortest string length instead of alphabetical first.",
+        "keyPoints": ["Alphabetical First", "Collation Order"],
+        "codeSnippet": "SELECT MIN(first_name) FROM employees;"
+      },
+      {
+        "id": "q-11-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between MIN() and ORDER BY ASC LIMIT 1?",
+        "whatInterviewerChecks": "Knowing when to return a single aggregate metric versus a full record tuple.",
+        "bestReplyScript": "MIN(column) returns only the smallest value from that specific column as an aggregate. ORDER BY column ASC LIMIT 1 sorts the dataset and returns the first complete record tuple, allowing you to select all employee details (SELECT *) alongside the smallest value.",
+        "commonMistakesToAvoid": "Using SELECT * with MIN() expecting it to return the row corresponding to the minimum value.",
+        "keyPoints": ["MIN() = Scalar Metric", "ORDER BY ASC LIMIT 1 = Full Row Tuple"],
+        "codeSnippet": "SELECT * FROM employees ORDER BY salary ASC LIMIT 1;"
+      },
+      {
+        "id": "q-11-6",
+        "category": "💡 Interview Notes",
+        "question": "Can MIN() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, MIN() returns the smallest value for each distinct group (e.g. SELECT department_id, MIN(salary) FROM employees GROUP BY department_id; returns the lowest salary within each department).",
+        "commonMistakesToAvoid": "Forgetting that un-grouped columns must be listed in GROUP BY.",
+        "keyPoints": ["Per-Group Minima", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, MIN(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "questions": [
       {
         "id": "q-11-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find records starting with a letter' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find records starting with a letter', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE first_name LIKE 'A%';"
+        "category": "💡 Interview Notes",
+        "question": "What is MIN() in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate functions and scalar single-value return semantics.",
+        "bestReplyScript": "MIN() is an aggregate function that scans all non-NULL values in a specified column and returns the single smallest value.",
+        "commonMistakesToAvoid": "Thinking MIN() returns an entire row or table instead of a single scalar value.",
+        "keyPoints": ["Aggregate Function", "Smallest Value", "Returns Single Scalar"],
+        "codeSnippet": "SELECT MIN(salary) FROM employees;"
+      },
+      {
+        "id": "q-11-2",
+        "category": "💡 Interview Notes",
+        "question": "Does MIN() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in aggregate functions.",
+        "bestReplyScript": "Yes. MIN() automatically ignores NULL values during its evaluation. If a column contains numbers and NULLs, it evaluates only the non-NULL values.",
+        "commonMistakesToAvoid": "Assuming NULL causes an error or evaluates as zero.",
+        "keyPoints": ["Ignores NULLs", "No Error on NULL"],
+        "codeSnippet": "NULL values are ignored by MIN()"
+      },
+      {
+        "id": "q-11-3",
+        "category": "💡 Interview Notes",
+        "question": "Can MIN() work with dates?",
+        "whatInterviewerChecks": "Knowledge of collation and temporal data types in aggregate functions.",
+        "bestReplyScript": "Yes. When used on dates or timestamps, MIN() returns the earliest (oldest) chronological date.",
+        "commonMistakesToAvoid": "Assuming MIN() only works on numeric columns.",
+        "keyPoints": ["Dates: Earliest Date", "Temporal Aggregation"],
+        "codeSnippet": "SELECT MIN(hire_date) FROM employees;"
+      },
+      {
+        "id": "q-11-4",
+        "category": "💡 Interview Notes",
+        "question": "Can MIN() work with text/strings?",
+        "whatInterviewerChecks": "Understanding string collation and alphabetical sorting in aggregates.",
+        "bestReplyScript": "Yes. When applied to string/varchar columns, MIN() returns the first value alphabetically based on character collation rules.",
+        "commonMistakesToAvoid": "Thinking MIN() returns the shortest string length instead of alphabetical first.",
+        "keyPoints": ["Alphabetical First", "Collation Order"],
+        "codeSnippet": "SELECT MIN(first_name) FROM employees;"
+      },
+      {
+        "id": "q-11-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between MIN() and ORDER BY ASC LIMIT 1?",
+        "whatInterviewerChecks": "Knowing when to return a single aggregate metric versus a full record tuple.",
+        "bestReplyScript": "MIN(column) returns only the smallest value from that specific column as an aggregate. ORDER BY column ASC LIMIT 1 sorts the dataset and returns the first complete record tuple, allowing you to select all employee details (SELECT *) alongside the smallest value.",
+        "commonMistakesToAvoid": "Using SELECT * with MIN() expecting it to return the row corresponding to the minimum value.",
+        "keyPoints": ["MIN() = Scalar Metric", "ORDER BY ASC LIMIT 1 = Full Row Tuple"],
+        "codeSnippet": "SELECT * FROM employees ORDER BY salary ASC LIMIT 1;"
+      },
+      {
+        "id": "q-11-6",
+        "category": "💡 Interview Notes",
+        "question": "Can MIN() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, MIN() returns the smallest value for each distinct group (e.g. SELECT department_id, MIN(salary) FROM employees GROUP BY department_id; returns the lowest salary within each department).",
+        "commonMistakesToAvoid": "Forgetting that un-grouped columns must be listed in GROUP BY.",
+        "keyPoints": ["Per-Group Minima", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, MIN(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "mistakes": [
       {
         "id": "m-11-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Confusing MIN() with MAX()",
+        "description": "Writing MAX(salary) when looking for the lowest salary value.",
+        "badSnippet": "SELECT MAX(salary) FROM employees;",
+        "failingInput": "SELECT MAX(salary) FROM employees;",
+        "consequence": "Returns the highest salary (e.g. 120000.0) instead of the lowest (e.g. 55000.0).",
+        "howToFix": "Use MIN(salary) to find the smallest value.",
+        "mistake": "Confusing MIN() with MAX()",
+        "whyItHappens": "Mixing up aggregate functions."
+      },
+      {
+        "id": "m-11-2",
+        "title": "2. Using MIN(*) with Wildcard Asterisk",
+        "description": "Attempting to pass wildcard * to MIN().",
+        "badSnippet": "SELECT MIN(*) FROM employees;",
+        "failingInput": "SELECT MIN(*) FROM employees;",
+        "consequence": "❌ Syntax Error: MIN() operates strictly on a single column, never on *.",
+        "howToFix": "Specify target column name: SELECT MIN(salary) FROM employees;",
+        "mistake": "Invalid MIN(*) syntax",
+        "whyItHappens": "Confusing MIN() with COUNT(*)."
+      },
+      {
+        "id": "m-11-3",
+        "title": "3. Forgetting Parentheses Around Function Argument",
+        "description": "Writing MIN without parentheses.",
+        "badSnippet": "SELECT MIN FROM employees;",
+        "failingInput": "SELECT MIN FROM employees;",
+        "consequence": "❌ Syntax Error: SQL functions require parentheses.",
+        "howToFix": "Enclose column name in parentheses: SELECT MIN(salary) FROM employees;",
+        "mistake": "Missing function parentheses",
+        "whyItHappens": "Typing error."
+      },
+      {
+        "id": "m-11-4",
+        "title": "4. Expecting MIN() to Return Entire Employee Row",
+        "description": "Expecting MIN(salary) to automatically include employee name and job title.",
+        "badSnippet": "SELECT first_name, MIN(salary) FROM employees; -- Without GROUP BY",
+        "failingInput": "SELECT first_name, MIN(salary) FROM employees;",
+        "consequence": "Returns lowest salary but first_name may be non-deterministic or cause SQL standard aggregate error.",
+        "howToFix": "Use ORDER BY salary ASC LIMIT 1 if full employee row is needed.",
+        "mistake": "Mixing un-grouped column with aggregate MIN()",
+        "whyItHappens": "Expecting scalar aggregate to preserve individual row identity."
+      },
+      {
+        "id": "m-11-5",
+        "title": "5. Thinking MIN() Sorts the Whole Table",
+        "description": "Assuming MIN() sorts table records in ascending order.",
+        "badSnippet": "SELECT MIN(salary) FROM employees; -- Expecting all sorted salaries",
+        "failingInput": "SELECT MIN(salary) FROM employees;",
+        "consequence": "Returns only a single number, not sorted rows.",
+        "howToFix": "Use ORDER BY salary ASC if sorting records is desired.",
+        "mistake": "Confusing scalar aggregation with sorting",
+        "whyItHappens": "Misunderstanding MIN() scope."
       }
     ]
   },
   "12": {
     "id": "sql-12",
-    "title": "Find records ending with a letter",
+    "title": "Find the Total Sum (SUM())",
     "levelNumber": 12,
     "problemId": 12,
-    "problemTitle": "Find records ending with a letter",
+    "problemTitle": "Find the Total Sum (SUM())",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE last_name LIKE '%n';",
+      "code": "SELECT SUM(salary)\nFROM employees;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find records ending with a letter' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Read rows",
+            "Action": "Iterate records"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL scans rows from disk/buffer pool, extracting the salary column values."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "SUM(salary)",
+            "Action": "Accumulate numeric total"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL adds each non-NULL salary value into a running accumulator (e.g. 50000 + 65000 + ... = 665000.0)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 1,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output single total sum value"
+          },
+          "explanation": "SQL returns a single row containing the cumulative total sum (665000.0)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-12-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find records ending with a letter' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find records ending with a letter', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE last_name LIKE '%n';"
+        "category": "💡 Interview Notes",
+        "question": "What does SUM() do in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate functions and mathematical summation semantics.",
+        "bestReplyScript": "SUM() is an aggregate function that adds all numeric values in a specified column and returns a single total number.",
+        "commonMistakesToAvoid": "Thinking SUM() counts rows instead of adding values.",
+        "keyPoints": ["Aggregate Function", "Numeric Addition", "Single Total Summary"],
+        "codeSnippet": "SELECT SUM(salary) FROM employees;"
+      },
+      {
+        "id": "q-12-2",
+        "category": "💡 Interview Notes",
+        "question": "Does SUM() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in arithmetic aggregation.",
+        "bestReplyScript": "Yes. SUM() automatically ignores NULL values. For example, [50000, 70000, NULL, 90000] evaluates to 210000, completely skipping the NULL record without error.",
+        "commonMistakesToAvoid": "Assuming NULL makes the entire sum NULL or throws an exception.",
+        "keyPoints": ["Ignores NULLs", "No Error on NULL", "Standard ANSI Behavior"],
+        "codeSnippet": "NULL values are ignored by SUM()"
+      },
+      {
+        "id": "q-12-3",
+        "category": "💡 Interview Notes",
+        "question": "Can SUM() work with text or VARCHAR columns?",
+        "whatInterviewerChecks": "Knowledge of column data types and numeric constraints.",
+        "bestReplyScript": "No. SUM() operates strictly on numeric data types (INTEGER, REAL, FLOAT, DECIMAL). Attempting to use SUM() on text or string columns results in a database syntax/type error.",
+        "commonMistakesToAvoid": "Attempting string concatenation using SUM().",
+        "keyPoints": ["Numeric Only", "No String Concatenation"],
+        "codeSnippet": "SELECT SUM(salary) FROM employees;"
+      },
+      {
+        "id": "q-12-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT() and SUM()?",
+        "whatInterviewerChecks": "Clear conceptual distinction between row counting and numeric summation.",
+        "bestReplyScript": "COUNT() counts the number of rows or non-NULL entries, whereas SUM() calculates the mathematical total of numeric values in a column.",
+        "commonMistakesToAvoid": "Using COUNT(salary) when looking for total payroll expenditure.",
+        "keyPoints": ["COUNT = Row Frequency", "SUM = Numeric Total"],
+        "codeSnippet": "COUNT(salary) vs SUM(salary)"
+      },
+      {
+        "id": "q-12-5",
+        "category": "💡 Interview Notes",
+        "question": "What does SUM() return if all values in the column are NULL?",
+        "whatInterviewerChecks": "Edge case behavior of aggregate functions on NULL sets.",
+        "bestReplyScript": "If all values in the column are NULL (or the table is empty), SUM() returns NULL (unlike COUNT(*) which returns 0). To guarantee a numeric return, wrap with COALESCE(SUM(salary), 0).",
+        "commonMistakesToAvoid": "Assuming SUM() returns 0 on an all-NULL set.",
+        "keyPoints": ["Returns NULL on empty/all-NULL set", "Use COALESCE for default 0"],
+        "codeSnippet": "SELECT COALESCE(SUM(salary), 0) FROM employees;"
+      },
+      {
+        "id": "q-12-6",
+        "category": "💡 Interview Notes",
+        "question": "Can SUM() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding partitioned summation per category/group.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, SUM() calculates the total sum for each distinct group (e.g. SELECT department_id, SUM(salary) FROM employees GROUP BY department_id; returns total salary spend per department).",
+        "commonMistakesToAvoid": "Forgetting to include non-aggregated columns in the GROUP BY clause.",
+        "keyPoints": ["Per-Group Totals", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, SUM(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "questions": [
       {
         "id": "q-12-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find records ending with a letter' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find records ending with a letter', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE last_name LIKE '%n';"
+        "category": "💡 Interview Notes",
+        "question": "What does SUM() do in SQL?",
+        "whatInterviewerChecks": "Understanding SQL aggregate functions and mathematical summation semantics.",
+        "bestReplyScript": "SUM() is an aggregate function that adds all numeric values in a specified column and returns a single total number.",
+        "commonMistakesToAvoid": "Thinking SUM() counts rows instead of adding values.",
+        "keyPoints": ["Aggregate Function", "Numeric Addition", "Single Total Summary"],
+        "codeSnippet": "SELECT SUM(salary) FROM employees;"
+      },
+      {
+        "id": "q-12-2",
+        "category": "💡 Interview Notes",
+        "question": "Does SUM() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in arithmetic aggregation.",
+        "bestReplyScript": "Yes. SUM() automatically ignores NULL values. For example, [50000, 70000, NULL, 90000] evaluates to 210000, completely skipping the NULL record without error.",
+        "commonMistakesToAvoid": "Assuming NULL makes the entire sum NULL or throws an exception.",
+        "keyPoints": ["Ignores NULLs", "No Error on NULL", "Standard ANSI Behavior"],
+        "codeSnippet": "NULL values are ignored by SUM()"
+      },
+      {
+        "id": "q-12-3",
+        "category": "💡 Interview Notes",
+        "question": "Can SUM() work with text or VARCHAR columns?",
+        "whatInterviewerChecks": "Knowledge of column data types and numeric constraints.",
+        "bestReplyScript": "No. SUM() operates strictly on numeric data types (INTEGER, REAL, FLOAT, DECIMAL). Attempting to use SUM() on text or string columns results in a database syntax/type error.",
+        "commonMistakesToAvoid": "Attempting string concatenation using SUM().",
+        "keyPoints": ["Numeric Only", "No String Concatenation"],
+        "codeSnippet": "SELECT SUM(salary) FROM employees;"
+      },
+      {
+        "id": "q-12-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT() and SUM()?",
+        "whatInterviewerChecks": "Clear conceptual distinction between row counting and numeric summation.",
+        "bestReplyScript": "COUNT() counts the number of rows or non-NULL entries, whereas SUM() calculates the mathematical total of numeric values in a column.",
+        "commonMistakesToAvoid": "Using COUNT(salary) when looking for total payroll expenditure.",
+        "keyPoints": ["COUNT = Row Frequency", "SUM = Numeric Total"],
+        "codeSnippet": "COUNT(salary) vs SUM(salary)"
+      },
+      {
+        "id": "q-12-5",
+        "category": "💡 Interview Notes",
+        "question": "What does SUM() return if all values in the column are NULL?",
+        "whatInterviewerChecks": "Edge case behavior of aggregate functions on NULL sets.",
+        "bestReplyScript": "If all values in the column are NULL (or the table is empty), SUM() returns NULL (unlike COUNT(*) which returns 0). To guarantee a numeric return, wrap with COALESCE(SUM(salary), 0).",
+        "commonMistakesToAvoid": "Assuming SUM() returns 0 on an all-NULL set.",
+        "keyPoints": ["Returns NULL on empty/all-NULL set", "Use COALESCE for default 0"],
+        "codeSnippet": "SELECT COALESCE(SUM(salary), 0) FROM employees;"
+      },
+      {
+        "id": "q-12-6",
+        "category": "💡 Interview Notes",
+        "question": "Can SUM() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding partitioned summation per category/group.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, SUM() calculates the total sum for each distinct group (e.g. SELECT department_id, SUM(salary) FROM employees GROUP BY department_id; returns total salary spend per department).",
+        "commonMistakesToAvoid": "Forgetting to include non-aggregated columns in the GROUP BY clause.",
+        "keyPoints": ["Per-Group Totals", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, SUM(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "mistakes": [
       {
         "id": "m-12-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using SUM(*) with Wildcard Asterisk",
+        "description": "Attempting to pass wildcard * to SUM().",
+        "badSnippet": "SELECT SUM(*) FROM employees;",
+        "failingInput": "SELECT SUM(*) FROM employees;",
+        "consequence": "❌ Syntax Error: SUM() requires a specific numeric column name.",
+        "howToFix": "Provide column name: SELECT SUM(salary) FROM employees;",
+        "mistake": "Invalid SUM(*) syntax",
+        "whyItHappens": "Confusing SUM() with COUNT(*)."
+      },
+      {
+        "id": "m-12-2",
+        "title": "2. Using SUM() on Text / Non-Numeric Columns",
+        "description": "Attempting to calculate sum of strings.",
+        "badSnippet": "SELECT SUM(first_name) FROM employees;",
+        "failingInput": "SELECT SUM(first_name) FROM employees;",
+        "consequence": "❌ Type Error: Cannot apply numeric aggregate SUM() to text values.",
+        "howToFix": "Only apply SUM() to numeric columns.",
+        "mistake": "Non-numeric SUM argument",
+        "whyItHappens": "Attempting to aggregate non-numeric data."
+      },
+      {
+        "id": "m-12-3",
+        "title": "3. Forgetting Parentheses Around Function Argument",
+        "description": "Writing SUM without parentheses.",
+        "badSnippet": "SELECT SUM FROM employees;",
+        "failingInput": "SELECT SUM FROM employees;",
+        "consequence": "❌ Syntax Error: SQL functions require parentheses.",
+        "howToFix": "Enclose column name in parentheses: SELECT SUM(salary) FROM employees;",
+        "mistake": "Missing function parentheses",
+        "whyItHappens": "Typing error."
+      },
+      {
+        "id": "m-12-4",
+        "title": "4. Confusing SUM() with COUNT()",
+        "description": "Using COUNT when mathematical sum was desired.",
+        "badSnippet": "SELECT COUNT(salary) FROM employees; -- Intending to find total budget",
+        "failingInput": "SELECT COUNT(salary) FROM employees;",
+        "consequence": "Returns row count (e.g. 10) instead of total sum (e.g. 665000.0).",
+        "howToFix": "Use SUM(salary) to compute mathematical total.",
+        "mistake": "Confusing COUNT() and SUM()",
+        "whyItHappens": "Conflating row counting with value summation."
+      },
+      {
+        "id": "m-12-5",
+        "title": "5. Expecting SUM() to Return Individual Row Records",
+        "description": "Expecting individual employees along with un-grouped SUM().",
+        "badSnippet": "SELECT first_name, SUM(salary) FROM employees;",
+        "failingInput": "SELECT first_name, SUM(salary) FROM employees;",
+        "consequence": "Returns aggregated sum but first_name is non-deterministic or triggers aggregate grouping error.",
+        "howToFix": "Use GROUP BY first_name or select SUM(salary) alone.",
+        "mistake": "Mixing un-grouped column with aggregate SUM()",
+        "whyItHappens": "Misunderstanding aggregate grouping rules."
       }
     ]
   },
   "13": {
     "id": "sql-13",
-    "title": "Find records containing a word",
+    "title": "Calculate the Average (AVG())",
     "levelNumber": 13,
     "problemId": 13,
-    "problemTitle": "Find records containing a word",
+    "problemTitle": "Calculate the Average (AVG())",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM products WHERE product_name LIKE '%Laptop%';",
+      "code": "SELECT AVG(salary)\nFROM employees;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find records containing a word' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Read rows",
+            "Action": "Iterate records"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL scans rows from disk/buffer pool, extracting the salary column values."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "AVG(salary)",
+            "Action": "Sum valid numbers and count"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL sums all non-NULL salary values (e.g. 665000.0) and counts non-NULL rows (e.g. 8), automatically skipping NULLs."
+        },
+        {
+          "step": 4,
+          "lineNumber": 1,
+          "vars": {
+            "Step": "Divide SUM ÷ COUNT",
+            "Action": "Compute arithmetic mean"
+          },
+          "explanation": "SQL divides the accumulated sum by the count of non-NULL values (665000.0 ÷ 8 = 83125.0)."
+        },
+        {
+          "step": 5,
+          "lineNumber": 1,
+          "vars": {
+            "Step": "Display Result",
+            "Action": "Output single average value"
+          },
+          "explanation": "SQL returns a single row containing the average salary (83125.0)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-13-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find records containing a word' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find records containing a word', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM products WHERE product_name LIKE '%Laptop%';"
+        "category": "💡 Interview Notes",
+        "question": "What does AVG() do in SQL?",
+        "whatInterviewerChecks": "Understanding arithmetic mean aggregation and single-value return semantics.",
+        "bestReplyScript": "AVG() is an aggregate function that computes the arithmetic mean of numeric values in a column. It returns a single scalar value.",
+        "commonMistakesToAvoid": "Thinking AVG() returns multiple rows or includes strings.",
+        "keyPoints": ["Aggregate Function", "Arithmetic Mean", "Single Scalar Output"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees;"
+      },
+      {
+        "id": "q-13-2",
+        "category": "💡 Interview Notes",
+        "question": "Does AVG() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in both the numerator and denominator.",
+        "bestReplyScript": "Yes. NULL values are completely ignored by AVG(). They are excluded from both the total sum (numerator) and the row count (denominator). For example, [50000, 70000, NULL, 90000, 60000] divides by 4, not 5.",
+        "commonMistakesToAvoid": "Assuming NULL is treated as 0 and included in the division denominator.",
+        "keyPoints": ["NULLs excluded from sum", "NULLs excluded from divisor count", "Divided by COUNT(column)"],
+        "codeSnippet": "NULL values are ignored by AVG()"
+      },
+      {
+        "id": "q-13-3",
+        "category": "💡 Interview Notes",
+        "question": "Can AVG() work on text or VARCHAR columns?",
+        "whatInterviewerChecks": "Column data types and arithmetic constraints.",
+        "bestReplyScript": "No. AVG() requires numeric types (INT, FLOAT, DECIMAL). Passing text/string columns causes a type or syntax error.",
+        "commonMistakesToAvoid": "Attempting to average non-numeric data.",
+        "keyPoints": ["Numeric Only", "No String Aggregation"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees;"
+      },
+      {
+        "id": "q-13-4",
+        "category": "💡 Interview Notes",
+        "question": "How is AVG() calculated internally by the query engine?",
+        "whatInterviewerChecks": "Mathematical equivalence and internal engine mechanics.",
+        "bestReplyScript": "Internally, the query engine evaluates AVG(column) as SUM(column) / COUNT(column), where both functions ignore NULLs.",
+        "commonMistakesToAvoid": "Assuming it divides by COUNT(*), which would incorrectly include NULL rows in the denominator.",
+        "keyPoints": ["SUM(col) / COUNT(col)", "COUNT(col) ignores NULLs, COUNT(*) includes them"],
+        "codeSnippet": "SELECT SUM(salary) / COUNT(salary) FROM employees;"
+      },
+      {
+        "id": "q-13-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUM() and AVG()?",
+        "whatInterviewerChecks": "Distinction between addition and mean calculation.",
+        "bestReplyScript": "SUM() computes the cumulative addition of all values, while AVG() divides that sum by the number of valid non-NULL records.",
+        "commonMistakesToAvoid": "Conflating sum with mean.",
+        "keyPoints": ["SUM = Total", "AVG = Mean per row"],
+        "codeSnippet": "SUM(salary) vs AVG(salary)"
+      },
+      {
+        "id": "q-13-6",
+        "category": "💡 Interview Notes",
+        "question": "Can AVG() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, AVG() calculates the average for each category or department (e.g. SELECT department_id, AVG(salary) FROM employees GROUP BY department_id;).",
+        "commonMistakesToAvoid": "Forgetting that non-aggregated columns must appear in GROUP BY.",
+        "keyPoints": ["Per-Group Averages", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, AVG(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "questions": [
       {
         "id": "q-13-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find records containing a word' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find records containing a word', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM products WHERE product_name LIKE '%Laptop%';"
+        "category": "💡 Interview Notes",
+        "question": "What does AVG() do in SQL?",
+        "whatInterviewerChecks": "Understanding arithmetic mean aggregation and single-value return semantics.",
+        "bestReplyScript": "AVG() is an aggregate function that computes the arithmetic mean of numeric values in a column. It returns a single scalar value.",
+        "commonMistakesToAvoid": "Thinking AVG() returns multiple rows or includes strings.",
+        "keyPoints": ["Aggregate Function", "Arithmetic Mean", "Single Scalar Output"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees;"
+      },
+      {
+        "id": "q-13-2",
+        "category": "💡 Interview Notes",
+        "question": "Does AVG() ignore NULL values?",
+        "whatInterviewerChecks": "Understanding NULL handling in both the numerator and denominator.",
+        "bestReplyScript": "Yes. NULL values are completely ignored by AVG(). They are excluded from both the total sum (numerator) and the row count (denominator). For example, [50000, 70000, NULL, 90000, 60000] divides by 4, not 5.",
+        "commonMistakesToAvoid": "Assuming NULL is treated as 0 and included in the division denominator.",
+        "keyPoints": ["NULLs excluded from sum", "NULLs excluded from divisor count", "Divided by COUNT(column)"],
+        "codeSnippet": "NULL values are ignored by AVG()"
+      },
+      {
+        "id": "q-13-3",
+        "category": "💡 Interview Notes",
+        "question": "Can AVG() work on text or VARCHAR columns?",
+        "whatInterviewerChecks": "Column data types and arithmetic constraints.",
+        "bestReplyScript": "No. AVG() requires numeric types (INT, FLOAT, DECIMAL). Passing text/string columns causes a type or syntax error.",
+        "commonMistakesToAvoid": "Attempting to average non-numeric data.",
+        "keyPoints": ["Numeric Only", "No String Aggregation"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees;"
+      },
+      {
+        "id": "q-13-4",
+        "category": "💡 Interview Notes",
+        "question": "How is AVG() calculated internally by the query engine?",
+        "whatInterviewerChecks": "Mathematical equivalence and internal engine mechanics.",
+        "bestReplyScript": "Internally, the query engine evaluates AVG(column) as SUM(column) / COUNT(column), where both functions ignore NULLs.",
+        "commonMistakesToAvoid": "Assuming it divides by COUNT(*), which would incorrectly include NULL rows in the denominator.",
+        "keyPoints": ["SUM(col) / COUNT(col)", "COUNT(col) ignores NULLs, COUNT(*) includes them"],
+        "codeSnippet": "SELECT SUM(salary) / COUNT(salary) FROM employees;"
+      },
+      {
+        "id": "q-13-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUM() and AVG()?",
+        "whatInterviewerChecks": "Distinction between addition and mean calculation.",
+        "bestReplyScript": "SUM() computes the cumulative addition of all values, while AVG() divides that sum by the number of valid non-NULL records.",
+        "commonMistakesToAvoid": "Conflating sum with mean.",
+        "keyPoints": ["SUM = Total", "AVG = Mean per row"],
+        "codeSnippet": "SUM(salary) vs AVG(salary)"
+      },
+      {
+        "id": "q-13-6",
+        "category": "💡 Interview Notes",
+        "question": "Can AVG() be used with GROUP BY?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning.",
+        "bestReplyScript": "Yes. When paired with GROUP BY, AVG() calculates the average for each category or department (e.g. SELECT department_id, AVG(salary) FROM employees GROUP BY department_id;).",
+        "commonMistakesToAvoid": "Forgetting that non-aggregated columns must appear in GROUP BY.",
+        "keyPoints": ["Per-Group Averages", "GROUP BY Integration"],
+        "codeSnippet": "SELECT department_id, AVG(salary) FROM employees GROUP BY department_id;"
       }
     ],
     "mistakes": [
       {
         "id": "m-13-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using AVG(*) with Wildcard Asterisk",
+        "description": "Attempting to pass wildcard * to AVG().",
+        "badSnippet": "SELECT AVG(*) FROM employees;",
+        "failingInput": "SELECT AVG(*) FROM employees;",
+        "consequence": "❌ Syntax Error: AVG() requires a single numeric column name.",
+        "howToFix": "Provide column name: SELECT AVG(salary) FROM employees;",
+        "mistake": "Invalid AVG(*) syntax",
+        "whyItHappens": "Confusing AVG() with COUNT(*)."
+      },
+      {
+        "id": "m-13-2",
+        "title": "2. Using AVG() on Text / Non-Numeric Columns",
+        "description": "Attempting to calculate average of strings.",
+        "badSnippet": "SELECT AVG(first_name) FROM employees;",
+        "failingInput": "SELECT AVG(first_name) FROM employees;",
+        "consequence": "❌ Type Error: Cannot apply numeric aggregate AVG() to text.",
+        "howToFix": "Only apply AVG() to numeric columns.",
+        "mistake": "Non-numeric AVG argument",
+        "whyItHappens": "Attempting to aggregate non-numeric data."
+      },
+      {
+        "id": "m-13-3",
+        "title": "3. Forgetting Parentheses Around Function Argument",
+        "description": "Writing AVG without parentheses.",
+        "badSnippet": "SELECT AVG FROM employees;",
+        "failingInput": "SELECT AVG FROM employees;",
+        "consequence": "❌ Syntax Error: SQL functions require parentheses.",
+        "howToFix": "Enclose column name in parentheses: SELECT AVG(salary) FROM employees;",
+        "mistake": "Missing function parentheses",
+        "whyItHappens": "Typing error."
+      },
+      {
+        "id": "m-13-4",
+        "title": "4. Confusing AVG() with SUM()",
+        "description": "Using SUM when mathematical average was desired.",
+        "badSnippet": "SELECT SUM(salary) FROM employees; -- Intending to find average",
+        "failingInput": "SELECT SUM(salary) FROM employees;",
+        "consequence": "Returns cumulative total (e.g. 665000.0) instead of average (e.g. 83125.0).",
+        "howToFix": "Use AVG(salary) to compute arithmetic mean.",
+        "mistake": "Confusing AVG() and SUM()",
+        "whyItHappens": "Conflating sum with average."
+      },
+      {
+        "id": "m-13-5",
+        "title": "5. Assuming NULL Values Are Included in Division",
+        "description": "Assuming NULL rows are divided into the total count.",
+        "badSnippet": "SELECT SUM(salary) / COUNT(*) FROM employees; -- Divides by total rows including NULLs",
+        "failingInput": "Table with NULL salary entries",
+        "consequence": "Deflates the average artificially because denominator includes NULL rows.",
+        "howToFix": "Use AVG(salary) or SUM(salary) / COUNT(salary) so NULLs are excluded from the denominator.",
+        "mistake": "Incorrect denominator calculation with NULLs",
+        "whyItHappens": "Misunderstanding NULL handling in aggregate division."
       }
     ]
   },
   "14": {
     "id": "sql-14",
-    "title": "Use IS NULL",
+    "title": "Group Data Using GROUP BY",
     "levelNumber": 14,
     "problemId": 14,
-    "problemTitle": "Use IS NULL",
+    "problemTitle": "Group Data Using GROUP BY",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Zoho",
+      "Cognizant"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE manager_id IS NULL;",
+      "code": "SELECT department_id,\n       COUNT(*)\nFROM employees\nGROUP BY department_id;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use IS NULL' and validates schema column names."
+          "explanation": "SQL locates the target table 'employees' to scan data rows."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Read rows",
+            "Action": "Extract department_id"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL scans rows from disk/buffer pool, extracting the department_id for grouping."
         },
         {
           "step": 3,
+          "lineNumber": 4,
+          "vars": {
+            "Step": "GROUP BY department_id",
+            "Action": "Partition records into buckets"
+          },
+          "explanation": "SQL groups rows with matching department_id values together (e.g. 101, 102, 103, 104, 105)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Step": "COUNT(*)",
+            "Action": "Evaluate aggregate per partition"
+          },
+          "explanation": "SQL counts the number of employee rows inside each partition separately (101: 3, 102: 2, 103: 1, 104: 1, 105: 1)."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Display Result",
+            "Action": "Output one summarized row per group"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL returns one row for each distinct group displaying department_id and its respective COUNT(*)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-14-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use IS NULL' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use IS NULL', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE manager_id IS NULL;"
+        "category": "💡 Interview Notes",
+        "question": "What is the purpose of GROUP BY in SQL?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning mechanics.",
+        "bestReplyScript": "GROUP BY combines rows with identical values in specified columns into summary groups. This enables aggregate functions like COUNT, SUM, AVG, MAX, and MIN to compute metrics separately for each distinct group rather than across the entire table.",
+        "commonMistakesToAvoid": "Thinking GROUP BY only sorts the table without creating aggregation partitions.",
+        "keyPoints": ["Partitions Rows by Key", "Per-Group Aggregations", "One Output Row Per Group"],
+        "codeSnippet": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": "q-14-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between GROUP BY and ORDER BY?",
+        "whatInterviewerChecks": "Crucial distinction between grouping partitions and result sorting.",
+        "bestReplyScript": "GROUP BY combines rows into summary buckets and enables aggregate computations per group, reducing multiple rows to one summary row per group. ORDER BY merely sorts the final output rows in ascending or descending sequence without combining rows or altering calculations.",
+        "commonMistakesToAvoid": "Assuming GROUP BY guarantees sorted results.",
+        "keyPoints": ["GROUP BY = Aggregation Partitioning", "ORDER BY = Output Sorting"],
+        "codeSnippet": "GROUP BY vs ORDER BY"
+      },
+      {
+        "id": "q-14-3",
+        "category": "💡 Interview Notes",
+        "question": "Can you SELECT a column that is neither in GROUP BY nor in an aggregate function?",
+        "whatInterviewerChecks": "Knowledge of ANSI SQL standard grouping rules and SQLite / MySQL quirks.",
+        "bestReplyScript": "In standard ANSI SQL, selecting a non-aggregated column that does not appear in GROUP BY is invalid because the database cannot determine which row's value to pick from the group. While some engines historically permitted this, modern databases (and ONLY_FULL_GROUP_BY modes) enforce that every projected column must either be in the GROUP BY clause or wrapped in an aggregate function.",
+        "commonMistakesToAvoid": "Selecting employee_name alongside department_id without grouping by employee_name.",
+        "keyPoints": ["Only grouped columns or aggregates", "Avoid non-deterministic projections"],
+        "codeSnippet": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": "q-14-4",
+        "category": "💡 Interview Notes",
+        "question": "Can GROUP BY be used with multiple columns?",
+        "whatInterviewerChecks": "Understanding multi-level hierarchy grouping.",
+        "bestReplyScript": "Yes. Grouping by multiple columns (e.g. GROUP BY department_id, job_title) creates composite groups for every unique combination of those column values, computing aggregate metrics at that granular sub-group level.",
+        "commonMistakesToAvoid": "Assuming GROUP BY is limited to a single dimension.",
+        "keyPoints": ["Composite Grouping", "Multi-column Partitions"],
+        "codeSnippet": "SELECT department_id, job_title, COUNT(*) FROM employees GROUP BY department_id, job_title;"
+      },
+      {
+        "id": "q-14-5",
+        "category": "💡 Interview Notes",
+        "question": "Does GROUP BY include NULL values?",
+        "whatInterviewerChecks": "Understanding NULL treatment in grouping clauses.",
+        "bestReplyScript": "Yes. In SQL, all rows with a NULL value in the grouping column are gathered together into a single distinct NULL group.",
+        "commonMistakesToAvoid": "Assuming rows with NULL grouping keys are ignored or discarded.",
+        "keyPoints": ["NULLs form their own group", "All NULLs combined into one row"],
+        "codeSnippet": "NULL values grouped into one bucket"
+      },
+      {
+        "id": "q-14-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of WHERE, GROUP BY, and HAVING?",
+        "whatInterviewerChecks": "Mastery of SQL logical query processing pipeline.",
+        "bestReplyScript": "The engine processes: 1. FROM (tables located) ──► 2. WHERE (individual rows filtered before grouping) ──► 3. GROUP BY (surviving rows bucketed) ──► 4. HAVING (groups filtered based on aggregate predicates) ──► 5. SELECT (projections evaluated).",
+        "commonMistakesToAvoid": "Using WHERE to filter on aggregate metrics instead of HAVING.",
+        "keyPoints": ["FROM -> WHERE -> GROUP BY -> HAVING -> SELECT", "WHERE filters rows, HAVING filters groups"],
+        "codeSnippet": "WHERE filters before GROUP BY, HAVING filters after"
       }
     ],
     "questions": [
       {
         "id": "q-14-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use IS NULL' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use IS NULL', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE manager_id IS NULL;"
+        "category": "💡 Interview Notes",
+        "question": "What is the purpose of GROUP BY in SQL?",
+        "whatInterviewerChecks": "Understanding grouped aggregation and partitioning mechanics.",
+        "bestReplyScript": "GROUP BY combines rows with identical values in specified columns into summary groups. This enables aggregate functions like COUNT, SUM, AVG, MAX, and MIN to compute metrics separately for each distinct group rather than across the entire table.",
+        "commonMistakesToAvoid": "Thinking GROUP BY only sorts the table without creating aggregation partitions.",
+        "keyPoints": ["Partitions Rows by Key", "Per-Group Aggregations", "One Output Row Per Group"],
+        "codeSnippet": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": "q-14-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between GROUP BY and ORDER BY?",
+        "whatInterviewerChecks": "Crucial distinction between grouping partitions and result sorting.",
+        "bestReplyScript": "GROUP BY combines rows into summary buckets and enables aggregate computations per group, reducing multiple rows to one summary row per group. ORDER BY merely sorts the final output rows in ascending or descending sequence without combining rows or altering calculations.",
+        "commonMistakesToAvoid": "Assuming GROUP BY guarantees sorted results.",
+        "keyPoints": ["GROUP BY = Aggregation Partitioning", "ORDER BY = Output Sorting"],
+        "codeSnippet": "GROUP BY vs ORDER BY"
+      },
+      {
+        "id": "q-14-3",
+        "category": "💡 Interview Notes",
+        "question": "Can you SELECT a column that is neither in GROUP BY nor in an aggregate function?",
+        "whatInterviewerChecks": "Knowledge of ANSI SQL standard grouping rules and SQLite / MySQL quirks.",
+        "bestReplyScript": "In standard ANSI SQL, selecting a non-aggregated column that does not appear in GROUP BY is invalid because the database cannot determine which row's value to pick from the group. While some engines historically permitted this, modern databases (and ONLY_FULL_GROUP_BY modes) enforce that every projected column must either be in the GROUP BY clause or wrapped in an aggregate function.",
+        "commonMistakesToAvoid": "Selecting employee_name alongside department_id without grouping by employee_name.",
+        "keyPoints": ["Only grouped columns or aggregates", "Avoid non-deterministic projections"],
+        "codeSnippet": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": "q-14-4",
+        "category": "💡 Interview Notes",
+        "question": "Can GROUP BY be used with multiple columns?",
+        "whatInterviewerChecks": "Understanding multi-level hierarchy grouping.",
+        "bestReplyScript": "Yes. Grouping by multiple columns (e.g. GROUP BY department_id, job_title) creates composite groups for every unique combination of those column values, computing aggregate metrics at that granular sub-group level.",
+        "commonMistakesToAvoid": "Assuming GROUP BY is limited to a single dimension.",
+        "keyPoints": ["Composite Grouping", "Multi-column Partitions"],
+        "codeSnippet": "SELECT department_id, job_title, COUNT(*) FROM employees GROUP BY department_id, job_title;"
+      },
+      {
+        "id": "q-14-5",
+        "category": "💡 Interview Notes",
+        "question": "Does GROUP BY include NULL values?",
+        "whatInterviewerChecks": "Understanding NULL treatment in grouping clauses.",
+        "bestReplyScript": "Yes. In SQL, all rows with a NULL value in the grouping column are gathered together into a single distinct NULL group.",
+        "commonMistakesToAvoid": "Assuming rows with NULL grouping keys are ignored or discarded.",
+        "keyPoints": ["NULLs form their own group", "All NULLs combined into one row"],
+        "codeSnippet": "NULL values grouped into one bucket"
+      },
+      {
+        "id": "q-14-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of WHERE, GROUP BY, and HAVING?",
+        "whatInterviewerChecks": "Mastery of SQL logical query processing pipeline.",
+        "bestReplyScript": "The engine processes: 1. FROM (tables located) ──► 2. WHERE (individual rows filtered before grouping) ──► 3. GROUP BY (surviving rows bucketed) ──► 4. HAVING (groups filtered based on aggregate predicates) ──► 5. SELECT (projections evaluated).",
+        "commonMistakesToAvoid": "Using WHERE to filter on aggregate metrics instead of HAVING.",
+        "keyPoints": ["FROM -> WHERE -> GROUP BY -> HAVING -> SELECT", "WHERE filters rows, HAVING filters groups"],
+        "codeSnippet": "WHERE filters before GROUP BY, HAVING filters after"
       }
     ],
     "mistakes": [
       {
         "id": "m-14-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting the GROUP BY Clause Entirely",
+        "description": "Selecting an un-aggregated dimension alongside COUNT(*).",
+        "badSnippet": "SELECT department_id, COUNT(*) FROM employees;",
+        "failingInput": "SELECT department_id, COUNT(*) FROM employees;",
+        "consequence": "❌ Syntax/Grouping Error: department_id is un-aggregated without GROUP BY.",
+        "howToFix": "Add GROUP BY department_id.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Forgetting that selecting non-aggregated columns with aggregates requires grouping."
+      },
+      {
+        "id": "m-14-2",
+        "title": "2. Selecting Columns Not Present in GROUP BY",
+        "description": "Projecting individual employee name with department group.",
+        "badSnippet": "SELECT department_id, first_name, COUNT(*) FROM employees GROUP BY department_id;",
+        "failingInput": "SELECT department_id, first_name, COUNT(*) FROM employees GROUP BY department_id;",
+        "consequence": "❌ Grouping Error: first_name is non-deterministic within each department group.",
+        "howToFix": "Remove first_name or include it in the GROUP BY clause.",
+        "mistake": "Selecting un-grouped, un-aggregated column",
+        "whyItHappens": "Expecting row-level detail within a collapsed group."
+      },
+      {
+        "id": "m-14-3",
+        "title": "3. Assuming GROUP BY Automatically Sorts Output",
+        "description": "Relying on GROUP BY for presentation ordering.",
+        "badSnippet": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id; -- Expecting sorted departments",
+        "failingInput": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;",
+        "consequence": "Rows may return in arbitrary hash order depending on database optimizer plan.",
+        "howToFix": "Add explicit ORDER BY department_id clause.",
+        "mistake": "Confusing grouping with sorting",
+        "whyItHappens": "Some older DB engines historically sorted during group resolution."
+      },
+      {
+        "id": "m-14-4",
+        "title": "4. Using WHERE Instead of HAVING for Aggregate Filtering",
+        "description": "Attempting to filter on aggregate in WHERE clause.",
+        "badSnippet": "SELECT department_id, COUNT(*) FROM employees WHERE COUNT(*) > 1 GROUP BY department_id;",
+        "failingInput": "WHERE COUNT(*) > 1",
+        "consequence": "❌ Syntax Error: Aggregate functions are not allowed in WHERE clause.",
+        "howToFix": "Use HAVING COUNT(*) > 1 after the GROUP BY clause.",
+        "mistake": "Using aggregate in WHERE",
+        "whyItHappens": "Not knowing the difference between WHERE (row filter) and HAVING (group filter)."
+      },
+      {
+        "id": "m-14-5",
+        "title": "5. Confusing GROUP BY with DISTINCT",
+        "description": "Using GROUP BY solely to eliminate duplicate column values without aggregates.",
+        "badSnippet": "SELECT department_id FROM employees GROUP BY department_id; -- Intending only distinct values",
+        "failingInput": "SELECT department_id FROM employees GROUP BY department_id;",
+        "consequence": "Produces the distinct values but incurs grouping overhead unnecessarily.",
+        "howToFix": "Use SELECT DISTINCT department_id FROM employees; when no aggregates are needed.",
+        "mistake": "Using GROUP BY instead of DISTINCT",
+        "whyItHappens": "Misunderstanding the intended semantic purpose of GROUP BY."
       }
     ]
   },
   "15": {
     "id": "sql-15",
-    "title": "Use IS NOT NULL",
+    "title": "Filter Groups Using HAVING",
     "levelNumber": 15,
     "problemId": 15,
-    "problemTitle": "Use IS NOT NULL",
+    "problemTitle": "Filter Groups Using HAVING",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees WHERE manager_id IS NOT NULL;",
+      "code": "SELECT department_id,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 2;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Locate target table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Use IS NOT NULL' and validates schema column names."
+          "explanation": "SQL locates and scans the target table 'employees'."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "GROUP BY department_id",
+            "Action": "Partition rows into buckets"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL partitions employee records by department_id into groups (101, 102, 103, 104, 105)."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Step": "COUNT(*)",
+            "Action": "Calculate aggregate per group"
+          },
+          "explanation": "SQL computes employee count for each group (101: 3, 102: 2, 103: 1, 104: 1, 105: 1)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "HAVING COUNT(*) > 2",
+            "Action": "Filter summarized groups"
+          },
+          "explanation": "SQL evaluates the group condition: department 101 has count 3 > 2 (kept); 102 has 2 (discarded); others have 1 (discarded)."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Display Result",
+            "Action": "Output surviving filtered groups"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL returns remaining group row: department_id 101 with total_employees 3."
         }
       ]
     },
     "qas": [
       {
         "id": "q-15-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use IS NOT NULL' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use IS NOT NULL', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE manager_id IS NOT NULL;"
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between WHERE and HAVING in SQL?",
+        "whatInterviewerChecks": "Core understanding of query pipeline execution and row vs group filtering.",
+        "bestReplyScript": "WHERE filters individual table rows BEFORE grouping and aggregation occurs, and cannot contain aggregate functions. HAVING filters aggregated groups AFTER GROUP BY execution, and is specifically designed to filter on aggregate function calculations (like COUNT(*) > 2).",
+        "commonMistakesToAvoid": "Saying WHERE and HAVING are interchangeable or that HAVING is just WHERE for strings.",
+        "keyPoints": ["WHERE filters rows before grouping", "HAVING filters groups after grouping", "Aggregate functions only allowed in HAVING"],
+        "codeSnippet": "WHERE vs HAVING"
+      },
+      {
+        "id": "q-15-2",
+        "category": "💡 Interview Notes",
+        "question": "Why can't we use aggregate functions like COUNT(*) inside a WHERE clause?",
+        "whatInterviewerChecks": "Understanding of relational algebra execution lifecycle.",
+        "bestReplyScript": "The WHERE clause is evaluated during row scanning, before groups exist in memory and before aggregates are computed. Because an aggregate represents a summarized metric across multiple rows, it cannot be evaluated row-by-row in the WHERE stage.",
+        "commonMistakesToAvoid": "Thinking it is just a syntax limitation rather than a logical execution timing constraint.",
+        "keyPoints": ["WHERE executes before aggregation", "Aggregates do not exist yet during WHERE"],
+        "codeSnippet": "WHERE COUNT(*) > 2 -- SYNTAX ERROR"
+      },
+      {
+        "id": "q-15-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the exact logical execution order of SQL query clauses?",
+        "whatInterviewerChecks": "Mastery of internal SQL engine processing pipeline.",
+        "bestReplyScript": "The logical order is: 1. FROM (and JOINs) ──► 2. WHERE (row filter) ──► 3. GROUP BY (group creation) ──► 4. HAVING (group filter) ──► 5. SELECT (projections & expressions) ──► 6. DISTINCT ──► 7. ORDER BY (sort output) ──► 8. LIMIT / OFFSET.",
+        "commonMistakesToAvoid": "Believing SELECT executes first because it is written first in query text.",
+        "keyPoints": ["FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT"],
+        "codeSnippet": "Execution Pipeline"
+      },
+      {
+        "id": "q-15-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING be used without a GROUP BY clause?",
+        "whatInterviewerChecks": "Understanding table-level aggregation as an implicit single group.",
+        "bestReplyScript": "Yes. If HAVING is used without GROUP BY, the entire table is treated as a single group. For example, SELECT AVG(salary) FROM employees HAVING AVG(salary) > 50000; returns the overall average if it exceeds 50000, or an empty set if not.",
+        "commonMistakesToAvoid": "Stating that HAVING strictly causes a syntax error without GROUP BY.",
+        "keyPoints": ["Whole table treated as single group", "Valid standard ANSI behavior"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees HAVING AVG(salary) > 50000;"
+      },
+      {
+        "id": "q-15-5",
+        "category": "💡 Interview Notes",
+        "question": "How can you optimize a query that uses both WHERE and HAVING?",
+        "whatInterviewerChecks": "Performance tuning and row pruning best practices.",
+        "bestReplyScript": "Push as many filtering conditions into WHERE as early as possible. Filtering individual rows with WHERE before GROUP BY significantly reduces the volume of data that must be sorted, hashed, and aggregated in memory, reserving HAVING strictly for conditions on aggregate outputs.",
+        "commonMistakesToAvoid": "Putting simple column predicates into HAVING instead of WHERE.",
+        "keyPoints": ["Filter early with WHERE", "Reduce group hashing memory", "Use HAVING only for aggregate metrics"],
+        "codeSnippet": "WHERE salary > 30000 GROUP BY department_id HAVING COUNT(*) > 2;"
+      },
+      {
+        "id": "q-15-6",
+        "category": "💡 Interview Notes",
+        "question": "Can column aliases defined in SELECT be referenced in HAVING?",
+        "whatInterviewerChecks": "Understanding clause binding order and dialect variations.",
+        "bestReplyScript": "In standard ANSI SQL, SELECT aliases cannot be referenced in HAVING because HAVING executes logically before SELECT. However, some engines (like MySQL and SQLite) permit it as an extension, while Postgres and SQL Server strictly require repeating the aggregate expression or using a subquery/CTE.",
+        "commonMistakesToAvoid": "Assuming aliases are universally permitted across all relational engines.",
+        "keyPoints": ["Standard SQL: repeat aggregate in HAVING", "Dialects vary (MySQL/SQLite allow aliases)"],
+        "codeSnippet": "HAVING COUNT(*) > 2"
       }
     ],
     "questions": [
       {
         "id": "q-15-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Use IS NOT NULL' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Use IS NOT NULL', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees WHERE manager_id IS NOT NULL;"
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between WHERE and HAVING in SQL?",
+        "whatInterviewerChecks": "Core understanding of query pipeline execution and row vs group filtering.",
+        "bestReplyScript": "WHERE filters individual table rows BEFORE grouping and aggregation occurs, and cannot contain aggregate functions. HAVING filters aggregated groups AFTER GROUP BY execution, and is specifically designed to filter on aggregate function calculations (like COUNT(*) > 2).",
+        "commonMistakesToAvoid": "Saying WHERE and HAVING are interchangeable or that HAVING is just WHERE for strings.",
+        "keyPoints": ["WHERE filters rows before grouping", "HAVING filters groups after grouping", "Aggregate functions only allowed in HAVING"],
+        "codeSnippet": "WHERE vs HAVING"
+      },
+      {
+        "id": "q-15-2",
+        "category": "💡 Interview Notes",
+        "question": "Why can't we use aggregate functions like COUNT(*) inside a WHERE clause?",
+        "whatInterviewerChecks": "Understanding of relational algebra execution lifecycle.",
+        "bestReplyScript": "The WHERE clause is evaluated during row scanning, before groups exist in memory and before aggregates are computed. Because an aggregate represents a summarized metric across multiple rows, it cannot be evaluated row-by-row in the WHERE stage.",
+        "commonMistakesToAvoid": "Thinking it is just a syntax limitation rather than a logical execution timing constraint.",
+        "keyPoints": ["WHERE executes before aggregation", "Aggregates do not exist yet during WHERE"],
+        "codeSnippet": "WHERE COUNT(*) > 2 -- SYNTAX ERROR"
+      },
+      {
+        "id": "q-15-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the exact logical execution order of SQL query clauses?",
+        "whatInterviewerChecks": "Mastery of internal SQL engine processing pipeline.",
+        "bestReplyScript": "The logical order is: 1. FROM (and JOINs) ──► 2. WHERE (row filter) ──► 3. GROUP BY (group creation) ──► 4. HAVING (group filter) ──► 5. SELECT (projections & expressions) ──► 6. DISTINCT ──► 7. ORDER BY (sort output) ──► 8. LIMIT / OFFSET.",
+        "commonMistakesToAvoid": "Believing SELECT executes first because it is written first in query text.",
+        "keyPoints": ["FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT"],
+        "codeSnippet": "Execution Pipeline"
+      },
+      {
+        "id": "q-15-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING be used without a GROUP BY clause?",
+        "whatInterviewerChecks": "Understanding table-level aggregation as an implicit single group.",
+        "bestReplyScript": "Yes. If HAVING is used without GROUP BY, the entire table is treated as a single group. For example, SELECT AVG(salary) FROM employees HAVING AVG(salary) > 50000; returns the overall average if it exceeds 50000, or an empty set if not.",
+        "commonMistakesToAvoid": "Stating that HAVING strictly causes a syntax error without GROUP BY.",
+        "keyPoints": ["Whole table treated as single group", "Valid standard ANSI behavior"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees HAVING AVG(salary) > 50000;"
+      },
+      {
+        "id": "q-15-5",
+        "category": "💡 Interview Notes",
+        "question": "How can you optimize a query that uses both WHERE and HAVING?",
+        "whatInterviewerChecks": "Performance tuning and row pruning best practices.",
+        "bestReplyScript": "Push as many filtering conditions into WHERE as early as possible. Filtering individual rows with WHERE before GROUP BY significantly reduces the volume of data that must be sorted, hashed, and aggregated in memory, reserving HAVING strictly for conditions on aggregate outputs.",
+        "commonMistakesToAvoid": "Putting simple column predicates into HAVING instead of WHERE.",
+        "keyPoints": ["Filter early with WHERE", "Reduce group hashing memory", "Use HAVING only for aggregate metrics"],
+        "codeSnippet": "WHERE salary > 30000 GROUP BY department_id HAVING COUNT(*) > 2;"
+      },
+      {
+        "id": "q-15-6",
+        "category": "💡 Interview Notes",
+        "question": "Can column aliases defined in SELECT be referenced in HAVING?",
+        "whatInterviewerChecks": "Understanding clause binding order and dialect variations.",
+        "bestReplyScript": "In standard ANSI SQL, SELECT aliases cannot be referenced in HAVING because HAVING executes logically before SELECT. However, some engines (like MySQL and SQLite) permit it as an extension, while Postgres and SQL Server strictly require repeating the aggregate expression or using a subquery/CTE.",
+        "commonMistakesToAvoid": "Assuming aliases are universally permitted across all relational engines.",
+        "keyPoints": ["Standard SQL: repeat aggregate in HAVING", "Dialects vary (MySQL/SQLite allow aliases)"],
+        "codeSnippet": "HAVING COUNT(*) > 2"
       }
     ],
     "mistakes": [
       {
         "id": "m-15-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using Aggregate Function in WHERE Clause",
+        "description": "Attempting to filter on aggregate inside WHERE.",
+        "badSnippet": "SELECT department_id, COUNT(*) FROM employees WHERE COUNT(*) > 2 GROUP BY department_id;",
+        "failingInput": "WHERE COUNT(*) > 2",
+        "consequence": "❌ Syntax Error: Misuse of aggregate function in WHERE clause.",
+        "howToFix": "Move aggregate predicate to HAVING COUNT(*) > 2 after GROUP BY.",
+        "mistake": "Aggregate in WHERE",
+        "whyItHappens": "Not recognizing that aggregates do not exist until the grouping phase."
+      },
+      {
+        "id": "m-15-2",
+        "title": "2. Using HAVING for Simple Row-Level Column Filters",
+        "description": "Filtering non-aggregated column in HAVING instead of WHERE.",
+        "badSnippet": "SELECT department_id, COUNT(*) FROM employees GROUP BY department_id HAVING department_id = 101;",
+        "failingInput": "HAVING department_id = 101",
+        "consequence": "Forces full table scan and unnecessary grouping before filtering.",
+        "howToFix": "Filter earlier using WHERE department_id = 101 before GROUP BY.",
+        "mistake": "Using HAVING instead of WHERE for row predicates",
+        "whyItHappens": "Misunderstanding when to apply row filters vs aggregate filters."
+      },
+      {
+        "id": "m-15-3",
+        "title": "3. Thinking HAVING Runs Before GROUP BY",
+        "description": "Believing HAVING filters rows before the group buckets form.",
+        "badSnippet": "SELECT department_id, COUNT(*) FROM employees HAVING COUNT(*) > 2 GROUP BY department_id;",
+        "failingInput": "HAVING before GROUP BY",
+        "consequence": "❌ Syntax Error: HAVING must follow GROUP BY in query grammar.",
+        "howToFix": "Position HAVING strictly after GROUP BY.",
+        "mistake": "Incorrect clause ordering",
+        "whyItHappens": "Not knowing the SQL syntax specification."
+      },
+      {
+        "id": "m-15-4",
+        "title": "4. Omitting Non-Aggregated Columns from GROUP BY",
+        "description": "Selecting columns that are not included in GROUP BY alongside HAVING.",
+        "badSnippet": "SELECT department_id, first_name, COUNT(*) FROM employees GROUP BY department_id HAVING COUNT(*) > 2;",
+        "failingInput": "Selecting first_name without grouping",
+        "consequence": "❌ Grouping Error: first_name is non-deterministic within each group.",
+        "howToFix": "Remove first_name or add it to GROUP BY department_id, first_name.",
+        "mistake": "Un-grouped column in SELECT with HAVING",
+        "whyItHappens": "Confusing summary group projection with row-level projections."
+      },
+      {
+        "id": "m-15-5",
+        "title": "5. Confusing HAVING COUNT(*) > 2 with HAVING COUNT(*) >= 2",
+        "description": "Using strict greater than (>) when inclusive greater or equal (>=) was required.",
+        "badSnippet": "HAVING COUNT(*) > 2; -- Excludes groups with exactly 2 employees",
+        "failingInput": "Groups with 2 items",
+        "consequence": "Groups with exactly 2 items are unexpectedly excluded.",
+        "howToFix": "Verify boundary requirements: use > for strictly greater and >= for inclusive.",
+        "mistake": "Boundary condition mismatch",
+        "whyItHappens": "Careless comparison operator choice."
       }
     ]
   },
   "16": {
     "id": "sql-16",
-    "title": "Sort using ORDER BY ASC",
+    "title": "Retrieve Matching Records Using INNER JOIN",
     "levelNumber": 16,
     "problemId": 16,
-    "problemTitle": "Sort using ORDER BY ASC",
+    "problemTitle": "Retrieve Matching Records Using INNER JOIN",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees ORDER BY salary ASC;",
+      "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nINNER JOIN departments\nON employees.department_id = departments.department_id;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Read left table rows"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Sort using ORDER BY ASC' and validates schema column names."
+          "explanation": "SQL engine reads rows from the employees table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "INNER JOIN departments",
+            "Action": "Read right table rows"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL engine accesses the departments table to establish join pairs."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "ON condition",
+            "Action": "Match keys (employees.department_id = departments.department_id)"
+          },
+          "explanation": "SQL compares keys: matching department IDs (101, 102, 103, 104, 105) are paired together."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "Filter intersection",
+            "Action": "Discard unmatched records"
+          },
+          "explanation": "Only rows present in BOTH tables survive the join; any employee with unmatched department is excluded."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Output employees.first_name and departments.department_name"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The projection engine outputs the matching employee first names paired with their respective department names."
         }
       ]
     },
     "qas": [
       {
         "id": "q-16-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Sort using ORDER BY ASC' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Sort using ORDER BY ASC', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY salary ASC;"
+        "category": "💡 Interview Notes",
+        "question": "What is an INNER JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of relational table joins and intersection semantics.",
+        "bestReplyScript": "An INNER JOIN evaluates two tables against a join predicate (usually an ON clause equating primary and foreign keys). It returns only those rows where the join condition evaluates to TRUE in both tables, discarding unmatched rows from either side.",
+        "commonMistakesToAvoid": "Thinking INNER JOIN keeps rows with NULL or unmatched keys.",
+        "keyPoints": ["Intersection of two tables", "Only matching records returned", "Unmatched rows discarded"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-16-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between INNER JOIN and LEFT JOIN?",
+        "whatInterviewerChecks": "One of the most frequently tested SQL interview concepts.",
+        "bestReplyScript": "INNER JOIN returns only matching rows that exist in both tables; unmatched rows from either table are excluded. LEFT JOIN returns all rows from the left table, and if a row has no corresponding match in the right table, it fills the right table's columns with NULL values.",
+        "commonMistakesToAvoid": "Saying LEFT JOIN only returns left rows without right columns.",
+        "keyPoints": ["INNER JOIN = Matching rows only", "LEFT JOIN = All left rows + matched right rows (NULL if missing)"],
+        "codeSnippet": "INNER JOIN vs LEFT JOIN"
+      },
+      {
+        "id": "q-16-3",
+        "category": "💡 Interview Notes",
+        "question": "Why is the ON clause required in an INNER JOIN?",
+        "whatInterviewerChecks": "Understanding join predicates vs Cartesian products.",
+        "bestReplyScript": "The ON clause defines the join predicate that determines how rows from the two tables correlate. Without an ON clause, the engine would produce a Cartesian product (CROSS JOIN), pairing every row of table 1 with every row of table 2 (N × M rows).",
+        "commonMistakesToAvoid": "Assuming SQL automatically infers the join key without an ON or USING clause.",
+        "keyPoints": ["Specifies join predicate", "Prevents unintended Cartesian product (CROSS JOIN)"],
+        "codeSnippet": "ON employees.department_id = departments.department_id"
+      },
+      {
+        "id": "q-16-4",
+        "category": "💡 Interview Notes",
+        "question": "Can an INNER JOIN connect more than two tables in a single query?",
+        "whatInterviewerChecks": "Multi-table relational traversal.",
+        "bestReplyScript": "Yes. Multiple INNER JOIN clauses can be chained sequentially. The output of the first join acts as the input dataset for the subsequent join (e.g. employees JOIN departments JOIN locations).",
+        "commonMistakesToAvoid": "Thinking multiple tables require subqueries or unions.",
+        "keyPoints": ["Chained joins", "Sequential relational pipeline"],
+        "codeSnippet": "SELECT * FROM employees e JOIN departments d ON e.department_id = d.department_id JOIN locations l ON d.location_id = l.location_id;"
+      },
+      {
+        "id": "q-16-5",
+        "category": "💡 Interview Notes",
+        "question": "Is JOIN identical to INNER JOIN in SQL?",
+        "whatInterviewerChecks": "ANSI SQL syntax defaults.",
+        "bestReplyScript": "Yes. In ANSI SQL, writing 'JOIN' without specifying a type defaults to an 'INNER JOIN'.",
+        "commonMistakesToAvoid": "Thinking JOIN defaults to LEFT JOIN or CROSS JOIN.",
+        "keyPoints": ["JOIN = INNER JOIN by default in ANSI standard"],
+        "codeSnippet": "JOIN is equivalent to INNER JOIN"
+      },
+      {
+        "id": "q-16-6",
+        "category": "💡 Interview Notes",
+        "question": "How does a database physically execute an INNER JOIN?",
+        "whatInterviewerChecks": "Deep database internals (Nested Loop, Hash Join, Merge Join).",
+        "bestReplyScript": "The query optimizer selects among three primary physical join algorithms based on data volume, statistics, and indexes: 1. Nested Loop Join (ideal for small tables or when the inner table has an index), 2. Hash Join (builds in-memory hash table of the smaller table, ideal for large unindexed equijoins), and 3. Sort-Merge Join (requires sorted inputs, efficient for large datasets).",
+        "commonMistakesToAvoid": "Believing databases only execute joins via nested loops.",
+        "keyPoints": ["Nested Loop Join", "Hash Join", "Sort-Merge Join"],
+        "codeSnippet": "Physical Join Algorithms"
       }
     ],
     "questions": [
       {
         "id": "q-16-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Sort using ORDER BY ASC' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Sort using ORDER BY ASC', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY salary ASC;"
+        "category": "💡 Interview Notes",
+        "question": "What is an INNER JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of relational table joins and intersection semantics.",
+        "bestReplyScript": "An INNER JOIN evaluates two tables against a join predicate (usually an ON clause equating primary and foreign keys). It returns only those rows where the join condition evaluates to TRUE in both tables, discarding unmatched rows from either side.",
+        "commonMistakesToAvoid": "Thinking INNER JOIN keeps rows with NULL or unmatched keys.",
+        "keyPoints": ["Intersection of two tables", "Only matching records returned", "Unmatched rows discarded"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-16-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between INNER JOIN and LEFT JOIN?",
+        "whatInterviewerChecks": "One of the most frequently tested SQL interview concepts.",
+        "bestReplyScript": "INNER JOIN returns only matching rows that exist in both tables; unmatched rows from either table are excluded. LEFT JOIN returns all rows from the left table, and if a row has no corresponding match in the right table, it fills the right table's columns with NULL values.",
+        "commonMistakesToAvoid": "Saying LEFT JOIN only returns left rows without right columns.",
+        "keyPoints": ["INNER JOIN = Matching rows only", "LEFT JOIN = All left rows + matched right rows (NULL if missing)"],
+        "codeSnippet": "INNER JOIN vs LEFT JOIN"
+      },
+      {
+        "id": "q-16-3",
+        "category": "💡 Interview Notes",
+        "question": "Why is the ON clause required in an INNER JOIN?",
+        "whatInterviewerChecks": "Understanding join predicates vs Cartesian products.",
+        "bestReplyScript": "The ON clause defines the join predicate that determines how rows from the two tables correlate. Without an ON clause, the engine would produce a Cartesian product (CROSS JOIN), pairing every row of table 1 with every row of table 2 (N × M rows).",
+        "commonMistakesToAvoid": "Assuming SQL automatically infers the join key without an ON or USING clause.",
+        "keyPoints": ["Specifies join predicate", "Prevents unintended Cartesian product (CROSS JOIN)"],
+        "codeSnippet": "ON employees.department_id = departments.department_id"
+      },
+      {
+        "id": "q-16-4",
+        "category": "💡 Interview Notes",
+        "question": "Can an INNER JOIN connect more than two tables in a single query?",
+        "whatInterviewerChecks": "Multi-table relational traversal.",
+        "bestReplyScript": "Yes. Multiple INNER JOIN clauses can be chained sequentially. The output of the first join acts as the input dataset for the subsequent join (e.g. employees JOIN departments JOIN locations).",
+        "commonMistakesToAvoid": "Thinking multiple tables require subqueries or unions.",
+        "keyPoints": ["Chained joins", "Sequential relational pipeline"],
+        "codeSnippet": "SELECT * FROM employees e JOIN departments d ON e.department_id = d.department_id JOIN locations l ON d.location_id = l.location_id;"
+      },
+      {
+        "id": "q-16-5",
+        "category": "💡 Interview Notes",
+        "question": "Is JOIN identical to INNER JOIN in SQL?",
+        "whatInterviewerChecks": "ANSI SQL syntax defaults.",
+        "bestReplyScript": "Yes. In ANSI SQL, writing 'JOIN' without specifying a type defaults to an 'INNER JOIN'.",
+        "commonMistakesToAvoid": "Thinking JOIN defaults to LEFT JOIN or CROSS JOIN.",
+        "keyPoints": ["JOIN = INNER JOIN by default in ANSI standard"],
+        "codeSnippet": "JOIN is equivalent to INNER JOIN"
+      },
+      {
+        "id": "q-16-6",
+        "category": "💡 Interview Notes",
+        "question": "How does a database physically execute an INNER JOIN?",
+        "whatInterviewerChecks": "Deep database internals (Nested Loop, Hash Join, Merge Join).",
+        "bestReplyScript": "The query optimizer selects among three primary physical join algorithms based on data volume, statistics, and indexes: 1. Nested Loop Join (ideal for small tables or when the inner table has an index), 2. Hash Join (builds in-memory hash table of the smaller table, ideal for large unindexed equijoins), and 3. Sort-Merge Join (requires sorted inputs, efficient for large datasets).",
+        "commonMistakesToAvoid": "Believing databases only execute joins via nested loops.",
+        "keyPoints": ["Nested Loop Join", "Hash Join", "Sort-Merge Join"],
+        "codeSnippet": "Physical Join Algorithms"
       }
     ],
     "mistakes": [
       {
         "id": "m-16-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting the ON Clause (Accidental Cartesian Product)",
+        "description": "Joining without specifying an ON predicate.",
+        "badSnippet": "SELECT * FROM employees INNER JOIN departments;",
+        "failingInput": "Query missing ON clause",
+        "consequence": "❌ Syntax Error or unintended Cross Join producing N × M rows.",
+        "howToFix": "Always specify the match predicate: ON employees.department_id = departments.department_id.",
+        "mistake": "Missing ON clause",
+        "whyItHappens": "Forgetting the join condition."
+      },
+      {
+        "id": "m-16-2",
+        "title": "2. Joining on Unrelated Keys",
+        "description": "Matching incompatible keys.",
+        "badSnippet": "ON employees.employee_id = departments.department_id",
+        "failingInput": "Mismatched foreign key column",
+        "consequence": "Corrupts join results by equating employee serial ID to department ID.",
+        "howToFix": "Verify schema foreign key relationships: ON employees.department_id = departments.department_id.",
+        "mistake": "Joining on wrong columns",
+        "whyItHappens": "Assuming ID columns always match across different entity tables."
+      },
+      {
+        "id": "m-16-3",
+        "title": "3. Ambiguous Column References",
+        "description": "Selecting a shared column without table qualification.",
+        "badSnippet": "SELECT department_id FROM employees INNER JOIN departments ON ...",
+        "failingInput": "SELECT department_id (exists in both tables)",
+        "consequence": "❌ Ambiguous Column Error: Database cannot resolve which table to pull from.",
+        "howToFix": "Prefix column with table name: SELECT employees.department_id or SELECT departments.department_id.",
+        "mistake": "Unqualified shared column name",
+        "whyItHappens": "Not realizing both tables have a department_id column."
+      },
+      {
+        "id": "m-16-4",
+        "title": "4. Expecting INNER JOIN to Retain Unmatched Records",
+        "description": "Assuming employees with non-existent department IDs will still appear.",
+        "badSnippet": "SELECT employees.first_name, departments.department_name FROM employees INNER JOIN departments ...",
+        "failingInput": "Employee with department_id 105 (not in departments table)",
+        "consequence": "Records with no match in the right table are completely omitted.",
+        "howToFix": "Use LEFT JOIN if you need to keep all employees even without a matching department.",
+        "mistake": "Using INNER JOIN when outer join was required",
+        "whyItHappens": "Misunderstanding the strict intersection behavior of INNER JOIN."
+      },
+      {
+        "id": "m-16-5",
+        "title": "5. Confusing Table Aliases in Multi-Join Queries",
+        "description": "Defining alias and then referencing original table name or mismatched alias.",
+        "badSnippet": "SELECT employees.first_name FROM employees e INNER JOIN departments d ON e.department_id = departments.department_id;",
+        "failingInput": "Mixing aliases with table names",
+        "consequence": "❌ Unknown Table Error: Once an alias is assigned, the original table name cannot be referenced.",
+        "howToFix": "Consistently use the defined alias: e.department_id = d.department_id.",
+        "mistake": "Inconsistent alias usage",
+        "whyItHappens": "Changing query to use aliases halfway through."
       }
     ]
   },
   "17": {
     "id": "sql-17",
-    "title": "Sort using ORDER BY DESC",
+    "title": "Retrieve All Records from the Left Table Using LEFT JOIN",
     "levelNumber": 17,
     "problemId": 17,
-    "problemTitle": "Sort using ORDER BY DESC",
+    "problemTitle": "Retrieve All Records from the Left Table Using LEFT JOIN",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees ORDER BY salary DESC;",
+      "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nLEFT JOIN departments\nON employees.department_id = departments.department_id;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Read all rows from left table (all preserved)"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Sort using ORDER BY DESC' and validates schema column names."
+          "explanation": "SQL engine scans the employees table. Every employee row is guaranteed to be in the output."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "LEFT JOIN departments",
+            "Action": "Read right table"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL engine accesses departments table to find matching department records."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "ON condition evaluation",
+            "Action": "Match employees.department_id = departments.department_id"
+          },
+          "explanation": "SQL compares keys between both tables to locate pairs."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "Handle unmatched rows",
+            "Action": "Assign NULL to right table columns when no match exists"
+          },
+          "explanation": "If an employee has a department_id that does not exist in departments, right-hand columns are filled with NULL."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Output employees.first_name and departments.department_name"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The projection engine returns every employee paired with their department name (or NULL)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-17-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Sort using ORDER BY DESC' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Sort using ORDER BY DESC', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC;"
+        "category": "💡 Interview Notes",
+        "question": "What is a LEFT JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of outer join mechanics and left preservation.",
+        "bestReplyScript": "A LEFT JOIN preserves all records from the left table regardless of whether a matching record exists in the right table. When a match is found via the ON clause, the right table's columns are populated; when no match exists, the right table's columns are padded with NULLs.",
+        "commonMistakesToAvoid": "Thinking unmatched left rows are discarded like in an INNER JOIN.",
+        "keyPoints": ["Preserves all left table rows", "Matching right columns included", "Missing right matches filled with NULL"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-17-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between LEFT JOIN and LEFT OUTER JOIN?",
+        "whatInterviewerChecks": "ANSI SQL syntax knowledge.",
+        "bestReplyScript": "There is zero functional or performance difference. In SQL standard syntax, the 'OUTER' keyword is optional. 'LEFT JOIN' is simply shorthand for 'LEFT OUTER JOIN'.",
+        "commonMistakesToAvoid": "Thinking LEFT OUTER JOIN does something extra beyond LEFT JOIN.",
+        "keyPoints": ["Exact synonyms", "OUTER keyword is optional"],
+        "codeSnippet": "LEFT JOIN === LEFT OUTER JOIN"
+      },
+      {
+        "id": "q-17-3",
+        "category": "💡 Interview Notes",
+        "question": "How can you find records in the left table that have NO match in the right table?",
+        "whatInterviewerChecks": "Knowledge of the classic Left Anti-Join pattern.",
+        "bestReplyScript": "Use a LEFT JOIN combined with a WHERE condition checking for NULL on the right table's primary key (e.g. WHERE d.department_id IS NULL). This filters for left table rows that failed to find any match.",
+        "commonMistakesToAvoid": "Using WHERE d.department_id = NULL instead of IS NULL.",
+        "keyPoints": ["Left Anti-Join pattern", "WHERE right_table.id IS NULL"],
+        "codeSnippet": "SELECT e.first_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id WHERE d.department_id IS NULL;"
+      },
+      {
+        "id": "q-17-4",
+        "category": "💡 Interview Notes",
+        "question": "What common mistake accidentally turns a LEFT JOIN into an INNER JOIN?",
+        "whatInterviewerChecks": "Advanced understanding of predicate pushdown and WHERE vs ON clause placement.",
+        "bestReplyScript": "Placing a filter on the right table inside the WHERE clause (e.g. WHERE d.department_name = 'Sales'). Because unmatched rows produce NULL for d.department_name, and NULL = 'Sales' evaluates to UNKNOWN/FALSE, the WHERE clause silently removes the unmatched left rows, converting the query into an INNER JOIN. The condition should be moved into the ON clause instead.",
+        "commonMistakesToAvoid": "Placing right-table filter predicates into WHERE instead of ON in a LEFT JOIN.",
+        "keyPoints": ["Filtering right table in WHERE eliminates NULLs", "Accidentally converts to INNER JOIN", "Place filter in ON clause to preserve left rows"],
+        "codeSnippet": "ON e.department_id = d.department_id AND d.department_name = 'Sales'"
+      },
+      {
+        "id": "q-17-5",
+        "category": "💡 Interview Notes",
+        "question": "Which table's rows are always preserved in a LEFT JOIN?",
+        "whatInterviewerChecks": "Directionality and table placement in FROM / JOIN.",
+        "bestReplyScript": "The table specified in the FROM clause (the 'left' table) is always preserved. All of its rows will appear in the result set at least once.",
+        "commonMistakesToAvoid": "Confusing left table with right table based on syntax ordering.",
+        "keyPoints": ["FROM table is the left table", "Always 100% preserved"],
+        "codeSnippet": "FROM left_table LEFT JOIN right_table"
+      },
+      {
+        "id": "q-17-6",
+        "category": "💡 Interview Notes",
+        "question": "Can a LEFT JOIN produce duplicate rows for an entry in the left table?",
+        "whatInterviewerChecks": "Cardianality understanding (one-to-many relationships).",
+        "bestReplyScript": "Yes! If a single row in the left table matches multiple rows in the right table (a 1-to-N relationship), the left row is duplicated for each matching right row in the output. Left join guarantees minimum 1 row per left tuple, not strictly 1 row.",
+        "commonMistakesToAvoid": "Assuming LEFT JOIN always returns exactly the count of rows in the left table.",
+        "keyPoints": ["Can expand row count on 1:N relations", "Minimum 1 row per left record, can be more if multi-match"],
+        "codeSnippet": "One-to-Many duplication in LEFT JOIN"
       }
     ],
     "questions": [
       {
         "id": "q-17-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Sort using ORDER BY DESC' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Sort using ORDER BY DESC', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC;"
+        "category": "💡 Interview Notes",
+        "question": "What is a LEFT JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of outer join mechanics and left preservation.",
+        "bestReplyScript": "A LEFT JOIN preserves all records from the left table regardless of whether a matching record exists in the right table. When a match is found via the ON clause, the right table's columns are populated; when no match exists, the right table's columns are padded with NULLs.",
+        "commonMistakesToAvoid": "Thinking unmatched left rows are discarded like in an INNER JOIN.",
+        "keyPoints": ["Preserves all left table rows", "Matching right columns included", "Missing right matches filled with NULL"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-17-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between LEFT JOIN and LEFT OUTER JOIN?",
+        "whatInterviewerChecks": "ANSI SQL syntax knowledge.",
+        "bestReplyScript": "There is zero functional or performance difference. In SQL standard syntax, the 'OUTER' keyword is optional. 'LEFT JOIN' is simply shorthand for 'LEFT OUTER JOIN'.",
+        "commonMistakesToAvoid": "Thinking LEFT OUTER JOIN does something extra beyond LEFT JOIN.",
+        "keyPoints": ["Exact synonyms", "OUTER keyword is optional"],
+        "codeSnippet": "LEFT JOIN === LEFT OUTER JOIN"
+      },
+      {
+        "id": "q-17-3",
+        "category": "💡 Interview Notes",
+        "question": "How can you find records in the left table that have NO match in the right table?",
+        "whatInterviewerChecks": "Knowledge of the classic Left Anti-Join pattern.",
+        "bestReplyScript": "Use a LEFT JOIN combined with a WHERE condition checking for NULL on the right table's primary key (e.g. WHERE d.department_id IS NULL). This filters for left table rows that failed to find any match.",
+        "commonMistakesToAvoid": "Using WHERE d.department_id = NULL instead of IS NULL.",
+        "keyPoints": ["Left Anti-Join pattern", "WHERE right_table.id IS NULL"],
+        "codeSnippet": "SELECT e.first_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id WHERE d.department_id IS NULL;"
+      },
+      {
+        "id": "q-17-4",
+        "category": "💡 Interview Notes",
+        "question": "What common mistake accidentally turns a LEFT JOIN into an INNER JOIN?",
+        "whatInterviewerChecks": "Advanced understanding of predicate pushdown and WHERE vs ON clause placement.",
+        "bestReplyScript": "Placing a filter on the right table inside the WHERE clause (e.g. WHERE d.department_name = 'Sales'). Because unmatched rows produce NULL for d.department_name, and NULL = 'Sales' evaluates to UNKNOWN/FALSE, the WHERE clause silently removes the unmatched left rows, converting the query into an INNER JOIN. The condition should be moved into the ON clause instead.",
+        "commonMistakesToAvoid": "Placing right-table filter predicates into WHERE instead of ON in a LEFT JOIN.",
+        "keyPoints": ["Filtering right table in WHERE eliminates NULLs", "Accidentally converts to INNER JOIN", "Place filter in ON clause to preserve left rows"],
+        "codeSnippet": "ON e.department_id = d.department_id AND d.department_name = 'Sales'"
+      },
+      {
+        "id": "q-17-5",
+        "category": "💡 Interview Notes",
+        "question": "Which table's rows are always preserved in a LEFT JOIN?",
+        "whatInterviewerChecks": "Directionality and table placement in FROM / JOIN.",
+        "bestReplyScript": "The table specified in the FROM clause (the 'left' table) is always preserved. All of its rows will appear in the result set at least once.",
+        "commonMistakesToAvoid": "Confusing left table with right table based on syntax ordering.",
+        "keyPoints": ["FROM table is the left table", "Always 100% preserved"],
+        "codeSnippet": "FROM left_table LEFT JOIN right_table"
+      },
+      {
+        "id": "q-17-6",
+        "category": "💡 Interview Notes",
+        "question": "Can a LEFT JOIN produce duplicate rows for an entry in the left table?",
+        "whatInterviewerChecks": "Cardianality understanding (one-to-many relationships).",
+        "bestReplyScript": "Yes! If a single row in the left table matches multiple rows in the right table (a 1-to-N relationship), the left row is duplicated for each matching right row in the output. Left join guarantees minimum 1 row per left tuple, not strictly 1 row.",
+        "commonMistakesToAvoid": "Assuming LEFT JOIN always returns exactly the count of rows in the left table.",
+        "keyPoints": ["Can expand row count on 1:N relations", "Minimum 1 row per left record, can be more if multi-match"],
+        "codeSnippet": "One-to-Many duplication in LEFT JOIN"
       }
     ],
     "mistakes": [
       {
         "id": "m-17-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Filtering Right Table in WHERE Clause (Silent INNER JOIN Conversion)",
+        "description": "Filtering right-side columns in WHERE eliminates rows with NULLs.",
+        "badSnippet": "SELECT e.first_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id WHERE d.department_name = 'IT';",
+        "failingInput": "WHERE d.department_name = 'IT'",
+        "consequence": "Silently drops all employees with no department, converting LEFT JOIN into INNER JOIN.",
+        "howToFix": "Move the condition into the ON clause: ON e.department_id = d.department_id AND d.department_name = 'IT'.",
+        "mistake": "Right-table predicate in WHERE instead of ON",
+        "whyItHappens": "Not realizing NULL evaluates to false in WHERE equality checks."
+      },
+      {
+        "id": "m-17-2",
+        "title": "2. Confusing LEFT JOIN with INNER JOIN",
+        "description": "Using INNER JOIN when unmatched left records are required.",
+        "badSnippet": "SELECT e.first_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "Unassigned employees (NULL department_id)",
+        "consequence": "Unassigned employees are dropped from the report.",
+        "howToFix": "Use LEFT JOIN to retain every employee.",
+        "mistake": "Using INNER JOIN instead of LEFT JOIN",
+        "whyItHappens": "Assuming INNER JOIN returns all rows."
+      },
+      {
+        "id": "m-17-3",
+        "title": "3. Using = NULL Instead of IS NULL in Anti-Joins",
+        "description": "Testing for missing matches with = NULL.",
+        "badSnippet": "WHERE d.department_id = NULL;",
+        "failingInput": "d.department_id = NULL",
+        "consequence": "Returns zero rows because comparisons with NULL always evaluate to UNKNOWN in Three-Valued Logic.",
+        "howToFix": "Use IS NULL: WHERE d.department_id IS NULL.",
+        "mistake": "Testing NULL with equality operator =",
+        "whyItHappens": "Forgetting SQL three-valued logic."
+      },
+      {
+        "id": "m-17-4",
+        "title": "4. Missing the ON Clause (Cartesian Product)",
+        "description": "Omitting the matching condition in a LEFT JOIN.",
+        "badSnippet": "SELECT * FROM employees LEFT JOIN departments;",
+        "failingInput": "Missing ON clause",
+        "consequence": "❌ Syntax Error or Cartesian product.",
+        "howToFix": "Always provide the ON condition: ON employees.department_id = departments.department_id.",
+        "mistake": "Missing ON clause",
+        "whyItHappens": "Incomplete join syntax."
+      },
+      {
+        "id": "m-17-5",
+        "title": "5. Inverting Left and Right Tables",
+        "description": "Swapping the order of tables in FROM / LEFT JOIN.",
+        "badSnippet": "FROM departments LEFT JOIN employees ON ... -- When looking for all employees",
+        "failingInput": "FROM departments LEFT JOIN employees",
+        "consequence": "Preserves all departments instead of all employees.",
+        "howToFix": "Keep the entity you want 100% preserved on the LEFT (in the FROM clause): FROM employees LEFT JOIN departments.",
+        "mistake": "Inverted table order",
+        "whyItHappens": "Not paying attention to which entity is the primary preserved set."
       }
     ]
   },
   "18": {
     "id": "sql-18",
-    "title": "Retrieve top N records (LIMIT/TOP)",
+    "title": "Retrieve All Records from the Right Table Using RIGHT JOIN",
     "levelNumber": 18,
     "problemId": 18,
-    "problemTitle": "Retrieve top N records (LIMIT/TOP)",
+    "problemTitle": "Retrieve All Records from the Right Table Using RIGHT JOIN",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
+      "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nRIGHT JOIN departments\nON employees.department_id = departments.department_id;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Read left table (employees)"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Retrieve top N records (LIMIT/TOP)' and validates schema column names."
+          "explanation": "SQL engine accesses the left table (employees)."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "RIGHT JOIN departments",
+            "Action": "Read right table (departments - 100% preserved)"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL engine accesses departments. Every single department record is guaranteed to appear in the output."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "ON condition evaluation",
+            "Action": "Match employees.department_id = departments.department_id"
+          },
+          "explanation": "SQL compares department keys to locate employee matches."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "Handle unmatched rows",
+            "Action": "Assign NULL to employee columns if department has no employees"
+          },
+          "explanation": "If a department has no employees, employee columns are set to NULL, keeping the department preserved."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Output employees.first_name and departments.department_name"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The projection engine outputs all departments paired with employee names (or NULL)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-18-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Retrieve top N records (LIMIT/TOP)' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Retrieve top N records (LIMIT/TOP)', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "What is a RIGHT JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of right preservation and outer join semantics.",
+        "bestReplyScript": "A RIGHT JOIN returns all rows from the right table, and the matching rows from the left table. If no matching row exists in the left table for a right table row, the left table's columns are filled with NULLs.",
+        "commonMistakesToAvoid": "Thinking RIGHT JOIN drops right-table rows when no left matches exist.",
+        "keyPoints": ["Preserves all right table rows", "Left-side columns filled with NULL if missing match", "Inverse of LEFT JOIN"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-18-2",
+        "category": "💡 Interview Notes",
+        "question": "Is RIGHT JOIN supported in all SQL database engines?",
+        "whatInterviewerChecks": "Database dialect specifics (SQLite historically did not support RIGHT JOIN until 3.39.0).",
+        "bestReplyScript": "While MySQL, PostgreSQL, Oracle, and SQL Server have always supported RIGHT JOIN, SQLite historically did not support RIGHT JOIN prior to version 3.39.0 (released in 2022). In environments lacking RIGHT JOIN, it is standard practice to rewrite the query by swapping the table order and using LEFT JOIN.",
+        "commonMistakesToAvoid": "Not knowing that RIGHT JOIN can always be rewritten as a LEFT JOIN by reversing table order.",
+        "keyPoints": ["Universal rewrite: swap tables + LEFT JOIN", "Supported in modern SQLite 3.39+, Postgres, MySQL, Oracle"],
+        "codeSnippet": "FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id"
+      },
+      {
+        "id": "q-18-3",
+        "category": "💡 Interview Notes",
+        "question": "Why do many engineering style guides avoid RIGHT JOIN in favor of LEFT JOIN?",
+        "whatInterviewerChecks": "Code maintainability and readability best practices.",
+        "bestReplyScript": "Human reading flow in code naturally moves top-to-bottom and left-to-right. Using only LEFT JOIN maintains a consistent mental model where the primary driving entity is always declared in the FROM clause, preventing cognitive confusion caused by mixing LEFT and RIGHT joins in complex multi-table queries.",
+        "commonMistakesToAvoid": "Claiming RIGHT JOIN is slower or deprecated by the ANSI standard.",
+        "keyPoints": ["Readability and cognitive consistency", "Left-to-right mental flow", "Standardize on LEFT JOIN in production"],
+        "codeSnippet": "Best Practice: Standardize on LEFT JOIN"
+      },
+      {
+        "id": "q-18-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between RIGHT JOIN and RIGHT OUTER JOIN?",
+        "whatInterviewerChecks": "SQL grammar keywords understanding.",
+        "bestReplyScript": "They are completely identical. The 'OUTER' keyword is optional syntactic sugar in the SQL standard specification.",
+        "commonMistakesToAvoid": "Assuming OUTER provides extra filtering.",
+        "keyPoints": ["Exact synonyms", "OUTER keyword is optional"],
+        "codeSnippet": "RIGHT JOIN === RIGHT OUTER JOIN"
+      },
+      {
+        "id": "q-18-5",
+        "category": "💡 Interview Notes",
+        "question": "How do you find right-table rows that have NO match in the left table (Right Anti-Join)?",
+        "whatInterviewerChecks": "Anti-join patterns on right table.",
+        "bestReplyScript": "Filter for NULL on the left table's primary key in the WHERE clause: WHERE employees.employee_id IS NULL. This filters out all matching records, leaving only unassigned departments.",
+        "commonMistakesToAvoid": "Checking the right table column for NULL instead of the left table column.",
+        "keyPoints": ["Right Anti-Join", "WHERE left_table.primary_key IS NULL"],
+        "codeSnippet": "SELECT d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id WHERE e.employee_id IS NULL;"
+      },
+      {
+        "id": "q-18-6",
+        "category": "💡 Interview Notes",
+        "question": "Which table's rows are guaranteed to appear in the output of a RIGHT JOIN?",
+        "whatInterviewerChecks": "Fundamental join directionality.",
+        "bestReplyScript": "The right table (the table specified after the RIGHT JOIN clause) is 100% preserved. Every single row from the right table will appear at least once in the result set.",
+        "commonMistakesToAvoid": "Confusing left and right tables.",
+        "keyPoints": ["Right table is 100% preserved", "Appears at least once"],
+        "codeSnippet": "FROM left_table RIGHT JOIN right_table"
       }
     ],
     "questions": [
       {
         "id": "q-18-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Retrieve top N records (LIMIT/TOP)' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Retrieve top N records (LIMIT/TOP)', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "What is a RIGHT JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of right preservation and outer join semantics.",
+        "bestReplyScript": "A RIGHT JOIN returns all rows from the right table, and the matching rows from the left table. If no matching row exists in the left table for a right table row, the left table's columns are filled with NULLs.",
+        "commonMistakesToAvoid": "Thinking RIGHT JOIN drops right-table rows when no left matches exist.",
+        "keyPoints": ["Preserves all right table rows", "Left-side columns filled with NULL if missing match", "Inverse of LEFT JOIN"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-18-2",
+        "category": "💡 Interview Notes",
+        "question": "Is RIGHT JOIN supported in all SQL database engines?",
+        "whatInterviewerChecks": "Database dialect specifics (SQLite historically did not support RIGHT JOIN until 3.39.0).",
+        "bestReplyScript": "While MySQL, PostgreSQL, Oracle, and SQL Server have always supported RIGHT JOIN, SQLite historically did not support RIGHT JOIN prior to version 3.39.0 (released in 2022). In environments lacking RIGHT JOIN, it is standard practice to rewrite the query by swapping the table order and using LEFT JOIN.",
+        "commonMistakesToAvoid": "Not knowing that RIGHT JOIN can always be rewritten as a LEFT JOIN by reversing table order.",
+        "keyPoints": ["Universal rewrite: swap tables + LEFT JOIN", "Supported in modern SQLite 3.39+, Postgres, MySQL, Oracle"],
+        "codeSnippet": "FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id"
+      },
+      {
+        "id": "q-18-3",
+        "category": "💡 Interview Notes",
+        "question": "Why do many engineering style guides avoid RIGHT JOIN in favor of LEFT JOIN?",
+        "whatInterviewerChecks": "Code maintainability and readability best practices.",
+        "bestReplyScript": "Human reading flow in code naturally moves top-to-bottom and left-to-right. Using only LEFT JOIN maintains a consistent mental model where the primary driving entity is always declared in the FROM clause, preventing cognitive confusion caused by mixing LEFT and RIGHT joins in complex multi-table queries.",
+        "commonMistakesToAvoid": "Claiming RIGHT JOIN is slower or deprecated by the ANSI standard.",
+        "keyPoints": ["Readability and cognitive consistency", "Left-to-right mental flow", "Standardize on LEFT JOIN in production"],
+        "codeSnippet": "Best Practice: Standardize on LEFT JOIN"
+      },
+      {
+        "id": "q-18-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between RIGHT JOIN and RIGHT OUTER JOIN?",
+        "whatInterviewerChecks": "SQL grammar keywords understanding.",
+        "bestReplyScript": "They are completely identical. The 'OUTER' keyword is optional syntactic sugar in the SQL standard specification.",
+        "commonMistakesToAvoid": "Assuming OUTER provides extra filtering.",
+        "keyPoints": ["Exact synonyms", "OUTER keyword is optional"],
+        "codeSnippet": "RIGHT JOIN === RIGHT OUTER JOIN"
+      },
+      {
+        "id": "q-18-5",
+        "category": "💡 Interview Notes",
+        "question": "How do you find right-table rows that have NO match in the left table (Right Anti-Join)?",
+        "whatInterviewerChecks": "Anti-join patterns on right table.",
+        "bestReplyScript": "Filter for NULL on the left table's primary key in the WHERE clause: WHERE employees.employee_id IS NULL. This filters out all matching records, leaving only unassigned departments.",
+        "commonMistakesToAvoid": "Checking the right table column for NULL instead of the left table column.",
+        "keyPoints": ["Right Anti-Join", "WHERE left_table.primary_key IS NULL"],
+        "codeSnippet": "SELECT d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id WHERE e.employee_id IS NULL;"
+      },
+      {
+        "id": "q-18-6",
+        "category": "💡 Interview Notes",
+        "question": "Which table's rows are guaranteed to appear in the output of a RIGHT JOIN?",
+        "whatInterviewerChecks": "Fundamental join directionality.",
+        "bestReplyScript": "The right table (the table specified after the RIGHT JOIN clause) is 100% preserved. Every single row from the right table will appear at least once in the result set.",
+        "commonMistakesToAvoid": "Confusing left and right tables.",
+        "keyPoints": ["Right table is 100% preserved", "Appears at least once"],
+        "codeSnippet": "FROM left_table RIGHT JOIN right_table"
       }
     ],
     "mistakes": [
       {
         "id": "m-18-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Confusing LEFT JOIN and RIGHT JOIN Table Preservation",
+        "description": "Expecting the FROM table to be preserved in a RIGHT JOIN.",
+        "badSnippet": "SELECT * FROM employees RIGHT JOIN departments ON ... -- Expecting all employees",
+        "failingInput": "Employees unassigned to departments",
+        "consequence": "Unassigned employees are dropped because departments is the preserved right table.",
+        "howToFix": "Use LEFT JOIN if you want employees preserved, or understand that RIGHT JOIN preserves departments.",
+        "mistake": "Confusing preserved table direction",
+        "whyItHappens": "Forgetting that RIGHT JOIN preserves the table declared in the JOIN clause."
+      },
+      {
+        "id": "m-18-2",
+        "title": "2. Filtering Left Table in WHERE Clause",
+        "description": "Filtering left-side columns in WHERE eliminates NULL padded rows.",
+        "badSnippet": "SELECT e.first_name, d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id WHERE e.salary > 50000;",
+        "failingInput": "WHERE e.salary > 50000",
+        "consequence": "Drops all departments without matching employees, converting RIGHT JOIN into INNER JOIN.",
+        "howToFix": "Move the condition into the ON clause: ON e.department_id = d.department_id AND e.salary > 50000.",
+        "mistake": "Left-table predicate in WHERE instead of ON",
+        "whyItHappens": "Not realizing NULL > 50000 evaluates to UNKNOWN, discarding right-table rows."
+      },
+      {
+        "id": "m-18-3",
+        "title": "3. Forgetting the ON Clause",
+        "description": "Omitting the matching condition in a RIGHT JOIN.",
+        "badSnippet": "SELECT * FROM employees RIGHT JOIN departments;",
+        "failingInput": "Missing ON clause",
+        "consequence": "❌ Syntax Error or Cartesian product.",
+        "howToFix": "Specify ON employees.department_id = departments.department_id.",
+        "mistake": "Missing ON clause",
+        "whyItHappens": "Incomplete join syntax."
+      },
+      {
+        "id": "m-18-4",
+        "title": "4. Assuming Older Dialects Support RIGHT JOIN Without Testing",
+        "description": "Using RIGHT JOIN in legacy SQLite or environments with older database engines.",
+        "badSnippet": "SELECT * FROM a RIGHT JOIN b ON a.id = b.id; -- Fails on SQLite < 3.39",
+        "failingInput": "Legacy SQLite engine",
+        "consequence": "❌ Syntax Error: RIGHT and FULL OUTER JOINs are not supported.",
+        "howToFix": "Rewrite as SELECT * FROM b LEFT JOIN a ON b.id = a.id.",
+        "mistake": "Using RIGHT JOIN in unsupported engine",
+        "whyItHappens": "Unawareness of engine feature compatibility."
+      },
+      {
+        "id": "m-18-5",
+        "title": "5. Checking Right Table Column for NULL in Anti-Join",
+        "description": "Writing WHERE d.department_id IS NULL when looking for departments without employees.",
+        "badSnippet": "WHERE d.department_id IS NULL",
+        "failingInput": "Checking right table key instead of left",
+        "consequence": "Returns zero rows because departments is the right preserved table.",
+        "howToFix": "Check the left table key: WHERE e.employee_id IS NULL.",
+        "mistake": "Checking wrong table key for NULL in anti-join",
+        "whyItHappens": "Confusing left and right table roles in outer joins."
       }
     ]
   },
   "19": {
     "id": "sql-19",
-    "title": "Remove duplicates using DISTINCT",
+    "title": "Retrieve All Records from Both Tables Using FULL OUTER JOIN",
     "levelNumber": 19,
     "problemId": 19,
-    "problemTitle": "Remove duplicates using DISTINCT",
+    "problemTitle": "Retrieve All Records from Both Tables Using FULL OUTER JOIN",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT DISTINCT job_title FROM employees;",
+      "code": "SELECT employees.first_name,\n       departments.department_name\nFROM employees\nFULL OUTER JOIN departments\nON employees.department_id = departments.department_id;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Read left table (employees)"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Remove duplicates using DISTINCT' and validates schema column names."
+          "explanation": "SQL engine accesses employees table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "FULL OUTER JOIN departments",
+            "Action": "Read right table (departments)"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL engine accesses departments table to prepare full outer join set."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "ON condition matching",
+            "Action": "Match employees.department_id = departments.department_id"
+          },
+          "explanation": "SQL pairs up rows where department_id matches."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "Include unmatched left & right rows",
+            "Action": "Preserve unmatched left rows (NULL right) and unmatched right rows (NULL left)"
+          },
+          "explanation": "Employees without departments get NULL department_name; departments without employees get NULL first_name."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Output employees.first_name and departments.department_name"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The projection engine outputs complete combined result set from both tables."
         }
       ]
     },
     "qas": [
       {
         "id": "q-19-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Remove duplicates using DISTINCT' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Remove duplicates using DISTINCT', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT DISTINCT job_title FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is a FULL OUTER JOIN and how does it work?",
+        "whatInterviewerChecks": "Understanding of complete outer join semantics across two tables.",
+        "bestReplyScript": "A FULL OUTER JOIN returns all rows from both the left and right tables. When rows match the ON predicate, they are combined; when a row exists in only one table, it is retained in the result set with NULLs for all columns of the missing table.",
+        "commonMistakesToAvoid": "Thinking FULL OUTER JOIN drops unmatched records like INNER JOIN.",
+        "keyPoints": ["Combines matching rows", "Preserves unmatched left rows with NULL right", "Preserves unmatched right rows with NULL left"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e FULL OUTER JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-19-2",
+        "category": "💡 Interview Notes",
+        "question": "Does MySQL natively support FULL OUTER JOIN syntax?",
+        "whatInterviewerChecks": "Cross-database dialect knowledge.",
+        "bestReplyScript": "No. MySQL (and SQLite prior to version 3.39.0) does not support the 'FULL OUTER JOIN' keyword syntax. To achieve a FULL OUTER JOIN in MySQL, you combine a LEFT JOIN with a RIGHT JOIN (or another LEFT JOIN with reversed tables) using the UNION operator.",
+        "commonMistakesToAvoid": "Assuming MySQL syntax supports FULL OUTER JOIN natively.",
+        "keyPoints": ["MySQL lacks native FULL OUTER JOIN keyword", "Simulate using LEFT JOIN + UNION + RIGHT JOIN"],
+        "codeSnippet": "SELECT ... FROM a LEFT JOIN b ON ... UNION SELECT ... FROM b LEFT JOIN a ON ..."
+      },
+      {
+        "id": "q-19-3",
+        "category": "💡 Interview Notes",
+        "question": "Why must you use UNION instead of UNION ALL when simulating FULL OUTER JOIN?",
+        "whatInterviewerChecks": "Understanding set operations (UNION deduplication vs UNION ALL inclusion).",
+        "bestReplyScript": "Both the LEFT JOIN and the RIGHT JOIN queries will return the matching rows. Standard UNION removes duplicate rows from the final result set, ensuring matching rows appear only once. UNION ALL would duplicate every matching pair!",
+        "commonMistakesToAvoid": "Using UNION ALL when simulating FULL OUTER JOIN.",
+        "keyPoints": ["UNION removes duplicate matching rows", "UNION ALL causes duplicate matching records"],
+        "codeSnippet": "LEFT JOIN ... UNION ... RIGHT JOIN"
+      },
+      {
+        "id": "q-19-4",
+        "category": "💡 Interview Notes",
+        "question": "How do you find records that exist ONLY in one table or the other, but NOT both (Full Anti-Join)?",
+        "whatInterviewerChecks": "Symmetric Difference anti-join pattern.",
+        "bestReplyScript": "Use FULL OUTER JOIN and filter for rows where either table's primary key IS NULL in the WHERE clause: WHERE employees.employee_id IS NULL OR departments.department_id IS NULL.",
+        "commonMistakesToAvoid": "Using AND instead of OR in the WHERE condition.",
+        "keyPoints": ["Full Anti-Join / Symmetric Difference", "WHERE left_pk IS NULL OR right_pk IS NULL"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e FULL OUTER JOIN departments d ON e.department_id = d.department_id WHERE e.employee_id IS NULL OR d.department_id IS NULL;"
+      },
+      {
+        "id": "q-19-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between FULL JOIN and FULL OUTER JOIN?",
+        "whatInterviewerChecks": "ANSI SQL keyword variations.",
+        "bestReplyScript": "They are exact synonyms. The 'OUTER' keyword is optional in standard SQL syntax specifications.",
+        "commonMistakesToAvoid": "Thinking FULL JOIN and FULL OUTER JOIN behave differently.",
+        "keyPoints": ["Exact synonyms", "OUTER keyword is optional"],
+        "codeSnippet": "FULL JOIN === FULL OUTER JOIN"
+      },
+      {
+        "id": "q-19-6",
+        "category": "💡 Interview Notes",
+        "question": "Summarize the 4 main SQL JOIN types in 1 sentence.",
+        "whatInterviewerChecks": "High-level summary of relational join hierarchy.",
+        "bestReplyScript": "1. INNER JOIN returns matching rows only. 2. LEFT JOIN returns all left rows + matching right rows. 3. RIGHT JOIN returns all right rows + matching left rows. 4. FULL OUTER JOIN returns all rows from both tables.",
+        "commonMistakesToAvoid": "Stumbling over join definitions.",
+        "keyPoints": ["INNER = Matches only", "LEFT = All Left", "RIGHT = All Right", "FULL OUTER = Everything"],
+        "codeSnippet": "SQL Join Hierarchy Summary"
       }
     ],
     "questions": [
       {
         "id": "q-19-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Remove duplicates using DISTINCT' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Remove duplicates using DISTINCT', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT DISTINCT job_title FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is a FULL OUTER JOIN and how does it work?",
+        "whatInterviewerChecks": "Understanding of complete outer join semantics across two tables.",
+        "bestReplyScript": "A FULL OUTER JOIN returns all rows from both the left and right tables. When rows match the ON predicate, they are combined; when a row exists in only one table, it is retained in the result set with NULLs for all columns of the missing table.",
+        "commonMistakesToAvoid": "Thinking FULL OUTER JOIN drops unmatched records like INNER JOIN.",
+        "keyPoints": ["Combines matching rows", "Preserves unmatched left rows with NULL right", "Preserves unmatched right rows with NULL left"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e FULL OUTER JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": "q-19-2",
+        "category": "💡 Interview Notes",
+        "question": "Does MySQL natively support FULL OUTER JOIN syntax?",
+        "whatInterviewerChecks": "Cross-database dialect knowledge.",
+        "bestReplyScript": "No. MySQL (and SQLite prior to version 3.39.0) does not support the 'FULL OUTER JOIN' keyword syntax. To achieve a FULL OUTER JOIN in MySQL, you combine a LEFT JOIN with a RIGHT JOIN (or another LEFT JOIN with reversed tables) using the UNION operator.",
+        "commonMistakesToAvoid": "Assuming MySQL syntax supports FULL OUTER JOIN natively.",
+        "keyPoints": ["MySQL lacks native FULL OUTER JOIN keyword", "Simulate using LEFT JOIN + UNION + RIGHT JOIN"],
+        "codeSnippet": "SELECT ... FROM a LEFT JOIN b ON ... UNION SELECT ... FROM b LEFT JOIN a ON ..."
+      },
+      {
+        "id": "q-19-3",
+        "category": "💡 Interview Notes",
+        "question": "Why must you use UNION instead of UNION ALL when simulating FULL OUTER JOIN?",
+        "whatInterviewerChecks": "Understanding set operations (UNION deduplication vs UNION ALL inclusion).",
+        "bestReplyScript": "Both the LEFT JOIN and the RIGHT JOIN queries will return the matching rows. Standard UNION removes duplicate rows from the final result set, ensuring matching rows appear only once. UNION ALL would duplicate every matching pair!",
+        "commonMistakesToAvoid": "Using UNION ALL when simulating FULL OUTER JOIN.",
+        "keyPoints": ["UNION removes duplicate matching rows", "UNION ALL causes duplicate matching records"],
+        "codeSnippet": "LEFT JOIN ... UNION ... RIGHT JOIN"
+      },
+      {
+        "id": "q-19-4",
+        "category": "💡 Interview Notes",
+        "question": "How do you find records that exist ONLY in one table or the other, but NOT both (Full Anti-Join)?",
+        "whatInterviewerChecks": "Symmetric Difference anti-join pattern.",
+        "bestReplyScript": "Use FULL OUTER JOIN and filter for rows where either table's primary key IS NULL in the WHERE clause: WHERE employees.employee_id IS NULL OR departments.department_id IS NULL.",
+        "commonMistakesToAvoid": "Using AND instead of OR in the WHERE condition.",
+        "keyPoints": ["Full Anti-Join / Symmetric Difference", "WHERE left_pk IS NULL OR right_pk IS NULL"],
+        "codeSnippet": "SELECT e.first_name, d.department_name FROM employees e FULL OUTER JOIN departments d ON e.department_id = d.department_id WHERE e.employee_id IS NULL OR d.department_id IS NULL;"
+      },
+      {
+        "id": "q-19-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between FULL JOIN and FULL OUTER JOIN?",
+        "whatInterviewerChecks": "ANSI SQL keyword variations.",
+        "bestReplyScript": "They are exact synonyms. The 'OUTER' keyword is optional in standard SQL syntax specifications.",
+        "commonMistakesToAvoid": "Thinking FULL JOIN and FULL OUTER JOIN behave differently.",
+        "keyPoints": ["Exact synonyms", "OUTER keyword is optional"],
+        "codeSnippet": "FULL JOIN === FULL OUTER JOIN"
+      },
+      {
+        "id": "q-19-6",
+        "category": "💡 Interview Notes",
+        "question": "Summarize the 4 main SQL JOIN types in 1 sentence.",
+        "whatInterviewerChecks": "High-level summary of relational join hierarchy.",
+        "bestReplyScript": "1. INNER JOIN returns matching rows only. 2. LEFT JOIN returns all left rows + matching right rows. 3. RIGHT JOIN returns all right rows + matching left rows. 4. FULL OUTER JOIN returns all rows from both tables.",
+        "commonMistakesToAvoid": "Stumbling over join definitions.",
+        "keyPoints": ["INNER = Matches only", "LEFT = All Left", "RIGHT = All Right", "FULL OUTER = Everything"],
+        "codeSnippet": "SQL Join Hierarchy Summary"
       }
     ],
     "mistakes": [
       {
         "id": "m-19-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Confusing FULL OUTER JOIN with INNER JOIN",
+        "description": "Expecting FULL OUTER JOIN to filter out unmatched records.",
+        "badSnippet": "Expecting unmatched rows to be deleted",
+        "failingInput": "Unmatched left or right records",
+        "consequence": "Unmatched records remain in output with NULL padding.",
+        "howToFix": "Use INNER JOIN if you only want rows that match in both tables.",
+        "mistake": "Using FULL OUTER JOIN when INNER JOIN was desired",
+        "whyItHappens": "Misunderstanding outer join semantics."
+      },
+      {
+        "id": "m-19-2",
+        "title": "2. Using Native FULL OUTER JOIN Syntax in MySQL",
+        "description": "Writing FULL OUTER JOIN in MySQL databases.",
+        "badSnippet": "SELECT * FROM a FULL OUTER JOIN b ON a.id = b.id; -- MySQL syntax error",
+        "failingInput": "MySQL Query Engine",
+        "consequence": "❌ Syntax Error: MySQL does not support FULL OUTER JOIN syntax.",
+        "howToFix": "Simulate using LEFT JOIN + UNION + RIGHT JOIN (or swapped LEFT JOIN).",
+        "mistake": "Native FULL OUTER JOIN in unsupported engine",
+        "whyItHappens": "Assuming all SQL engines implement full ANSI feature set."
+      },
+      {
+        "id": "m-19-3",
+        "title": "3. Using UNION ALL Instead of UNION in Simulation",
+        "description": "Combining LEFT JOIN and RIGHT JOIN with UNION ALL.",
+        "badSnippet": "SELECT ... LEFT JOIN ... UNION ALL SELECT ... RIGHT JOIN ...",
+        "failingInput": "Simulating FULL OUTER JOIN",
+        "consequence": "Matching rows are duplicated in the output set.",
+        "howToFix": "Use UNION (without ALL) so matching records are automatically deduplicated.",
+        "mistake": "Using UNION ALL in FULL OUTER JOIN simulation",
+        "whyItHappens": "Forgetting that UNION deduplicates while UNION ALL retains duplicates."
+      },
+      {
+        "id": "m-19-4",
+        "title": "4. Forgetting the ON Clause",
+        "description": "Omitting the join condition in FULL OUTER JOIN.",
+        "badSnippet": "SELECT * FROM employees FULL OUTER JOIN departments;",
+        "failingInput": "Missing ON clause",
+        "consequence": "❌ Syntax Error.",
+        "howToFix": "Provide explicit ON predicate: ON employees.department_id = departments.department_id.",
+        "mistake": "Missing ON clause",
+        "whyItHappens": "Incomplete query syntax."
+      },
+      {
+        "id": "m-19-5",
+        "title": "5. Using AND Instead of OR in Full Anti-Join WHERE Clause",
+        "description": "Writing WHERE left_pk IS NULL AND right_pk IS NULL.",
+        "badSnippet": "WHERE e.employee_id IS NULL AND d.department_id IS NULL",
+        "failingInput": "Full anti-join query",
+        "consequence": "Returns zero rows because a row in a FULL OUTER JOIN is either from left or right, never NULL on both primary keys!",
+        "howToFix": "Use OR: WHERE e.employee_id IS NULL OR d.department_id IS NULL.",
+        "mistake": "Using AND instead of OR in anti-join predicate",
+        "whyItHappens": "Logical error in boolean conjunction."
       }
     ]
   },
   "20": {
     "id": "sql-20",
-    "title": "Alias columns using AS",
+    "title": "Join a Table with Itself Using SELF JOIN",
     "levelNumber": 20,
     "problemId": 20,
-    "problemTitle": "Alias columns using AS",
+    "problemTitle": "Join a Table with Itself Using SELF JOIN",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT first_name AS name, salary AS annual_pay FROM employees;",
+      "code": "SELECT e.first_name AS employee_name,\n       m.first_name AS manager_name\nFROM employees e\nINNER JOIN employees m\nON e.manager_id = m.employee_id;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees e",
+            "Action": "Create first logical table copy (e) representing employees"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Alias columns using AS' and validates schema column names."
+          "explanation": "SQL creates the first logical copy of employees table using alias e."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "INNER JOIN employees m",
+            "Action": "Create second logical table copy (m) representing managers"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL creates the second logical copy of employees table using alias m."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "ON condition evaluation",
+            "Action": "Match e.manager_id = m.employee_id"
+          },
+          "explanation": "SQL compares employee's manager_id against manager's employee_id."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Step": "Filter non-matches",
+            "Action": "Retain matched employee-manager pairs"
+          },
+          "explanation": "Employees without a manager (manager_id IS NULL) are omitted by INNER JOIN."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Output e.first_name AS employee_name and m.first_name AS manager_name"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The projection engine outputs matched employee and manager name pairs."
         }
       ]
     },
     "qas": [
       {
         "id": "q-20-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Alias columns using AS' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Alias columns using AS', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT first_name AS name, salary AS annual_pay FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is a SELF JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of joining a single table with itself via table aliases.",
+        "bestReplyScript": "A SELF JOIN is a regular join in which a table is joined with itself. Table aliases (such as e and m) are required so SQL can treat the single physical table as two distinct logical tables in memory.",
+        "commonMistakesToAvoid": "Thinking SELF JOIN is a unique SQL keyword or requires two separate physical tables.",
+        "keyPoints": ["Joins a table with itself", "Table aliases are strictly required", "Uses standard INNER JOIN or LEFT JOIN syntax"],
+        "codeSnippet": "SELECT e.first_name, m.first_name FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;"
+      },
+      {
+        "id": "q-20-2",
+        "category": "💡 Interview Notes",
+        "question": "Why can't you write JOIN employees without aliases in a SELF JOIN?",
+        "whatInterviewerChecks": "Column ambiguity resolution in SQL parser.",
+        "bestReplyScript": "Without distinct table aliases, SQL cannot determine which logical copy a column reference belongs to (e.g. WHICH employee_id or manager_id is being matched), resulting in an Ambiguous Column Name error.",
+        "commonMistakesToAvoid": "Claiming SQL automatically distinguishes left and right instances without aliases.",
+        "keyPoints": ["Resolves column name ambiguity", "Enables parser to distinguish logical copies"],
+        "codeSnippet": "FROM employees e INNER JOIN employees m"
+      },
+      {
+        "id": "q-20-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between INNER SELF JOIN and LEFT SELF JOIN?",
+        "whatInterviewerChecks": "Handling NULL foreign key values in self-referencing hierarchies.",
+        "bestReplyScript": "An INNER SELF JOIN excludes top-level executives whose manager_id is NULL. A LEFT SELF JOIN preserves all employees, including the CEO, displaying NULL for their manager name.",
+        "commonMistakesToAvoid": "Forgetting that CEOs/Founders have NULL manager_id.",
+        "keyPoints": ["INNER SELF JOIN excludes NULL manager_id", "LEFT SELF JOIN retains top executives with NULL manager"],
+        "codeSnippet": "FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id"
+      },
+      {
+        "id": "q-20-4",
+        "category": "💡 Interview Notes",
+        "question": "What common mistake happens if you join on ON e.employee_id = m.employee_id?",
+        "whatInterviewerChecks": "Understanding of primary vs foreign key roles in self-joins.",
+        "bestReplyScript": "Joining on e.employee_id = m.employee_id matches every employee with themselves rather than their manager! The correct predicate matches the foreign key to the primary key: ON e.manager_id = m.employee_id.",
+        "commonMistakesToAvoid": "Matching primary key to primary key in self-joins.",
+        "keyPoints": ["Self-match error", "Must join foreign key (manager_id) to primary key (employee_id)"],
+        "codeSnippet": "e.manager_id = m.employee_id"
+      },
+      {
+        "id": "q-20-5",
+        "category": "💡 Interview Notes",
+        "question": "Can a table be joined with itself multiple times?",
+        "whatInterviewerChecks": "Multi-level hierarchical querying.",
+        "bestReplyScript": "Yes! You can perform multi-level SELF JOINs to find an employee's manager and their manager's manager (grand-manager) by referencing the table three times with distinct aliases (e, m, gm).",
+        "commonMistakesToAvoid": "Assuming a table can only be joined with itself once.",
+        "keyPoints": ["Multi-level hierarchy retrieval", "Unlimited self-joins with unique aliases"],
+        "codeSnippet": "FROM employees e JOIN employees m ON e.manager_id = m.employee_id JOIN employees gm ON m.manager_id = gm.employee_id"
+      },
+      {
+        "id": "q-20-6",
+        "category": "💡 Interview Notes",
+        "question": "Name 4 common real-world applications of SELF JOIN.",
+        "whatInterviewerChecks": "Practical industry application of self-referencing schemas.",
+        "bestReplyScript": "1. Employee ↔ Manager organizational charts. 2. Student ↔ Peer Mentor pairings. 3. Parent ↔ Child genealogy trees. 4. Product ↔ Recommended Alternate Product listings.",
+        "commonMistakesToAvoid": "Struggling to come up with real-world examples beyond employees.",
+        "keyPoints": ["Org charts", "Mentorships", "Genealogy", "Product cross-sells"],
+        "codeSnippet": "Real-World Self-Join Applications"
       }
     ],
     "questions": [
       {
         "id": "q-20-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Alias columns using AS' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Alias columns using AS', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT first_name AS name, salary AS annual_pay FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is a SELF JOIN and how does it work?",
+        "whatInterviewerChecks": "Core understanding of joining a single table with itself via table aliases.",
+        "bestReplyScript": "A SELF JOIN is a regular join in which a table is joined with itself. Table aliases (such as e and m) are required so SQL can treat the single physical table as two distinct logical tables in memory.",
+        "commonMistakesToAvoid": "Thinking SELF JOIN is a unique SQL keyword or requires two separate physical tables.",
+        "keyPoints": ["Joins a table with itself", "Table aliases are strictly required", "Uses standard INNER JOIN or LEFT JOIN syntax"],
+        "codeSnippet": "SELECT e.first_name, m.first_name FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;"
+      },
+      {
+        "id": "q-20-2",
+        "category": "💡 Interview Notes",
+        "question": "Why can't you write JOIN employees without aliases in a SELF JOIN?",
+        "whatInterviewerChecks": "Column ambiguity resolution in SQL parser.",
+        "bestReplyScript": "Without distinct table aliases, SQL cannot determine which logical copy a column reference belongs to (e.g. WHICH employee_id or manager_id is being matched), resulting in an Ambiguous Column Name error.",
+        "commonMistakesToAvoid": "Claiming SQL automatically distinguishes left and right instances without aliases.",
+        "keyPoints": ["Resolves column name ambiguity", "Enables parser to distinguish logical copies"],
+        "codeSnippet": "FROM employees e INNER JOIN employees m"
+      },
+      {
+        "id": "q-20-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between INNER SELF JOIN and LEFT SELF JOIN?",
+        "whatInterviewerChecks": "Handling NULL foreign key values in self-referencing hierarchies.",
+        "bestReplyScript": "An INNER SELF JOIN excludes top-level executives whose manager_id is NULL. A LEFT SELF JOIN preserves all employees, including the CEO, displaying NULL for their manager name.",
+        "commonMistakesToAvoid": "Forgetting that CEOs/Founders have NULL manager_id.",
+        "keyPoints": ["INNER SELF JOIN excludes NULL manager_id", "LEFT SELF JOIN retains top executives with NULL manager"],
+        "codeSnippet": "FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id"
+      },
+      {
+        "id": "q-20-4",
+        "category": "💡 Interview Notes",
+        "question": "What common mistake happens if you join on ON e.employee_id = m.employee_id?",
+        "whatInterviewerChecks": "Understanding of primary vs foreign key roles in self-joins.",
+        "bestReplyScript": "Joining on e.employee_id = m.employee_id matches every employee with themselves rather than their manager! The correct predicate matches the foreign key to the primary key: ON e.manager_id = m.employee_id.",
+        "commonMistakesToAvoid": "Matching primary key to primary key in self-joins.",
+        "keyPoints": ["Self-match error", "Must join foreign key (manager_id) to primary key (employee_id)"],
+        "codeSnippet": "e.manager_id = m.employee_id"
+      },
+      {
+        "id": "q-20-5",
+        "category": "💡 Interview Notes",
+        "question": "Can a table be joined with itself multiple times?",
+        "whatInterviewerChecks": "Multi-level hierarchical querying.",
+        "bestReplyScript": "Yes! You can perform multi-level SELF JOINs to find an employee's manager and their manager's manager (grand-manager) by referencing the table three times with distinct aliases (e, m, gm).",
+        "commonMistakesToAvoid": "Assuming a table can only be joined with itself once.",
+        "keyPoints": ["Multi-level hierarchy retrieval", "Unlimited self-joins with unique aliases"],
+        "codeSnippet": "FROM employees e JOIN employees m ON e.manager_id = m.employee_id JOIN employees gm ON m.manager_id = gm.employee_id"
+      },
+      {
+        "id": "q-20-6",
+        "category": "💡 Interview Notes",
+        "question": "Name 4 common real-world applications of SELF JOIN.",
+        "whatInterviewerChecks": "Practical industry application of self-referencing schemas.",
+        "bestReplyScript": "1. Employee ↔ Manager organizational charts. 2. Student ↔ Peer Mentor pairings. 3. Parent ↔ Child genealogy trees. 4. Product ↔ Recommended Alternate Product listings.",
+        "commonMistakesToAvoid": "Struggling to come up with real-world examples beyond employees.",
+        "keyPoints": ["Org charts", "Mentorships", "Genealogy", "Product cross-sells"],
+        "codeSnippet": "Real-World Self-Join Applications"
       }
     ],
     "mistakes": [
       {
         "id": "m-20-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting Table Aliases",
+        "description": "Omitting aliases when joining a table with itself.",
+        "badSnippet": "SELECT employee_name FROM employees JOIN employees;",
+        "failingInput": "Self join without aliases",
+        "consequence": "❌ Syntax Error: Ambiguous column name / table reference.",
+        "howToFix": "Use distinct aliases: FROM employees e JOIN employees m.",
+        "mistake": "Missing table aliases in self-join",
+        "whyItHappens": "Forgetting that SQL needs aliases to distinguish logical copies."
+      },
+      {
+        "id": "m-20-2",
+        "title": "2. Joining Primary Key to Primary Key (Self-Match Trap)",
+        "description": "Matching e.employee_id = m.employee_id instead of e.manager_id = m.employee_id.",
+        "badSnippet": "ON e.employee_id = m.employee_id",
+        "failingInput": "Self-matching join condition",
+        "consequence": "Matches every employee with themselves rather than their manager.",
+        "howToFix": "Join foreign key to primary key: ON e.manager_id = m.employee_id.",
+        "mistake": "Self-matching on primary key",
+        "whyItHappens": "Confusing foreign key reference with primary key."
+      },
+      {
+        "id": "m-20-3",
+        "title": "3. Unexpectedly Dropping Top Executives with INNER JOIN",
+        "description": "Using INNER JOIN when reporting an org chart that includes top executives.",
+        "badSnippet": "FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;",
+        "failingInput": "Top executives with manager_id IS NULL",
+        "consequence": "CEOs and top managers with NULL manager_id are omitted from the report.",
+        "howToFix": "Use LEFT JOIN: FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id.",
+        "mistake": "Dropping NULL manager records with INNER JOIN",
+        "whyItHappens": "Not considering boundary records in hierarchical data."
+      },
+      {
+        "id": "m-20-4",
+        "title": "4. Reusing the Same Alias Name",
+        "description": "Assigning the same alias to both logical table references.",
+        "badSnippet": "FROM employees e JOIN employees e ON ...",
+        "failingInput": "Duplicate alias name",
+        "consequence": "❌ Syntax Error: Table alias 'e' specified more than once.",
+        "howToFix": "Provide distinct alias names: FROM employees e JOIN employees m.",
+        "mistake": "Duplicate alias name",
+        "whyItHappens": "Typographical error or copy-paste mistake."
+      },
+      {
+        "id": "m-20-5",
+        "title": "5. Believing SELF JOIN Requires Two Physical Disk Tables",
+        "description": "Assuming a second table must be created on disk for a self-join.",
+        "badSnippet": "Trying to create a secondary table copy on disk",
+        "failingInput": "Conceptual understanding",
+        "consequence": "Unnecessary schema duplication.",
+        "howToFix": "Understand that a single table self-references using logical aliases.",
+        "mistake": "Thinking SELF JOIN requires 2 physical tables",
+        "whyItHappens": "Mental model confusion."
       }
     ]
   },
   "21": {
     "id": "sql-21",
-    "title": "Count total rows",
+    "title": "Combine Results of Two Queries Using UNION",
     "levelNumber": 21,
     "problemId": 21,
-    "problemTitle": "Count total rows",
+    "problemTitle": "Combine Results of Two Queries Using UNION",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT COUNT(*) AS total_employees FROM employees;",
+      "code": "SELECT first_name FROM employees\nUNION\nSELECT department_name FROM departments;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "First SELECT",
+            "Action": "Execute SELECT first_name FROM employees"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Count total rows' and validates schema column names."
+          "explanation": "SQL engine executes the first query, fetching all first_name values."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Second SELECT",
+            "Action": "Execute SELECT department_name FROM departments"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL engine executes the second query, fetching all department_name values."
         },
         {
           "step": 3,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "UNION operator",
+            "Action": "Merge row sets vertically"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL stacks the two single-column result sets into one combined list."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Step": "Duplicate Removal",
+            "Action": "Apply sort/hash deduplication"
+          },
+          "explanation": "SQL removes all duplicate records across the combined result set."
+        },
+        {
+          "step": 5,
+          "lineNumber": 3,
+          "vars": {
+            "Step": "Projection",
+            "Action": "Return distinct unified list"
+          },
+          "explanation": "The engine projects the final deduplicated result set."
         }
       ]
     },
     "qas": [
       {
         "id": "q-21-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count total rows' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count total rows', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT COUNT(*) AS total_employees FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is a UNION and how does it work?",
+        "whatInterviewerChecks": "Core understanding of vertical row combination across multiple SELECT statements.",
+        "bestReplyScript": "UNION is a set operator that combines the result sets of two or more SELECT queries into a single result set. It automatically removes duplicate rows between the query outputs.",
+        "commonMistakesToAvoid": "Confusing UNION with JOIN (JOIN merges columns horizontally; UNION merges rows vertically).",
+        "keyPoints": ["Combines results of multiple SELECT queries", "Merges rows vertically", "Automatically eliminates duplicate rows"],
+        "codeSnippet": "SELECT first_name FROM employees UNION SELECT department_name FROM departments;"
+      },
+      {
+        "id": "q-21-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between UNION and UNION ALL?",
+        "whatInterviewerChecks": "Set operator deduplication vs performance trade-offs.",
+        "bestReplyScript": "UNION removes duplicate rows from the final result set, requiring an additional sorting or hashing pass. UNION ALL retains all rows including duplicates and executes significantly faster because no deduplication pass is required.",
+        "commonMistakesToAvoid": "Using UNION when duplicate elimination is not needed, wasting CPU cycles.",
+        "keyPoints": ["UNION = Deduplicates output (slower)", "UNION ALL = Keeps all duplicates (faster)"],
+        "codeSnippet": "SELECT col FROM t1 UNION ALL SELECT col FROM t2"
+      },
+      {
+        "id": "q-21-3",
+        "category": "💡 Interview Notes",
+        "question": "What are the two mandatory rules for using UNION?",
+        "whatInterviewerChecks": "SQL grammar and set compatibility rules.",
+        "bestReplyScript": "1. Each SELECT statement within the UNION must have the exact same number of columns. 2. The columns must have compatible data types in corresponding order.",
+        "commonMistakesToAvoid": "Attempting to UNION queries with different column counts.",
+        "keyPoints": ["Same number of columns", "Compatible data types in corresponding position"],
+        "codeSnippet": "SELECT a, b FROM t1 UNION SELECT c, d FROM t2"
+      },
+      {
+        "id": "q-21-4",
+        "category": "💡 Interview Notes",
+        "question": "Where should the ORDER BY clause be placed when using UNION?",
+        "whatInterviewerChecks": "Understanding ORDER BY scope in compound set queries.",
+        "bestReplyScript": "An ORDER BY clause can only appear once at the very end of the final SELECT statement. Placing ORDER BY inside individual SELECT statements causes a syntax error.",
+        "commonMistakesToAvoid": "Adding ORDER BY to the first SELECT statement before the UNION keyword.",
+        "keyPoints": ["Place ORDER BY only at the end of the entire query", "Sorts the combined output"],
+        "codeSnippet": "SELECT name FROM t1 UNION SELECT name FROM t2 ORDER BY name;"
+      },
+      {
+        "id": "q-21-5",
+        "category": "💡 Interview Notes",
+        "question": "How do JOIN and UNION differ fundamentally?",
+        "whatInterviewerChecks": "Relational algebra fundamentals.",
+        "bestReplyScript": "JOIN combines columns horizontally from multiple tables based on a matching ON condition. UNION combines rows vertically from multiple SELECT statements without using an ON clause.",
+        "commonMistakesToAvoid": "Stumbling over column (JOIN) vs row (UNION) dimensionality.",
+        "keyPoints": ["JOIN = Horizontal (Columns) with ON clause", "UNION = Vertical (Rows) without ON clause"],
+        "codeSnippet": "JOIN -> Columns | UNION -> Rows"
+      },
+      {
+        "id": "q-21-6",
+        "category": "💡 Interview Notes",
+        "question": "Can UNION combine more than two SELECT statements?",
+        "whatInterviewerChecks": "Chaining compound set operators.",
+        "bestReplyScript": "Yes! You can chain multiple UNION or UNION ALL operators together to combine as many SELECT queries as needed.",
+        "commonMistakesToAvoid": "Thinking UNION only works on exactly two queries.",
+        "keyPoints": ["Unlimited chaining of UNION operators", "All subqueries must observe column count rules"],
+        "codeSnippet": "SELECT col FROM t1 UNION SELECT col FROM t2 UNION SELECT col FROM t3"
       }
     ],
     "questions": [
       {
         "id": "q-21-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count total rows' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count total rows', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT COUNT(*) AS total_employees FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is a UNION and how does it work?",
+        "whatInterviewerChecks": "Core understanding of vertical row combination across multiple SELECT statements.",
+        "bestReplyScript": "UNION is a set operator that combines the result sets of two or more SELECT queries into a single result set. It automatically removes duplicate rows between the query outputs.",
+        "commonMistakesToAvoid": "Confusing UNION with JOIN (JOIN merges columns horizontally; UNION merges rows vertically).",
+        "keyPoints": ["Combines results of multiple SELECT queries", "Merges rows vertically", "Automatically eliminates duplicate rows"],
+        "codeSnippet": "SELECT first_name FROM employees UNION SELECT department_name FROM departments;"
+      },
+      {
+        "id": "q-21-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between UNION and UNION ALL?",
+        "whatInterviewerChecks": "Set operator deduplication vs performance trade-offs.",
+        "bestReplyScript": "UNION removes duplicate rows from the final result set, requiring an additional sorting or hashing pass. UNION ALL retains all rows including duplicates and executes significantly faster because no deduplication pass is required.",
+        "commonMistakesToAvoid": "Using UNION when duplicate elimination is not needed, wasting CPU cycles.",
+        "keyPoints": ["UNION = Deduplicates output (slower)", "UNION ALL = Keeps all duplicates (faster)"],
+        "codeSnippet": "SELECT col FROM t1 UNION ALL SELECT col FROM t2"
+      },
+      {
+        "id": "q-21-3",
+        "category": "💡 Interview Notes",
+        "question": "What are the two mandatory rules for using UNION?",
+        "whatInterviewerChecks": "SQL grammar and set compatibility rules.",
+        "bestReplyScript": "1. Each SELECT statement within the UNION must have the exact same number of columns. 2. The columns must have compatible data types in corresponding order.",
+        "commonMistakesToAvoid": "Attempting to UNION queries with different column counts.",
+        "keyPoints": ["Same number of columns", "Compatible data types in corresponding position"],
+        "codeSnippet": "SELECT a, b FROM t1 UNION SELECT c, d FROM t2"
+      },
+      {
+        "id": "q-21-4",
+        "category": "💡 Interview Notes",
+        "question": "Where should the ORDER BY clause be placed when using UNION?",
+        "whatInterviewerChecks": "Understanding ORDER BY scope in compound set queries.",
+        "bestReplyScript": "An ORDER BY clause can only appear once at the very end of the final SELECT statement. Placing ORDER BY inside individual SELECT statements causes a syntax error.",
+        "commonMistakesToAvoid": "Adding ORDER BY to the first SELECT statement before the UNION keyword.",
+        "keyPoints": ["Place ORDER BY only at the end of the entire query", "Sorts the combined output"],
+        "codeSnippet": "SELECT name FROM t1 UNION SELECT name FROM t2 ORDER BY name;"
+      },
+      {
+        "id": "q-21-5",
+        "category": "💡 Interview Notes",
+        "question": "How do JOIN and UNION differ fundamentally?",
+        "whatInterviewerChecks": "Relational algebra fundamentals.",
+        "bestReplyScript": "JOIN combines columns horizontally from multiple tables based on a matching ON condition. UNION combines rows vertically from multiple SELECT statements without using an ON clause.",
+        "commonMistakesToAvoid": "Stumbling over column (JOIN) vs row (UNION) dimensionality.",
+        "keyPoints": ["JOIN = Horizontal (Columns) with ON clause", "UNION = Vertical (Rows) without ON clause"],
+        "codeSnippet": "JOIN -> Columns | UNION -> Rows"
+      },
+      {
+        "id": "q-21-6",
+        "category": "💡 Interview Notes",
+        "question": "Can UNION combine more than two SELECT statements?",
+        "whatInterviewerChecks": "Chaining compound set operators.",
+        "bestReplyScript": "Yes! You can chain multiple UNION or UNION ALL operators together to combine as many SELECT queries as needed.",
+        "commonMistakesToAvoid": "Thinking UNION only works on exactly two queries.",
+        "keyPoints": ["Unlimited chaining of UNION operators", "All subqueries must observe column count rules"],
+        "codeSnippet": "SELECT col FROM t1 UNION SELECT col FROM t2 UNION SELECT col FROM t3"
       }
     ],
     "mistakes": [
       {
         "id": "m-21-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Mismatched Column Counts",
+        "description": "Combining SELECT statements that return different numbers of columns.",
+        "badSnippet": "SELECT name FROM t1 UNION SELECT name, salary FROM t2;",
+        "failingInput": "Unequal column count in subqueries",
+        "consequence": "❌ Syntax Error: SELECT statements value count mismatch.",
+        "howToFix": "Ensure all subqueries select the exact same number of columns.",
+        "mistake": "Unequal column counts",
+        "whyItHappens": "Forgetting that set union operates on conforming tuple shapes."
+      },
+      {
+        "id": "m-21-2",
+        "title": "2. Incompatible Data Types",
+        "description": "Combining columns with incompatible data types.",
+        "badSnippet": "SELECT employee_name FROM employees UNION SELECT salary FROM employees;",
+        "failingInput": "VARCHAR and INT data type mismatch",
+        "consequence": "❌ Type Conversion Error or unintended string coercion.",
+        "howToFix": "Ensure corresponding columns have matching or implicitly castable data types.",
+        "mistake": "Data type mismatch in corresponding columns",
+        "whyItHappens": "Selecting different attributes in subqueries."
+      },
+      {
+        "id": "m-21-3",
+        "title": "3. Placing ORDER BY Inside Subqueries",
+        "description": "Adding ORDER BY inside individual SELECT statements before UNION.",
+        "badSnippet": "SELECT name FROM t1 ORDER BY name UNION SELECT name FROM t2;",
+        "failingInput": "ORDER BY inside subquery",
+        "consequence": "❌ Syntax Error in SQL parser.",
+        "howToFix": "Place ORDER BY once at the very end of the compound query.",
+        "mistake": "ORDER BY inside intermediate SELECT statement",
+        "whyItHappens": "Treating each subquery as an isolated standalone query."
+      },
+      {
+        "id": "m-21-4",
+        "title": "4. Expecting UNION to Keep Duplicate Rows",
+        "description": "Using UNION when duplicate values need to be preserved.",
+        "badSnippet": "Using UNION instead of UNION ALL for full audit logs",
+        "failingInput": "Data with duplicates that must be retained",
+        "consequence": "Duplicate rows are silently removed, resulting in inaccurate total counts.",
+        "howToFix": "Use UNION ALL when duplicate retention is required.",
+        "mistake": "Using UNION instead of UNION ALL",
+        "whyItHappens": "Assuming UNION behaves like UNION ALL."
+      },
+      {
+        "id": "m-21-5",
+        "title": "5. Confusing UNION with JOIN",
+        "description": "Using UNION when table columns need to be matched on a key.",
+        "badSnippet": "SELECT e.name UNION SELECT d.dept_name -- Expecting employee-department pair",
+        "failingInput": "Relational matching scenario",
+        "consequence": "Stacks names into a single list rather than pairing employees with departments.",
+        "howToFix": "Use INNER JOIN or LEFT JOIN with an ON predicate.",
+        "mistake": "Using UNION for column matching",
+        "whyItHappens": "Misunderstanding row stacking vs column joining."
       }
     ]
   },
   "22": {
     "id": "sql-22",
-    "title": "Count distinct values",
+    "title": "Combine Results of Two Queries Using UNION ALL",
     "levelNumber": 22,
     "problemId": 22,
-    "problemTitle": "Count distinct values",
+    "problemTitle": "Combine Results of Two Queries Using UNION ALL",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT COUNT(DISTINCT department_id) AS total_depts FROM employees;",
+      "code": "SELECT first_name FROM employees\nUNION ALL\nSELECT department_name FROM departments;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "First SELECT",
+            "Action": "Execute SELECT first_name FROM employees"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Count distinct values' and validates schema column names."
+          "explanation": "SQL engine executes the first query, fetching all first_name values."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Second SELECT",
+            "Action": "Execute SELECT department_name FROM departments"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL engine executes the second query, fetching all department_name values."
         },
         {
           "step": 3,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "UNION ALL operator",
+            "Action": "Concatenate row sets vertically"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "SQL stacks the two single-column result sets into one combined list."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Step": "Stream Output",
+            "Action": "Skip duplicate checking pass"
+          },
+          "explanation": "SQL skips sort/hash deduplication and outputs all rows directly."
+        },
+        {
+          "step": 5,
+          "lineNumber": 3,
+          "vars": {
+            "Step": "Projection",
+            "Action": "Return complete unified list including duplicates"
+          },
+          "explanation": "The engine projects the final result set containing all rows."
         }
       ]
     },
     "qas": [
       {
         "id": "q-22-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count distinct values' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count distinct values', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT COUNT(DISTINCT department_id) AS total_depts FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is UNION ALL and how does it work?",
+        "whatInterviewerChecks": "Understanding of set concatenation without duplicate elimination.",
+        "bestReplyScript": "UNION ALL is a set operator that combines the result sets of two or more SELECT queries into a single result set without removing duplicate rows. All rows from all queries are retained.",
+        "commonMistakesToAvoid": "Claiming UNION ALL eliminates duplicate rows.",
+        "keyPoints": ["Combines multiple SELECT outputs", "Preserves all duplicate rows", "Does not perform deduplication pass"],
+        "codeSnippet": "SELECT first_name FROM employees UNION ALL SELECT department_name FROM departments;"
+      },
+      {
+        "id": "q-22-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is UNION ALL faster than UNION?",
+        "whatInterviewerChecks": "Internal database performance and memory execution plans.",
+        "bestReplyScript": "UNION ALL directly streams and concatenates result sets without building a hash table or sorting to find duplicates. Plain UNION requires an O(N log N) or hash-based deduplication step, making it slower.",
+        "commonMistakesToAvoid": "Thinking UNION and UNION ALL have identical performance characteristics.",
+        "keyPoints": ["Skips expensive sort/hash deduplication", "Direct streaming execution O(N+M)", "Lower memory consumption"],
+        "codeSnippet": "UNION ALL is O(N+M) vs UNION O((N+M) log(N+M))"
+      },
+      {
+        "id": "q-22-3",
+        "category": "💡 Interview Notes",
+        "question": "When should you prefer UNION ALL over UNION in production?",
+        "whatInterviewerChecks": "Real-world database engineering judgment.",
+        "bestReplyScript": "Prefer UNION ALL whenever: 1) The underlying result sets are known to be completely disjoint (no duplicates possible), 2) Duplicate rows are explicitly desired (e.g. log streams or audit trails), 3) Query speed is critical.",
+        "commonMistakesToAvoid": "Defaulting to UNION when result sets are naturally disjoint.",
+        "keyPoints": ["Disjoint datasets", "Log aggregation / Audit trails", "Performance optimization"],
+        "codeSnippet": "SELECT msg FROM server1_logs UNION ALL SELECT msg FROM server2_logs"
+      },
+      {
+        "id": "q-22-4",
+        "category": "💡 Interview Notes",
+        "question": "What happens if a row appears in both tables when using UNION ALL?",
+        "whatInterviewerChecks": "Duplicate row handling semantics.",
+        "bestReplyScript": "The row will appear MULTIPLE times in the output result set—once for every occurrence in each subquery.",
+        "commonMistakesToAvoid": "Thinking UNION ALL deduplicates matching rows between tables.",
+        "keyPoints": ["Duplicates are retained", "Each occurrence appears in final output"],
+        "codeSnippet": "If 'Alice' is in both tables, output contains 'Alice' twice."
+      },
+      {
+        "id": "q-22-5",
+        "category": "💡 Interview Notes",
+        "question": "Where should the ORDER BY clause be placed in a UNION ALL query?",
+        "whatInterviewerChecks": "Compound query ordering rules.",
+        "bestReplyScript": "At the very end of the final SELECT statement. Placing ORDER BY inside individual subqueries results in a syntax error.",
+        "commonMistakesToAvoid": "Placing ORDER BY before UNION ALL.",
+        "keyPoints": ["Place ORDER BY at the end of the entire query", "Sorts the combined output"],
+        "codeSnippet": "SELECT col FROM t1 UNION ALL SELECT col FROM t2 ORDER BY col;"
+      },
+      {
+        "id": "q-22-6",
+        "category": "💡 Interview Notes",
+        "question": "Quick summary: UNION vs UNION ALL in 1 sentence.",
+        "whatInterviewerChecks": "Concise elevator pitch summary.",
+        "bestReplyScript": "UNION merges rows and removes duplicates (slower); UNION ALL merges rows and keeps all duplicates (faster).",
+        "commonMistakesToAvoid": "Stumbling over the distinction.",
+        "keyPoints": ["UNION = Deduplicated (Slower)", "UNION ALL = Retains Duplicates (Faster)"],
+        "codeSnippet": "UNION (Deduplicate) vs UNION ALL (Keep All)"
       }
     ],
     "questions": [
       {
         "id": "q-22-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count distinct values' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count distinct values', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT COUNT(DISTINCT department_id) AS total_depts FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is UNION ALL and how does it work?",
+        "whatInterviewerChecks": "Understanding of set concatenation without duplicate elimination.",
+        "bestReplyScript": "UNION ALL is a set operator that combines the result sets of two or more SELECT queries into a single result set without removing duplicate rows. All rows from all queries are retained.",
+        "commonMistakesToAvoid": "Claiming UNION ALL eliminates duplicate rows.",
+        "keyPoints": ["Combines multiple SELECT outputs", "Preserves all duplicate rows", "Does not perform deduplication pass"],
+        "codeSnippet": "SELECT first_name FROM employees UNION ALL SELECT department_name FROM departments;"
+      },
+      {
+        "id": "q-22-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is UNION ALL faster than UNION?",
+        "whatInterviewerChecks": "Internal database performance and memory execution plans.",
+        "bestReplyScript": "UNION ALL directly streams and concatenates result sets without building a hash table or sorting to find duplicates. Plain UNION requires an O(N log N) or hash-based deduplication step, making it slower.",
+        "commonMistakesToAvoid": "Thinking UNION and UNION ALL have identical performance characteristics.",
+        "keyPoints": ["Skips expensive sort/hash deduplication", "Direct streaming execution O(N+M)", "Lower memory consumption"],
+        "codeSnippet": "UNION ALL is O(N+M) vs UNION O((N+M) log(N+M))"
+      },
+      {
+        "id": "q-22-3",
+        "category": "💡 Interview Notes",
+        "question": "When should you prefer UNION ALL over UNION in production?",
+        "whatInterviewerChecks": "Real-world database engineering judgment.",
+        "bestReplyScript": "Prefer UNION ALL whenever: 1) The underlying result sets are known to be completely disjoint (no duplicates possible), 2) Duplicate rows are explicitly desired (e.g. log streams or audit trails), 3) Query speed is critical.",
+        "commonMistakesToAvoid": "Defaulting to UNION when result sets are naturally disjoint.",
+        "keyPoints": ["Disjoint datasets", "Log aggregation / Audit trails", "Performance optimization"],
+        "codeSnippet": "SELECT msg FROM server1_logs UNION ALL SELECT msg FROM server2_logs"
+      },
+      {
+        "id": "q-22-4",
+        "category": "💡 Interview Notes",
+        "question": "What happens if a row appears in both tables when using UNION ALL?",
+        "whatInterviewerChecks": "Duplicate row handling semantics.",
+        "bestReplyScript": "The row will appear MULTIPLE times in the output result set—once for every occurrence in each subquery.",
+        "commonMistakesToAvoid": "Thinking UNION ALL deduplicates matching rows between tables.",
+        "keyPoints": ["Duplicates are retained", "Each occurrence appears in final output"],
+        "codeSnippet": "If 'Alice' is in both tables, output contains 'Alice' twice."
+      },
+      {
+        "id": "q-22-5",
+        "category": "💡 Interview Notes",
+        "question": "Where should the ORDER BY clause be placed in a UNION ALL query?",
+        "whatInterviewerChecks": "Compound query ordering rules.",
+        "bestReplyScript": "At the very end of the final SELECT statement. Placing ORDER BY inside individual subqueries results in a syntax error.",
+        "commonMistakesToAvoid": "Placing ORDER BY before UNION ALL.",
+        "keyPoints": ["Place ORDER BY at the end of the entire query", "Sorts the combined output"],
+        "codeSnippet": "SELECT col FROM t1 UNION ALL SELECT col FROM t2 ORDER BY col;"
+      },
+      {
+        "id": "q-22-6",
+        "category": "💡 Interview Notes",
+        "question": "Quick summary: UNION vs UNION ALL in 1 sentence.",
+        "whatInterviewerChecks": "Concise elevator pitch summary.",
+        "bestReplyScript": "UNION merges rows and removes duplicates (slower); UNION ALL merges rows and keeps all duplicates (faster).",
+        "commonMistakesToAvoid": "Stumbling over the distinction.",
+        "keyPoints": ["UNION = Deduplicated (Slower)", "UNION ALL = Retains Duplicates (Faster)"],
+        "codeSnippet": "UNION (Deduplicate) vs UNION ALL (Keep All)"
       }
     ],
     "mistakes": [
       {
         "id": "m-22-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Assuming UNION ALL Removes Duplicates",
+        "description": "Expecting UNION ALL to deduplicate results automatically.",
+        "badSnippet": "Using UNION ALL when distinct values are required",
+        "failingInput": "Query requiring unique records",
+        "consequence": "Duplicate rows remain in the output result set.",
+        "howToFix": "Use plain UNION if deduplication is required.",
+        "mistake": "Using UNION ALL when distinct values are required",
+        "whyItHappens": "Confusing UNION ALL with UNION."
+      },
+      {
+        "id": "m-22-2",
+        "title": "2. Mismatched Column Counts",
+        "description": "Combining queries with different numbers of columns.",
+        "badSnippet": "SELECT first_name FROM employees UNION ALL SELECT department_name, department_id FROM departments;",
+        "failingInput": "Unequal column counts",
+        "consequence": "❌ Syntax Error: SELECT statements value count mismatch.",
+        "howToFix": "Ensure both queries select identical numbers of columns.",
+        "mistake": "Unequal column count across UNION ALL subqueries",
+        "whyItHappens": "Forgetting set alignment rules."
+      },
+      {
+        "id": "m-21-3",
+        "title": "3. Defaulting to UNION when UNION ALL is Faster",
+        "description": "Using UNION on disjoint data sets where duplicates are impossible.",
+        "badSnippet": "SELECT customer_id FROM active_customers UNION SELECT customer_id FROM archived_customers;",
+        "failingInput": "Disjoint datasets",
+        "consequence": "Wastes CPU and memory performing unnecessary deduplication.",
+        "howToFix": "Use UNION ALL when subqueries operate on disjoint sets.",
+        "mistake": "Unnecessary deduplication overhead",
+        "whyItHappens": "Habitually writing UNION instead of UNION ALL."
+      },
+      {
+        "id": "m-22-4",
+        "title": "4. Misplacing ORDER BY Inside Subqueries",
+        "description": "Adding ORDER BY inside individual subqueries before UNION ALL.",
+        "badSnippet": "SELECT col FROM t1 ORDER BY col UNION ALL SELECT col FROM t2;",
+        "failingInput": "ORDER BY inside subquery",
+        "consequence": "❌ Syntax Error in query execution engine.",
+        "howToFix": "Place ORDER BY once at the very end of the final query.",
+        "mistake": "Misplacing ORDER BY clause",
+        "whyItHappens": "Confusing isolated subquery ordering with final compound result set ordering."
+      },
+      {
+        "id": "m-22-5",
+        "title": "5. Confusing UNION ALL with JOIN",
+        "description": "Using UNION ALL to match columns from two tables.",
+        "badSnippet": "SELECT e.name UNION ALL SELECT d.name -- Expecting matched table rows",
+        "failingInput": "Relational lookup task",
+        "consequence": "Outputs a single tall list of names rather than side-by-side matching columns.",
+        "howToFix": "Use JOIN with an ON predicate for horizontal table matching.",
+        "mistake": "Using UNION ALL instead of JOIN",
+        "whyItHappens": "Misunderstanding row stacking versus column joining."
       }
     ]
   },
   "23": {
     "id": "sql-23",
-    "title": "Find maximum salary",
+    "title": "Filter Records Using the LIKE Operator",
     "levelNumber": 23,
     "problemId": 23,
-    "problemTitle": "Find maximum salary",
+    "problemTitle": "Filter Records Using the LIKE Operator",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT MAX(salary) AS max_salary FROM employees;",
+      "code": "SELECT first_name FROM employees WHERE first_name LIKE 'A%';",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Scan employees table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find maximum salary' and validates schema column names."
+          "explanation": "SQL engine accesses rows from the employees table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "WHERE Pattern Match",
+            "Action": "Evaluate first_name LIKE 'A%'"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL evaluates each name. Names beginning with uppercase 'A' evaluate to TRUE."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Project matching first_name values"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The engine projects matching names ('Alice') into the output buffer."
         }
       ]
     },
     "qas": [
       {
         "id": "q-23-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find maximum salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find maximum salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT MAX(salary) AS max_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the LIKE operator and how does it work?",
+        "whatInterviewerChecks": "Understanding pattern matching using SQL wildcards.",
+        "bestReplyScript": "The LIKE operator is used in a WHERE clause to search for a specified pattern in a string column. It uses wildcard characters: '%' (matches zero or more characters) and '_' (matches exactly one character).",
+        "commonMistakesToAvoid": "Confusing LIKE with exact equality '='.",
+        "keyPoints": ["Pattern matching operator", "'%' = 0 or more chars", "'_' = exactly 1 char"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE first_name LIKE 'A%';"
+      },
+      {
+        "id": "q-23-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between % and _ wildcards?",
+        "whatInterviewerChecks": "Precision wildcard semantics.",
+        "bestReplyScript": "% matches zero, one, or multiple characters. _ matches exactly one single character.",
+        "commonMistakesToAvoid": "Thinking % matches at least one character (it can match zero characters!).",
+        "keyPoints": ["% = 0 to N characters", "_ = exactly 1 character"],
+        "codeSnippet": "'A%' matches 'A', 'An', 'Alice' | '_ob' matches 'Bob', 'Rob' but NOT 'Jacob'"
+      },
+      {
+        "id": "q-23-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between = and LIKE?",
+        "whatInterviewerChecks": "Scalar equality vs wildcard evaluation.",
+        "bestReplyScript": "= performs exact literal matching (e.g. col = 'A%' searches for literal text 'A%'). LIKE treats % and _ as special pattern wildcards.",
+        "commonMistakesToAvoid": "Using = with wildcards expecting pattern matching.",
+        "keyPoints": ["= is exact scalar equality", "LIKE evaluates wildcards % and _"],
+        "codeSnippet": "WHERE name = 'Alice' vs WHERE name LIKE 'A%'"
+      },
+      {
+        "id": "q-23-4",
+        "category": "💡 Interview Notes",
+        "question": "How do pattern locations ('A%', '%A', '%A%', '_A%') change query results?",
+        "whatInterviewerChecks": "Pattern position syntax mastery.",
+        "bestReplyScript": "1) 'A%' = Starts with A. 2) '%A' = Ends with A. 3) '%A%' = Contains A anywhere. 4) '_A%' = Second character is A.",
+        "commonMistakesToAvoid": "Misplacing % or _ in position matching.",
+        "keyPoints": ["A% = Starts with A", "%A = Ends with A", "%A% = Contains A", "_A% = 2nd letter is A"],
+        "codeSnippet": "WHERE name LIKE '_a%'"
+      },
+      {
+        "id": "q-23-5",
+        "category": "💡 Interview Notes",
+        "question": "Can LIKE queries utilize B-Tree database indexes?",
+        "whatInterviewerChecks": "Database index optimization & sargability.",
+        "bestReplyScript": "Yes, but ONLY for prefix searches (e.g. LIKE 'A%'). Leading wildcard searches (e.g. LIKE '%A%') invalidate B-Tree index range scans and force full table scans.",
+        "commonMistakesToAvoid": "Assuming all LIKE queries run slowly.",
+        "keyPoints": ["LIKE 'A%' can use B-Tree index", "LIKE '%A%' forces full table scan"],
+        "codeSnippet": "Prefix LIKE 'A%' is index-sargable"
+      },
+      {
+        "id": "q-23-6",
+        "category": "💡 Interview Notes",
+        "question": "How do you search for names containing a literal % or _ character?",
+        "whatInterviewerChecks": "Escaping wildcard characters in SQL.",
+        "bestReplyScript": "Use the ESCAPE clause! For example: WHERE discount LIKE '10\\%' ESCAPE '\\' treats \\% as a literal percent sign.",
+        "commonMistakesToAvoid": "Forgetting that % and _ are reserved wildcard symbols.",
+        "keyPoints": ["Use ESCAPE clause", "Custom escape character"],
+        "codeSnippet": "WHERE code LIKE '10\\%' ESCAPE '\\'"
       }
     ],
     "questions": [
       {
         "id": "q-23-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find maximum salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find maximum salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT MAX(salary) AS max_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the LIKE operator and how does it work?",
+        "whatInterviewerChecks": "Understanding pattern matching using SQL wildcards.",
+        "bestReplyScript": "The LIKE operator is used in a WHERE clause to search for a specified pattern in a string column. It uses wildcard characters: '%' (matches zero or more characters) and '_' (matches exactly one character).",
+        "commonMistakesToAvoid": "Confusing LIKE with exact equality '='.",
+        "keyPoints": ["Pattern matching operator", "'%' = 0 or more chars", "'_' = exactly 1 char"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE first_name LIKE 'A%';"
+      },
+      {
+        "id": "q-23-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between % and _ wildcards?",
+        "whatInterviewerChecks": "Precision wildcard semantics.",
+        "bestReplyScript": "% matches zero, one, or multiple characters. _ matches exactly one single character.",
+        "commonMistakesToAvoid": "Thinking % matches at least one character (it can match zero characters!).",
+        "keyPoints": ["% = 0 to N characters", "_ = exactly 1 character"],
+        "codeSnippet": "'A%' matches 'A', 'An', 'Alice' | '_ob' matches 'Bob', 'Rob' but NOT 'Jacob'"
+      },
+      {
+        "id": "q-23-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between = and LIKE?",
+        "whatInterviewerChecks": "Scalar equality vs wildcard evaluation.",
+        "bestReplyScript": "= performs exact literal matching (e.g. col = 'A%' searches for literal text 'A%'). LIKE treats % and _ as special pattern wildcards.",
+        "commonMistakesToAvoid": "Using = with wildcards expecting pattern matching.",
+        "keyPoints": ["= is exact scalar equality", "LIKE evaluates wildcards % and _"],
+        "codeSnippet": "WHERE name = 'Alice' vs WHERE name LIKE 'A%'"
+      },
+      {
+        "id": "q-23-4",
+        "category": "💡 Interview Notes",
+        "question": "How do pattern locations ('A%', '%A', '%A%', '_A%') change query results?",
+        "whatInterviewerChecks": "Pattern position syntax mastery.",
+        "bestReplyScript": "1) 'A%' = Starts with A. 2) '%A' = Ends with A. 3) '%A%' = Contains A anywhere. 4) '_A%' = Second character is A.",
+        "commonMistakesToAvoid": "Misplacing % or _ in position matching.",
+        "keyPoints": ["A% = Starts with A", "%A = Ends with A", "%A% = Contains A", "_A% = 2nd letter is A"],
+        "codeSnippet": "WHERE name LIKE '_a%'"
+      },
+      {
+        "id": "q-23-5",
+        "category": "💡 Interview Notes",
+        "question": "Can LIKE queries utilize B-Tree database indexes?",
+        "whatInterviewerChecks": "Database index optimization & sargability.",
+        "bestReplyScript": "Yes, but ONLY for prefix searches (e.g. LIKE 'A%'). Leading wildcard searches (e.g. LIKE '%A%') invalidate B-Tree index range scans and force full table scans.",
+        "commonMistakesToAvoid": "Assuming all LIKE queries run slowly.",
+        "keyPoints": ["LIKE 'A%' can use B-Tree index", "LIKE '%A%' forces full table scan"],
+        "codeSnippet": "Prefix LIKE 'A%' is index-sargable"
+      },
+      {
+        "id": "q-23-6",
+        "category": "💡 Interview Notes",
+        "question": "How do you search for names containing a literal % or _ character?",
+        "whatInterviewerChecks": "Escaping wildcard characters in SQL.",
+        "bestReplyScript": "Use the ESCAPE clause! For example: WHERE discount LIKE '10\\%' ESCAPE '\\' treats \\% as a literal percent sign.",
+        "commonMistakesToAvoid": "Forgetting that % and _ are reserved wildcard symbols.",
+        "keyPoints": ["Use ESCAPE clause", "Custom escape character"],
+        "codeSnippet": "WHERE code LIKE '10\\%' ESCAPE '\\'"
       }
     ],
     "mistakes": [
       {
         "id": "m-23-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting Quotes around Pattern String",
+        "description": "Writing unquoted wildcard strings in WHERE clause.",
+        "badSnippet": "SELECT * FROM employees WHERE first_name LIKE A%;",
+        "failingInput": "Unquoted pattern",
+        "consequence": "❌ Syntax Error: Near A%: syntax error.",
+        "howToFix": "Enclose pattern string in single quotes: LIKE 'A%'.",
+        "mistake": "Unquoted pattern string",
+        "whyItHappens": "Treating pattern string like a column identifier."
+      },
+      {
+        "id": "m-23-2",
+        "title": "2. Confusing % and _ Wildcards",
+        "description": "Using _ expecting multiple character match or % expecting single char match.",
+        "badSnippet": "WHERE name LIKE '_ob' -- Expecting Jacob to match",
+        "failingInput": "Names of varying character length",
+        "consequence": "Jacob is excluded because _ matches EXACTLY ONE character.",
+        "howToFix": "Use % for multi-character matching.",
+        "mistake": "Using _ instead of %",
+        "whyItHappens": "Misunderstanding single vs multi-character wildcard scope."
+      },
+      {
+        "id": "m-23-3",
+        "title": "3. Using = Instead of LIKE",
+        "description": "Using equality operator = with wildcard characters.",
+        "badSnippet": "SELECT * FROM employees WHERE first_name = 'A%';",
+        "failingInput": "Names starting with A",
+        "consequence": "Returns 0 rows (searches for literal name 'A%').",
+        "howToFix": "Replace = with the LIKE operator.",
+        "mistake": "Using = with wildcards",
+        "whyItHappens": "Assuming = supports wildcard pattern evaluation."
+      },
+      {
+        "id": "m-23-4",
+        "title": "4. Omitting Wildcards Entirely",
+        "description": "Writing LIKE 'A' without adding wildcards.",
+        "badSnippet": "SELECT * FROM employees WHERE first_name LIKE 'A';",
+        "failingInput": "Names like Alice, Andrew",
+        "consequence": "Matches ONLY the single-letter string 'A'.",
+        "howToFix": "Add % wildcard: LIKE 'A%'.",
+        "mistake": "Omitting wildcards",
+        "whyItHappens": "Forgetting that LIKE without wildcards behaves like exact equality."
+      },
+      {
+        "id": "m-23-5",
+        "title": "5. Using Leading Wildcards on High-Volume Tables",
+        "description": "Using LIKE '%A%' on multi-million row production tables without full-text index.",
+        "badSnippet": "SELECT * FROM logs WHERE message LIKE '%error%';",
+        "failingInput": "High volume table scan",
+        "consequence": "Bypasses B-Tree indexes, causing massive disk I/O and CPU spikes.",
+        "howToFix": "Use prefix matching ('error%') or full-text search indexes (FTS/Elasticsearch).",
+        "mistake": "Unindexed leading wildcard table scan",
+        "whyItHappens": "Unaware of index sargability limits."
       }
     ]
   },
   "24": {
     "id": "sql-24",
-    "title": "Find minimum salary",
+    "title": "Filter Records Using the IN Operator",
     "levelNumber": 24,
     "problemId": 24,
-    "problemTitle": "Find minimum salary",
+    "problemTitle": "Filter Records Using the IN Operator",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT MIN(salary) AS min_salary FROM employees;",
+      "code": "SELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Scan employees table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find minimum salary' and validates schema column names."
+          "explanation": "SQL engine accesses rows from the employees table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "WHERE Membership Evaluation",
+            "Action": "Evaluate first_name IN ('John', 'Alice', 'Bob')"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL checks if first_name matches any element in the set ('John', 'Alice', 'Bob'). Matches evaluate to TRUE."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Project matching first_name records"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The engine projects matching names ('John', 'Bob', 'Alice') into output."
         }
       ]
     },
     "qas": [
       {
         "id": "q-24-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find minimum salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find minimum salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT MIN(salary) AS min_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the IN operator and how does it work?",
+        "whatInterviewerChecks": "Understanding of set membership evaluation.",
+        "bestReplyScript": "The IN operator allows you to specify multiple values in a WHERE clause. It acts as a shorthand for multiple OR conditions, checking whether a column value matches any item in a literal list or subquery result.",
+        "commonMistakesToAvoid": "Confusing IN with scalar equality '='.",
+        "keyPoints": ["Checks membership in a set", "Shorthand for multiple ORs", "Supports literal lists and subqueries"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');"
+      },
+      {
+        "id": "q-24-2",
+        "category": "💡 Interview Notes",
+        "question": "Is IN equivalent to multiple OR conditions?",
+        "whatInterviewerChecks": "Logical equivalence and engine parsing.",
+        "bestReplyScript": "Yes! WHERE department IN ('HR', 'IT') is logically identical to WHERE department = 'HR' OR department = 'IT'. Query optimizers convert IN into an in-list iterator or hash lookup.",
+        "commonMistakesToAvoid": "Assuming IN behaves differently logically than OR.",
+        "keyPoints": ["Logically equivalent to OR chain", "Better readability and maintainability"],
+        "codeSnippet": "IN ('HR', 'IT') == (dept = 'HR' OR dept = 'IT')"
+      },
+      {
+        "id": "q-24-3",
+        "category": "💡 Interview Notes",
+        "question": "Why use IN instead of multiple OR conditions?",
+        "whatInterviewerChecks": "Code maintainability and query readability.",
+        "bestReplyScript": "1) Cleaner and more concise syntax, 2) Reduces operator precedence bugs when combined with AND, 3) Easier to update dynamically or pair with subqueries.",
+        "commonMistakesToAvoid": "Writing lengthy OR chains that degrade readability.",
+        "keyPoints": ["Shorter syntax", "Prevents AND/OR precedence bugs", "Subquery support"],
+        "codeSnippet": "WHERE city IN ('Bangalore', 'Mumbai', 'Delhi')"
+      },
+      {
+        "id": "q-24-4",
+        "category": "💡 Interview Notes",
+        "question": "Can IN be used with subqueries?",
+        "whatInterviewerChecks": "Subquery integration and semi-join concepts.",
+        "bestReplyScript": "Yes! You can supply a subquery inside IN to filter against dynamically generated value lists, e.g. WHERE department_id IN (SELECT department_id FROM departments WHERE location = 'Bangalore').",
+        "commonMistakesToAvoid": "Limiting IN only to static literal lists.",
+        "keyPoints": ["Supports subqueries", "Enables dynamic list filtering"],
+        "codeSnippet": "WHERE dept_id IN (SELECT id FROM depts WHERE loc = 'Bangalore')"
+      },
+      {
+        "id": "q-24-5",
+        "category": "💡 Interview Notes",
+        "question": "How does IN handle NULL values inside the value list?",
+        "whatInterviewerChecks": "Three-valued logic (TRUE, FALSE, UNKNOWN) in SQL.",
+        "bestReplyScript": "For positive IN, if a matching non-NULL value is found, it returns TRUE. But for NOT IN, if the list contains a NULL value, the entire query returns ZERO rows because comparison with NULL yields UNKNOWN!",
+        "commonMistakesToAvoid": "Overlooking NULL handling in NOT IN queries.",
+        "keyPoints": ["IN handles NULL gracefully if match exists", "NOT IN with NULL list returns 0 rows!"],
+        "codeSnippet": "WHERE col NOT IN (1, 2, NULL) -- Always returns empty result!"
+      },
+      {
+        "id": "q-24-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the key trick to remember for '=' vs 'IN'?",
+        "whatInterviewerChecks": "Concise elevator pitch distinction.",
+        "bestReplyScript": "'=' checks ONE scalar value; 'IN' checks MANY values inside a list.",
+        "commonMistakesToAvoid": "Writing col = ('val1', 'val2').",
+        "keyPoints": ["= is for 1 value", "IN is for many values"],
+        "codeSnippet": "= (1 Value) vs IN (Many Values)"
       }
     ],
     "questions": [
       {
         "id": "q-24-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find minimum salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find minimum salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT MIN(salary) AS min_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the IN operator and how does it work?",
+        "whatInterviewerChecks": "Understanding of set membership evaluation.",
+        "bestReplyScript": "The IN operator allows you to specify multiple values in a WHERE clause. It acts as a shorthand for multiple OR conditions, checking whether a column value matches any item in a literal list or subquery result.",
+        "commonMistakesToAvoid": "Confusing IN with scalar equality '='.",
+        "keyPoints": ["Checks membership in a set", "Shorthand for multiple ORs", "Supports literal lists and subqueries"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE first_name IN ('John', 'Alice', 'Bob');"
+      },
+      {
+        "id": "q-24-2",
+        "category": "💡 Interview Notes",
+        "question": "Is IN equivalent to multiple OR conditions?",
+        "whatInterviewerChecks": "Logical equivalence and engine parsing.",
+        "bestReplyScript": "Yes! WHERE department IN ('HR', 'IT') is logically identical to WHERE department = 'HR' OR department = 'IT'. Query optimizers convert IN into an in-list iterator or hash lookup.",
+        "commonMistakesToAvoid": "Assuming IN behaves differently logically than OR.",
+        "keyPoints": ["Logically equivalent to OR chain", "Better readability and maintainability"],
+        "codeSnippet": "IN ('HR', 'IT') == (dept = 'HR' OR dept = 'IT')"
+      },
+      {
+        "id": "q-24-3",
+        "category": "💡 Interview Notes",
+        "question": "Why use IN instead of multiple OR conditions?",
+        "whatInterviewerChecks": "Code maintainability and query readability.",
+        "bestReplyScript": "1) Cleaner and more concise syntax, 2) Reduces operator precedence bugs when combined with AND, 3) Easier to update dynamically or pair with subqueries.",
+        "commonMistakesToAvoid": "Writing lengthy OR chains that degrade readability.",
+        "keyPoints": ["Shorter syntax", "Prevents AND/OR precedence bugs", "Subquery support"],
+        "codeSnippet": "WHERE city IN ('Bangalore', 'Mumbai', 'Delhi')"
+      },
+      {
+        "id": "q-24-4",
+        "category": "💡 Interview Notes",
+        "question": "Can IN be used with subqueries?",
+        "whatInterviewerChecks": "Subquery integration and semi-join concepts.",
+        "bestReplyScript": "Yes! You can supply a subquery inside IN to filter against dynamically generated value lists, e.g. WHERE department_id IN (SELECT department_id FROM departments WHERE location = 'Bangalore').",
+        "commonMistakesToAvoid": "Limiting IN only to static literal lists.",
+        "keyPoints": ["Supports subqueries", "Enables dynamic list filtering"],
+        "codeSnippet": "WHERE dept_id IN (SELECT id FROM depts WHERE loc = 'Bangalore')"
+      },
+      {
+        "id": "q-24-5",
+        "category": "💡 Interview Notes",
+        "question": "How does IN handle NULL values inside the value list?",
+        "whatInterviewerChecks": "Three-valued logic (TRUE, FALSE, UNKNOWN) in SQL.",
+        "bestReplyScript": "For positive IN, if a matching non-NULL value is found, it returns TRUE. But for NOT IN, if the list contains a NULL value, the entire query returns ZERO rows because comparison with NULL yields UNKNOWN!",
+        "commonMistakesToAvoid": "Overlooking NULL handling in NOT IN queries.",
+        "keyPoints": ["IN handles NULL gracefully if match exists", "NOT IN with NULL list returns 0 rows!"],
+        "codeSnippet": "WHERE col NOT IN (1, 2, NULL) -- Always returns empty result!"
+      },
+      {
+        "id": "q-24-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the key trick to remember for '=' vs 'IN'?",
+        "whatInterviewerChecks": "Concise elevator pitch distinction.",
+        "bestReplyScript": "'=' checks ONE scalar value; 'IN' checks MANY values inside a list.",
+        "commonMistakesToAvoid": "Writing col = ('val1', 'val2').",
+        "keyPoints": ["= is for 1 value", "IN is for many values"],
+        "codeSnippet": "= (1 Value) vs IN (Many Values)"
       }
     ],
     "mistakes": [
       {
         "id": "m-24-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting Parentheses around IN Value List",
+        "description": "Writing IN list without surrounding parentheses.",
+        "badSnippet": "SELECT * FROM employees WHERE department IN 'HR', 'IT';",
+        "failingInput": "Missing parentheses",
+        "consequence": "❌ Syntax Error: Near 'HR': syntax error.",
+        "howToFix": "Enclose values inside parentheses: IN ('HR', 'IT').",
+        "mistake": "Missing parentheses around IN list",
+        "whyItHappens": "Forgetting SQL tuple syntax rules."
+      },
+      {
+        "id": "m-24-2",
+        "title": "2. Forgetting Quotes around String Literals",
+        "description": "Writing string values unquoted inside IN list.",
+        "badSnippet": "WHERE department IN (HR, IT);",
+        "failingInput": "Unquoted strings",
+        "consequence": "❌ Error: no such column: HR.",
+        "howToFix": "Enclose string literals in single quotes: IN ('HR', 'IT').",
+        "mistake": "Unquoted string values inside IN list",
+        "whyItHappens": "Confusing string values with database column names."
+      },
+      {
+        "id": "m-24-3",
+        "title": "3. Using = with List Tuples",
+        "description": "Using equality operator = with a list tuple.",
+        "badSnippet": "SELECT * FROM employees WHERE department = ('HR', 'IT');",
+        "failingInput": "Tuple equality comparison",
+        "consequence": "❌ Syntax/Type Error: row value misused or unsupported comparison.",
+        "howToFix": "Use IN operator for multi-value comparisons.",
+        "mistake": "Using = with list tuples",
+        "whyItHappens": "Assuming = supports list membership evaluation."
+      },
+      {
+        "id": "m-24-4",
+        "title": "4. Using NOT IN with a List Containing NULL",
+        "description": "Using NOT IN when the list contains a NULL value.",
+        "badSnippet": "SELECT * FROM employees WHERE department_id NOT IN (1, 2, NULL);",
+        "failingInput": "NULL inside NOT IN list",
+        "consequence": "Returns 0 rows regardless of data due to three-valued logic.",
+        "howToFix": "Filter out NULLs or use NOT EXISTS / LEFT JOIN.",
+        "mistake": "NOT IN with NULL in value list",
+        "whyItHappens": "Not realizing that X != NULL evaluates to UNKNOWN."
+      },
+      {
+        "id": "m-24-5",
+        "title": "5. Redundant IN with Single Value",
+        "description": "Using IN when checking only a single value.",
+        "badSnippet": "SELECT * FROM employees WHERE department IN ('HR');",
+        "failingInput": "Single item list",
+        "consequence": "Redundant complexity (though valid SQL).",
+        "howToFix": "Use direct scalar equality: WHERE department = 'HR'.",
+        "mistake": "Redundant IN operator",
+        "whyItHappens": "Overusing IN for single value comparisons."
       }
     ]
   },
   "25": {
     "id": "sql-25",
-    "title": "Find average salary",
+    "title": "Filter Records Using the BETWEEN Operator",
     "levelNumber": 25,
     "problemId": 25,
-    "problemTitle": "Find average salary",
+    "problemTitle": "Filter Records Using the BETWEEN Operator",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT AVG(salary) AS avg_salary FROM employees;",
+      "code": "SELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Scan employees table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find average salary' and validates schema column names."
+          "explanation": "SQL engine accesses rows from the employees table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "WHERE Range Evaluation",
+            "Action": "Evaluate salary BETWEEN 50000 AND 100000"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL tests whether salary is >= 50000 AND <= 100000. Salaries within bounds evaluate to TRUE."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Project matching first_name records"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The engine projects matching names into the output result set."
         }
       ]
     },
     "qas": [
       {
         "id": "q-25-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find average salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find average salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT AVG(salary) AS avg_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the BETWEEN operator and how does it work?",
+        "whatInterviewerChecks": "Understanding of range comparison evaluation.",
+        "bestReplyScript": "The BETWEEN operator filters a result set by matching values within a specified continuous range. It works with numbers, text, and dates.",
+        "commonMistakesToAvoid": "Thinking BETWEEN excludes the endpoint values.",
+        "keyPoints": ["Filters continuous range", "Supports numbers, dates, strings", "Inclusive of boundary limits"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;"
+      },
+      {
+        "id": "q-25-2",
+        "category": "💡 Interview Notes",
+        "question": "Does BETWEEN include the boundary values?",
+        "whatInterviewerChecks": "Endpoint inclusive vs exclusive semantics.",
+        "bestReplyScript": "YES! BETWEEN is fully inclusive. WHERE salary BETWEEN 50000 AND 100000 includes both salaries equal to 50000 and 100000.",
+        "commonMistakesToAvoid": "Assuming upper or lower limits are excluded.",
+        "keyPoints": ["Fully INCLUSIVE operator", "Includes both lower and upper bounds"],
+        "codeSnippet": "BETWEEN 50000 AND 100000 includes 50000 and 100000"
+      },
+      {
+        "id": "q-25-3",
+        "category": "💡 Interview Notes",
+        "question": "Is BETWEEN equivalent to >= and <=?",
+        "whatInterviewerChecks": "Logical equivalence to comparison operators.",
+        "bestReplyScript": "Yes! WHERE salary BETWEEN 50000 AND 100000 is logically identical to WHERE salary >= 50000 AND salary <= 100000.",
+        "commonMistakesToAvoid": "Thinking BETWEEN behaves differently under the hood.",
+        "keyPoints": ["Identical to >= low AND <= high", "Shorter and more readable syntax"],
+        "codeSnippet": "salary BETWEEN 50000 AND 100000 == (salary >= 50000 AND salary <= 100000)"
+      },
+      {
+        "id": "q-25-4",
+        "category": "💡 Interview Notes",
+        "question": "Can BETWEEN be used with dates and strings?",
+        "whatInterviewerChecks": "Data type versatility of range queries.",
+        "bestReplyScript": "Yes! For dates: order_date BETWEEN '2026-01-01' AND '2026-12-31'. For strings: name BETWEEN 'A' AND 'M' (alphabetical collation).",
+        "commonMistakesToAvoid": "Restricting BETWEEN only to numeric types.",
+        "keyPoints": ["Works with dates", "Works with text alphabetically"],
+        "codeSnippet": "WHERE order_date BETWEEN '2026-01-01' AND '2026-12-31'"
+      },
+      {
+        "id": "q-25-5",
+        "category": "💡 Interview Notes",
+        "question": "What happens if you reverse the range limits (e.g. BETWEEN 100000 AND 50000)?",
+        "whatInterviewerChecks": "Understanding range ordering rules.",
+        "bestReplyScript": "It will return ZERO rows in standard SQL because low_bound must be less than or equal to high_bound (val >= 100000 AND val <= 50000 evaluates to FALSE for all numbers).",
+        "commonMistakesToAvoid": "Reversing lower and upper boundary values.",
+        "keyPoints": ["Must be ordered low AND high", "Reversed bounds return empty set"],
+        "codeSnippet": "BETWEEN 100000 AND 50000 returns 0 rows"
+      },
+      {
+        "id": "q-25-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between IN and BETWEEN?",
+        "whatInterviewerChecks": "Discrete set vs continuous range distinction.",
+        "bestReplyScript": "IN checks discrete, specific values in a list (e.g. 10, 20, 30). BETWEEN checks a continuous range interval (e.g. 10 to 30 inclusive).",
+        "commonMistakesToAvoid": "Using IN for continuous numeric ranges.",
+        "keyPoints": ["IN = Discrete list of values", "BETWEEN = Continuous range interval"],
+        "codeSnippet": "IN (List) vs BETWEEN (Continuous Range)"
       }
     ],
     "questions": [
       {
         "id": "q-25-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find average salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find average salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT AVG(salary) AS avg_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the BETWEEN operator and how does it work?",
+        "whatInterviewerChecks": "Understanding of range comparison evaluation.",
+        "bestReplyScript": "The BETWEEN operator filters a result set by matching values within a specified continuous range. It works with numbers, text, and dates.",
+        "commonMistakesToAvoid": "Thinking BETWEEN excludes the endpoint values.",
+        "keyPoints": ["Filters continuous range", "Supports numbers, dates, strings", "Inclusive of boundary limits"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE salary BETWEEN 50000 AND 100000;"
+      },
+      {
+        "id": "q-25-2",
+        "category": "💡 Interview Notes",
+        "question": "Does BETWEEN include the boundary values?",
+        "whatInterviewerChecks": "Endpoint inclusive vs exclusive semantics.",
+        "bestReplyScript": "YES! BETWEEN is fully inclusive. WHERE salary BETWEEN 50000 AND 100000 includes both salaries equal to 50000 and 100000.",
+        "commonMistakesToAvoid": "Assuming upper or lower limits are excluded.",
+        "keyPoints": ["Fully INCLUSIVE operator", "Includes both lower and upper bounds"],
+        "codeSnippet": "BETWEEN 50000 AND 100000 includes 50000 and 100000"
+      },
+      {
+        "id": "q-25-3",
+        "category": "💡 Interview Notes",
+        "question": "Is BETWEEN equivalent to >= and <=?",
+        "whatInterviewerChecks": "Logical equivalence to comparison operators.",
+        "bestReplyScript": "Yes! WHERE salary BETWEEN 50000 AND 100000 is logically identical to WHERE salary >= 50000 AND salary <= 100000.",
+        "commonMistakesToAvoid": "Thinking BETWEEN behaves differently under the hood.",
+        "keyPoints": ["Identical to >= low AND <= high", "Shorter and more readable syntax"],
+        "codeSnippet": "salary BETWEEN 50000 AND 100000 == (salary >= 50000 AND salary <= 100000)"
+      },
+      {
+        "id": "q-25-4",
+        "category": "💡 Interview Notes",
+        "question": "Can BETWEEN be used with dates and strings?",
+        "whatInterviewerChecks": "Data type versatility of range queries.",
+        "bestReplyScript": "Yes! For dates: order_date BETWEEN '2026-01-01' AND '2026-12-31'. For strings: name BETWEEN 'A' AND 'M' (alphabetical collation).",
+        "commonMistakesToAvoid": "Restricting BETWEEN only to numeric types.",
+        "keyPoints": ["Works with dates", "Works with text alphabetically"],
+        "codeSnippet": "WHERE order_date BETWEEN '2026-01-01' AND '2026-12-31'"
+      },
+      {
+        "id": "q-25-5",
+        "category": "💡 Interview Notes",
+        "question": "What happens if you reverse the range limits (e.g. BETWEEN 100000 AND 50000)?",
+        "whatInterviewerChecks": "Understanding range ordering rules.",
+        "bestReplyScript": "It will return ZERO rows in standard SQL because low_bound must be less than or equal to high_bound (val >= 100000 AND val <= 50000 evaluates to FALSE for all numbers).",
+        "commonMistakesToAvoid": "Reversing lower and upper boundary values.",
+        "keyPoints": ["Must be ordered low AND high", "Reversed bounds return empty set"],
+        "codeSnippet": "BETWEEN 100000 AND 50000 returns 0 rows"
+      },
+      {
+        "id": "q-25-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between IN and BETWEEN?",
+        "whatInterviewerChecks": "Discrete set vs continuous range distinction.",
+        "bestReplyScript": "IN checks discrete, specific values in a list (e.g. 10, 20, 30). BETWEEN checks a continuous range interval (e.g. 10 to 30 inclusive).",
+        "commonMistakesToAvoid": "Using IN for continuous numeric ranges.",
+        "keyPoints": ["IN = Discrete list of values", "BETWEEN = Continuous range interval"],
+        "codeSnippet": "IN (List) vs BETWEEN (Continuous Range)"
       }
     ],
     "mistakes": [
       {
         "id": "m-25-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Assuming BETWEEN Excludes Boundary Endpoints",
+        "description": "Expecting boundary values to be excluded from the query output.",
+        "badSnippet": "WHERE salary BETWEEN 50000 AND 100000 -- Assuming 50000 is excluded",
+        "failingInput": "Salaries equal to exactly 50000 or 100000",
+        "consequence": "Boundary rows ARE included in result set.",
+        "howToFix": "Use salary > 50000 AND salary < 100000 if exclusive range is needed.",
+        "mistake": "Assuming exclusive boundary behavior",
+        "whyItHappens": "Confusing SQL BETWEEN with strictly-between intervals."
+      },
+      {
+        "id": "m-25-2",
+        "title": "2. Reversing Lower and Upper Bounds",
+        "description": "Placing higher value before lower value.",
+        "badSnippet": "SELECT * FROM employees WHERE salary BETWEEN 100000 AND 50000;",
+        "failingInput": "Any salary data",
+        "consequence": "Returns 0 rows (always evaluates to FALSE).",
+        "howToFix": "Place lower bound first: BETWEEN 50000 AND 100000.",
+        "mistake": "Reversing bound arguments",
+        "whyItHappens": "Careless order of parameters."
+      },
+      {
+        "id": "m-25-3",
+        "title": "3. Forgetting the AND Keyword",
+        "description": "Omitting AND between lower and upper bounds.",
+        "badSnippet": "SELECT * FROM employees WHERE salary BETWEEN 50000 100000;",
+        "failingInput": "Missing AND operator",
+        "consequence": "❌ Syntax Error: Near 100000: syntax error.",
+        "howToFix": "Separate boundary values with AND keyword.",
+        "mistake": "Omitting AND keyword in BETWEEN clause",
+        "whyItHappens": "Forgetting SQL BETWEEN syntax rules."
+      },
+      {
+        "id": "m-25-4",
+        "title": "4. Date-Time Boundary Truncation Trap",
+        "description": "Using BETWEEN '2026-01-01' AND '2026-12-31' on DATETIME columns.",
+        "badSnippet": "WHERE created_at BETWEEN '2026-01-01' AND '2026-12-31'",
+        "failingInput": "Timestamp like 2026-12-31 14:30:00",
+        "consequence": "Excludes timestamps on Dec 31 after 00:00:00!",
+        "howToFix": "Use created_at >= '2026-01-01' AND created_at < '2027-01-01'.",
+        "mistake": "DATETIME midnight truncation bug",
+        "whyItHappens": "Assuming '2026-12-31' includes the entire end of day."
+      },
+      {
+        "id": "m-25-5",
+        "title": "5. Confusing BETWEEN with IN Operator",
+        "description": "Using IN for numeric range queries or BETWEEN for discrete lists.",
+        "badSnippet": "WHERE status BETWEEN ('ACTIVE', 'PENDING')",
+        "failingInput": "String discrete list",
+        "consequence": "❌ Syntax/Type Error.",
+        "howToFix": "Use IN for discrete lists and BETWEEN for continuous ranges.",
+        "mistake": "Confusing BETWEEN and IN operators",
+        "whyItHappens": "Misunderstanding set vs range comparison."
       }
     ]
   },
   "26": {
     "id": "sql-26",
-    "title": "Find total salary",
+    "title": "Find Records with Missing Values Using IS NULL",
     "levelNumber": 26,
     "problemId": 26,
-    "problemTitle": "Find total salary",
+    "problemTitle": "Find Records with Missing Values Using IS NULL",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT SUM(salary) AS total_salary FROM employees;",
+      "code": "SELECT first_name FROM employees WHERE manager_id IS NULL;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Scan employees table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find total salary' and validates schema column names."
+          "explanation": "SQL engine accesses rows from the employees table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "WHERE NULL Evaluation",
+            "Action": "Evaluate manager_id IS NULL"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL tests whether manager_id has no stored value (NULL). Missing values evaluate to TRUE."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Project matching first_name records"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The engine projects matching names ('John', 'Jane', 'Alice', 'Diana', 'Frank') into output."
         }
       ]
     },
     "qas": [
       {
         "id": "q-26-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find total salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find total salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT SUM(salary) AS total_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is NULL in SQL?",
+        "whatInterviewerChecks": "Understanding of relational NULL semantics.",
+        "bestReplyScript": "NULL represents missing, unknown, or unassigned data in a database column. It is not zero (0), an empty string (''), or a space (' ').",
+        "commonMistakesToAvoid": "Confusing NULL with 0 or empty strings.",
+        "keyPoints": ["Missing or unknown value", "Not equal to zero", "Not equal to empty string ''"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE manager_id IS NULL;"
+      },
+      {
+        "id": "q-26-2",
+        "category": "💡 Interview Notes",
+        "question": "Why doesn't '= NULL' work in SQL?",
+        "whatInterviewerChecks": "Knowledge of SQL three-valued logic (TRUE, FALSE, UNKNOWN).",
+        "bestReplyScript": "Because NULL represents an unknown value, comparing anything to NULL using '=' yields UNKNOWN (which evaluates to FALSE in WHERE clause filtering). SQL provides special IS NULL and IS NOT NULL operators for NULL comparisons.",
+        "commonMistakesToAvoid": "Writing WHERE col = NULL.",
+        "keyPoints": ["= NULL yields UNKNOWN", "WHERE treats UNKNOWN as FALSE", "Must use IS NULL"],
+        "codeSnippet": "WHERE manager_id = NULL -- Returns 0 rows!"
+      },
+      {
+        "id": "q-26-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you search for rows that DO contain a value?",
+        "whatInterviewerChecks": "Usage of IS NOT NULL.",
+        "bestReplyScript": "Use the IS NOT NULL operator! e.g., WHERE manager_id IS NOT NULL returns all employees who report to a manager.",
+        "commonMistakesToAvoid": "Writing WHERE manager_id != NULL.",
+        "keyPoints": ["Use IS NOT NULL", "Never use != NULL"],
+        "codeSnippet": "SELECT employee_name FROM employees WHERE manager_id IS NOT NULL;"
+      },
+      {
+        "id": "q-26-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between NULL, 0, and '' (empty string)?",
+        "whatInterviewerChecks": "Data model representation nuance.",
+        "bestReplyScript": "1) NULL = Absence of a value (unknown). 2) 0 = A known numeric value equal to zero. 3) '' = A known string value of zero length.",
+        "commonMistakesToAvoid": "Treating NULL as equivalent to empty string or zero.",
+        "keyPoints": ["NULL = Missing", "0 = Numeric zero", "'' = Zero length string"],
+        "codeSnippet": "NULL != 0 AND NULL != ''"
+      },
+      {
+        "id": "q-26-5",
+        "category": "💡 Interview Notes",
+        "question": "How do aggregate functions (SUM, AVG, COUNT) treat NULL values?",
+        "whatInterviewerChecks": "Aggregate NULL handling behavior.",
+        "bestReplyScript": "Aggregate functions like SUM, AVG, MIN, MAX automatically ignore NULL values. COUNT(column_name) ignores NULLs, whereas COUNT(*) counts all rows including NULLs.",
+        "commonMistakesToAvoid": "Assuming AVG includes NULL rows in divisor.",
+        "keyPoints": ["Aggregates ignore NULLs", "COUNT(col) ignores NULL", "COUNT(*) includes NULL"],
+        "codeSnippet": "COUNT(salary) vs COUNT(*)"
+      },
+      {
+        "id": "q-26-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the golden rule to remember for NULL in interviews?",
+        "whatInterviewerChecks": "Core rule recall.",
+        "bestReplyScript": "Never compare NULL using '=' or '!='. Always use 'IS NULL' or 'IS NOT NULL'.",
+        "commonMistakesToAvoid": "Using scalar equality operators on NULL.",
+        "keyPoints": ["IS NULL = ✅", "= NULL = ❌"],
+        "codeSnippet": "IS NULL ✅ | = NULL ❌"
       }
     ],
     "questions": [
       {
         "id": "q-26-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find total salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find total salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT SUM(salary) AS total_salary FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is NULL in SQL?",
+        "whatInterviewerChecks": "Understanding of relational NULL semantics.",
+        "bestReplyScript": "NULL represents missing, unknown, or unassigned data in a database column. It is not zero (0), an empty string (''), or a space (' ').",
+        "commonMistakesToAvoid": "Confusing NULL with 0 or empty strings.",
+        "keyPoints": ["Missing or unknown value", "Not equal to zero", "Not equal to empty string ''"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE manager_id IS NULL;"
+      },
+      {
+        "id": "q-26-2",
+        "category": "💡 Interview Notes",
+        "question": "Why doesn't '= NULL' work in SQL?",
+        "whatInterviewerChecks": "Knowledge of SQL three-valued logic (TRUE, FALSE, UNKNOWN).",
+        "bestReplyScript": "Because NULL represents an unknown value, comparing anything to NULL using '=' yields UNKNOWN (which evaluates to FALSE in WHERE clause filtering). SQL provides special IS NULL and IS NOT NULL operators for NULL comparisons.",
+        "commonMistakesToAvoid": "Writing WHERE col = NULL.",
+        "keyPoints": ["= NULL yields UNKNOWN", "WHERE treats UNKNOWN as FALSE", "Must use IS NULL"],
+        "codeSnippet": "WHERE manager_id = NULL -- Returns 0 rows!"
+      },
+      {
+        "id": "q-26-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you search for rows that DO contain a value?",
+        "whatInterviewerChecks": "Usage of IS NOT NULL.",
+        "bestReplyScript": "Use the IS NOT NULL operator! e.g., WHERE manager_id IS NOT NULL returns all employees who report to a manager.",
+        "commonMistakesToAvoid": "Writing WHERE manager_id != NULL.",
+        "keyPoints": ["Use IS NOT NULL", "Never use != NULL"],
+        "codeSnippet": "SELECT employee_name FROM employees WHERE manager_id IS NOT NULL;"
+      },
+      {
+        "id": "q-26-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between NULL, 0, and '' (empty string)?",
+        "whatInterviewerChecks": "Data model representation nuance.",
+        "bestReplyScript": "1) NULL = Absence of a value (unknown). 2) 0 = A known numeric value equal to zero. 3) '' = A known string value of zero length.",
+        "commonMistakesToAvoid": "Treating NULL as equivalent to empty string or zero.",
+        "keyPoints": ["NULL = Missing", "0 = Numeric zero", "'' = Zero length string"],
+        "codeSnippet": "NULL != 0 AND NULL != ''"
+      },
+      {
+        "id": "q-26-5",
+        "category": "💡 Interview Notes",
+        "question": "How do aggregate functions (SUM, AVG, COUNT) treat NULL values?",
+        "whatInterviewerChecks": "Aggregate NULL handling behavior.",
+        "bestReplyScript": "Aggregate functions like SUM, AVG, MIN, MAX automatically ignore NULL values. COUNT(column_name) ignores NULLs, whereas COUNT(*) counts all rows including NULLs.",
+        "commonMistakesToAvoid": "Assuming AVG includes NULL rows in divisor.",
+        "keyPoints": ["Aggregates ignore NULLs", "COUNT(col) ignores NULL", "COUNT(*) includes NULL"],
+        "codeSnippet": "COUNT(salary) vs COUNT(*)"
+      },
+      {
+        "id": "q-26-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the golden rule to remember for NULL in interviews?",
+        "whatInterviewerChecks": "Core rule recall.",
+        "bestReplyScript": "Never compare NULL using '=' or '!='. Always use 'IS NULL' or 'IS NOT NULL'.",
+        "commonMistakesToAvoid": "Using scalar equality operators on NULL.",
+        "keyPoints": ["IS NULL = ✅", "= NULL = ❌"],
+        "codeSnippet": "IS NULL ✅ | = NULL ❌"
       }
     ],
     "mistakes": [
       {
         "id": "m-26-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using = NULL instead of IS NULL",
+        "description": "Attempting scalar equality comparison on NULL.",
+        "badSnippet": "SELECT * FROM employees WHERE manager_id = NULL;",
+        "failingInput": "Rows where manager_id is NULL",
+        "consequence": "Returns 0 rows because comparison evaluates to UNKNOWN.",
+        "howToFix": "Use IS NULL operator: WHERE manager_id IS NULL.",
+        "mistake": "Using = NULL",
+        "whyItHappens": "Assuming NULL behaves like standard primitive values."
+      },
+      {
+        "id": "m-26-2",
+        "title": "2. Using != NULL instead of IS NOT NULL",
+        "description": "Attempting inequality comparison on NULL.",
+        "badSnippet": "SELECT * FROM employees WHERE manager_id != NULL;",
+        "failingInput": "Rows where manager_id is NOT NULL",
+        "consequence": "Returns 0 rows because inequality with NULL evaluates to UNKNOWN.",
+        "howToFix": "Use IS NOT NULL operator: WHERE manager_id IS NOT NULL.",
+        "mistake": "Using != NULL",
+        "whyItHappens": "Assuming != works on NULL values."
+      },
+      {
+        "id": "m-26-3",
+        "title": "3. Thinking NULL Equals 0",
+        "description": "Confusing missing data with zero numeric value.",
+        "badSnippet": "WHERE salary = 0 -- Expecting NULL salaries to match",
+        "failingInput": "Salaries set to NULL",
+        "consequence": "Excludes NULL salary records.",
+        "howToFix": "Check for NULL explicitly: WHERE salary IS NULL.",
+        "mistake": "Equating NULL with numeric 0",
+        "whyItHappens": "Not distinguishing zero from missing state."
+      },
+      {
+        "id": "m-26-4",
+        "title": "4. Thinking NULL Equals Empty String ('')",
+        "description": "Confusing NULL with empty text.",
+        "badSnippet": "WHERE email = '' -- Expecting NULL emails to match",
+        "failingInput": "NULL email entries",
+        "consequence": "Excludes NULL records (unless using Oracle string coercion).",
+        "howToFix": "Use WHERE email IS NULL OR email = ''.",
+        "mistake": "Equating NULL with empty string",
+        "whyItHappens": "Assuming empty input fields save empty strings."
+      },
+      {
+        "id": "m-26-5",
+        "title": "5. Omitting IS Keyword",
+        "description": "Writing WHERE column_name NULL.",
+        "badSnippet": "SELECT * FROM employees WHERE manager_id NULL;",
+        "failingInput": "Syntax error",
+        "consequence": "❌ Syntax Error: Near NULL: syntax error.",
+        "howToFix": "Include IS keyword: WHERE manager_id IS NULL.",
+        "mistake": "Omitting IS keyword",
+        "whyItHappens": "Forgetting SQL predicate keyword syntax."
       }
     ]
   },
   "27": {
     "id": "sql-27",
-    "title": "Find average marks",
+    "title": "Find Records with Non-NULL Values Using IS NOT NULL",
     "levelNumber": 27,
     "problemId": 27,
-    "problemTitle": "Find average marks",
+    "problemTitle": "Find Records with Non-NULL Values Using IS NOT NULL",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Capgemini",
+      "Zoho"
     ],
     "tracing": {
-      "code": "SELECT AVG(marks) AS avg_marks FROM students;",
+      "code": "SELECT first_name FROM employees WHERE manager_id IS NOT NULL;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Scan employees table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find average marks' and validates schema column names."
+          "explanation": "SQL engine accesses rows from the employees table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "WHERE Non-NULL Evaluation",
+            "Action": "Evaluate manager_id IS NOT NULL"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "SQL tests whether manager_id contains an actual stored value (excluding NULL). Valid rows evaluate to TRUE."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection",
+            "Action": "Project matching first_name records"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The engine projects matching names ('Bob', 'Charlie', 'Eva') into the output result set."
         }
       ]
     },
     "qas": [
       {
         "id": "q-27-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find average marks' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find average marks', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT AVG(marks) AS avg_marks FROM students;"
+        "category": "💡 Interview Notes",
+        "question": "What is IS NOT NULL and how does it work?",
+        "whatInterviewerChecks": "Understanding non-missing value filtering.",
+        "bestReplyScript": "IS NOT NULL filters rows where a specified column contains a valid, stored non-missing value, excluding all NULL values.",
+        "commonMistakesToAvoid": "Using != NULL or <> NULL.",
+        "keyPoints": ["Filters existing stored values", "Excludes NULL values", "Standard ANSI SQL predicate"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE manager_id IS NOT NULL;"
+      },
+      {
+        "id": "q-27-2",
+        "category": "💡 Interview Notes",
+        "question": "Why doesn't '!= NULL' or '<> NULL' work?",
+        "whatInterviewerChecks": "Knowledge of SQL three-valued logic for inequality.",
+        "bestReplyScript": "Because comparing any value to NULL using '!=' or '<>' yields UNKNOWN. Since WHERE filtering only keeps TRUE rows, '!= NULL' returns 0 matching rows.",
+        "commonMistakesToAvoid": "Writing WHERE col != NULL.",
+        "keyPoints": ["!= NULL yields UNKNOWN", "Evaluates to 0 rows in WHERE clause", "Must use IS NOT NULL"],
+        "codeSnippet": "WHERE manager_id != NULL -- Returns 0 rows!"
+      },
+      {
+        "id": "q-27-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between IS NULL and IS NOT NULL?",
+        "whatInterviewerChecks": "Comparing opposite predicate semantics.",
+        "bestReplyScript": "IS NULL finds records where data is missing (unknown). IS NOT NULL finds records where data exists (valid value present).",
+        "commonMistakesToAvoid": "Confusing the target row set.",
+        "keyPoints": ["IS NULL = Missing data", "IS NOT NULL = Present data"],
+        "codeSnippet": "IS NULL (Missing) vs IS NOT NULL (Present)"
+      },
+      {
+        "id": "q-27-4",
+        "category": "💡 Interview Notes",
+        "question": "Is NULL equal to 0 or an empty string ''?",
+        "whatInterviewerChecks": "Understanding data value representations.",
+        "bestReplyScript": "No! NULL means no value exists. 0 is a valid numeric value, and '' is a valid 0-length string value. IS NOT NULL will treat 0 and '' as valid existing values.",
+        "commonMistakesToAvoid": "Expecting IS NOT NULL to exclude 0 or empty strings.",
+        "keyPoints": ["NULL is missing data", "0 and '' are valid non-NULL values"],
+        "codeSnippet": "WHERE col IS NOT NULL includes 0 and ''"
+      },
+      {
+        "id": "q-27-5",
+        "category": "💡 Interview Notes",
+        "question": "How do JOINs interact with NULL values?",
+        "whatInterviewerChecks": "Relational JOIN behavior on NULL foreign keys.",
+        "bestReplyScript": "INNER JOINs exclude rows where join key is NULL (since NULL = NULL is UNKNOWN). LEFT JOINs preserve left-table rows with NULL join keys, filling right-table columns with NULL.",
+        "commonMistakesToAvoid": "Assuming NULL keys match in INNER JOIN.",
+        "keyPoints": ["INNER JOIN drops NULL keys", "LEFT JOIN preserves left NULL keys"],
+        "codeSnippet": "ON a.id = b.id -- drops NULL ids in INNER JOIN"
+      },
+      {
+        "id": "q-27-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the key takeaways for NULL comparisons in technical interviews?",
+        "whatInterviewerChecks": "Core rule recall.",
+        "bestReplyScript": "Never compare NULL using '=', '!=', or '<>'. Always use 'IS NULL' for missing data and 'IS NOT NULL' for existing data!",
+        "commonMistakesToAvoid": "Using scalar comparison operators with NULL.",
+        "keyPoints": ["IS NOT NULL = ✅", "!= NULL / <> NULL = ❌"],
+        "codeSnippet": "IS NOT NULL ✅ | != NULL ❌"
       }
     ],
     "questions": [
       {
         "id": "q-27-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find average marks' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find average marks', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT AVG(marks) AS avg_marks FROM students;"
+        "category": "💡 Interview Notes",
+        "question": "What is IS NOT NULL and how does it work?",
+        "whatInterviewerChecks": "Understanding non-missing value filtering.",
+        "bestReplyScript": "IS NOT NULL filters rows where a specified column contains a valid, stored non-missing value, excluding all NULL values.",
+        "commonMistakesToAvoid": "Using != NULL or <> NULL.",
+        "keyPoints": ["Filters existing stored values", "Excludes NULL values", "Standard ANSI SQL predicate"],
+        "codeSnippet": "SELECT first_name FROM employees WHERE manager_id IS NOT NULL;"
+      },
+      {
+        "id": "q-27-2",
+        "category": "💡 Interview Notes",
+        "question": "Why doesn't '!= NULL' or '<> NULL' work?",
+        "whatInterviewerChecks": "Knowledge of SQL three-valued logic for inequality.",
+        "bestReplyScript": "Because comparing any value to NULL using '!=' or '<>' yields UNKNOWN. Since WHERE filtering only keeps TRUE rows, '!= NULL' returns 0 matching rows.",
+        "commonMistakesToAvoid": "Writing WHERE col != NULL.",
+        "keyPoints": ["!= NULL yields UNKNOWN", "Evaluates to 0 rows in WHERE clause", "Must use IS NOT NULL"],
+        "codeSnippet": "WHERE manager_id != NULL -- Returns 0 rows!"
+      },
+      {
+        "id": "q-27-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between IS NULL and IS NOT NULL?",
+        "whatInterviewerChecks": "Comparing opposite predicate semantics.",
+        "bestReplyScript": "IS NULL finds records where data is missing (unknown). IS NOT NULL finds records where data exists (valid value present).",
+        "commonMistakesToAvoid": "Confusing the target row set.",
+        "keyPoints": ["IS NULL = Missing data", "IS NOT NULL = Present data"],
+        "codeSnippet": "IS NULL (Missing) vs IS NOT NULL (Present)"
+      },
+      {
+        "id": "q-27-4",
+        "category": "💡 Interview Notes",
+        "question": "Is NULL equal to 0 or an empty string ''?",
+        "whatInterviewerChecks": "Understanding data value representations.",
+        "bestReplyScript": "No! NULL means no value exists. 0 is a valid numeric value, and '' is a valid 0-length string value. IS NOT NULL will treat 0 and '' as valid existing values.",
+        "commonMistakesToAvoid": "Expecting IS NOT NULL to exclude 0 or empty strings.",
+        "keyPoints": ["NULL is missing data", "0 and '' are valid non-NULL values"],
+        "codeSnippet": "WHERE col IS NOT NULL includes 0 and ''"
+      },
+      {
+        "id": "q-27-5",
+        "category": "💡 Interview Notes",
+        "question": "How do JOINs interact with NULL values?",
+        "whatInterviewerChecks": "Relational JOIN behavior on NULL foreign keys.",
+        "bestReplyScript": "INNER JOINs exclude rows where join key is NULL (since NULL = NULL is UNKNOWN). LEFT JOINs preserve left-table rows with NULL join keys, filling right-table columns with NULL.",
+        "commonMistakesToAvoid": "Assuming NULL keys match in INNER JOIN.",
+        "keyPoints": ["INNER JOIN drops NULL keys", "LEFT JOIN preserves left NULL keys"],
+        "codeSnippet": "ON a.id = b.id -- drops NULL ids in INNER JOIN"
+      },
+      {
+        "id": "q-27-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the key takeaways for NULL comparisons in technical interviews?",
+        "whatInterviewerChecks": "Core rule recall.",
+        "bestReplyScript": "Never compare NULL using '=', '!=', or '<>'. Always use 'IS NULL' for missing data and 'IS NOT NULL' for existing data!",
+        "commonMistakesToAvoid": "Using scalar comparison operators with NULL.",
+        "keyPoints": ["IS NOT NULL = ✅", "!= NULL / <> NULL = ❌"],
+        "codeSnippet": "IS NOT NULL ✅ | != NULL ❌"
       }
     ],
     "mistakes": [
       {
         "id": "m-27-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using != NULL instead of IS NOT NULL",
+        "description": "Attempting scalar inequality comparison on NULL.",
+        "badSnippet": "SELECT * FROM employees WHERE manager_id != NULL;",
+        "failingInput": "Rows with valid manager_id values",
+        "consequence": "Returns 0 rows because inequality with NULL yields UNKNOWN.",
+        "howToFix": "Use IS NOT NULL operator: WHERE manager_id IS NOT NULL.",
+        "mistake": "Using != NULL",
+        "whyItHappens": "Assuming != works on NULL values."
+      },
+      {
+        "id": "m-27-2",
+        "title": "2. Using <> NULL instead of IS NOT NULL",
+        "description": "Using SQL standard <> operator with NULL.",
+        "badSnippet": "SELECT * FROM employees WHERE manager_id <> NULL;",
+        "failingInput": "Rows with valid manager_id values",
+        "consequence": "Returns 0 rows because <> NULL evaluates to UNKNOWN.",
+        "howToFix": "Use IS NOT NULL operator: WHERE manager_id IS NOT NULL.",
+        "mistake": "Using <> NULL",
+        "whyItHappens": "Confusing <> with IS NOT NULL."
+      },
+      {
+        "id": "m-27-3",
+        "title": "3. Expecting IS NOT NULL to Exclude Empty Strings ('')",
+        "description": "Assuming IS NOT NULL will filter out empty strings.",
+        "badSnippet": "WHERE email IS NOT NULL -- Expecting empty strings '' to be filtered",
+        "failingInput": "Row with email = ''",
+        "consequence": "Empty string '' IS NOT NULL, so row is included!",
+        "howToFix": "Use WHERE email IS NOT NULL AND email != ''.",
+        "mistake": "Expecting IS NOT NULL to drop empty strings",
+        "whyItHappens": "Treating empty string as NULL."
+      },
+      {
+        "id": "m-27-4",
+        "title": "4. Expecting IS NOT NULL to Exclude Zero (0)",
+        "description": "Assuming IS NOT NULL filters out zero numeric values.",
+        "badSnippet": "WHERE balance IS NOT NULL -- Expecting 0 to be filtered",
+        "failingInput": "Row with balance = 0",
+        "consequence": "Numeric 0 IS NOT NULL, so row is included!",
+        "howToFix": "Use WHERE balance IS NOT NULL AND balance > 0.",
+        "mistake": "Expecting IS NOT NULL to drop 0",
+        "whyItHappens": "Confusing zero numeric value with NULL state."
+      },
+      {
+        "id": "m-27-5",
+        "title": "5. Omitting IS Keyword",
+        "description": "Writing WHERE column_name NOT NULL.",
+        "badSnippet": "SELECT * FROM employees WHERE manager_id NOT NULL;",
+        "failingInput": "Syntax error",
+        "consequence": "❌ Syntax Error in standard SQL parsers.",
+        "howToFix": "Include IS keyword: WHERE manager_id IS NOT NULL.",
+        "mistake": "Omitting IS keyword in IS NOT NULL",
+        "whyItHappens": "Forgetting SQL predicate keyword requirements."
       }
     ]
   },
   "28": {
     "id": "sql-28",
-    "title": "Sum sales",
+    "title": "Use CASE WHEN to Display Conditional Values",
     "levelNumber": 28,
     "problemId": 28,
-    "problemTitle": "Sum sales",
+    "problemTitle": "Use CASE WHEN to Display Conditional Values",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "Uber",
+      "Netflix",
+      "TCS",
+      "Infosys",
+      "Wipro"
     ],
     "tracing": {
-      "code": "SELECT SUM(sale_amount) AS total_sales FROM sales;",
+      "code": "SELECT first_name, salary, CASE WHEN salary >= 100000 THEN 'High Salary' WHEN salary >= 60000 THEN 'Medium Salary' ELSE 'Low Salary' END AS salary_category FROM employees;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Access employee records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Sum sales' and validates schema column names."
+          "explanation": "SQL engine iterates over rows in the employees table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "CASE Evaluation",
+            "Action": "Evaluate WHEN salary >= 100000 then WHEN salary >= 60000"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "For each row, SQL checks conditions sequentially until a TRUE condition is found, returning the corresponding THEN value."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Alias",
+            "Action": "Project first_name, salary, salary_category"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "The computed CASE category is assigned to column alias salary_category and emitted alongside first_name and salary."
         }
       ]
     },
     "qas": [
       {
         "id": "q-28-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Sum sales' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Sum sales', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT SUM(sale_amount) AS total_sales FROM sales;"
+        "category": "💡 Interview Notes",
+        "question": "What is CASE WHEN in SQL?",
+        "whatInterviewerChecks": "Understanding inline conditional logic in SQL.",
+        "bestReplyScript": "CASE WHEN is SQL's conditional expression that allows us to perform if-elif-else logic directly inside queries to compute dynamic columns or conditionally filter/sort data.",
+        "commonMistakesToAvoid": "Thinking CASE alters rows stored in the database.",
+        "keyPoints": ["Inline conditional expression", "Direct equivalent of if-elif-else", "Evaluates per projected row"],
+        "codeSnippet": "CASE WHEN condition THEN result ELSE fallback END"
+      },
+      {
+        "id": "q-28-2",
+        "category": "💡 Interview Notes",
+        "question": "Why does the order of WHEN clauses matter in CASE expressions?",
+        "whatInterviewerChecks": "Understanding short-circuit evaluation in SQL CASE statements.",
+        "bestReplyScript": "SQL evaluates WHEN conditions sequentially from top to bottom and returns immediately on the FIRST condition that evaluates to TRUE. If broader conditions come before specific ones, the specific conditions will never be checked.",
+        "commonMistakesToAvoid": "Putting broader thresholds (>= 60000) before specific ones (>= 100000).",
+        "keyPoints": ["Sequential top-to-bottom evaluation", "Stops at first TRUE match", "Specific conditions must come first"],
+        "codeSnippet": "WHEN salary >= 100000 THEN 'High' WHEN salary >= 60000 THEN 'Medium'"
+      },
+      {
+        "id": "q-28-3",
+        "category": "💡 Interview Notes",
+        "question": "What happens if no WHEN condition matches and ELSE is omitted?",
+        "whatInterviewerChecks": "Fallback evaluation behavior for CASE.",
+        "bestReplyScript": "If no WHEN condition evaluates to TRUE and no ELSE clause is specified, SQL defaults to returning NULL for that row.",
+        "commonMistakesToAvoid": "Assuming an omitted ELSE throws an error.",
+        "keyPoints": ["Omitted ELSE returns NULL", "Always provide ELSE to guarantee non-null fallbacks"],
+        "codeSnippet": "CASE WHEN salary > 200000 THEN 'Exec' END -- returns NULL for normal salaries"
+      },
+      {
+        "id": "q-28-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between Simple CASE and Searched CASE?",
+        "whatInterviewerChecks": "Syntax variations of CASE.",
+        "bestReplyScript": "1) Simple CASE compares a single expression against discrete values: CASE dept WHEN 'IT' THEN 'Tech' END. 2) Searched CASE evaluates arbitrary boolean expressions: CASE WHEN salary >= 100000 THEN 'High' END.",
+        "commonMistakesToAvoid": "Trying to use range operators inside Simple CASE syntax.",
+        "keyPoints": ["Simple CASE = discrete value lookup", "Searched CASE = boolean range/logical expressions"],
+        "codeSnippet": "Searched: CASE WHEN salary >= 100000 THEN 'High' END"
+      },
+      {
+        "id": "q-28-5",
+        "category": "💡 Interview Notes",
+        "question": "Can CASE WHEN be used in clauses other than SELECT?",
+        "whatInterviewerChecks": "Broad usage of CASE in SQL clauses.",
+        "bestReplyScript": "Yes! CASE WHEN can be used in SELECT, WHERE, ORDER BY, GROUP BY, and HAVING clauses to control sorting order or dynamic aggregations.",
+        "commonMistakesToAvoid": "Thinking CASE is restricted only to SELECT statements.",
+        "keyPoints": ["Works in SELECT, ORDER BY, GROUP BY, HAVING", "Allows dynamic sorting and conditional aggregations"],
+        "codeSnippet": "ORDER BY CASE WHEN role = 'Manager' THEN 1 ELSE 2 END"
+      },
+      {
+        "id": "q-28-6",
+        "category": "💡 Interview Notes",
+        "question": "What programming concept is CASE equivalent to?",
+        "whatInterviewerChecks": "Conceptual mapping to imperative programming languages.",
+        "bestReplyScript": "CASE is the SQL equivalent of an if → else if → else control structure or a switch-case statement.",
+        "commonMistakesToAvoid": "Comparing CASE to a loop structure.",
+        "keyPoints": ["Maps to if-elif-else", "Maps to switch-case"],
+        "codeSnippet": "if (salary >= 100000) return 'High'; else if (salary >= 60000) return 'Medium';"
       }
     ],
     "questions": [
       {
         "id": "q-28-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Sum sales' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Sum sales', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT SUM(sale_amount) AS total_sales FROM sales;"
+        "category": "💡 Interview Notes",
+        "question": "What is CASE WHEN in SQL?",
+        "whatInterviewerChecks": "Understanding inline conditional logic in SQL.",
+        "bestReplyScript": "CASE WHEN is SQL's conditional expression that allows us to perform if-elif-else logic directly inside queries to compute dynamic columns or conditionally filter/sort data.",
+        "commonMistakesToAvoid": "Thinking CASE alters rows stored in the database.",
+        "keyPoints": ["Inline conditional expression", "Direct equivalent of if-elif-else", "Evaluates per projected row"],
+        "codeSnippet": "CASE WHEN condition THEN result ELSE fallback END"
+      },
+      {
+        "id": "q-28-2",
+        "category": "💡 Interview Notes",
+        "question": "Why does the order of WHEN clauses matter in CASE expressions?",
+        "whatInterviewerChecks": "Understanding short-circuit evaluation in SQL CASE statements.",
+        "bestReplyScript": "SQL evaluates WHEN conditions sequentially from top to bottom and returns immediately on the FIRST condition that evaluates to TRUE. If broader conditions come before specific ones, the specific conditions will never be checked.",
+        "commonMistakesToAvoid": "Putting broader thresholds (>= 60000) before specific ones (>= 100000).",
+        "keyPoints": ["Sequential top-to-bottom evaluation", "Stops at first TRUE match", "Specific conditions must come first"],
+        "codeSnippet": "WHEN salary >= 100000 THEN 'High' WHEN salary >= 60000 THEN 'Medium'"
+      },
+      {
+        "id": "q-28-3",
+        "category": "💡 Interview Notes",
+        "question": "What happens if no WHEN condition matches and ELSE is omitted?",
+        "whatInterviewerChecks": "Fallback evaluation behavior for CASE.",
+        "bestReplyScript": "If no WHEN condition evaluates to TRUE and no ELSE clause is specified, SQL defaults to returning NULL for that row.",
+        "commonMistakesToAvoid": "Assuming an omitted ELSE throws an error.",
+        "keyPoints": ["Omitted ELSE returns NULL", "Always provide ELSE to guarantee non-null fallbacks"],
+        "codeSnippet": "CASE WHEN salary > 200000 THEN 'Exec' END -- returns NULL for normal salaries"
+      },
+      {
+        "id": "q-28-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between Simple CASE and Searched CASE?",
+        "whatInterviewerChecks": "Syntax variations of CASE.",
+        "bestReplyScript": "1) Simple CASE compares a single expression against discrete values: CASE dept WHEN 'IT' THEN 'Tech' END. 2) Searched CASE evaluates arbitrary boolean expressions: CASE WHEN salary >= 100000 THEN 'High' END.",
+        "commonMistakesToAvoid": "Trying to use range operators inside Simple CASE syntax.",
+        "keyPoints": ["Simple CASE = discrete value lookup", "Searched CASE = boolean range/logical expressions"],
+        "codeSnippet": "Searched: CASE WHEN salary >= 100000 THEN 'High' END"
+      },
+      {
+        "id": "q-28-5",
+        "category": "💡 Interview Notes",
+        "question": "Can CASE WHEN be used in clauses other than SELECT?",
+        "whatInterviewerChecks": "Broad usage of CASE in SQL clauses.",
+        "bestReplyScript": "Yes! CASE WHEN can be used in SELECT, WHERE, ORDER BY, GROUP BY, and HAVING clauses to control sorting order or dynamic aggregations.",
+        "commonMistakesToAvoid": "Thinking CASE is restricted only to SELECT statements.",
+        "keyPoints": ["Works in SELECT, ORDER BY, GROUP BY, HAVING", "Allows dynamic sorting and conditional aggregations"],
+        "codeSnippet": "ORDER BY CASE WHEN role = 'Manager' THEN 1 ELSE 2 END"
+      },
+      {
+        "id": "q-28-6",
+        "category": "💡 Interview Notes",
+        "question": "What programming concept is CASE equivalent to?",
+        "whatInterviewerChecks": "Conceptual mapping to imperative programming languages.",
+        "bestReplyScript": "CASE is the SQL equivalent of an if → else if → else control structure or a switch-case statement.",
+        "commonMistakesToAvoid": "Comparing CASE to a loop structure.",
+        "keyPoints": ["Maps to if-elif-else", "Maps to switch-case"],
+        "codeSnippet": "if (salary >= 100000) return 'High'; else if (salary >= 60000) return 'Medium';"
       }
     ],
     "mistakes": [
       {
         "id": "m-28-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting END Keyword",
+        "description": "Omitting the required END token to terminate the CASE block.",
+        "badSnippet": "SELECT salary, CASE WHEN salary >= 60000 THEN 'Medium' FROM employees;",
+        "failingInput": "SQL query missing END",
+        "consequence": "❌ Syntax Error: near FROM: syntax error.",
+        "howToFix": "Always close the CASE expression with END (and optional AS alias).",
+        "mistake": "Forgetting END keyword",
+        "whyItHappens": "Rushing through query syntax."
+      },
+      {
+        "id": "m-28-2",
+        "title": "2. Incorrect Condition Ordering",
+        "description": "Placing broader range conditions before specific ones.",
+        "badSnippet": "CASE WHEN salary >= 60000 THEN 'Medium' WHEN salary >= 100000 THEN 'High' END",
+        "failingInput": "Salary = 120000",
+        "consequence": "120000 matches >= 60000 first, returning 'Medium' incorrectly!",
+        "howToFix": "Order conditions from most specific (100000) to least specific (60000).",
+        "mistake": "Incorrect condition ordering",
+        "whyItHappens": "Forgetting that SQL short-circuits at the first TRUE match."
+      },
+      {
+        "id": "m-28-3",
+        "title": "3. Forgetting ELSE Clause",
+        "description": "Omitting default fallback result for unmatched rows.",
+        "badSnippet": "CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 60000 THEN 'Medium' END",
+        "failingInput": "Salary = 45000",
+        "consequence": "Unmatched rows return NULL instead of a fallback string like 'Low Salary'.",
+        "howToFix": "Add ELSE fallback: ELSE 'Low Salary'.",
+        "mistake": "Forgetting ELSE clause",
+        "whyItHappens": "Assuming unmatched rows retain their original value."
+      },
+      {
+        "id": "m-28-4",
+        "title": "4. Missing Column Alias",
+        "description": "Omitting AS alias_name after END.",
+        "badSnippet": "SELECT CASE WHEN salary >= 60000 THEN 'Pass' END FROM employees;",
+        "failingInput": "Query without column alias",
+        "consequence": "Column gets named CASE WHEN salary >= 60000... in result output.",
+        "howToFix": "Provide clean alias: END AS status.",
+        "mistake": "Missing column alias",
+        "whyItHappens": "Forgetting to name computed expressions."
+      },
+      {
+        "id": "m-28-5",
+        "title": "5. Confusing CASE with WHERE",
+        "description": "Using CASE when row filtering via WHERE was required.",
+        "badSnippet": "SELECT * FROM employees WHERE CASE WHEN salary >= 60000 THEN TRUE END;",
+        "failingInput": "Row filtering request",
+        "consequence": "Overcomplicated query structure.",
+        "howToFix": "Use WHERE salary >= 60000 directly for simple row filtering.",
+        "mistake": "Confusing CASE with WHERE",
+        "whyItHappens": "Not distinguishing between value transformation (CASE) and tuple filtering (WHERE)."
       }
     ]
   },
   "29": {
     "id": "sql-29",
-    "title": "Count employees in each department",
+    "title": "Round Decimal Values Using ROUND()",
     "levelNumber": 29,
     "problemId": 29,
-    "problemTitle": "Count employees in each department",
+    "problemTitle": "Round Decimal Values Using ROUND()",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "Goldman Sachs",
+      "JPMorgan",
+      "TCS",
+      "Infosys",
+      "Accenture"
     ],
     "tracing": {
-      "code": "SELECT department_id, COUNT(*) AS emp_count FROM employees GROUP BY department_id;",
+      "code": "SELECT first_name, salary, ROUND(salary, 2) AS rounded_salary FROM employees;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Access employee table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Count employees in each department' and validates schema column names."
+          "explanation": "SQL engine reads rows from the employees table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "ROUND Scalar Function",
+            "Action": "Execute ROUND(salary, 2) per row"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Calculates rounded float/decimal value to 2 places after decimal point."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Alias",
+            "Action": "Project first_name, salary, rounded_salary"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Emits requested original columns alongside computed rounded_salary column."
         }
       ]
     },
     "qas": [
       {
         "id": "q-29-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count employees in each department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count employees in each department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT department_id, COUNT(*) AS emp_count FROM employees GROUP BY department_id;"
+        "category": "💡 Interview Notes",
+        "question": "What does ROUND() do in SQL?",
+        "whatInterviewerChecks": "Understanding of numeric scalar functions.",
+        "bestReplyScript": "ROUND() is a scalar function that rounds a numeric expression to a specified number of decimal places.",
+        "commonMistakesToAvoid": "Thinking ROUND changes stored table data.",
+        "keyPoints": ["Rounds numeric expressions", "Accepts optional decimal place argument", "Scalar function applied per row"],
+        "codeSnippet": "SELECT ROUND(salary, 2) AS rounded_salary FROM employees;"
+      },
+      {
+        "id": "q-29-2",
+        "category": "💡 Interview Notes",
+        "question": "What happens if the second argument (decimal places) is omitted in ROUND()?",
+        "whatInterviewerChecks": "Default behavior of ROUND().",
+        "bestReplyScript": "If the second argument is omitted, ROUND() rounds the number to 0 decimal places, returning the nearest whole integer.",
+        "commonMistakesToAvoid": "Thinking decimal places default to 2.",
+        "keyPoints": ["Omitted decimal places = 0", "Rounds to nearest whole number"],
+        "codeSnippet": "ROUND(12.678) -- Returns 13"
+      },
+      {
+        "id": "q-29-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between ROUND() and TRUNCATE()? (Or TRUNC in Oracle/Postgres)",
+        "whatInterviewerChecks": "Comparing mathematical rounding vs digit truncation.",
+        "bestReplyScript": "ROUND() performs mathematical rounding (if next digit >= 5, rounds up). TRUNCATE() / TRUNC() simply cuts off digits beyond the specified precision without rounding.",
+        "commonMistakesToAvoid": "Using TRUNCATE when rounding is required for financial figures.",
+        "keyPoints": ["ROUND = Mathematical rounding", "TRUNCATE = Direct digit truncation"],
+        "codeSnippet": "ROUND(12.678, 2) -> 12.68 vs TRUNCATE(12.678, 2) -> 12.67"
+      },
+      {
+        "id": "q-29-4",
+        "category": "💡 Interview Notes",
+        "question": "Can ROUND() accept negative values for the second argument?",
+        "whatInterviewerChecks": "Understanding integer power-of-10 rounding.",
+        "bestReplyScript": "Yes! Passing a negative integer rounds digits to the left of the decimal point (e.g. -1 rounds to nearest 10, -2 to nearest 100, -3 to nearest 1000).",
+        "commonMistakesToAvoid": "Assuming negative decimal arguments throw an error.",
+        "keyPoints": ["Negative precision rounds left of decimal", "-1 = tens, -2 = hundreds"],
+        "codeSnippet": "ROUND(45678, -2) -- Returns 45700"
+      },
+      {
+        "id": "q-29-5",
+        "category": "💡 Interview Notes",
+        "question": "How does ROUND() behave when combined with aggregate functions like AVG()?",
+        "whatInterviewerChecks": "Combining scalar functions with aggregate calculations.",
+        "bestReplyScript": "Aggregate functions compute first, and ROUND() wraps the aggregate result to clean up floating point trailing decimals.",
+        "commonMistakesToAvoid": "Placing ROUND inside AVG like AVG(ROUND(val, 2)).",
+        "keyPoints": ["Wrap aggregate inside ROUND", "ROUND(AVG(col), 2) is optimal"],
+        "codeSnippet": "SELECT ROUND(AVG(salary), 2) AS avg_sal FROM employees;"
+      },
+      {
+        "id": "q-29-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the result of ROUND(12.345, 2) vs ROUND(12.345)?",
+        "whatInterviewerChecks": "Exact calculation verification.",
+        "bestReplyScript": "ROUND(12.345, 2) returns 12.35. ROUND(12.345) returns 12.",
+        "commonMistakesToAvoid": "Miscalculating 12.345 rounded to whole integer.",
+        "keyPoints": ["ROUND(12.345, 2) = 12.35", "ROUND(12.345) = 12"],
+        "codeSnippet": "12.35 vs 12"
       }
     ],
     "questions": [
       {
         "id": "q-29-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count employees in each department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count employees in each department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT department_id, COUNT(*) AS emp_count FROM employees GROUP BY department_id;"
+        "category": "💡 Interview Notes",
+        "question": "What does ROUND() do in SQL?",
+        "whatInterviewerChecks": "Understanding of numeric scalar functions.",
+        "bestReplyScript": "ROUND() is a scalar function that rounds a numeric expression to a specified number of decimal places.",
+        "commonMistakesToAvoid": "Thinking ROUND changes stored table data.",
+        "keyPoints": ["Rounds numeric expressions", "Accepts optional decimal place argument", "Scalar function applied per row"],
+        "codeSnippet": "SELECT ROUND(salary, 2) AS rounded_salary FROM employees;"
+      },
+      {
+        "id": "q-29-2",
+        "category": "💡 Interview Notes",
+        "question": "What happens if the second argument (decimal places) is omitted in ROUND()?",
+        "whatInterviewerChecks": "Default behavior of ROUND().",
+        "bestReplyScript": "If the second argument is omitted, ROUND() rounds the number to 0 decimal places, returning the nearest whole integer.",
+        "commonMistakesToAvoid": "Thinking decimal places default to 2.",
+        "keyPoints": ["Omitted decimal places = 0", "Rounds to nearest whole number"],
+        "codeSnippet": "ROUND(12.678) -- Returns 13"
+      },
+      {
+        "id": "q-29-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between ROUND() and TRUNCATE()? (Or TRUNC in Oracle/Postgres)",
+        "whatInterviewerChecks": "Comparing mathematical rounding vs digit truncation.",
+        "bestReplyScript": "ROUND() performs mathematical rounding (if next digit >= 5, rounds up). TRUNCATE() / TRUNC() simply cuts off digits beyond the specified precision without rounding.",
+        "commonMistakesToAvoid": "Using TRUNCATE when rounding is required for financial figures.",
+        "keyPoints": ["ROUND = Mathematical rounding", "TRUNCATE = Direct digit truncation"],
+        "codeSnippet": "ROUND(12.678, 2) -> 12.68 vs TRUNCATE(12.678, 2) -> 12.67"
+      },
+      {
+        "id": "q-29-4",
+        "category": "💡 Interview Notes",
+        "question": "Can ROUND() accept negative values for the second argument?",
+        "whatInterviewerChecks": "Understanding integer power-of-10 rounding.",
+        "bestReplyScript": "Yes! Passing a negative integer rounds digits to the left of the decimal point (e.g. -1 rounds to nearest 10, -2 to nearest 100, -3 to nearest 1000).",
+        "commonMistakesToAvoid": "Assuming negative decimal arguments throw an error.",
+        "keyPoints": ["Negative precision rounds left of decimal", "-1 = tens, -2 = hundreds"],
+        "codeSnippet": "ROUND(45678, -2) -- Returns 45700"
+      },
+      {
+        "id": "q-29-5",
+        "category": "💡 Interview Notes",
+        "question": "How does ROUND() behave when combined with aggregate functions like AVG()?",
+        "whatInterviewerChecks": "Combining scalar functions with aggregate calculations.",
+        "bestReplyScript": "Aggregate functions compute first, and ROUND() wraps the aggregate result to clean up floating point trailing decimals.",
+        "commonMistakesToAvoid": "Placing ROUND inside AVG like AVG(ROUND(val, 2)).",
+        "keyPoints": ["Wrap aggregate inside ROUND", "ROUND(AVG(col), 2) is optimal"],
+        "codeSnippet": "SELECT ROUND(AVG(salary), 2) AS avg_sal FROM employees;"
+      },
+      {
+        "id": "q-29-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the result of ROUND(12.345, 2) vs ROUND(12.345)?",
+        "whatInterviewerChecks": "Exact calculation verification.",
+        "bestReplyScript": "ROUND(12.345, 2) returns 12.35. ROUND(12.345) returns 12.",
+        "commonMistakesToAvoid": "Miscalculating 12.345 rounded to whole integer.",
+        "keyPoints": ["ROUND(12.345, 2) = 12.35", "ROUND(12.345) = 12"],
+        "codeSnippet": "12.35 vs 12"
       }
     ],
     "mistakes": [
       {
         "id": "m-29-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting Second Argument (Decimal Places)",
+        "description": "Writing ROUND(salary) when 2 decimal places were required.",
+        "badSnippet": "SELECT ROUND(salary) FROM employees; -- Expecting 45678.46",
+        "failingInput": "Salary = 45678.456",
+        "consequence": "Returns 45678 (whole integer) instead of 45678.46.",
+        "howToFix": "Specify decimal precision explicitly: ROUND(salary, 2).",
+        "mistake": "Omitting decimal places argument",
+        "whyItHappens": "Assuming ROUND defaults to 2 decimal places."
+      },
+      {
+        "id": "m-29-2",
+        "title": "2. Confusing ROUND() with TRUNCATE()",
+        "description": "Expecting ROUND to truncate numbers without rounding.",
+        "badSnippet": "SELECT ROUND(12.678, 2); -- Expecting 12.67",
+        "failingInput": "Number = 12.678",
+        "consequence": "Returns 12.68 due to mathematical rounding up.",
+        "howToFix": "Use TRUNCATE(12.678, 2) if truncation is explicitly desired.",
+        "mistake": "Confusing ROUND with TRUNCATE",
+        "whyItHappens": "Assuming ROUND drops trailing digits."
+      },
+      {
+        "id": "m-29-3",
+        "title": "3. Misinterpreting Negative Precision",
+        "description": "Assuming negative decimal arguments cause an error.",
+        "badSnippet": "SELECT ROUND(45678, -2); -- Believing this is invalid",
+        "failingInput": "Number = 45678",
+        "consequence": "Rounds to nearest hundred (45700).",
+        "howToFix": "Use negative numbers intentionally to round to tens/hundreds.",
+        "mistake": "Assuming negative precision is invalid",
+        "whyItHappens": "Not knowing power-of-10 left-of-decimal rounding."
+      },
+      {
+        "id": "m-29-4",
+        "title": "4. Forgetting Column Alias",
+        "description": "Omitting AS rounded_salary.",
+        "badSnippet": "SELECT ROUND(salary, 2) FROM employees;",
+        "failingInput": "Query without column alias",
+        "consequence": "Column gets named ROUND(salary, 2) in output.",
+        "howToFix": "Provide clean alias: AS rounded_salary.",
+        "mistake": "Missing column alias",
+        "whyItHappens": "Forgetting readability standards."
+      },
+      {
+        "id": "m-29-5",
+        "title": "5. Nesting ROUND Inside AVG Incorrectly",
+        "description": "Writing AVG(ROUND(val, 2)) instead of ROUND(AVG(val), 2).",
+        "badSnippet": "SELECT AVG(ROUND(salary, 2)) FROM employees;",
+        "failingInput": "Floating point averages",
+        "consequence": "Rounds individual values before averaging, introducing compounding rounding errors.",
+        "howToFix": "Wrap aggregate inside ROUND: ROUND(AVG(salary), 2).",
+        "mistake": "Placing ROUND inside aggregate function",
+        "whyItHappens": "Confusing execution order of scalar vs aggregate functions."
       }
     ]
   },
   "30": {
     "id": "sql-30",
-    "title": "Find department with highest salary",
+    "title": "Find the Length of a String Using LENGTH()",
     "levelNumber": 30,
     "problemId": 30,
-    "problemTitle": "Find department with highest salary",
+    "problemTitle": "Find the Length of a String Using LENGTH()",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Apple",
+      "Oracle",
+      "Uber",
+      "Salesforce",
+      "TCS",
+      "Infosys",
+      "Wipro"
     ],
     "tracing": {
-      "code": "SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id ORDER BY max_salary DESC LIMIT 1;",
+      "code": "SELECT first_name, LENGTH(first_name) AS name_length FROM employees;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Access employee table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find department with highest salary' and validates schema column names."
+          "explanation": "SQL engine reads rows from the employees table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "LENGTH Scalar Function",
+            "Action": "Execute LENGTH(first_name) per row"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Iterates character sequence in first_name string buffer and calculates character count."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Alias",
+            "Action": "Project first_name, name_length"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Emits first_name alongside computed integer character count aliased as name_length."
         }
       ]
     },
     "qas": [
       {
         "id": "q-30-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find department with highest salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find department with highest salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id ORDER BY max_salary DESC LIMIT 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does LENGTH() do in SQL?",
+        "whatInterviewerChecks": "Understanding scalar string functions.",
+        "bestReplyScript": "LENGTH() returns the number of characters present in a given string value.",
+        "commonMistakesToAvoid": "Thinking LENGTH counts words or table rows.",
+        "keyPoints": ["Counts characters in string", "Includes whitespace and special symbols", "Scalar function applied per tuple"],
+        "codeSnippet": "SELECT LENGTH('John') -- Returns 4"
+      },
+      {
+        "id": "q-30-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between LENGTH() and LEN()?",
+        "whatInterviewerChecks": "Cross-database SQL dialect knowledge.",
+        "bestReplyScript": "LENGTH() is used in MySQL, PostgreSQL, SQLite, and Oracle. LEN() is the T-SQL equivalent used in Microsoft SQL Server.",
+        "commonMistakesToAvoid": "Using LEN() in Postgres/SQLite or LENGTH() in T-SQL.",
+        "keyPoints": ["LENGTH = MySQL/Postgres/SQLite/Oracle", "LEN = SQL Server"],
+        "codeSnippet": "SQL Server: SELECT LEN(name) FROM employees;"
+      },
+      {
+        "id": "q-30-3",
+        "category": "💡 Interview Notes",
+        "question": "Does LENGTH() count whitespace characters?",
+        "whatInterviewerChecks": "Whitespace inclusion rules in string length evaluation.",
+        "bestReplyScript": "Yes! LENGTH() counts every character in the string including leading, trailing, and interior spaces.",
+        "commonMistakesToAvoid": "Assuming spaces are ignored by LENGTH().",
+        "keyPoints": ["Includes all spaces", "'John Doe' returns 8 (4 + 1 space + 3)"],
+        "codeSnippet": "SELECT LENGTH('John Doe'); -- Returns 8"
+      },
+      {
+        "id": "q-30-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT() and LENGTH()?",
+        "whatInterviewerChecks": "Distinguishing aggregate row counting vs scalar character counting.",
+        "bestReplyScript": "COUNT() is an aggregate function that counts the number of rows in a table. LENGTH() is a scalar function that counts the number of characters in a single string value.",
+        "commonMistakesToAvoid": "Confusing row counts with character counts.",
+        "keyPoints": ["COUNT() = row count (aggregate)", "LENGTH() = character count (scalar)"],
+        "codeSnippet": "COUNT(*) vs LENGTH(col)"
+      },
+      {
+        "id": "q-30-5",
+        "category": "💡 Interview Notes",
+        "question": "Can LENGTH() be used in the WHERE clause?",
+        "whatInterviewerChecks": "Using scalar functions in predicate filtering.",
+        "bestReplyScript": "Yes! LENGTH() can be used in WHERE to filter rows based on string length rules (e.g. enforcing password/username length constraints).",
+        "commonMistakesToAvoid": "Thinking scalar functions are restricted to SELECT.",
+        "keyPoints": ["Allowed in WHERE, HAVING, and ORDER BY", "Useful for string length validation"],
+        "codeSnippet": "SELECT username FROM users WHERE LENGTH(username) < 8;"
+      },
+      {
+        "id": "q-30-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between LENGTH() and CHAR_LENGTH() / OCTET_LENGTH()?",
+        "whatInterviewerChecks": "Multibyte UTF-8 character vs byte length distinction.",
+        "bestReplyScript": "CHAR_LENGTH() returns character counts (code points). OCTET_LENGTH() / LENGTHB() returns byte size. In MySQL/Postgres, CHAR_LENGTH is multi-byte aware.",
+        "commonMistakesToAvoid": "Confusing UTF-8 byte length with character count for non-ASCII text.",
+        "keyPoints": ["CHAR_LENGTH = character count", "OCTET_LENGTH = byte count"],
+        "codeSnippet": "CHAR_LENGTH(multibyte_str) vs OCTET_LENGTH(multibyte_str)"
       }
     ],
     "questions": [
       {
         "id": "q-30-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find department with highest salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find department with highest salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id ORDER BY max_salary DESC LIMIT 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does LENGTH() do in SQL?",
+        "whatInterviewerChecks": "Understanding scalar string functions.",
+        "bestReplyScript": "LENGTH() returns the number of characters present in a given string value.",
+        "commonMistakesToAvoid": "Thinking LENGTH counts words or table rows.",
+        "keyPoints": ["Counts characters in string", "Includes whitespace and special symbols", "Scalar function applied per tuple"],
+        "codeSnippet": "SELECT LENGTH('John') -- Returns 4"
+      },
+      {
+        "id": "q-30-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between LENGTH() and LEN()?",
+        "whatInterviewerChecks": "Cross-database SQL dialect knowledge.",
+        "bestReplyScript": "LENGTH() is used in MySQL, PostgreSQL, SQLite, and Oracle. LEN() is the T-SQL equivalent used in Microsoft SQL Server.",
+        "commonMistakesToAvoid": "Using LEN() in Postgres/SQLite or LENGTH() in T-SQL.",
+        "keyPoints": ["LENGTH = MySQL/Postgres/SQLite/Oracle", "LEN = SQL Server"],
+        "codeSnippet": "SQL Server: SELECT LEN(name) FROM employees;"
+      },
+      {
+        "id": "q-30-3",
+        "category": "💡 Interview Notes",
+        "question": "Does LENGTH() count whitespace characters?",
+        "whatInterviewerChecks": "Whitespace inclusion rules in string length evaluation.",
+        "bestReplyScript": "Yes! LENGTH() counts every character in the string including leading, trailing, and interior spaces.",
+        "commonMistakesToAvoid": "Assuming spaces are ignored by LENGTH().",
+        "keyPoints": ["Includes all spaces", "'John Doe' returns 8 (4 + 1 space + 3)"],
+        "codeSnippet": "SELECT LENGTH('John Doe'); -- Returns 8"
+      },
+      {
+        "id": "q-30-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT() and LENGTH()?",
+        "whatInterviewerChecks": "Distinguishing aggregate row counting vs scalar character counting.",
+        "bestReplyScript": "COUNT() is an aggregate function that counts the number of rows in a table. LENGTH() is a scalar function that counts the number of characters in a single string value.",
+        "commonMistakesToAvoid": "Confusing row counts with character counts.",
+        "keyPoints": ["COUNT() = row count (aggregate)", "LENGTH() = character count (scalar)"],
+        "codeSnippet": "COUNT(*) vs LENGTH(col)"
+      },
+      {
+        "id": "q-30-5",
+        "category": "💡 Interview Notes",
+        "question": "Can LENGTH() be used in the WHERE clause?",
+        "whatInterviewerChecks": "Using scalar functions in predicate filtering.",
+        "bestReplyScript": "Yes! LENGTH() can be used in WHERE to filter rows based on string length rules (e.g. enforcing password/username length constraints).",
+        "commonMistakesToAvoid": "Thinking scalar functions are restricted to SELECT.",
+        "keyPoints": ["Allowed in WHERE, HAVING, and ORDER BY", "Useful for string length validation"],
+        "codeSnippet": "SELECT username FROM users WHERE LENGTH(username) < 8;"
+      },
+      {
+        "id": "q-30-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between LENGTH() and CHAR_LENGTH() / OCTET_LENGTH()?",
+        "whatInterviewerChecks": "Multibyte UTF-8 character vs byte length distinction.",
+        "bestReplyScript": "CHAR_LENGTH() returns character counts (code points). OCTET_LENGTH() / LENGTHB() returns byte size. In MySQL/Postgres, CHAR_LENGTH is multi-byte aware.",
+        "commonMistakesToAvoid": "Confusing UTF-8 byte length with character count for non-ASCII text.",
+        "keyPoints": ["CHAR_LENGTH = character count", "OCTET_LENGTH = byte count"],
+        "codeSnippet": "CHAR_LENGTH(multibyte_str) vs OCTET_LENGTH(multibyte_str)"
       }
     ],
     "mistakes": [
       {
         "id": "m-30-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using LEN() in MySQL/PostgreSQL/SQLite",
+        "description": "Using SQL Server's LEN() syntax in non-T-SQL databases.",
+        "badSnippet": "SELECT LEN(first_name) FROM employees; -- In PostgreSQL or SQLite",
+        "failingInput": "Non-SQL Server database engine",
+        "consequence": "❌ Error: no such function: LEN.",
+        "howToFix": "Use LENGTH(first_name) for SQLite, MySQL, and PostgreSQL.",
+        "mistake": "Using wrong dialect function name",
+        "whyItHappens": "Mixing SQL dialect syntax."
+      },
+      {
+        "id": "m-30-2",
+        "title": "2. Forgetting Function Parentheses",
+        "description": "Omitting parentheses around string column.",
+        "badSnippet": "SELECT LENGTH first_name FROM employees;",
+        "failingInput": "Query missing parentheses",
+        "consequence": "❌ Syntax Error near first_name.",
+        "howToFix": "Pass column inside parentheses: LENGTH(first_name).",
+        "mistake": "Omitting function parentheses",
+        "whyItHappens": "Syntax typo."
+      },
+      {
+        "id": "m-30-3",
+        "title": "3. Expecting LENGTH to Ignore Whitespace",
+        "description": "Assuming spaces are automatically trimmed.",
+        "badSnippet": "SELECT LENGTH('John '); -- Expecting 4",
+        "failingInput": "String with trailing space 'John '",
+        "consequence": "Returns 5 because space is counted.",
+        "howToFix": "Use LENGTH(TRIM(first_name)) if whitespace should be ignored.",
+        "mistake": "Expecting whitespace to be ignored",
+        "whyItHappens": "Forgetting space is a character."
+      },
+      {
+        "id": "m-30-4",
+        "title": "4. Confusing LENGTH() with COUNT()",
+        "description": "Using LENGTH() when total rows were needed or vice versa.",
+        "badSnippet": "SELECT LENGTH(*) FROM employees;",
+        "failingInput": "Row counting request",
+        "consequence": "❌ Syntax Error: LENGTH doesn't accept wildcard *.",
+        "howToFix": "Use COUNT(*) for row counts, LENGTH(col) for character counts.",
+        "mistake": "Confusing row counting with character counting",
+        "whyItHappens": "Concept confusion."
+      },
+      {
+        "id": "m-30-5",
+        "title": "5. Forgetting Column Alias",
+        "description": "Omitting AS name_length.",
+        "badSnippet": "SELECT first_name, LENGTH(first_name) FROM employees;",
+        "failingInput": "Query without alias",
+        "consequence": "Column gets output as raw expression LENGTH(first_name).",
+        "howToFix": "Provide alias: AS name_length.",
+        "mistake": "Missing column alias",
+        "whyItHappens": "Skipping SQL formatting standards."
       }
     ]
   },
   "31": {
     "id": "sql-31",
-    "title": "Find department with lowest salary",
+    "title": "Convert Text to Uppercase and Lowercase Using UPPER() and LOWER()",
     "levelNumber": 31,
     "problemId": 31,
-    "problemTitle": "Find department with lowest salary",
+    "problemTitle": "Convert Text to Uppercase and Lowercase Using UPPER() and LOWER()",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Accenture",
+      "TCS",
+      "Infosys",
+      "Cognizant",
+      "Deloitte"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees;",
+      "code": "SELECT first_name, UPPER(first_name) AS upper_name, LOWER(first_name) AS lower_name FROM employees;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Access employee table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Find department with lowest salary' and validates schema column names."
+          "explanation": "SQL engine reads rows from the employees table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "UPPER() & LOWER() Functions",
+            "Action": "Execute case conversion per row"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Transforms first_name characters into uppercase and lowercase strings."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Alias",
+            "Action": "Project first_name, upper_name, lower_name"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Emits requested original column alongside upper_name and lower_name computed columns."
         }
       ]
     },
     "qas": [
       {
         "id": "q-31-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find department with lowest salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find department with lowest salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What do UPPER() and LOWER() do in SQL?",
+        "whatInterviewerChecks": "Understanding of string case scalar functions.",
+        "bestReplyScript": "UPPER() converts all characters in a string to uppercase, while LOWER() converts all characters to lowercase.",
+        "commonMistakesToAvoid": "Believing these functions mutate underlying database storage.",
+        "keyPoints": ["UPPER = converts to uppercase", "LOWER = converts to lowercase", "Operates per row in query projection"],
+        "codeSnippet": "SELECT UPPER('John'), LOWER('John');"
+      },
+      {
+        "id": "q-31-2",
+        "category": "💡 Interview Notes",
+        "question": "Do UPPER() and LOWER() modify stored table data?",
+        "whatInterviewerChecks": "Distinguishing SELECT projection scalar functions from DML UPDATE statements.",
+        "bestReplyScript": "No. UPPER() and LOWER() only modify the output result set of the query. The original stored data inside the table remains untouched.",
+        "commonMistakesToAvoid": "Confusing UPPER() function with the UPDATE statement.",
+        "keyPoints": ["Projection only", "Does not alter disk storage", "UPDATE is required to persist changes"],
+        "codeSnippet": "SELECT UPPER(name) FROM employees; -- Data on disk remains unchanged"
+      },
+      {
+        "id": "q-31-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you perform a case-insensitive search in SQL?",
+        "whatInterviewerChecks": "Standardizing string comparison in predicate WHERE clauses.",
+        "bestReplyScript": "By wrapping both the column and the search value in LOWER() or UPPER(): WHERE LOWER(email) = LOWER('User@Domain.com').",
+        "commonMistakesToAvoid": "Hardcoding case sensitivity rules per database engine.",
+        "keyPoints": ["Wrap column & target in LOWER() or UPPER()", "Ensures consistent matching across DB dialects"],
+        "codeSnippet": "WHERE LOWER(username) = 'john'"
+      },
+      {
+        "id": "q-31-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the performance impact of using LOWER() or UPPER() in a WHERE clause?",
+        "whatInterviewerChecks": "Index sargability and functional index optimization awareness.",
+        "bestReplyScript": "Applying a function like LOWER(col) on a WHERE clause column prevents the database from using a standard B-Tree index on 'col' (non-sargable query), forcing a full table scan unless a functional/expression index is created.",
+        "commonMistakesToAvoid": "Assuming indexes work automatically when functions wrap columns in WHERE.",
+        "keyPoints": ["Non-sargable predicate", "May cause full table scans", "Requires functional/expression index"],
+        "codeSnippet": "CREATE INDEX idx_lower_email ON users(LOWER(email));"
+      },
+      {
+        "id": "q-31-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between UPPER() and UPDATE?",
+        "whatInterviewerChecks": "Querying vs modifying data.",
+        "bestReplyScript": "UPPER() is a scalar function used in SELECT/WHERE to transform text display casing. UPDATE is a Data Manipulation Language (DML) command used to permanently modify database records on disk.",
+        "commonMistakesToAvoid": "Confusing string functions with DML write commands.",
+        "keyPoints": ["UPPER() = read/format", "UPDATE = write/persist"],
+        "codeSnippet": "UPDATE employees SET first_name = UPPER(first_name);"
+      },
+      {
+        "id": "q-31-6",
+        "category": "💡 Interview Notes",
+        "question": "Are UPPER() and LOWER() ANSI SQL standard?",
+        "whatInterviewerChecks": "Standard SQL compliance across database vendors.",
+        "bestReplyScript": "Yes! UPPER() and LOWER() are ANSI SQL standard functions supported natively across MySQL, PostgreSQL, Oracle, SQL Server, and SQLite.",
+        "commonMistakesToAvoid": "Expecting vendor-specific syntax for basic casing.",
+        "keyPoints": ["ANSI SQL standard", "Universal database vendor support"],
+        "codeSnippet": "SELECT UPPER('test'), LOWER('TEST');"
       }
     ],
     "questions": [
       {
         "id": "q-31-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Find department with lowest salary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Find department with lowest salary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What do UPPER() and LOWER() do in SQL?",
+        "whatInterviewerChecks": "Understanding of string case scalar functions.",
+        "bestReplyScript": "UPPER() converts all characters in a string to uppercase, while LOWER() converts all characters to lowercase.",
+        "commonMistakesToAvoid": "Believing these functions mutate underlying database storage.",
+        "keyPoints": ["UPPER = converts to uppercase", "LOWER = converts to lowercase", "Operates per row in query projection"],
+        "codeSnippet": "SELECT UPPER('John'), LOWER('John');"
+      },
+      {
+        "id": "q-31-2",
+        "category": "💡 Interview Notes",
+        "question": "Do UPPER() and LOWER() modify stored table data?",
+        "whatInterviewerChecks": "Distinguishing SELECT projection scalar functions from DML UPDATE statements.",
+        "bestReplyScript": "No. UPPER() and LOWER() only modify the output result set of the query. The original stored data inside the table remains untouched.",
+        "commonMistakesToAvoid": "Confusing UPPER() function with the UPDATE statement.",
+        "keyPoints": ["Projection only", "Does not alter disk storage", "UPDATE is required to persist changes"],
+        "codeSnippet": "SELECT UPPER(name) FROM employees; -- Data on disk remains unchanged"
+      },
+      {
+        "id": "q-31-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you perform a case-insensitive search in SQL?",
+        "whatInterviewerChecks": "Standardizing string comparison in predicate WHERE clauses.",
+        "bestReplyScript": "By wrapping both the column and the search value in LOWER() or UPPER(): WHERE LOWER(email) = LOWER('User@Domain.com').",
+        "commonMistakesToAvoid": "Hardcoding case sensitivity rules per database engine.",
+        "keyPoints": ["Wrap column & target in LOWER() or UPPER()", "Ensures consistent matching across DB dialects"],
+        "codeSnippet": "WHERE LOWER(username) = 'john'"
+      },
+      {
+        "id": "q-31-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the performance impact of using LOWER() or UPPER() in a WHERE clause?",
+        "whatInterviewerChecks": "Index sargability and functional index optimization awareness.",
+        "bestReplyScript": "Applying a function like LOWER(col) on a WHERE clause column prevents the database from using a standard B-Tree index on 'col' (non-sargable query), forcing a full table scan unless a functional/expression index is created.",
+        "commonMistakesToAvoid": "Assuming indexes work automatically when functions wrap columns in WHERE.",
+        "keyPoints": ["Non-sargable predicate", "May cause full table scans", "Requires functional/expression index"],
+        "codeSnippet": "CREATE INDEX idx_lower_email ON users(LOWER(email));"
+      },
+      {
+        "id": "q-31-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between UPPER() and UPDATE?",
+        "whatInterviewerChecks": "Querying vs modifying data.",
+        "bestReplyScript": "UPPER() is a scalar function used in SELECT/WHERE to transform text display casing. UPDATE is a Data Manipulation Language (DML) command used to permanently modify database records on disk.",
+        "commonMistakesToAvoid": "Confusing string functions with DML write commands.",
+        "keyPoints": ["UPPER() = read/format", "UPDATE = write/persist"],
+        "codeSnippet": "UPDATE employees SET first_name = UPPER(first_name);"
+      },
+      {
+        "id": "q-31-6",
+        "category": "💡 Interview Notes",
+        "question": "Are UPPER() and LOWER() ANSI SQL standard?",
+        "whatInterviewerChecks": "Standard SQL compliance across database vendors.",
+        "bestReplyScript": "Yes! UPPER() and LOWER() are ANSI SQL standard functions supported natively across MySQL, PostgreSQL, Oracle, SQL Server, and SQLite.",
+        "commonMistakesToAvoid": "Expecting vendor-specific syntax for basic casing.",
+        "keyPoints": ["ANSI SQL standard", "Universal database vendor support"],
+        "codeSnippet": "SELECT UPPER('test'), LOWER('TEST');"
       }
     ],
     "mistakes": [
       {
         "id": "m-31-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Assuming Table Data Is Updated",
+        "description": "Believing UPPER(first_name) permanently updates records in the table.",
+        "badSnippet": "SELECT UPPER(first_name) FROM employees; -- Assuming database table was modified",
+        "failingInput": "Original stored string 'john'",
+        "consequence": "Stored table data remains 'john' on disk.",
+        "howToFix": "Use UPDATE employees SET first_name = UPPER(first_name) if persistence is needed.",
+        "mistake": "Confusing projection transformation with DML update",
+        "whyItHappens": "Misunderstanding scalar SELECT functions."
+      },
+      {
+        "id": "m-31-2",
+        "title": "2. Forgetting Function Parentheses",
+        "description": "Writing UPPER first_name.",
+        "badSnippet": "SELECT UPPER first_name FROM employees;",
+        "failingInput": "Query missing parentheses",
+        "consequence": "❌ Syntax Error near first_name.",
+        "howToFix": "Always enclose function arguments: UPPER(first_name).",
+        "mistake": "Omitting parentheses",
+        "whyItHappens": "Syntax typo."
+      },
+      {
+        "id": "m-31-3",
+        "title": "3. Forgetting Column Aliases",
+        "description": "Omitting AS upper_name / AS lower_name.",
+        "badSnippet": "SELECT UPPER(first_name), LOWER(first_name) FROM employees;",
+        "failingInput": "Query without aliases",
+        "consequence": "Columns emitted as raw UPPER(first_name) and LOWER(first_name) headers.",
+        "howToFix": "Provide clean aliases: AS upper_name, AS lower_name.",
+        "mistake": "Missing column aliases",
+        "whyItHappens": "Rushing through formatting."
+      },
+      {
+        "id": "m-31-4",
+        "title": "4. Case-Sensitive Match Failures",
+        "description": "Matching raw string column without case standardization.",
+        "badSnippet": "SELECT * FROM employees WHERE first_name = 'john';",
+        "failingInput": "Stored value 'John'",
+        "consequence": "Query returns 0 rows on case-sensitive collations.",
+        "howToFix": "Use case-insensitive standardization: WHERE LOWER(first_name) = 'john'.",
+        "mistake": "Omitting case standardization in WHERE",
+        "whyItHappens": "Testing on case-insensitive local databases only."
+      },
+      {
+        "id": "m-31-5",
+        "title": "5. Disabling Index Scans in WHERE",
+        "description": "Wrapping indexed column in LOWER() without functional index.",
+        "badSnippet": "SELECT * FROM employees WHERE LOWER(email) = 'john@gmail.com';",
+        "failingInput": "Table with standard B-Tree index on email",
+        "consequence": "Engine performs full table scan instead of fast index lookup.",
+        "howToFix": "Store normalized lowercase emails on write or create an expression index: CREATE INDEX idx_lower_email ON employees(LOWER(email)).",
+        "mistake": "Non-sargable query predicate",
+        "whyItHappens": "Unaware of index sargability constraints."
       }
     ]
   },
   "32": {
     "id": "sql-32",
-    "title": "Average salary by department",
+    "title": "Extract Part of a String Using SUBSTRING()",
     "levelNumber": 32,
     "problemId": 32,
-    "problemTitle": "Average salary by department",
+    "problemTitle": "Extract Part of a String Using SUBSTRING()",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
       "TCS"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees;",
+      "code": "SELECT first_name, SUBSTR(first_name, 1, 3) AS first_three_letters FROM employees;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Access employee table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Average salary by department' and validates schema column names."
+          "explanation": "SQL engine reads rows from the employees table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "SUBSTR Scalar Function",
+            "Action": "Execute SUBSTR(first_name, 1, 3) per row"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Locates character position 1 and extracts 3 characters from the first_name string buffer."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Alias",
+            "Action": "Project first_name, first_three_letters"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Emits first_name alongside computed substring slice aliased as first_three_letters."
         }
       ]
     },
     "qas": [
       {
         "id": "q-32-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Average salary by department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Average salary by department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What does SUBSTRING() do in SQL?",
+        "whatInterviewerChecks": "Understanding scalar string extraction parameters.",
+        "bestReplyScript": "SUBSTRING() extracts a portion of a string based on a specified starting position and length.",
+        "commonMistakesToAvoid": "Confusing starting position index with end position index.",
+        "keyPoints": ["Extracts substring slice", "Parameters: (column, start_pos, length)", "Operates as scalar function per tuple"],
+        "codeSnippet": "SELECT SUBSTRING('Christopher', 1, 5); -- Returns 'Chris'"
+      },
+      {
+        "id": "q-32-2",
+        "category": "💡 Interview Notes",
+        "question": "Does SQL start string indexing from 0 or 1?",
+        "whatInterviewerChecks": "1-based indexing standard in SQL vs 0-based indexing in languages like Python/Java/JS.",
+        "bestReplyScript": "Most SQL databases (ANSI standard SQL, MySQL, Postgres, Oracle, SQL Server, SQLite) use 1-based indexing for string functions.",
+        "commonMistakesToAvoid": "Passing 0 as start position expecting Python/Java behavior.",
+        "keyPoints": ["SQL indexing starts at 1", "Position 1 = first character"],
+        "codeSnippet": "SUBSTRING('John', 1, 1) -- Returns 'J'"
+      },
+      {
+        "id": "q-32-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUBSTRING() and SUBSTR()?",
+        "whatInterviewerChecks": "Cross-database SQL dialect knowledge.",
+        "bestReplyScript": "They perform identical substring extractions. SUBSTR() is standard in Oracle and SQLite, while SUBSTRING() is standard in MySQL, PostgreSQL, and SQL Server.",
+        "commonMistakesToAvoid": "Thinking SUBSTR and SUBSTRING calculate different outputs.",
+        "keyPoints": ["Identical functionality", "Dialect variation (Oracle/SQLite = SUBSTR, MySQL/Postgres/SQL Server = SUBSTRING)"],
+        "codeSnippet": "Oracle/SQLite: SUBSTR(col, 1, 3); Postgres/MySQL: SUBSTRING(col, 1, 3);"
+      },
+      {
+        "id": "q-32-4",
+        "category": "💡 Interview Notes",
+        "question": "What does SUBSTRING('Christopher', 2, 4) return?",
+        "whatInterviewerChecks": "Evaluating understanding of (start_position, length) arguments.",
+        "bestReplyScript": "It starts at the 2nd character ('h') and extracts 4 characters, returning 'hris'.",
+        "commonMistakesToAvoid": "Assuming the 2nd parameter (4) means slice up to character position 4.",
+        "keyPoints": ["Start = 2 ('h')", "Length = 4 characters", "Output = 'hris'"],
+        "codeSnippet": "SELECT SUBSTRING('Christopher', 2, 4); -- 'hris'"
+      },
+      {
+        "id": "q-32-5",
+        "category": "💡 Interview Notes",
+        "question": "Can SUBSTRING() be used in a WHERE clause?",
+        "whatInterviewerChecks": "Using string extraction functions as filtering predicates.",
+        "bestReplyScript": "Yes! For example, WHERE SUBSTRING(phone_number, 1, 3) = '415' filters numbers matching area code 415.",
+        "commonMistakesToAvoid": "Using SUBSTRING in WHERE when LIKE '415%' could leverage a B-Tree index better.",
+        "keyPoints": ["Valid in WHERE", "Useful for prefix/suffix matching", "LIKE can be more sargable"],
+        "codeSnippet": "SELECT * FROM customers WHERE SUBSTRING(phone, 1, 3) = '415';"
+      },
+      {
+        "id": "q-32-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUBSTRING() and LENGTH()?",
+        "whatInterviewerChecks": "Distinguishing text slicing scalar function vs integer length scalar function.",
+        "bestReplyScript": "SUBSTRING() extracts and returns a text slice (string), whereas LENGTH() measures and returns the total character count (integer).",
+        "commonMistakesToAvoid": "Confusing returned data types.",
+        "keyPoints": ["SUBSTRING() returns VARCHAR/TEXT", "LENGTH() returns INT"],
+        "codeSnippet": "SUBSTRING('John', 1, 2) -> 'Jo' vs LENGTH('John') -> 4"
       }
     ],
     "questions": [
       {
         "id": "q-32-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Average salary by department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Average salary by department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What does SUBSTRING() do in SQL?",
+        "whatInterviewerChecks": "Understanding scalar string extraction parameters.",
+        "bestReplyScript": "SUBSTRING() extracts a portion of a string based on a specified starting position and length.",
+        "commonMistakesToAvoid": "Confusing starting position index with end position index.",
+        "keyPoints": ["Extracts substring slice", "Parameters: (column, start_pos, length)", "Operates as scalar function per tuple"],
+        "codeSnippet": "SELECT SUBSTRING('Christopher', 1, 5); -- Returns 'Chris'"
+      },
+      {
+        "id": "q-32-2",
+        "category": "💡 Interview Notes",
+        "question": "Does SQL start string indexing from 0 or 1?",
+        "whatInterviewerChecks": "1-based indexing standard in SQL vs 0-based indexing in languages like Python/Java/JS.",
+        "bestReplyScript": "Most SQL databases (ANSI standard SQL, MySQL, Postgres, Oracle, SQL Server, SQLite) use 1-based indexing for string functions.",
+        "commonMistakesToAvoid": "Passing 0 as start position expecting Python/Java behavior.",
+        "keyPoints": ["SQL indexing starts at 1", "Position 1 = first character"],
+        "codeSnippet": "SUBSTRING('John', 1, 1) -- Returns 'J'"
+      },
+      {
+        "id": "q-32-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUBSTRING() and SUBSTR()?",
+        "whatInterviewerChecks": "Cross-database SQL dialect knowledge.",
+        "bestReplyScript": "They perform identical substring extractions. SUBSTR() is standard in Oracle and SQLite, while SUBSTRING() is standard in MySQL, PostgreSQL, and SQL Server.",
+        "commonMistakesToAvoid": "Thinking SUBSTR and SUBSTRING calculate different outputs.",
+        "keyPoints": ["Identical functionality", "Dialect variation (Oracle/SQLite = SUBSTR, MySQL/Postgres/SQL Server = SUBSTRING)"],
+        "codeSnippet": "Oracle/SQLite: SUBSTR(col, 1, 3); Postgres/MySQL: SUBSTRING(col, 1, 3);"
+      },
+      {
+        "id": "q-32-4",
+        "category": "💡 Interview Notes",
+        "question": "What does SUBSTRING('Christopher', 2, 4) return?",
+        "whatInterviewerChecks": "Evaluating understanding of (start_position, length) arguments.",
+        "bestReplyScript": "It starts at the 2nd character ('h') and extracts 4 characters, returning 'hris'.",
+        "commonMistakesToAvoid": "Assuming the 2nd parameter (4) means slice up to character position 4.",
+        "keyPoints": ["Start = 2 ('h')", "Length = 4 characters", "Output = 'hris'"],
+        "codeSnippet": "SELECT SUBSTRING('Christopher', 2, 4); -- 'hris'"
+      },
+      {
+        "id": "q-32-5",
+        "category": "💡 Interview Notes",
+        "question": "Can SUBSTRING() be used in a WHERE clause?",
+        "whatInterviewerChecks": "Using string extraction functions as filtering predicates.",
+        "bestReplyScript": "Yes! For example, WHERE SUBSTRING(phone_number, 1, 3) = '415' filters numbers matching area code 415.",
+        "commonMistakesToAvoid": "Using SUBSTRING in WHERE when LIKE '415%' could leverage a B-Tree index better.",
+        "keyPoints": ["Valid in WHERE", "Useful for prefix/suffix matching", "LIKE can be more sargable"],
+        "codeSnippet": "SELECT * FROM customers WHERE SUBSTRING(phone, 1, 3) = '415';"
+      },
+      {
+        "id": "q-32-6",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUBSTRING() and LENGTH()?",
+        "whatInterviewerChecks": "Distinguishing text slicing scalar function vs integer length scalar function.",
+        "bestReplyScript": "SUBSTRING() extracts and returns a text slice (string), whereas LENGTH() measures and returns the total character count (integer).",
+        "commonMistakesToAvoid": "Confusing returned data types.",
+        "keyPoints": ["SUBSTRING() returns VARCHAR/TEXT", "LENGTH() returns INT"],
+        "codeSnippet": "SUBSTRING('John', 1, 2) -> 'Jo' vs LENGTH('John') -> 4"
       }
     ],
     "mistakes": [
       {
         "id": "m-32-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Starting at Index 0",
+        "description": "Passing 0 as starting position assuming 0-based array indexing.",
+        "badSnippet": "SELECT SUBSTRING(first_name, 0, 3) FROM employees;",
+        "failingInput": "Query with 0 start position",
+        "consequence": "Returns empty string or unexpected length offset depending on DB dialect.",
+        "howToFix": "Start at position 1: SUBSTR(first_name, 1, 3).",
+        "mistake": "Using 0-based indexing",
+        "whyItHappens": "Habits from programming languages like Python or JavaScript."
+      },
+      {
+        "id": "m-32-2",
+        "title": "2. Confusing Length with End Position",
+        "description": "Treating the 3rd argument as end index position instead of length count.",
+        "badSnippet": "SELECT SUBSTRING('Christopher', 2, 4); -- Expecting position 2 to position 4 ('hr')",
+        "failingInput": "String 'Christopher'",
+        "consequence": "Returns 'hris' (4 characters starting at 2).",
+        "howToFix": "Remember: 3rd parameter is character count, not end index.",
+        "mistake": "Confusing character count with end index",
+        "whyItHappens": "Misinterpreting function signature parameters."
+      },
+      {
+        "id": "m-32-3",
+        "title": "3. Wrong Dialect Function Name",
+        "description": "Using SUBSTRING() in Oracle or SUBSTR() in SQL Server.",
+        "badSnippet": "SELECT SUBSTRING(first_name, 1, 3) FROM employees; -- In Oracle",
+        "failingInput": "Oracle SQL database",
+        "consequence": "❌ ORA-00904: SUBSTRING invalid identifier.",
+        "howToFix": "Use SUBSTR() in Oracle/SQLite, SUBSTRING() in SQL Server/Postgres/MySQL.",
+        "mistake": "Mixing database dialect function syntax",
+        "whyItHappens": "Switching between database engines."
+      },
+      {
+        "id": "m-32-4",
+        "title": "4. Forgetting Column Aliases",
+        "description": "Omitting AS first_three_letters.",
+        "badSnippet": "SELECT first_name, SUBSTR(first_name, 1, 3) FROM employees;",
+        "failingInput": "Query without alias",
+        "consequence": "Result output emits raw unreadable column header SUBSTR(first_name, 1, 3).",
+        "howToFix": "Provide clean alias: AS first_three_letters.",
+        "mistake": "Missing column alias",
+        "whyItHappens": "Skipping SQL formatting best practices."
+      },
+      {
+        "id": "m-32-5",
+        "title": "5. Using SUBSTRING Instead of LIKE for Prefix Filtering",
+        "description": "Filtering with WHERE SUBSTRING(col, 1, 3) = 'ABC' instead of WHERE col LIKE 'ABC%'.",
+        "badSnippet": "SELECT * FROM products WHERE SUBSTRING(product_code, 1, 3) = 'PRO';",
+        "failingInput": "Indexed product_code column",
+        "consequence": "Prevents B-Tree index lookup, causing slow full table scan.",
+        "howToFix": "Use sargable predicate: WHERE product_code LIKE 'PRO%'.",
+        "mistake": "Non-sargable string predicate",
+        "whyItHappens": "Overusing SUBSTRING for basic prefix matching."
       }
     ]
   },
   "33": {
     "id": "sql-33",
-    "title": "Maximum marks by class",
+    "title": "Replace Part of a String Using REPLACE()",
     "levelNumber": 33,
     "problemId": 33,
-    "problemTitle": "Maximum marks by class",
+    "problemTitle": "Replace Part of a String Using REPLACE()",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "TCS",
+      "Infosys",
+      "Accenture",
+      "Cognizant",
+      "Deloitte"
     ],
     "tracing": {
-      "code": "SELECT class, AVG(marks) AS avg_mark FROM students GROUP BY class;",
+      "code": "SELECT first_name, REPLACE(first_name, 'John', 'Jonathan') AS updated_name FROM employees;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Access employee table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Maximum marks by class' and validates schema column names."
+          "explanation": "SQL engine reads rows from the employees table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "REPLACE Scalar Function",
+            "Action": "Search 'John' and substitute with 'Jonathan'"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Scans string buffer of first_name for 'John' and replaces every matching occurrence with 'Jonathan'."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Alias",
+            "Action": "Project first_name, updated_name"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Emits original first_name alongside computed column aliased as updated_name."
         }
       ]
     },
     "qas": [
       {
         "id": "q-33-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Maximum marks by class' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Maximum marks by class', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT class, AVG(marks) AS avg_mark FROM students GROUP BY class;"
+        "category": "💡 Interview Notes",
+        "question": "What does REPLACE() do in SQL?",
+        "whatInterviewerChecks": "Understanding string substitution parameters.",
+        "bestReplyScript": "REPLACE() searches a string column for a specified target substring and replaces every occurrence with a new replacement string.",
+        "commonMistakesToAvoid": "Assuming it only replaces the first occurrence.",
+        "keyPoints": ["Replaces all occurrences", "Signature: REPLACE(string, find_text, replace_with)", "Operates per row"],
+        "codeSnippet": "SELECT REPLACE('John Smith', 'John', 'Jonathan'); -- 'Jonathan Smith'"
+      },
+      {
+        "id": "q-33-2",
+        "category": "💡 Interview Notes",
+        "question": "Does REPLACE() modify the data stored in the database table?",
+        "whatInterviewerChecks": "Distinguishing query projection functions from DML write operations.",
+        "bestReplyScript": "No. When used in a SELECT statement, REPLACE() only alters the query result set. To permanently update stored records, it must be used inside an UPDATE statement.",
+        "commonMistakesToAvoid": "Thinking SELECT REPLACE() updates disk storage.",
+        "keyPoints": ["SELECT = read-only display", "UPDATE = disk persistence"],
+        "codeSnippet": "UPDATE employees SET first_name = REPLACE(first_name, 'John', 'Jonathan');"
+      },
+      {
+        "id": "q-33-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you remove all spaces from a string in SQL?",
+        "whatInterviewerChecks": "Data cleaning techniques using empty string replacements.",
+        "bestReplyScript": "By passing an empty string '' as the 3rd argument: REPLACE(column_name, ' ', '').",
+        "commonMistakesToAvoid": "Using NULL instead of '' (replacing with NULL yields NULL!).",
+        "keyPoints": ["Pass '' (empty string)", "Removes target characters"],
+        "codeSnippet": "SELECT REPLACE('John Smith', ' ', ''); -- 'JohnSmith'"
+      },
+      {
+        "id": "q-33-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between REPLACE() and UPDATE?",
+        "whatInterviewerChecks": "Scalar function vs DML command distinction.",
+        "bestReplyScript": "REPLACE() is a scalar string function that computes substituted text. UPDATE is a DML command that modifies persisted table rows on disk.",
+        "commonMistakesToAvoid": "Using them interchangeably.",
+        "keyPoints": ["REPLACE() = string function", "UPDATE = DML statement"],
+        "codeSnippet": "SELECT REPLACE(col, 'a', 'b'); vs UPDATE tbl SET col = 'b';"
+      },
+      {
+        "id": "q-33-5",
+        "category": "💡 Interview Notes",
+        "question": "Does REPLACE() substitute one occurrence or all occurrences in a string?",
+        "whatInterviewerChecks": "Global substitution behavior of SQL REPLACE().",
+        "bestReplyScript": "It replaces EVERY matching occurrence of the target substring within the string.",
+        "commonMistakesToAvoid": "Expecting single-match replacement like some basic regex functions.",
+        "keyPoints": ["Replaces all matching occurrences"],
+        "codeSnippet": "SELECT REPLACE('banana', 'a', 'o'); -- Returns 'bonono'"
+      },
+      {
+        "id": "q-33-6",
+        "category": "💡 Interview Notes",
+        "question": "How do you remove hyphens/dashes from phone numbers in SQL?",
+        "whatInterviewerChecks": "Practical data standardization techniques.",
+        "bestReplyScript": "Use REPLACE(phone_number, '-', '').",
+        "commonMistakesToAvoid": "Writing complex regex when simple REPLACE suffices.",
+        "keyPoints": ["REPLACE(phone, '-', '')", "Standardizes numeric phone strings"],
+        "codeSnippet": "SELECT REPLACE('123-456-7890', '-', ''); -- '1234567890'"
       }
     ],
     "questions": [
       {
         "id": "q-33-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Maximum marks by class' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Maximum marks by class', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT class, AVG(marks) AS avg_mark FROM students GROUP BY class;"
+        "category": "💡 Interview Notes",
+        "question": "What does REPLACE() do in SQL?",
+        "whatInterviewerChecks": "Understanding string substitution parameters.",
+        "bestReplyScript": "REPLACE() searches a string column for a specified target substring and replaces every occurrence with a new replacement string.",
+        "commonMistakesToAvoid": "Assuming it only replaces the first occurrence.",
+        "keyPoints": ["Replaces all occurrences", "Signature: REPLACE(string, find_text, replace_with)", "Operates per row"],
+        "codeSnippet": "SELECT REPLACE('John Smith', 'John', 'Jonathan'); -- 'Jonathan Smith'"
+      },
+      {
+        "id": "q-33-2",
+        "category": "💡 Interview Notes",
+        "question": "Does REPLACE() modify the data stored in the database table?",
+        "whatInterviewerChecks": "Distinguishing query projection functions from DML write operations.",
+        "bestReplyScript": "No. When used in a SELECT statement, REPLACE() only alters the query result set. To permanently update stored records, it must be used inside an UPDATE statement.",
+        "commonMistakesToAvoid": "Thinking SELECT REPLACE() updates disk storage.",
+        "keyPoints": ["SELECT = read-only display", "UPDATE = disk persistence"],
+        "codeSnippet": "UPDATE employees SET first_name = REPLACE(first_name, 'John', 'Jonathan');"
+      },
+      {
+        "id": "q-33-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you remove all spaces from a string in SQL?",
+        "whatInterviewerChecks": "Data cleaning techniques using empty string replacements.",
+        "bestReplyScript": "By passing an empty string '' as the 3rd argument: REPLACE(column_name, ' ', '').",
+        "commonMistakesToAvoid": "Using NULL instead of '' (replacing with NULL yields NULL!).",
+        "keyPoints": ["Pass '' (empty string)", "Removes target characters"],
+        "codeSnippet": "SELECT REPLACE('John Smith', ' ', ''); -- 'JohnSmith'"
+      },
+      {
+        "id": "q-33-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between REPLACE() and UPDATE?",
+        "whatInterviewerChecks": "Scalar function vs DML command distinction.",
+        "bestReplyScript": "REPLACE() is a scalar string function that computes substituted text. UPDATE is a DML command that modifies persisted table rows on disk.",
+        "commonMistakesToAvoid": "Using them interchangeably.",
+        "keyPoints": ["REPLACE() = string function", "UPDATE = DML statement"],
+        "codeSnippet": "SELECT REPLACE(col, 'a', 'b'); vs UPDATE tbl SET col = 'b';"
+      },
+      {
+        "id": "q-33-5",
+        "category": "💡 Interview Notes",
+        "question": "Does REPLACE() substitute one occurrence or all occurrences in a string?",
+        "whatInterviewerChecks": "Global substitution behavior of SQL REPLACE().",
+        "bestReplyScript": "It replaces EVERY matching occurrence of the target substring within the string.",
+        "commonMistakesToAvoid": "Expecting single-match replacement like some basic regex functions.",
+        "keyPoints": ["Replaces all matching occurrences"],
+        "codeSnippet": "SELECT REPLACE('banana', 'a', 'o'); -- Returns 'bonono'"
+      },
+      {
+        "id": "q-33-6",
+        "category": "💡 Interview Notes",
+        "question": "How do you remove hyphens/dashes from phone numbers in SQL?",
+        "whatInterviewerChecks": "Practical data standardization techniques.",
+        "bestReplyScript": "Use REPLACE(phone_number, '-', '').",
+        "commonMistakesToAvoid": "Writing complex regex when simple REPLACE suffices.",
+        "keyPoints": ["REPLACE(phone, '-', '')", "Standardizes numeric phone strings"],
+        "codeSnippet": "SELECT REPLACE('123-456-7890', '-', ''); -- '1234567890'"
       }
     ],
     "mistakes": [
       {
         "id": "m-33-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Expecting SELECT REPLACE() to Mutate Database",
+        "description": "Believing SELECT REPLACE() changes table data on disk.",
+        "badSnippet": "SELECT REPLACE(first_name, 'John', 'Jonathan') FROM employees; -- Thinking table is modified",
+        "failingInput": "Stored value 'John'",
+        "consequence": "Database table data remains 'John'.",
+        "howToFix": "Use UPDATE employees SET first_name = REPLACE(first_name, 'John', 'Jonathan') for disk persistence.",
+        "mistake": "Confusing query projection with table mutation",
+        "whyItHappens": "Misunderstanding scalar SELECT functions."
+      },
+      {
+        "id": "m-33-2",
+        "title": "2. Forgetting String Literal Quotes",
+        "description": "Writing REPLACE(first_name, John, Jonathan) without single quotes.",
+        "badSnippet": "SELECT REPLACE(first_name, John, Jonathan) FROM employees;",
+        "failingInput": "Query missing string quotes",
+        "consequence": "❌ Error: no such column: John.",
+        "howToFix": "Wrap literal target and replacement strings in single quotes: 'John', 'Jonathan'.",
+        "mistake": "Unquoted string literal",
+        "whyItHappens": "Syntax typo."
+      },
+      {
+        "id": "m-33-3",
+        "title": "3. Using NULL Instead of Empty String",
+        "description": "Passing NULL as 3rd parameter to remove characters.",
+        "badSnippet": "SELECT REPLACE(first_name, ' ', NULL) FROM employees;",
+        "failingInput": "String 'John Smith'",
+        "consequence": "Returns NULL for every row (in ANSI SQL, operating with NULL yields NULL).",
+        "howToFix": "Use empty string literal '' instead of NULL.",
+        "mistake": "Passing NULL as replacement target",
+        "whyItHappens": "Confusing NULL with empty string ''."
+      },
+      {
+        "id": "m-33-4",
+        "title": "4. Forgetting Column Aliases",
+        "description": "Omitting AS updated_name.",
+        "badSnippet": "SELECT first_name, REPLACE(first_name, 'John', 'Jonathan') FROM employees;",
+        "failingInput": "Query without alias",
+        "consequence": "Result set outputs unreadable raw header REPLACE(first_name, 'John', 'Jonathan').",
+        "howToFix": "Provide alias: AS updated_name.",
+        "mistake": "Missing column alias",
+        "whyItHappens": "Rushing through formatting."
+      },
+      {
+        "id": "m-33-5",
+        "title": "5. Assuming Regex Pattern Matching Support",
+        "description": "Attempting regex wildcards inside standard REPLACE().",
+        "badSnippet": "SELECT REPLACE(first_name, '[0-9]', '') FROM employees;",
+        "failingInput": "String with numbers",
+        "consequence": "Searches for literal string '[0-9]' rather than matching digits.",
+        "howToFix": "Use REGEXP_REPLACE() for regex patterns in supported engines (Postgres/Oracle/MySQL 8+).",
+        "mistake": "Expecting regex behavior in standard REPLACE()",
+        "whyItHappens": "Confusing REPLACE() with REGEXP_REPLACE()."
       }
     ]
   },
   "34": {
     "id": "sql-34",
-    "title": "Minimum sales by region",
+    "title": "Replace NULL Values Using COALESCE()",
     "levelNumber": 34,
     "problemId": 34,
-    "problemTitle": "Minimum sales by region",
+    "problemTitle": "Replace NULL Values Using COALESCE()",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
+      "JPMorgan",
       "TCS"
     ],
     "tracing": {
-      "code": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
+      "code": "SELECT first_name, COALESCE(CAST(manager_id AS TEXT), 'No Manager') AS manager FROM employees;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "FROM employees",
+            "Action": "Access employee table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Minimum sales by region' and validates schema column names."
+          "explanation": "SQL engine reads rows from the employees table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "COALESCE Short-Circuit Evaluation",
+            "Action": "Check CAST(manager_id AS TEXT) -> fallback to 'No Manager'"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Evaluates 1st argument. If non-NULL, returns manager_id text; if NULL, moves to 2nd argument 'No Manager'."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Alias",
+            "Action": "Project first_name, manager"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Emits original first_name alongside computed fallback value aliased as manager."
         }
       ]
     },
     "qas": [
       {
         "id": "q-34-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Minimum sales by region' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Minimum sales by region', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does COALESCE() do in SQL?",
+        "whatInterviewerChecks": "Understanding NULL replacement mechanisms and short-circuit evaluation.",
+        "bestReplyScript": "COALESCE() accepts N expressions and returns the very first non-NULL expression from left to right. If all expressions evaluate to NULL, it returns NULL.",
+        "commonMistakesToAvoid": "Thinking COALESCE evaluates all parameters even after finding a non-NULL value.",
+        "keyPoints": ["Returns first non-NULL argument", "Short-circuits evaluation", "ANSI SQL standard"],
+        "codeSnippet": "SELECT COALESCE(NULL, NULL, 'Backup', 'Default'); -- Returns 'Backup'"
+      },
+      {
+        "id": "q-34-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COALESCE() and IFNULL()/ISNULL()?",
+        "whatInterviewerChecks": "ANSI SQL portability and parameter flexibility.",
+        "bestReplyScript": "COALESCE() is ANSI SQL standard, supported across all database engines (Postgres, Oracle, MySQL, SQL Server, SQLite), and handles N parameters. IFNULL() (MySQL/SQLite) and ISNULL() (SQL Server) are vendor-specific and restricted to 2 parameters.",
+        "commonMistakesToAvoid": "Using vendor-specific IFNULL/ISNULL when writing cross-platform SQL.",
+        "keyPoints": ["COALESCE is ANSI standard & N-arity", "IFNULL/ISNULL are vendor-specific & binary"],
+        "codeSnippet": "ANSI: COALESCE(a, b, c) vs MySQL: IFNULL(a, b)"
+      },
+      {
+        "id": "q-34-3",
+        "category": "💡 Interview Notes",
+        "question": "Why do we use CAST() inside COALESCE() when replacing numeric NULLs with text?",
+        "whatInterviewerChecks": "Understanding SQL data type coercion rules in COALESCE().",
+        "bestReplyScript": "COALESCE requires all arguments to have compatible data types. When manager_id is INT and default is 'No Manager' (VARCHAR), strict SQL engines throw a type mismatch error unless the INT is explicitly CAST to text.",
+        "commonMistakesToAvoid": "Mixing mismatched data types without explicit CAST in strict DBs like PostgreSQL or SQL Server.",
+        "keyPoints": ["Arguments must match data types", "Use CAST(numeric_col AS TEXT/CHAR) for text fallbacks"],
+        "codeSnippet": "COALESCE(CAST(manager_id AS TEXT), 'No Manager')"
+      },
+      {
+        "id": "q-34-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COALESCE() and IS NULL?",
+        "whatInterviewerChecks": "Operator vs function distinction in NULL handling.",
+        "bestReplyScript": "IS NULL is a boolean comparison predicate used in WHERE or CASE clauses (e.g. WHERE col IS NULL). COALESCE() is a scalar function that replaces NULL values with defaults.",
+        "commonMistakesToAvoid": "Using IS NULL where a replacement value is required.",
+        "keyPoints": ["IS NULL = boolean predicate", "COALESCE() = scalar replacement function"],
+        "codeSnippet": "WHERE col IS NULL vs SELECT COALESCE(col, 0)"
+      },
+      {
+        "id": "q-34-5",
+        "category": "💡 Interview Notes",
+        "question": "Does COALESCE() modify table data on disk?",
+        "whatInterviewerChecks": "Read vs write operation semantics.",
+        "bestReplyScript": "No. When used in a SELECT statement, COALESCE() only alters the projected output display. To persist non-NULL default values to disk, use an UPDATE statement.",
+        "commonMistakesToAvoid": "Believing SELECT COALESCE() modifies stored records.",
+        "keyPoints": ["SELECT = read-only display", "UPDATE = disk persistence"],
+        "codeSnippet": "UPDATE employees SET salary = COALESCE(salary, 0);"
+      },
+      {
+        "id": "q-34-6",
+        "category": "💡 Interview Notes",
+        "question": "How can you rewrite COALESCE() using a CASE statement?",
+        "whatInterviewerChecks": "Equivalence between COALESCE() and conditional CASE expressions.",
+        "bestReplyScript": "COALESCE(col, 'Default') is functionally equivalent to: CASE WHEN col IS NOT NULL THEN col ELSE 'Default' END.",
+        "commonMistakesToAvoid": "Writing verbose CASE statements when COALESCE() is cleaner.",
+        "keyPoints": ["Syntactic sugar for CASE WHEN col IS NOT NULL...", "COALESCE is cleaner and concise"],
+        "codeSnippet": "CASE WHEN manager_id IS NULL THEN 'No Manager' ELSE CAST(manager_id AS TEXT) END"
       }
     ],
     "questions": [
       {
         "id": "q-34-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Minimum sales by region' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Minimum sales by region', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does COALESCE() do in SQL?",
+        "whatInterviewerChecks": "Understanding NULL replacement mechanisms and short-circuit evaluation.",
+        "bestReplyScript": "COALESCE() accepts N expressions and returns the very first non-NULL expression from left to right. If all expressions evaluate to NULL, it returns NULL.",
+        "commonMistakesToAvoid": "Thinking COALESCE evaluates all parameters even after finding a non-NULL value.",
+        "keyPoints": ["Returns first non-NULL argument", "Short-circuits evaluation", "ANSI SQL standard"],
+        "codeSnippet": "SELECT COALESCE(NULL, NULL, 'Backup', 'Default'); -- Returns 'Backup'"
+      },
+      {
+        "id": "q-34-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COALESCE() and IFNULL()/ISNULL()?",
+        "whatInterviewerChecks": "ANSI SQL portability and parameter flexibility.",
+        "bestReplyScript": "COALESCE() is ANSI SQL standard, supported across all database engines (Postgres, Oracle, MySQL, SQL Server, SQLite), and handles N parameters. IFNULL() (MySQL/SQLite) and ISNULL() (SQL Server) are vendor-specific and restricted to 2 parameters.",
+        "commonMistakesToAvoid": "Using vendor-specific IFNULL/ISNULL when writing cross-platform SQL.",
+        "keyPoints": ["COALESCE is ANSI standard & N-arity", "IFNULL/ISNULL are vendor-specific & binary"],
+        "codeSnippet": "ANSI: COALESCE(a, b, c) vs MySQL: IFNULL(a, b)"
+      },
+      {
+        "id": "q-34-3",
+        "category": "💡 Interview Notes",
+        "question": "Why do we use CAST() inside COALESCE() when replacing numeric NULLs with text?",
+        "whatInterviewerChecks": "Understanding SQL data type coercion rules in COALESCE().",
+        "bestReplyScript": "COALESCE requires all arguments to have compatible data types. When manager_id is INT and default is 'No Manager' (VARCHAR), strict SQL engines throw a type mismatch error unless the INT is explicitly CAST to text.",
+        "commonMistakesToAvoid": "Mixing mismatched data types without explicit CAST in strict DBs like PostgreSQL or SQL Server.",
+        "keyPoints": ["Arguments must match data types", "Use CAST(numeric_col AS TEXT/CHAR) for text fallbacks"],
+        "codeSnippet": "COALESCE(CAST(manager_id AS TEXT), 'No Manager')"
+      },
+      {
+        "id": "q-34-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COALESCE() and IS NULL?",
+        "whatInterviewerChecks": "Operator vs function distinction in NULL handling.",
+        "bestReplyScript": "IS NULL is a boolean comparison predicate used in WHERE or CASE clauses (e.g. WHERE col IS NULL). COALESCE() is a scalar function that replaces NULL values with defaults.",
+        "commonMistakesToAvoid": "Using IS NULL where a replacement value is required.",
+        "keyPoints": ["IS NULL = boolean predicate", "COALESCE() = scalar replacement function"],
+        "codeSnippet": "WHERE col IS NULL vs SELECT COALESCE(col, 0)"
+      },
+      {
+        "id": "q-34-5",
+        "category": "💡 Interview Notes",
+        "question": "Does COALESCE() modify table data on disk?",
+        "whatInterviewerChecks": "Read vs write operation semantics.",
+        "bestReplyScript": "No. When used in a SELECT statement, COALESCE() only alters the projected output display. To persist non-NULL default values to disk, use an UPDATE statement.",
+        "commonMistakesToAvoid": "Believing SELECT COALESCE() modifies stored records.",
+        "keyPoints": ["SELECT = read-only display", "UPDATE = disk persistence"],
+        "codeSnippet": "UPDATE employees SET salary = COALESCE(salary, 0);"
+      },
+      {
+        "id": "q-34-6",
+        "category": "💡 Interview Notes",
+        "question": "How can you rewrite COALESCE() using a CASE statement?",
+        "whatInterviewerChecks": "Equivalence between COALESCE() and conditional CASE expressions.",
+        "bestReplyScript": "COALESCE(col, 'Default') is functionally equivalent to: CASE WHEN col IS NOT NULL THEN col ELSE 'Default' END.",
+        "commonMistakesToAvoid": "Writing verbose CASE statements when COALESCE() is cleaner.",
+        "keyPoints": ["Syntactic sugar for CASE WHEN col IS NOT NULL...", "COALESCE is cleaner and concise"],
+        "codeSnippet": "CASE WHEN manager_id IS NULL THEN 'No Manager' ELSE CAST(manager_id AS TEXT) END"
       }
     ],
     "mistakes": [
       {
         "id": "m-34-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Data Type Mismatch in Strict Databases",
+        "description": "Combining numeric columns and string default values without CAST.",
+        "badSnippet": "SELECT COALESCE(manager_id, 'No Manager') FROM employees;",
+        "failingInput": "PostgreSQL / SQL Server database engine",
+        "consequence": "❌ Error: invalid input syntax for integer / type mismatch.",
+        "howToFix": "Explicitly cast integer column to text: COALESCE(CAST(manager_id AS TEXT), 'No Manager').",
+        "mistake": "Data type mismatch across COALESCE arguments",
+        "whyItHappens": "Relying on implicit type conversion in loose DBs like MySQL/SQLite."
+      },
+      {
+        "id": "m-34-2",
+        "title": "2. Expecting SELECT COALESCE() to Mutate Stored Table Data",
+        "description": "Believing SELECT COALESCE() updates disk storage.",
+        "badSnippet": "SELECT COALESCE(bonus, 0) FROM employees; -- Expecting table NULLs to become 0",
+        "failingInput": "Stored NULL values",
+        "consequence": "Table records on disk remain NULL.",
+        "howToFix": "Use UPDATE employees SET bonus = COALESCE(bonus, 0) for disk mutation.",
+        "mistake": "Confusing projection display with table modification",
+        "whyItHappens": "Misinterpreting SELECT projection scope."
+      },
+      {
+        "id": "m-34-3",
+        "title": "3. Confusing IS NULL with COALESCE()",
+        "description": "Using IS NULL where a default value replacement is required.",
+        "badSnippet": "SELECT employee_name, (manager_id IS NULL) AS manager FROM employees;",
+        "failingInput": "NULL manager_id",
+        "consequence": "Returns boolean 1/TRUE instead of fallback string 'No Manager'.",
+        "howToFix": "Use COALESCE(CAST(manager_id AS TEXT), 'No Manager').",
+        "mistake": "Using IS NULL operator instead of COALESCE function",
+        "whyItHappens": "Confusing boolean checks with value substitution."
+      },
+      {
+        "id": "m-34-4",
+        "title": "4. Forgetting Column Aliases",
+        "description": "Omitting AS manager.",
+        "badSnippet": "SELECT first_name, COALESCE(CAST(manager_id AS TEXT), 'No Manager') FROM employees;",
+        "failingInput": "Query without alias",
+        "consequence": "Result output emits raw unreadable column header COALESCE(CAST(...)).",
+        "howToFix": "Provide clean alias: AS manager.",
+        "mistake": "Missing column alias",
+        "whyItHappens": "Rushing query construction."
+      },
+      {
+        "id": "m-34-5",
+        "title": "5. Using Vendor-Specific IFNULL / ISNULL in Portable Codebases",
+        "description": "Writing IFNULL() or ISNULL() in cross-database production code.",
+        "badSnippet": "SELECT IFNULL(manager_id, 'No Manager') FROM employees; -- In PostgreSQL",
+        "failingInput": "PostgreSQL database engine",
+        "consequence": "❌ Error: function ifnull does not exist.",
+        "howToFix": "Use ANSI standard COALESCE() across all database platforms.",
+        "mistake": "Non-standard vendor-specific NULL handling",
+        "whyItHappens": "Switching from MySQL to Postgres or SQL Server."
       }
     ]
   },
   "35": {
     "id": "sql-35",
-    "title": "Total revenue by month",
+    "title": "Display the Current Date and Time",
     "levelNumber": 35,
     "problemId": 35,
-    "problemTitle": "Total revenue by month",
+    "problemTitle": "Display the Current Date and Time",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees;",
+      "code": "SELECT CURRENT_DATE AS current_date, CURRENT_TIME AS current_time, CURRENT_TIMESTAMP AS current_datetime;",
       "steps": [
         {
           "step": 1,
           "lineNumber": 1,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Step": "Read DB Server Clock",
+            "Action": "Query system clock module"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Total revenue by month' and validates schema column names."
+          "explanation": "SQL engine queries database server system clock parameters."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Step": "Format Scalars",
+            "Action": "Format date (YYYY-MM-DD), time (HH:MM:SS), and full timestamp"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Formats scalar clock values into requested ISO string representations."
         },
         {
           "step": 3,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Step": "Projection & Aliasing",
+            "Action": "Project current_date, current_time, current_datetime"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Emits single row result set with custom column aliases without table scanning."
         }
       ]
     },
     "qas": [
       {
         "id": "q-35-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Total revenue by month' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Total revenue by month', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between CURRENT_DATE and CURRENT_TIMESTAMP?",
+        "whatInterviewerChecks": "Understanding date vs timestamp scalar functions.",
+        "bestReplyScript": "CURRENT_DATE returns only today's date (YYYY-MM-DD). CURRENT_TIMESTAMP returns both date and time (YYYY-MM-DD HH:MM:SS) from the database server clock.",
+        "commonMistakesToAvoid": "Thinking CURRENT_DATE includes time component.",
+        "keyPoints": ["CURRENT_DATE = YYYY-MM-DD", "CURRENT_TIMESTAMP = YYYY-MM-DD HH:MM:SS", "ANSI SQL standard"],
+        "codeSnippet": "SELECT CURRENT_DATE, CURRENT_TIMESTAMP;"
+      },
+      {
+        "id": "q-35-2",
+        "category": "💡 Interview Notes",
+        "question": "Do date/time scalar functions require a FROM table clause?",
+        "whatInterviewerChecks": "Understanding table-less scalar SQL query execution.",
+        "bestReplyScript": "No, in ANSI SQL, MySQL, PostgreSQL, and SQLite, you can run SELECT CURRENT_DATE; directly without a FROM clause. Oracle requires SELECT CURRENT_DATE FROM DUAL;.",
+        "commonMistakesToAvoid": "Forgetting that Oracle requires FROM DUAL.",
+        "keyPoints": ["No FROM clause needed in ANSI/MySQL/Postgres/SQLite", "Oracle requires FROM DUAL"],
+        "codeSnippet": "SELECT CURRENT_DATE; -- Postgres/MySQL/SQLite"
+      },
+      {
+        "id": "q-35-3",
+        "category": "💡 Interview Notes",
+        "question": "Whose system clock is returned by CURRENT_TIMESTAMP?",
+        "whatInterviewerChecks": "Server vs client architecture awareness.",
+        "bestReplyScript": "Always the database server's clock. It does not reflect the local device or user client time.",
+        "commonMistakesToAvoid": "Assuming client device local clock time is returned.",
+        "keyPoints": ["Returns DB Server Clock", "Timezone depends on database server configuration"],
+        "codeSnippet": "SELECT CURRENT_TIMESTAMP; -- Evaluates DB Server System Time"
+      },
+      {
+        "id": "q-35-4",
+        "category": "💡 Interview Notes",
+        "question": "What are vendor-specific equivalents for CURRENT_TIMESTAMP?",
+        "whatInterviewerChecks": "Cross-database dialect knowledge.",
+        "bestReplyScript": "MySQL uses NOW() or CURDATE()/CURTIME(). SQL Server uses GETDATE(). Oracle uses SYSTIMESTAMP or SYSDATE.",
+        "commonMistakesToAvoid": "Using NOW() in SQL Server or GETDATE() in PostgreSQL.",
+        "keyPoints": ["MySQL: NOW()", "SQL Server: GETDATE()", "Oracle: SYSDATE / SYSTIMESTAMP"],
+        "codeSnippet": "MySQL: SELECT NOW(); vs SQL Server: SELECT GETDATE();"
+      },
+      {
+        "id": "q-35-5",
+        "category": "💡 Interview Notes",
+        "question": "How are date and timestamp functions used in real-world application tables?",
+        "whatInterviewerChecks": "Practical DDL/DML auditing and logging experience.",
+        "bestReplyScript": "They are used in INSERT/UPDATE statements or DEFAULT table constraints to record audit events such as created_at or updated_at timestamps.",
+        "commonMistakesToAvoid": "Manually passing hardcoded client date strings instead of DB timestamps.",
+        "keyPoints": ["Audit logging", "Transaction creation timestamps", "DEFAULT CURRENT_TIMESTAMP table column definitions"],
+        "codeSnippet": "INSERT INTO audit_log (user_id, login_time) VALUES (1, CURRENT_TIMESTAMP);"
+      },
+      {
+        "id": "q-35-6",
+        "category": "💡 Interview Notes",
+        "question": "What happens if you run SELECT CURRENT_DATE FROM employees?",
+        "whatInterviewerChecks": "Understanding relational execution over table rows.",
+        "bestReplyScript": "It evaluates CURRENT_DATE for every single row in the employees table, outputting N identical date rows. To get a single date result, omit the FROM clause.",
+        "commonMistakesToAvoid": "Adding unnecessary FROM table clauses when retrieving scalar values.",
+        "keyPoints": ["Evaluates N times for N rows", "Omit FROM clause for single-row scalar lookup"],
+        "codeSnippet": "SELECT CURRENT_DATE FROM employees; -- Returns N duplicate date rows"
       }
     ],
     "questions": [
       {
         "id": "q-35-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Total revenue by month' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Total revenue by month', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between CURRENT_DATE and CURRENT_TIMESTAMP?",
+        "whatInterviewerChecks": "Understanding date vs timestamp scalar functions.",
+        "bestReplyScript": "CURRENT_DATE returns only today's date (YYYY-MM-DD). CURRENT_TIMESTAMP returns both date and time (YYYY-MM-DD HH:MM:SS) from the database server clock.",
+        "commonMistakesToAvoid": "Thinking CURRENT_DATE includes time component.",
+        "keyPoints": ["CURRENT_DATE = YYYY-MM-DD", "CURRENT_TIMESTAMP = YYYY-MM-DD HH:MM:SS", "ANSI SQL standard"],
+        "codeSnippet": "SELECT CURRENT_DATE, CURRENT_TIMESTAMP;"
+      },
+      {
+        "id": "q-35-2",
+        "category": "💡 Interview Notes",
+        "question": "Do date/time scalar functions require a FROM table clause?",
+        "whatInterviewerChecks": "Understanding table-less scalar SQL query execution.",
+        "bestReplyScript": "No, in ANSI SQL, MySQL, PostgreSQL, and SQLite, you can run SELECT CURRENT_DATE; directly without a FROM clause. Oracle requires SELECT CURRENT_DATE FROM DUAL;.",
+        "commonMistakesToAvoid": "Forgetting that Oracle requires FROM DUAL.",
+        "keyPoints": ["No FROM clause needed in ANSI/MySQL/Postgres/SQLite", "Oracle requires FROM DUAL"],
+        "codeSnippet": "SELECT CURRENT_DATE; -- Postgres/MySQL/SQLite"
+      },
+      {
+        "id": "q-35-3",
+        "category": "💡 Interview Notes",
+        "question": "Whose system clock is returned by CURRENT_TIMESTAMP?",
+        "whatInterviewerChecks": "Server vs client architecture awareness.",
+        "bestReplyScript": "Always the database server's clock. It does not reflect the local device or user client time.",
+        "commonMistakesToAvoid": "Assuming client device local clock time is returned.",
+        "keyPoints": ["Returns DB Server Clock", "Timezone depends on database server configuration"],
+        "codeSnippet": "SELECT CURRENT_TIMESTAMP; -- Evaluates DB Server System Time"
+      },
+      {
+        "id": "q-35-4",
+        "category": "💡 Interview Notes",
+        "question": "What are vendor-specific equivalents for CURRENT_TIMESTAMP?",
+        "whatInterviewerChecks": "Cross-database dialect knowledge.",
+        "bestReplyScript": "MySQL uses NOW() or CURDATE()/CURTIME(). SQL Server uses GETDATE(). Oracle uses SYSTIMESTAMP or SYSDATE.",
+        "commonMistakesToAvoid": "Using NOW() in SQL Server or GETDATE() in PostgreSQL.",
+        "keyPoints": ["MySQL: NOW()", "SQL Server: GETDATE()", "Oracle: SYSDATE / SYSTIMESTAMP"],
+        "codeSnippet": "MySQL: SELECT NOW(); vs SQL Server: SELECT GETDATE();"
+      },
+      {
+        "id": "q-35-5",
+        "category": "💡 Interview Notes",
+        "question": "How are date and timestamp functions used in real-world application tables?",
+        "whatInterviewerChecks": "Practical DDL/DML auditing and logging experience.",
+        "bestReplyScript": "They are used in INSERT/UPDATE statements or DEFAULT table constraints to record audit events such as created_at or updated_at timestamps.",
+        "commonMistakesToAvoid": "Manually passing hardcoded client date strings instead of DB timestamps.",
+        "keyPoints": ["Audit logging", "Transaction creation timestamps", "DEFAULT CURRENT_TIMESTAMP table column definitions"],
+        "codeSnippet": "INSERT INTO audit_log (user_id, login_time) VALUES (1, CURRENT_TIMESTAMP);"
+      },
+      {
+        "id": "q-35-6",
+        "category": "💡 Interview Notes",
+        "question": "What happens if you run SELECT CURRENT_DATE FROM employees?",
+        "whatInterviewerChecks": "Understanding relational execution over table rows.",
+        "bestReplyScript": "It evaluates CURRENT_DATE for every single row in the employees table, outputting N identical date rows. To get a single date result, omit the FROM clause.",
+        "commonMistakesToAvoid": "Adding unnecessary FROM table clauses when retrieving scalar values.",
+        "keyPoints": ["Evaluates N times for N rows", "Omit FROM clause for single-row scalar lookup"],
+        "codeSnippet": "SELECT CURRENT_DATE FROM employees; -- Returns N duplicate date rows"
       }
     ],
     "mistakes": [
       {
         "id": "m-35-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Writing Unnecessary FROM Clauses",
+        "description": "Including FROM employees when querying system clock scalars.",
+        "badSnippet": "SELECT CURRENT_DATE FROM employees;",
+        "failingInput": "10,000 row employees table",
+        "consequence": "Outputs 10,000 identical duplicate date rows.",
+        "howToFix": "Omit the FROM clause: SELECT CURRENT_DATE;.",
+        "mistake": "Adding table reference to scalar system clock query",
+        "whyItHappens": "Habitually typing FROM table in SELECT queries."
+      },
+      {
+        "id": "m-35-2",
+        "title": "2. Confusing Client Clock with DB Server Clock",
+        "description": "Assuming CURRENT_TIMESTAMP returns user device local time.",
+        "badSnippet": "SELECT CURRENT_TIMESTAMP; -- Expecting user timezone local clock",
+        "failingInput": "Server in UTC, User in PST",
+        "consequence": "Returns UTC timestamp, causing unexpected date offset bugs in application UI.",
+        "howToFix": "Convert timezone explicitly using AT TIME ZONE or handle UTC offsets in application layer.",
+        "mistake": "Assuming client local timezone",
+        "whyItHappens": "Misunderstanding server-side database architecture."
+      },
+      {
+        "id": "m-35-3",
+        "title": "3. Confusing CURRENT_DATE with CURRENT_TIMESTAMP",
+        "description": "Using CURRENT_DATE when exact hour/minute/second precision is required.",
+        "badSnippet": "INSERT INTO audit_log(event_time) VALUES (CURRENT_DATE);",
+        "failingInput": "Event occurring at 14:35:10",
+        "consequence": "Loses time components, saving only 2026-09-24 00:00:00.",
+        "howToFix": "Use CURRENT_TIMESTAMP for full date and time precision.",
+        "mistake": "Using date-only function for timestamp logging",
+        "whyItHappens": "Confusing function names."
+      },
+      {
+        "id": "m-35-4",
+        "title": "4. Forgetting Column Aliases",
+        "description": "Omitting AS current_date, AS current_time, etc.",
+        "badSnippet": "SELECT CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP;",
+        "failingInput": "Raw query execution",
+        "consequence": "Outputs raw function headers as column names.",
+        "howToFix": "Alias columns cleanly: AS current_date, AS current_time, AS current_datetime.",
+        "mistake": "Missing column aliases",
+        "whyItHappens": "Rushing query formatting."
+      },
+      {
+        "id": "m-35-5",
+        "title": "5. Using Vendor-Specific Functions in Cross-Database Codebases",
+        "description": "Using MySQL NOW() or SQL Server GETDATE() in portable code.",
+        "badSnippet": "SELECT NOW(); -- In SQL Server",
+        "failingInput": "SQL Server database engine",
+        "consequence": "❌ Error: 'NOW' is not a recognized built-in function name.",
+        "howToFix": "Use ANSI standard CURRENT_TIMESTAMP across portable codebases.",
+        "mistake": "Non-portable vendor dialect function",
+        "whyItHappens": "Mixing SQL vendor syntax."
       }
     ]
   },

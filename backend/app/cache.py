@@ -83,11 +83,8 @@ class CacheStore:
 
         self._cached_at = time.time()
 
-    def load_from_json_fallback(self):
+    def load_from_json_fallback(self, force: bool = False):
         """Loads seeded challenges directly from local json for instant zero-latency startup."""
-        if self._all_challenges:
-            return
-        
         json_path = os.path.join(os.path.dirname(__file__), "sql_challenges_seeded.json")
         if not os.path.exists(json_path):
             return
@@ -96,12 +93,19 @@ class CacheStore:
             with open(json_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
+            if not force and len(self._all_challenges) == len(data):
+                return
+
             loaded = []
             for idx, item in enumerate(data, start=1):
+                track_val = item.get("track")
+                if not track_val:
+                    track_val = "fundamentals" if str(item.get("code_id", "")).startswith("Basics") else "core"
+
                 ch = Challenge(
                     id=idx,
                     code_id=item["code_id"],
-                    track=item.get("track", "core"),
+                    track=track_val,
                     level_number=item["level_number"],
                     chapter_id=item["chapter_id"],
                     chapter_title=item["chapter_title"],

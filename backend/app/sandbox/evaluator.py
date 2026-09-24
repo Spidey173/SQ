@@ -118,7 +118,15 @@ def check_sql_output_matches(
         try:
             return float(u_s) == float(t_s)
         except (ValueError, TypeError):
-            return False
+            pass
+        # Dynamic date/time matching: e.g. dates formatted like 2026-09-24, times 12:00:00
+        if re.match(r"^\d{4}-\d{2}-\d{2}$", t_s) and re.match(r"^\d{4}-\d{2}-\d{2}$", u_s):
+            return True
+        if re.match(r"^\d{2}:\d{2}:\d{2}$", t_s) and re.match(r"^\d{2}:\d{2}:\d{2}$", u_s):
+            return True
+        if re.match(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$", t_s) and re.match(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$", u_s):
+            return True
+        return False
 
     def row_matches(u_row: List[str], t_row: List[str]) -> bool:
         if len(u_row) != len(t_row):

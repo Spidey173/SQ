@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark bg-[#090909]">
+    <html lang="en" className="dark bg-[#090909]" data-scroll-behavior="smooth">
       <body className="min-h-screen bg-[#090909] text-[#F5F5F5] selection:bg-[#FF6B00]/30 selection:text-white antialiased">
         <AuthProvider>
           <Navbar />
