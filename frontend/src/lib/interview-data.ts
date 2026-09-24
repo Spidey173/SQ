@@ -8101,1381 +8101,3605 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
   },
   "36": {
     "id": "sql-36",
-    "title": "Group employees by department",
+    "title": "Group Employees by Department",
     "levelNumber": 36,
     "problemId": 36,
-    "problemTitle": "Group employees by department",
+    "problemTitle": "Group Employees by Department",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees;",
+      "code": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nORDER BY department_name;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM employees",
+            "Action": "Locate data table pages"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Group employees by department' and validates schema column names."
+          "explanation": "Reads records from the employees table into memory."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY department_name",
+            "Action": "Partition rows into department buckets"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Creates separate groups for each unique department_name (Engineering, Finance, HR, Marketing, Sales)."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*)",
+            "Action": "Aggregate count per department"
+          },
+          "explanation": "Counts total employee records within each individual department group."
+        },
+        {
+          "step": 4,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects department_name and employee_count."
+        },
+        {
+          "step": 5,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY department_name",
+            "Action": "Sort department results"
+          },
+          "explanation": "Sorts the grouped results alphabetically in ascending order."
         }
       ]
     },
     "qas": [
       {
         "id": "q-36-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Group employees by department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Group employees by department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the primary purpose of GROUP BY?",
+        "whatInterviewerChecks": "Understanding relational aggregation and row partitioning.",
+        "bestReplyScript": "GROUP BY clusters rows sharing the same values across specified columns into single summary groups, allowing aggregate functions like COUNT(), SUM(), AVG(), MIN(), and MAX() to compute metrics per group.",
+        "commonMistakesToAvoid": "Thinking GROUP BY filters rows or sorts rows automatically.",
+        "keyPoints": ["Clusters rows into groups", "Enables per-group aggregation", "Does not sort automatically"],
+        "codeSnippet": "SELECT department_name, COUNT(*) FROM employees GROUP BY department_name;"
+      },
+      {
+        "id": "q-36-2",
+        "category": "💡 Interview Notes",
+        "question": "Can you use GROUP BY without aggregate functions?",
+        "whatInterviewerChecks": "Knowledge of GROUP BY vs DISTINCT semantics.",
+        "bestReplyScript": "Yes. Running SELECT department_name FROM employees GROUP BY department_name returns unique department names, behaving identically to SELECT DISTINCT. However, GROUP BY is primarily designed for calculating aggregate metrics.",
+        "commonMistakesToAvoid": "Believing GROUP BY strictly requires an aggregate function.",
+        "keyPoints": ["Can run without aggregates", "Behaves like DISTINCT", "Designed for aggregation"],
+        "codeSnippet": "SELECT department_name FROM employees GROUP BY department_name;"
+      },
+      {
+        "id": "q-36-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between WHERE and HAVING?",
+        "whatInterviewerChecks": "Critical understanding of query execution order.",
+        "bestReplyScript": "WHERE filters individual rows BEFORE grouping takes place and cannot evaluate aggregate functions. HAVING filters aggregated summary rows AFTER GROUP BY has created groups.",
+        "commonMistakesToAvoid": "Attempting to filter COUNT(*) in a WHERE clause.",
+        "keyPoints": ["WHERE: filters before grouping", "HAVING: filters after grouping", "Aggregates only allowed in HAVING"],
+        "codeSnippet": "WHERE salary > 50000 GROUP BY dept HAVING COUNT(*) > 2"
+      },
+      {
+        "id": "q-36-4",
+        "category": "💡 Interview Notes",
+        "question": "Can GROUP BY group by multiple columns?",
+        "whatInterviewerChecks": "Composite grouping mechanics.",
+        "bestReplyScript": "Yes. Specifying GROUP BY department_name, city creates a unique group for every distinct combination of department and city, calculating aggregates across that multi-attribute partition.",
+        "commonMistakesToAvoid": "Thinking GROUP BY only supports a single column.",
+        "keyPoints": ["Supports multiple columns", "Creates composite groups (A, B)"],
+        "codeSnippet": "SELECT department_name, city, COUNT(*) FROM employees GROUP BY department_name, city;"
+      },
+      {
+        "id": "q-36-5",
+        "category": "💡 Interview Notes",
+        "question": "Does GROUP BY automatically sort results?",
+        "whatInterviewerChecks": "Standard ANSI query order guarantees.",
+        "bestReplyScript": "No. Although some database engines historically sorted during group hashing, ANSI SQL does not guarantee order without an explicit ORDER BY clause.",
+        "commonMistakesToAvoid": "Relying on implicit sorting from GROUP BY.",
+        "keyPoints": ["No automatic sort guarantee", "Always use ORDER BY for sorted output"],
+        "codeSnippet": "GROUP BY department_name ORDER BY department_name ASC;"
+      },
+      {
+        "id": "q-36-6",
+        "category": "💡 Interview Notes",
+        "question": "What happens to NULL values in the grouped column?",
+        "whatInterviewerChecks": "NULL grouping semantics.",
+        "bestReplyScript": "SQL treats all NULL values as matching each other for the purpose of grouping, clustering all rows with NULL in that column into a single combined NULL group.",
+        "commonMistakesToAvoid": "Thinking NULL values are dropped or create individual groups per row.",
+        "keyPoints": ["NULLs cluster into one group", "Not excluded by GROUP BY"],
+        "codeSnippet": "GROUP BY manager_id -- All NULL manager rows form one group"
       }
     ],
     "questions": [
       {
         "id": "q-36-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Group employees by department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Group employees by department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the primary purpose of GROUP BY?",
+        "whatInterviewerChecks": "Understanding relational aggregation and row partitioning.",
+        "bestReplyScript": "GROUP BY clusters rows sharing the same values across specified columns into single summary groups, allowing aggregate functions like COUNT(), SUM(), AVG(), MIN(), and MAX() to compute metrics per group.",
+        "commonMistakesToAvoid": "Thinking GROUP BY filters rows or sorts rows automatically.",
+        "keyPoints": ["Clusters rows into groups", "Enables per-group aggregation", "Does not sort automatically"],
+        "codeSnippet": "SELECT department_name, COUNT(*) FROM employees GROUP BY department_name;"
+      },
+      {
+        "id": "q-36-2",
+        "category": "💡 Interview Notes",
+        "question": "Can you use GROUP BY without aggregate functions?",
+        "whatInterviewerChecks": "Knowledge of GROUP BY vs DISTINCT semantics.",
+        "bestReplyScript": "Yes. Running SELECT department_name FROM employees GROUP BY department_name returns unique department names, behaving identically to SELECT DISTINCT. However, GROUP BY is primarily designed for calculating aggregate metrics.",
+        "commonMistakesToAvoid": "Believing GROUP BY strictly requires an aggregate function.",
+        "keyPoints": ["Can run without aggregates", "Behaves like DISTINCT", "Designed for aggregation"],
+        "codeSnippet": "SELECT department_name FROM employees GROUP BY department_name;"
+      },
+      {
+        "id": "q-36-3",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between WHERE and HAVING?",
+        "whatInterviewerChecks": "Critical understanding of query execution order.",
+        "bestReplyScript": "WHERE filters individual rows BEFORE grouping takes place and cannot evaluate aggregate functions. HAVING filters aggregated summary rows AFTER GROUP BY has created groups.",
+        "commonMistakesToAvoid": "Attempting to filter COUNT(*) in a WHERE clause.",
+        "keyPoints": ["WHERE: filters before grouping", "HAVING: filters after grouping", "Aggregates only allowed in HAVING"],
+        "codeSnippet": "WHERE salary > 50000 GROUP BY dept HAVING COUNT(*) > 2"
+      },
+      {
+        "id": "q-36-4",
+        "category": "💡 Interview Notes",
+        "question": "Can GROUP BY group by multiple columns?",
+        "whatInterviewerChecks": "Composite grouping mechanics.",
+        "bestReplyScript": "Yes. Specifying GROUP BY department_name, city creates a unique group for every distinct combination of department and city, calculating aggregates across that multi-attribute partition.",
+        "commonMistakesToAvoid": "Thinking GROUP BY only supports a single column.",
+        "keyPoints": ["Supports multiple columns", "Creates composite groups (A, B)"],
+        "codeSnippet": "SELECT department_name, city, COUNT(*) FROM employees GROUP BY department_name, city;"
+      },
+      {
+        "id": "q-36-5",
+        "category": "💡 Interview Notes",
+        "question": "Does GROUP BY automatically sort results?",
+        "whatInterviewerChecks": "Standard ANSI query order guarantees.",
+        "bestReplyScript": "No. Although some database engines historically sorted during group hashing, ANSI SQL does not guarantee order without an explicit ORDER BY clause.",
+        "commonMistakesToAvoid": "Relying on implicit sorting from GROUP BY.",
+        "keyPoints": ["No automatic sort guarantee", "Always use ORDER BY for sorted output"],
+        "codeSnippet": "GROUP BY department_name ORDER BY department_name ASC;"
+      },
+      {
+        "id": "q-36-6",
+        "category": "💡 Interview Notes",
+        "question": "What happens to NULL values in the grouped column?",
+        "whatInterviewerChecks": "NULL grouping semantics.",
+        "bestReplyScript": "SQL treats all NULL values as matching each other for the purpose of grouping, clustering all rows with NULL in that column into a single combined NULL group.",
+        "commonMistakesToAvoid": "Thinking NULL values are dropped or create individual groups per row.",
+        "keyPoints": ["NULLs cluster into one group", "Not excluded by GROUP BY"],
+        "codeSnippet": "GROUP BY manager_id -- All NULL manager rows form one group"
       }
     ],
     "mistakes": [
       {
         "id": "m-36-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY When Aggregating Non-Aggregated Columns",
+        "description": "Selecting department_name and COUNT(*) without a GROUP BY clause.",
+        "badSnippet": "SELECT department_name, COUNT(*) FROM employees;",
+        "failingInput": "Employees table with multiple departments",
+        "consequence": "❌ Error: misuse of aggregate function COUNT() or non-aggregated column in projection.",
+        "howToFix": "Add GROUP BY department_name.",
+        "mistake": "Mixing scalar and aggregate projection without GROUP BY",
+        "whyItHappens": "Thinking SQL infers groups automatically."
+      },
+      {
+        "id": "m-36-2",
+        "title": "2. Selecting Non-Aggregated Columns Not Present in GROUP BY",
+        "description": "Including columns in SELECT that are neither grouped nor wrapped in aggregates.",
+        "badSnippet": "SELECT department_name, employee_name, COUNT(*) FROM employees GROUP BY department_name;",
+        "failingInput": "Query execution in strict mode engines",
+        "consequence": "❌ Error: employee_name must appear in the GROUP BY clause or be used in an aggregate function.",
+        "howToFix": "Only select columns that appear in the GROUP BY clause or are enclosed in aggregate functions.",
+        "mistake": "Projecting non-aggregated, non-grouped column",
+        "whyItHappens": "Wanting individual row details while also grouping."
+      },
+      {
+        "id": "m-36-3",
+        "title": "3. Using WHERE to Filter Aggregate Values",
+        "description": "Placing aggregate conditions like COUNT(*) > 2 inside WHERE.",
+        "badSnippet": "SELECT department_name, COUNT(*) FROM employees WHERE COUNT(*) > 2 GROUP BY department_name;",
+        "failingInput": "Aggregate filter in WHERE clause",
+        "consequence": "❌ Error: misuse of aggregate: COUNT() not allowed in WHERE.",
+        "howToFix": "Use HAVING: GROUP BY department_name HAVING COUNT(*) > 2.",
+        "mistake": "Filtering aggregates in WHERE clause",
+        "whyItHappens": "Confusing WHERE and HAVING filtering stages."
+      },
+      {
+        "id": "m-36-4",
+        "title": "4. Assuming GROUP BY Implicitly Sorts Output",
+        "description": "Omitting ORDER BY expecting groups to appear in alphabetical order.",
+        "badSnippet": "SELECT department_name, COUNT(*) FROM employees GROUP BY department_name;",
+        "failingInput": "Ordered output expectation",
+        "consequence": "Rows may return in nondeterministic hash bucket order across different database versions.",
+        "howToFix": "Explicitly add ORDER BY department_name ASC.",
+        "mistake": "Omitting explicit ORDER BY clause",
+        "whyItHappens": "Relying on old MySQL hash table ordering behavior."
+      },
+      {
+        "id": "m-36-5",
+        "title": "5. Confusing GROUP BY with DISTINCT",
+        "description": "Using DISTINCT when aggregate group calculations are required.",
+        "badSnippet": "SELECT DISTINCT department_name, COUNT(*) FROM employees;",
+        "failingInput": "Attempting aggregation with DISTINCT",
+        "consequence": "Does not aggregate per department; results in syntax or projection error.",
+        "howToFix": "Use GROUP BY department_name whenever aggregate functions are involved.",
+        "mistake": "Using DISTINCT instead of GROUP BY for aggregation",
+        "whyItHappens": "Conflating unique value extraction with group aggregation."
       }
     ]
   },
   "37": {
     "id": "sql-37",
-    "title": "Group students by class",
+    "title": "Group Students by Class",
     "levelNumber": 37,
     "problemId": 37,
-    "problemTitle": "Group students by class",
+    "problemTitle": "Group Students by Class",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM students;",
+      "code": "SELECT class_name,\n       COUNT(*) AS student_count\nFROM students\nGROUP BY class_name\nORDER BY class_name;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM students",
+            "Action": "Locate student records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Group students by class' and validates schema column names."
+          "explanation": "Reads records from the students table into memory."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY class_name",
+            "Action": "Partition students into class groups"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Combines rows having the same class_name into distinct groups (Class A, Class B)."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*)",
+            "Action": "Count enrolled students per class"
+          },
+          "explanation": "Counts total enrolled student records within each class group."
+        },
+        {
+          "step": 4,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects class_name and student_count."
+        },
+        {
+          "step": 5,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY class_name",
+            "Action": "Sort classes alphabetically"
+          },
+          "explanation": "Sorts class results alphabetically in ascending order."
         }
       ]
     },
     "qas": [
       {
         "id": "q-37-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Group students by class' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Group students by class', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM students;"
+        "category": "💡 Interview Notes",
+        "question": "Why do we use GROUP BY in this query?",
+        "whatInterviewerChecks": "Aggregation vs row-level scanning concepts.",
+        "bestReplyScript": "To combine rows with identical class names into single groups so that the aggregate function COUNT(*) can calculate total student enrollments per class rather than listing individual students.",
+        "commonMistakesToAvoid": "Thinking GROUP BY filters rows.",
+        "keyPoints": ["Clusters rows by class_name", "Calculates aggregate counts per group", "Collapses individual tuples into summary rows"],
+        "codeSnippet": "SELECT class_name, COUNT(*) FROM students GROUP BY class_name;"
+      },
+      {
+        "id": "q-37-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(student_id)?",
+        "whatInterviewerChecks": "Handling of NULL values in aggregation.",
+        "bestReplyScript": "COUNT(*) counts every row in the group regardless of whether columns contain NULLs. COUNT(student_id) only counts rows where student_id is NOT NULL. Since student_id is a Primary Key, both yield identical counts, but COUNT(*) is the standard recommendation.",
+        "commonMistakesToAvoid": "Believing COUNT(*) runs slower than COUNT(column).",
+        "keyPoints": ["COUNT(*) counts all rows", "COUNT(col) ignores NULLs", "COUNT(*) is query optimizer standard"],
+        "codeSnippet": "COUNT(*) vs COUNT(student_id)"
+      },
+      {
+        "id": "q-37-3",
+        "category": "💡 Interview Notes",
+        "question": "Can GROUP BY operate on numeric or date columns?",
+        "whatInterviewerChecks": "Data type flexibility of grouping columns.",
+        "bestReplyScript": "Yes. GROUP BY works across text, numeric, date, and timestamp data types (e.g. GROUP BY age groups by age, GROUP BY enrollment_date groups by day).",
+        "commonMistakesToAvoid": "Assuming GROUP BY is limited to string/categorical attributes.",
+        "keyPoints": ["Supports numbers, dates, strings", "Any equatable data type"],
+        "codeSnippet": "GROUP BY age, enrollment_date"
+      },
+      {
+        "id": "q-37-4",
+        "category": "💡 Interview Notes",
+        "question": "Can we group by multiple columns simultaneously?",
+        "whatInterviewerChecks": "Composite grouping knowledge.",
+        "bestReplyScript": "Yes. Writing GROUP BY class_name, city creates a separate group for each unique combination of class and city, counting students per composite bucket.",
+        "commonMistakesToAvoid": "Assuming multiple GROUP BY columns run separate independent queries.",
+        "keyPoints": ["Creates composite groups", "Calculates aggregates per unique tuple (col1, col2)"],
+        "codeSnippet": "SELECT class_name, city, COUNT(*) FROM students GROUP BY class_name, city;"
+      },
+      {
+        "id": "q-37-5",
+        "category": "💡 Interview Notes",
+        "question": "Does GROUP BY guarantee ascending order?",
+        "whatInterviewerChecks": "SQL relational standard execution rules.",
+        "bestReplyScript": "No. ANSI SQL does not guarantee result order after GROUP BY. An explicit ORDER BY class_name clause is required whenever predictable sorting is required.",
+        "commonMistakesToAvoid": "Omitting ORDER BY and assuming the database returns sorted groups.",
+        "keyPoints": ["No sort guarantee", "Always use ORDER BY"],
+        "codeSnippet": "ORDER BY class_name ASC;"
+      },
+      {
+        "id": "q-37-6",
+        "category": "💡 Interview Notes",
+        "question": "Can you use WHERE to filter out classes having fewer than 10 students?",
+        "whatInterviewerChecks": "WHERE vs HAVING query lifecycle rules.",
+        "bestReplyScript": "No. WHERE operates before rows are grouped. To filter groups based on aggregate results like COUNT(*) >= 10, you must use the HAVING clause: HAVING COUNT(*) >= 10.",
+        "commonMistakesToAvoid": "Writing WHERE COUNT(*) >= 10.",
+        "keyPoints": ["WHERE cannot evaluate aggregates", "Use HAVING for group filters"],
+        "codeSnippet": "GROUP BY class_name HAVING COUNT(*) >= 10"
       }
     ],
     "questions": [
       {
         "id": "q-37-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Group students by class' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Group students by class', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM students;"
+        "category": "💡 Interview Notes",
+        "question": "Why do we use GROUP BY in this query?",
+        "whatInterviewerChecks": "Aggregation vs row-level scanning concepts.",
+        "bestReplyScript": "To combine rows with identical class names into single groups so that the aggregate function COUNT(*) can calculate total student enrollments per class rather than listing individual students.",
+        "commonMistakesToAvoid": "Thinking GROUP BY filters rows.",
+        "keyPoints": ["Clusters rows by class_name", "Calculates aggregate counts per group", "Collapses individual tuples into summary rows"],
+        "codeSnippet": "SELECT class_name, COUNT(*) FROM students GROUP BY class_name;"
+      },
+      {
+        "id": "q-37-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(student_id)?",
+        "whatInterviewerChecks": "Handling of NULL values in aggregation.",
+        "bestReplyScript": "COUNT(*) counts every row in the group regardless of whether columns contain NULLs. COUNT(student_id) only counts rows where student_id is NOT NULL. Since student_id is a Primary Key, both yield identical counts, but COUNT(*) is the standard recommendation.",
+        "commonMistakesToAvoid": "Believing COUNT(*) runs slower than COUNT(column).",
+        "keyPoints": ["COUNT(*) counts all rows", "COUNT(col) ignores NULLs", "COUNT(*) is query optimizer standard"],
+        "codeSnippet": "COUNT(*) vs COUNT(student_id)"
+      },
+      {
+        "id": "q-37-3",
+        "category": "💡 Interview Notes",
+        "question": "Can GROUP BY operate on numeric or date columns?",
+        "whatInterviewerChecks": "Data type flexibility of grouping columns.",
+        "bestReplyScript": "Yes. GROUP BY works across text, numeric, date, and timestamp data types (e.g. GROUP BY age groups by age, GROUP BY enrollment_date groups by day).",
+        "commonMistakesToAvoid": "Assuming GROUP BY is limited to string/categorical attributes.",
+        "keyPoints": ["Supports numbers, dates, strings", "Any equatable data type"],
+        "codeSnippet": "GROUP BY age, enrollment_date"
+      },
+      {
+        "id": "q-37-4",
+        "category": "💡 Interview Notes",
+        "question": "Can we group by multiple columns simultaneously?",
+        "whatInterviewerChecks": "Composite grouping knowledge.",
+        "bestReplyScript": "Yes. Writing GROUP BY class_name, city creates a separate group for each unique combination of class and city, counting students per composite bucket.",
+        "commonMistakesToAvoid": "Assuming multiple GROUP BY columns run separate independent queries.",
+        "keyPoints": ["Creates composite groups", "Calculates aggregates per unique tuple (col1, col2)"],
+        "codeSnippet": "SELECT class_name, city, COUNT(*) FROM students GROUP BY class_name, city;"
+      },
+      {
+        "id": "q-37-5",
+        "category": "💡 Interview Notes",
+        "question": "Does GROUP BY guarantee ascending order?",
+        "whatInterviewerChecks": "SQL relational standard execution rules.",
+        "bestReplyScript": "No. ANSI SQL does not guarantee result order after GROUP BY. An explicit ORDER BY class_name clause is required whenever predictable sorting is required.",
+        "commonMistakesToAvoid": "Omitting ORDER BY and assuming the database returns sorted groups.",
+        "keyPoints": ["No sort guarantee", "Always use ORDER BY"],
+        "codeSnippet": "ORDER BY class_name ASC;"
+      },
+      {
+        "id": "q-37-6",
+        "category": "💡 Interview Notes",
+        "question": "Can you use WHERE to filter out classes having fewer than 10 students?",
+        "whatInterviewerChecks": "WHERE vs HAVING query lifecycle rules.",
+        "bestReplyScript": "No. WHERE operates before rows are grouped. To filter groups based on aggregate results like COUNT(*) >= 10, you must use the HAVING clause: HAVING COUNT(*) >= 10.",
+        "commonMistakesToAvoid": "Writing WHERE COUNT(*) >= 10.",
+        "keyPoints": ["WHERE cannot evaluate aggregates", "Use HAVING for group filters"],
+        "codeSnippet": "GROUP BY class_name HAVING COUNT(*) >= 10"
       }
     ],
     "mistakes": [
       {
         "id": "m-37-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY When Projecting Column with COUNT()",
+        "description": "Writing SELECT class_name, COUNT(*) FROM students without GROUP BY.",
+        "badSnippet": "SELECT class_name, COUNT(*) FROM students;",
+        "failingInput": "Students table with multiple classes",
+        "consequence": "❌ Error: misuse of aggregate function COUNT() or non-aggregated column in projection.",
+        "howToFix": "Add GROUP BY class_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically knows to group by class_name."
+      },
+      {
+        "id": "m-37-2",
+        "title": "2. Selecting Extra Non-Aggregated Columns",
+        "description": "Including student_name in SELECT without grouping by it.",
+        "badSnippet": "SELECT class_name, student_name, COUNT(*) FROM students GROUP BY class_name;",
+        "failingInput": "Query execution in standard SQL engine",
+        "consequence": "❌ Error: student_name must appear in the GROUP BY clause or be used in an aggregate function.",
+        "howToFix": "Only select columns that appear in GROUP BY or are enclosed in aggregate functions.",
+        "mistake": "Un-aggregated column in projection",
+        "whyItHappens": "Wanting individual student names alongside summary counts."
+      },
+      {
+        "id": "m-37-3",
+        "title": "3. Using WHERE to Filter by COUNT()",
+        "description": "Attempting to filter classes with WHERE COUNT(*) > 10.",
+        "badSnippet": "SELECT class_name, COUNT(*) FROM students WHERE COUNT(*) > 10 GROUP BY class_name;",
+        "failingInput": "Aggregate condition in WHERE clause",
+        "consequence": "❌ Error: misuse of aggregate: COUNT() not allowed in WHERE.",
+        "howToFix": "Use HAVING: GROUP BY class_name HAVING COUNT(*) > 10.",
+        "mistake": "Filtering aggregate in WHERE clause",
+        "whyItHappens": "Confusing WHERE and HAVING clauses."
+      },
+      {
+        "id": "m-37-4",
+        "title": "4. Omitting ORDER BY",
+        "description": "Expecting grouped classes to return in alphabetical order automatically.",
+        "badSnippet": "SELECT class_name, COUNT(*) FROM students GROUP BY class_name;",
+        "failingInput": "Alphabetical order requirement",
+        "consequence": "Classes may appear in unpredictable hash bucket order.",
+        "howToFix": "Explicitly append ORDER BY class_name ASC.",
+        "mistake": "Missing explicit ORDER BY clause",
+        "whyItHappens": "Assuming GROUP BY guarantees sorted order."
+      },
+      {
+        "id": "m-37-5",
+        "title": "5. Confusing COUNT(*) with SUM()",
+        "description": "Using SUM() instead of COUNT() to calculate class student strength.",
+        "badSnippet": "SELECT class_name, SUM(*) FROM students GROUP BY class_name;",
+        "failingInput": "Calculating student headcount",
+        "consequence": "❌ Error: SUM(*) is invalid syntax; SUM requires a numeric column argument.",
+        "howToFix": "Use COUNT(*) AS student_count to count rows.",
+        "mistake": "Using SUM(*) for row counting",
+        "whyItHappens": "Confusing total headcount with numerical summation."
       }
     ]
   },
   "38": {
     "id": "sql-38",
-    "title": "Count employees per department",
+    "title": "Count Employees per Department",
     "levelNumber": 38,
     "problemId": 38,
-    "problemTitle": "Count employees per department",
+    "problemTitle": "Count Employees per Department",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT department_id, COUNT(*) AS total FROM employees GROUP BY department_id;",
+      "code": "SELECT department_name,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_name\nORDER BY total_employees DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM employees",
+            "Action": "Locate employee table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Count employees per department' and validates schema column names."
+          "explanation": "Reads records from the employees table into memory."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY department_name",
+            "Action": "Group rows by department"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Clusters employees sharing identical department_name into distinct groups."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*)",
+            "Action": "Calculate headcount per group"
+          },
+          "explanation": "Counts total employees in each department, assigning alias total_employees."
+        },
+        {
+          "step": 4,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects department_name and total_employees."
+        },
+        {
+          "step": 5,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY total_employees DESC",
+            "Action": "Sort by headcount descending"
+          },
+          "explanation": "Sorts department rows from highest total_employees down to lowest."
         }
       ]
     },
     "qas": [
       {
         "id": "q-38-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count employees per department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count employees per department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT department_id, COUNT(*) AS total FROM employees GROUP BY department_id;"
+        "category": "💡 Interview Notes",
+        "question": "Why do we use ORDER BY DESC in this query?",
+        "whatInterviewerChecks": "Sorting direction concepts.",
+        "bestReplyScript": "DESC sorts data in descending order (highest to lowest), ensuring departments with the largest headcounts appear first.",
+        "commonMistakesToAvoid": "Using ASC which puts the smallest departments at the top.",
+        "keyPoints": ["DESC = Highest to lowest", "ASC = Lowest to highest", "Surfaces largest groups first"],
+        "codeSnippet": "ORDER BY total_employees DESC;"
+      },
+      {
+        "id": "q-38-2",
+        "category": "💡 Interview Notes",
+        "question": "Can you sort by an aggregate alias like total_employees in ORDER BY?",
+        "whatInterviewerChecks": "Understanding SQL query execution lifecycle.",
+        "bestReplyScript": "Yes. In the SQL logical execution pipeline, ORDER BY executes AFTER the SELECT step. Therefore, column aliases created in SELECT are recognized and valid inside ORDER BY.",
+        "commonMistakesToAvoid": "Thinking column aliases can be used in WHERE or GROUP BY.",
+        "keyPoints": ["Aliases allowed in ORDER BY", "ORDER BY runs after SELECT", "More readable than repeating expressions"],
+        "codeSnippet": "SELECT COUNT(*) AS total_employees ... ORDER BY total_employees DESC;"
+      },
+      {
+        "id": "q-38-3",
+        "category": "💡 Interview Notes",
+        "question": "Can we sort using ORDER BY COUNT(*) DESC directly?",
+        "whatInterviewerChecks": "Alternate standard ANSI sorting syntax.",
+        "bestReplyScript": "Yes. ORDER BY COUNT(*) DESC is fully standard ANSI SQL and produces the identical execution plan. Using the alias total_employees is generally preferred for readability.",
+        "commonMistakesToAvoid": "Believing ORDER BY COUNT(*) DESC computes the aggregate twice.",
+        "keyPoints": ["Identical execution plan", "Direct aggregate sorting is ANSI compliant", "Alias is syntactic sugar"],
+        "codeSnippet": "ORDER BY COUNT(*) DESC;"
+      },
+      {
+        "id": "q-38-4",
+        "category": "💡 Interview Notes",
+        "question": "Can we filter out departments with fewer than 2 employees using WHERE total_employees >= 2?",
+        "whatInterviewerChecks": "WHERE vs HAVING execution boundaries.",
+        "bestReplyScript": "No. WHERE runs before rows are grouped and cannot evaluate aggregate values or aliases. To filter on department size, use HAVING COUNT(*) >= 2.",
+        "commonMistakesToAvoid": "Writing WHERE total_employees >= 2.",
+        "keyPoints": ["WHERE cannot filter group aggregates", "Use HAVING COUNT(*) >= 2"],
+        "codeSnippet": "GROUP BY department_name HAVING COUNT(*) >= 2 ORDER BY total_employees DESC;"
+      },
+      {
+        "id": "q-38-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Deep SQL optimizer and execution order knowledge.",
+        "bestReplyScript": "1. FROM employees -> 2. GROUP BY department_name -> 3. Aggregate COUNT(*) -> 4. SELECT department_name, total_employees -> 5. ORDER BY total_employees DESC.",
+        "commonMistakesToAvoid": "Thinking SELECT executes first because it is written first.",
+        "keyPoints": ["FROM -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-38-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Count employees per department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Count employees per department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT department_id, COUNT(*) AS total FROM employees GROUP BY department_id;"
+        "category": "💡 Interview Notes",
+        "question": "Why do we use ORDER BY DESC in this query?",
+        "whatInterviewerChecks": "Sorting direction concepts.",
+        "bestReplyScript": "DESC sorts data in descending order (highest to lowest), ensuring departments with the largest headcounts appear first.",
+        "commonMistakesToAvoid": "Using ASC which puts the smallest departments at the top.",
+        "keyPoints": ["DESC = Highest to lowest", "ASC = Lowest to highest", "Surfaces largest groups first"],
+        "codeSnippet": "ORDER BY total_employees DESC;"
+      },
+      {
+        "id": "q-38-2",
+        "category": "💡 Interview Notes",
+        "question": "Can you sort by an aggregate alias like total_employees in ORDER BY?",
+        "whatInterviewerChecks": "Understanding SQL query execution lifecycle.",
+        "bestReplyScript": "Yes. In the SQL logical execution pipeline, ORDER BY executes AFTER the SELECT step. Therefore, column aliases created in SELECT are recognized and valid inside ORDER BY.",
+        "commonMistakesToAvoid": "Thinking column aliases can be used in WHERE or GROUP BY.",
+        "keyPoints": ["Aliases allowed in ORDER BY", "ORDER BY runs after SELECT", "More readable than repeating expressions"],
+        "codeSnippet": "SELECT COUNT(*) AS total_employees ... ORDER BY total_employees DESC;"
+      },
+      {
+        "id": "q-38-3",
+        "category": "💡 Interview Notes",
+        "question": "Can we sort using ORDER BY COUNT(*) DESC directly?",
+        "whatInterviewerChecks": "Alternate standard ANSI sorting syntax.",
+        "bestReplyScript": "Yes. ORDER BY COUNT(*) DESC is fully standard ANSI SQL and produces the identical execution plan. Using the alias total_employees is generally preferred for readability.",
+        "commonMistakesToAvoid": "Believing ORDER BY COUNT(*) DESC computes the aggregate twice.",
+        "keyPoints": ["Identical execution plan", "Direct aggregate sorting is ANSI compliant", "Alias is syntactic sugar"],
+        "codeSnippet": "ORDER BY COUNT(*) DESC;"
+      },
+      {
+        "id": "q-38-4",
+        "category": "💡 Interview Notes",
+        "question": "Can we filter out departments with fewer than 2 employees using WHERE total_employees >= 2?",
+        "whatInterviewerChecks": "WHERE vs HAVING execution boundaries.",
+        "bestReplyScript": "No. WHERE runs before rows are grouped and cannot evaluate aggregate values or aliases. To filter on department size, use HAVING COUNT(*) >= 2.",
+        "commonMistakesToAvoid": "Writing WHERE total_employees >= 2.",
+        "keyPoints": ["WHERE cannot filter group aggregates", "Use HAVING COUNT(*) >= 2"],
+        "codeSnippet": "GROUP BY department_name HAVING COUNT(*) >= 2 ORDER BY total_employees DESC;"
+      },
+      {
+        "id": "q-38-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Deep SQL optimizer and execution order knowledge.",
+        "bestReplyScript": "1. FROM employees -> 2. GROUP BY department_name -> 3. Aggregate COUNT(*) -> 4. SELECT department_name, total_employees -> 5. ORDER BY total_employees DESC.",
+        "commonMistakesToAvoid": "Thinking SELECT executes first because it is written first.",
+        "keyPoints": ["FROM -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-38-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY When Counting Rows Per Department",
+        "description": "Selecting department_name and COUNT(*) without a GROUP BY clause.",
+        "badSnippet": "SELECT department_name, COUNT(*) FROM employees;",
+        "failingInput": "Employees table with multiple departments",
+        "consequence": "❌ Error: misuse of aggregate function COUNT() or non-aggregated column in projection.",
+        "howToFix": "Add GROUP BY department_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically partitions departments."
+      },
+      {
+        "id": "m-38-2",
+        "title": "2. Using ASC Instead of DESC for Headcount Ranking",
+        "description": "Writing ORDER BY total_employees ASC when ranking the largest departments first.",
+        "badSnippet": "ORDER BY total_employees ASC;",
+        "failingInput": "Department headcount leaderboard",
+        "consequence": "Smallest departments appear first, inverting the requested ranking order.",
+        "howToFix": "Specify DESC: ORDER BY total_employees DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting that SQL defaults to ASC when no keyword is specified."
+      },
+      {
+        "id": "m-38-3",
+        "title": "3. Omitting ORDER BY Entirely",
+        "description": "Expecting GROUP BY to automatically sort by counts.",
+        "badSnippet": "SELECT department_name, COUNT(*) AS total_employees FROM employees GROUP BY department_name;",
+        "failingInput": "Requirement for largest department first",
+        "consequence": "Rows return in hash-table insertion order rather than headcount order.",
+        "howToFix": "Add ORDER BY total_employees DESC.",
+        "mistake": "Missing ORDER BY clause",
+        "whyItHappens": "Assuming databases automatically order grouped rows."
+      },
+      {
+        "id": "m-38-4",
+        "title": "4. Attempting to Filter Counts in WHERE",
+        "description": "Writing WHERE COUNT(*) > 1 inside the query.",
+        "badSnippet": "SELECT department_name, COUNT(*) AS total_employees FROM employees WHERE COUNT(*) > 1 GROUP BY department_name;",
+        "failingInput": "Filtering group sizes",
+        "consequence": "❌ Error: misuse of aggregate: COUNT() not allowed in WHERE.",
+        "howToFix": "Filter aggregated groups using HAVING: HAVING COUNT(*) > 1.",
+        "mistake": "Aggregate condition in WHERE clause",
+        "whyItHappens": "Confusing pre-group filtering (WHERE) with post-group filtering (HAVING)."
+      },
+      {
+        "id": "m-38-5",
+        "title": "5. Using SUM(*) Instead of COUNT(*)",
+        "description": "Calling SUM(*) to count employees in departments.",
+        "badSnippet": "SELECT department_name, SUM(*) AS total_employees FROM employees GROUP BY department_name;",
+        "failingInput": "Headcount calculation",
+        "consequence": "❌ Error: SUM(*) is invalid SQL syntax. SUM takes a numeric column argument.",
+        "howToFix": "Use COUNT(*) to count total employee rows.",
+        "mistake": "Using SUM(*) for row counting",
+        "whyItHappens": "Confusing row counts with column summation."
       }
     ]
   },
   "39": {
     "id": "sql-39",
-    "title": "Departments having more than 5 employees",
+    "title": "Departments Having More Than 5 Employees",
     "levelNumber": 39,
     "problemId": 39,
-    "problemTitle": "Departments having more than 5 employees",
+    "problemTitle": "Departments Having More Than 5 Employees",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees;",
+      "code": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nHAVING COUNT(*) > 5\nORDER BY employee_count DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM employees",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Departments having more than 5 employees' and validates schema column names."
+          "explanation": "Reads employee records into memory."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY department_name",
+            "Action": "Cluster into department groups"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Partitions employees by department_name."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*)",
+            "Action": "Count rows per group"
+          },
+          "explanation": "Calculates the total headcount for each department group."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "HAVING COUNT(*) > 5",
+            "Action": "Filter out small departments"
+          },
+          "explanation": "Discards groups with 5 or fewer employees, keeping only departments with > 5."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Project columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Formats surviving department_name and employee_count."
+        },
+        {
+          "step": 6,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "ORDER BY employee_count DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Sorts qualified departments from highest employee_count down to lowest."
         }
       ]
     },
     "qas": [
       {
         "id": "q-39-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Departments having more than 5 employees' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Departments having more than 5 employees', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between WHERE and HAVING in SQL?",
+        "whatInterviewerChecks": "Core understanding of query filtering phases.",
+        "bestReplyScript": "WHERE filters individual rows BEFORE they are grouped and aggregated, and cannot use aggregate functions. HAVING filters entire aggregated groups AFTER GROUP BY has evaluated aggregate functions like COUNT().",
+        "commonMistakesToAvoid": "Saying HAVING is just an alias for WHERE.",
+        "keyPoints": ["WHERE filters rows before grouping", "HAVING filters groups after aggregation", "Aggregate functions only allowed in HAVING"],
+        "codeSnippet": "WHERE salary > 50000 ... HAVING COUNT(*) > 5"
+      },
+      {
+        "id": "q-39-2",
+        "category": "💡 Interview Notes",
+        "question": "Why does writing WHERE COUNT(*) > 5 result in an error?",
+        "whatInterviewerChecks": "Logical query execution sequence.",
+        "bestReplyScript": "Because in the database execution pipeline, the WHERE clause evaluates BEFORE GROUP BY occurs. At that stage, groups and aggregate counts do not yet exist, so the query optimizer cannot evaluate COUNT(*).",
+        "commonMistakesToAvoid": "Thinking COUNT(*) is computed on every row during WHERE.",
+        "keyPoints": ["WHERE executes before GROUP BY", "Aggregates do not exist during WHERE", "HAVING must be used"],
+        "codeSnippet": "WHERE COUNT(*) > 5 -- ❌ SQL Error: misuse of aggregate"
+      },
+      {
+        "id": "q-39-3",
+        "category": "💡 Interview Notes",
+        "question": "Can a single query use BOTH WHERE and HAVING?",
+        "whatInterviewerChecks": "Combining pre-filtering and post-filtering.",
+        "bestReplyScript": "Yes. WHERE filters individual rows first (e.g. active employees only: WHERE status = 'Active'), then GROUP BY aggregates those rows, and HAVING filters the resulting group totals (e.g. HAVING COUNT(*) > 5).",
+        "commonMistakesToAvoid": "Thinking HAVING replaces WHERE completely.",
+        "keyPoints": ["WHERE filters rows first", "Reduces dataset before GROUP BY", "HAVING filters aggregate totals"],
+        "codeSnippet": "WHERE status = 'Active' GROUP BY department_name HAVING COUNT(*) > 5"
+      },
+      {
+        "id": "q-39-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING filter using other aggregate functions like AVG(), SUM(), or MAX()?",
+        "whatInterviewerChecks": "Aggregate function versatility in HAVING.",
+        "bestReplyScript": "Yes. HAVING works with any standard SQL aggregate function, such as HAVING AVG(salary) > 60000, HAVING SUM(sales) > 100000, or HAVING MAX(age) < 65.",
+        "commonMistakesToAvoid": "Assuming HAVING only works with COUNT().",
+        "keyPoints": ["Works with all aggregate functions", "HAVING AVG()", "HAVING SUM()", "HAVING MAX()/MIN()"],
+        "codeSnippet": "HAVING AVG(salary) > 60000"
+      },
+      {
+        "id": "q-39-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of a complete SQL query?",
+        "whatInterviewerChecks": "Mastery of relational database architecture.",
+        "bestReplyScript": "The logical sequence is: 1. FROM -> 2. WHERE -> 3. GROUP BY -> 4. HAVING -> 5. SELECT -> 6. DISTINCT -> 7. ORDER BY -> 8. LIMIT.",
+        "commonMistakesToAvoid": "Listing SELECT first because it is written first in query text.",
+        "keyPoints": ["FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT"],
+        "codeSnippet": "FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-39-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Departments having more than 5 employees' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Departments having more than 5 employees', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between WHERE and HAVING in SQL?",
+        "whatInterviewerChecks": "Core understanding of query filtering phases.",
+        "bestReplyScript": "WHERE filters individual rows BEFORE they are grouped and aggregated, and cannot use aggregate functions. HAVING filters entire aggregated groups AFTER GROUP BY has evaluated aggregate functions like COUNT().",
+        "commonMistakesToAvoid": "Saying HAVING is just an alias for WHERE.",
+        "keyPoints": ["WHERE filters rows before grouping", "HAVING filters groups after aggregation", "Aggregate functions only allowed in HAVING"],
+        "codeSnippet": "WHERE salary > 50000 ... HAVING COUNT(*) > 5"
+      },
+      {
+        "id": "q-39-2",
+        "category": "💡 Interview Notes",
+        "question": "Why does writing WHERE COUNT(*) > 5 result in an error?",
+        "whatInterviewerChecks": "Logical query execution sequence.",
+        "bestReplyScript": "Because in the database execution pipeline, the WHERE clause evaluates BEFORE GROUP BY occurs. At that stage, groups and aggregate counts do not yet exist, so the query optimizer cannot evaluate COUNT(*).",
+        "commonMistakesToAvoid": "Thinking COUNT(*) is computed on every row during WHERE.",
+        "keyPoints": ["WHERE executes before GROUP BY", "Aggregates do not exist during WHERE", "HAVING must be used"],
+        "codeSnippet": "WHERE COUNT(*) > 5 -- ❌ SQL Error: misuse of aggregate"
+      },
+      {
+        "id": "q-39-3",
+        "category": "💡 Interview Notes",
+        "question": "Can a single query use BOTH WHERE and HAVING?",
+        "whatInterviewerChecks": "Combining pre-filtering and post-filtering.",
+        "bestReplyScript": "Yes. WHERE filters individual rows first (e.g. active employees only: WHERE status = 'Active'), then GROUP BY aggregates those rows, and HAVING filters the resulting group totals (e.g. HAVING COUNT(*) > 5).",
+        "commonMistakesToAvoid": "Thinking HAVING replaces WHERE completely.",
+        "keyPoints": ["WHERE filters rows first", "Reduces dataset before GROUP BY", "HAVING filters aggregate totals"],
+        "codeSnippet": "WHERE status = 'Active' GROUP BY department_name HAVING COUNT(*) > 5"
+      },
+      {
+        "id": "q-39-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING filter using other aggregate functions like AVG(), SUM(), or MAX()?",
+        "whatInterviewerChecks": "Aggregate function versatility in HAVING.",
+        "bestReplyScript": "Yes. HAVING works with any standard SQL aggregate function, such as HAVING AVG(salary) > 60000, HAVING SUM(sales) > 100000, or HAVING MAX(age) < 65.",
+        "commonMistakesToAvoid": "Assuming HAVING only works with COUNT().",
+        "keyPoints": ["Works with all aggregate functions", "HAVING AVG()", "HAVING SUM()", "HAVING MAX()/MIN()"],
+        "codeSnippet": "HAVING AVG(salary) > 60000"
+      },
+      {
+        "id": "q-39-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of a complete SQL query?",
+        "whatInterviewerChecks": "Mastery of relational database architecture.",
+        "bestReplyScript": "The logical sequence is: 1. FROM -> 2. WHERE -> 3. GROUP BY -> 4. HAVING -> 5. SELECT -> 6. DISTINCT -> 7. ORDER BY -> 8. LIMIT.",
+        "commonMistakesToAvoid": "Listing SELECT first because it is written first in query text.",
+        "keyPoints": ["FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT"],
+        "codeSnippet": "FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-39-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using WHERE Instead of HAVING for Aggregate Conditions",
+        "description": "Attempting to filter with WHERE COUNT(*) > 5.",
+        "badSnippet": "SELECT department_name, COUNT(*) FROM employees WHERE COUNT(*) > 5 GROUP BY department_name;",
+        "failingInput": "Filtering group sizes",
+        "consequence": "❌ Error: misuse of aggregate: COUNT() not allowed in WHERE.",
+        "howToFix": "Move aggregate condition to HAVING: HAVING COUNT(*) > 5.",
+        "mistake": "Using WHERE with aggregate functions",
+        "whyItHappens": "Confusing pre-group row filtering with post-group aggregate filtering."
+      },
+      {
+        "id": "m-39-2",
+        "title": "2. Forgetting GROUP BY Clause",
+        "description": "Using HAVING COUNT(*) > 5 without a GROUP BY department_name clause.",
+        "badSnippet": "SELECT department_name, COUNT(*) FROM employees HAVING COUNT(*) > 5;",
+        "failingInput": "Calculating counts per department",
+        "consequence": "Evaluates table as a single grand total group instead of distinct departments.",
+        "howToFix": "Include GROUP BY department_name before HAVING.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming HAVING implicitly groups rows by selected non-aggregate columns."
+      },
+      {
+        "id": "m-39-3",
+        "title": "3. Placing HAVING Before GROUP BY",
+        "description": "Writing HAVING COUNT(*) > 5 before GROUP BY department_name in the query.",
+        "badSnippet": "SELECT department_name, COUNT(*) FROM employees HAVING COUNT(*) > 5 GROUP BY department_name;",
+        "failingInput": "SQL Parser validation",
+        "consequence": "❌ SQL syntax error near 'HAVING'.",
+        "howToFix": "Always place GROUP BY before HAVING.",
+        "mistake": "Invalid clause ordering",
+        "whyItHappens": "Writing filtering conditions instinctively before grouping clauses."
+      },
+      {
+        "id": "m-39-4",
+        "title": "4. Using Greater Than or Equal (>=) Instead of Strictly Greater Than (>)",
+        "description": "Writing HAVING COUNT(*) >= 5 when asked for departments with more than 5 employees.",
+        "badSnippet": "HAVING COUNT(*) >= 5",
+        "failingInput": "Department with exactly 5 employees",
+        "consequence": "Includes departments with 5 employees when problem asked strictly for > 5.",
+        "howToFix": "Use strict inequality: HAVING COUNT(*) > 5.",
+        "mistake": "Inclusive inequality error",
+        "whyItHappens": "Misinterpreting 'more than 5' as 'at least 5'."
+      },
+      {
+        "id": "m-39-5",
+        "title": "5. Forgetting DESC in ORDER BY",
+        "description": "Writing ORDER BY employee_count without DESC.",
+        "badSnippet": "ORDER BY employee_count;",
+        "failingInput": "Ranking leaderboard requirement",
+        "consequence": "Sorts in ascending order (smallest first), failing the expected output test case.",
+        "howToFix": "Specify DESC: ORDER BY employee_count DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting that SQL defaults to ASC when no keyword is provided."
       }
     ]
   },
   "40": {
     "id": "sql-40",
-    "title": "Departments with average salary > 50,000",
+    "title": "Departments with Average Salary Greater Than ₹50,000",
     "levelNumber": 40,
     "problemId": 40,
-    "problemTitle": "Departments with average salary > 50,000",
+    "problemTitle": "Departments with Average Salary Greater Than ₹50,000",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Google",
       "Microsoft",
       "Meta",
-      "TCS"
+      "Oracle",
+      "Apple",
+      "Uber",
+      "Goldman Sachs",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees;",
+      "code": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nHAVING AVG(salary) > 50000\nORDER BY average_salary DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM employees",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Departments with average salary > 50,000' and validates schema column names."
+          "explanation": "Loads rows from the employees table into memory."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY department_name",
+            "Action": "Cluster into department groups"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Groups employee rows by department_name."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "HAVING AVG(salary) > 50000",
+            "Action": "Filter out lower-paying groups"
+          },
+          "explanation": "Calculates department AVG(salary) and filters out groups with mean salary <= 50,000."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "ROUND(AVG(salary), 2)",
+            "Action": "Round average to 2 decimal places"
+          },
+          "explanation": "Rounds the computed average salary of qualifying departments to 2 decimal places."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects department_name and average_salary."
+        },
+        {
+          "step": 6,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "ORDER BY average_salary DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Sorts qualified departments from highest average salary down to lowest."
         }
       ]
     },
     "qas": [
       {
         "id": "q-40-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Departments with average salary > 50,000' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Departments with average salary > 50,000', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What does AVG() do and how does it handle NULL values?",
+        "whatInterviewerChecks": "Aggregation math and NULL handling.",
+        "bestReplyScript": "AVG() computes the arithmetic mean of numeric values in a column. It automatically ignores NULL values from both the sum numerator and row count denominator, ensuring unrecorded values do not artificially drag down the average.",
+        "commonMistakesToAvoid": "Thinking NULL values are treated as zero in AVG().",
+        "keyPoints": ["Arithmetic mean of numeric values", "Excludes NULL values", "NULL is not treated as 0"],
+        "codeSnippet": "AVG(salary) -- excludes NULL salaries"
+      },
+      {
+        "id": "q-40-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is ROUND() used in financial and payroll reporting?",
+        "whatInterviewerChecks": "Presentation and precision formatting.",
+        "bestReplyScript": "Floating-point division often generates infinite or lengthy repeating decimal fractions (e.g. 98333.333333). ROUND(..., 2) formats numbers into clean, human-readable monetary currency precision with 2 decimal places.",
+        "commonMistakesToAvoid": "Using TRUNCATE when rounding to the nearest cent is expected.",
+        "keyPoints": ["Monetary precision", "Rounds to 2 decimal places", "Prevents floating-point display artifacts"],
+        "codeSnippet": "ROUND(AVG(salary), 2)"
+      },
+      {
+        "id": "q-40-3",
+        "category": "💡 Interview Notes",
+        "question": "Can we filter using HAVING average_salary > 50000 using the column alias?",
+        "whatInterviewerChecks": "Execution order of HAVING vs SELECT.",
+        "bestReplyScript": "In standard ANSI SQL, HAVING evaluates BEFORE SELECT. Therefore, aliases declared in SELECT are not technically available in HAVING. While some SQL engines (like MySQL/SQLite) permit it, standard practice in production code is writing HAVING AVG(salary) > 50000.",
+        "commonMistakesToAvoid": "Believing column aliases are universally supported in HAVING across all DBMS engines.",
+        "keyPoints": ["HAVING evaluates before SELECT", "Standard ANSI SQL uses HAVING AVG(salary) > 50000", "Avoid vendor-specific alias reliance in HAVING"],
+        "codeSnippet": "HAVING AVG(salary) > 50000"
+      },
+      {
+        "id": "q-40-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING use AVG() without a GROUP BY clause?",
+        "whatInterviewerChecks": "HAVING semantics without explicit grouping.",
+        "bestReplyScript": "Yes. When used without GROUP BY, HAVING treats the entire table as a single grand total group. If the company-wide average salary exceeds 50000, it returns one row; otherwise, it returns an empty result set.",
+        "commonMistakesToAvoid": "Assuming HAVING is syntactically illegal without GROUP BY.",
+        "keyPoints": ["Valid without GROUP BY", "Treats entire table as one group", "Uncommon in real reporting"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees HAVING AVG(salary) > 50000;"
+      },
+      {
+        "id": "q-40-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the complete execution pipeline for this query?",
+        "whatInterviewerChecks": "Relational query optimizer evaluation stages.",
+        "bestReplyScript": "1. FROM employees -> 2. GROUP BY department_name -> 3. Aggregate AVG(salary) -> 4. HAVING AVG(salary) > 50000 -> 5. SELECT department_name, ROUND(AVG(salary), 2) -> 6. ORDER BY average_salary DESC.",
+        "commonMistakesToAvoid": "Thinking ROUND() happens before HAVING filtering.",
+        "keyPoints": ["FROM -> GROUP BY -> AVG -> HAVING -> SELECT & ROUND -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-40-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Departments with average salary > 50,000' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Departments with average salary > 50,000', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What does AVG() do and how does it handle NULL values?",
+        "whatInterviewerChecks": "Aggregation math and NULL handling.",
+        "bestReplyScript": "AVG() computes the arithmetic mean of numeric values in a column. It automatically ignores NULL values from both the sum numerator and row count denominator, ensuring unrecorded values do not artificially drag down the average.",
+        "commonMistakesToAvoid": "Thinking NULL values are treated as zero in AVG().",
+        "keyPoints": ["Arithmetic mean of numeric values", "Excludes NULL values", "NULL is not treated as 0"],
+        "codeSnippet": "AVG(salary) -- excludes NULL salaries"
+      },
+      {
+        "id": "q-40-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is ROUND() used in financial and payroll reporting?",
+        "whatInterviewerChecks": "Presentation and precision formatting.",
+        "bestReplyScript": "Floating-point division often generates infinite or lengthy repeating decimal fractions (e.g. 98333.333333). ROUND(..., 2) formats numbers into clean, human-readable monetary currency precision with 2 decimal places.",
+        "commonMistakesToAvoid": "Using TRUNCATE when rounding to the nearest cent is expected.",
+        "keyPoints": ["Monetary precision", "Rounds to 2 decimal places", "Prevents floating-point display artifacts"],
+        "codeSnippet": "ROUND(AVG(salary), 2)"
+      },
+      {
+        "id": "q-40-3",
+        "category": "💡 Interview Notes",
+        "question": "Can we filter using HAVING average_salary > 50000 using the column alias?",
+        "whatInterviewerChecks": "Execution order of HAVING vs SELECT.",
+        "bestReplyScript": "In standard ANSI SQL, HAVING evaluates BEFORE SELECT. Therefore, aliases declared in SELECT are not technically available in HAVING. While some SQL engines (like MySQL/SQLite) permit it, standard practice in production code is writing HAVING AVG(salary) > 50000.",
+        "commonMistakesToAvoid": "Believing column aliases are universally supported in HAVING across all DBMS engines.",
+        "keyPoints": ["HAVING evaluates before SELECT", "Standard ANSI SQL uses HAVING AVG(salary) > 50000", "Avoid vendor-specific alias reliance in HAVING"],
+        "codeSnippet": "HAVING AVG(salary) > 50000"
+      },
+      {
+        "id": "q-40-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING use AVG() without a GROUP BY clause?",
+        "whatInterviewerChecks": "HAVING semantics without explicit grouping.",
+        "bestReplyScript": "Yes. When used without GROUP BY, HAVING treats the entire table as a single grand total group. If the company-wide average salary exceeds 50000, it returns one row; otherwise, it returns an empty result set.",
+        "commonMistakesToAvoid": "Assuming HAVING is syntactically illegal without GROUP BY.",
+        "keyPoints": ["Valid without GROUP BY", "Treats entire table as one group", "Uncommon in real reporting"],
+        "codeSnippet": "SELECT AVG(salary) FROM employees HAVING AVG(salary) > 50000;"
+      },
+      {
+        "id": "q-40-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the complete execution pipeline for this query?",
+        "whatInterviewerChecks": "Relational query optimizer evaluation stages.",
+        "bestReplyScript": "1. FROM employees -> 2. GROUP BY department_name -> 3. Aggregate AVG(salary) -> 4. HAVING AVG(salary) > 50000 -> 5. SELECT department_name, ROUND(AVG(salary), 2) -> 6. ORDER BY average_salary DESC.",
+        "commonMistakesToAvoid": "Thinking ROUND() happens before HAVING filtering.",
+        "keyPoints": ["FROM -> GROUP BY -> AVG -> HAVING -> SELECT & ROUND -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-40-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using WHERE Instead of HAVING for AVG(salary)",
+        "description": "Attempting to filter on aggregate function with WHERE AVG(salary) > 50000.",
+        "badSnippet": "SELECT department_name, AVG(salary) FROM employees WHERE AVG(salary) > 50000 GROUP BY department_name;",
+        "failingInput": "Query compiler / parser",
+        "consequence": "❌ Error: misuse of aggregate: AVG() not allowed in WHERE.",
+        "howToFix": "Filter groups using HAVING: HAVING AVG(salary) > 50000.",
+        "mistake": "Aggregate filter in WHERE",
+        "whyItHappens": "Assuming all filtering in SQL belongs in the WHERE clause."
+      },
+      {
+        "id": "m-40-2",
+        "title": "2. Forgetting GROUP BY department_name",
+        "description": "Selecting department_name with AVG(salary) without grouping.",
+        "badSnippet": "SELECT department_name, AVG(salary) FROM employees HAVING AVG(salary) > 50000;",
+        "failingInput": "Aggregating across multiple departments",
+        "consequence": "Returns an arbitrary single department with the overall company average salary.",
+        "howToFix": "Add GROUP BY department_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Thinking SQL automatically groups by non-aggregated columns."
+      },
+      {
+        "id": "m-40-3",
+        "title": "3. Forgetting ROUND(..., 2)",
+        "description": "Omitting the ROUND() function on the calculated average.",
+        "badSnippet": "SELECT department_name, AVG(salary) AS average_salary FROM employees ...",
+        "failingInput": "Formatted financial report",
+        "consequence": "Output yields long floating-point decimals (e.g. 98333.33333333333).",
+        "howToFix": "Wrap AVG in ROUND: ROUND(AVG(salary), 2).",
+        "mistake": "Missing decimal rounding",
+        "whyItHappens": "Neglecting presentation requirements in problem statements."
+      },
+      {
+        "id": "m-40-4",
+        "title": "4. Using ASC Instead of DESC for Salary Ranking",
+        "description": "Writing ORDER BY average_salary without DESC.",
+        "badSnippet": "ORDER BY average_salary;",
+        "failingInput": "Highest average salary leaderboard",
+        "consequence": "Sorts in ascending order, displaying lowest-paying departments first.",
+        "howToFix": "Specify DESC: ORDER BY average_salary DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting SQL defaults to ASC."
+      },
+      {
+        "id": "m-40-5",
+        "title": "5. Using COUNT() Instead of AVG()",
+        "description": "Writing HAVING COUNT(salary) > 50000 instead of AVG(salary).",
+        "badSnippet": "HAVING COUNT(salary) > 50000",
+        "failingInput": "Average compensation threshold",
+        "consequence": "Counts employee rows instead of averaging salary values, returning 0 rows.",
+        "howToFix": "Use AVG(salary): HAVING AVG(salary) > 50000.",
+        "mistake": "Wrong aggregate function",
+        "whyItHappens": "Copying pattern from previous COUNT() exercises."
       }
     ]
   },
   "41": {
     "id": "sql-41",
-    "title": "Cities having more than 10 customers",
+    "title": "Cities Having More Than 10 Customers",
     "levelNumber": 41,
     "problemId": 41,
-    "problemTitle": "Cities having more than 10 customers",
+    "problemTitle": "Cities Having More Than 10 Customers",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
+      "Flipkart",
+      "Swiggy",
+      "Zomato",
       "Google",
       "Microsoft",
+      "Uber",
       "Meta",
-      "TCS"
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM customers;",
+      "code": "SELECT city,\n       COUNT(*) AS customer_count\nFROM customers\nGROUP BY city\nHAVING COUNT(*) > 10\nORDER BY customer_count DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM customers",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Cities having more than 10 customers' and validates schema column names."
+          "explanation": "Reads all customer rows into memory."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY city",
+            "Action": "Partition by municipality"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Groups customer records by distinct city."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*)",
+            "Action": "Count customers per city"
+          },
+          "explanation": "Calculates the total customer count in each city group."
+        },
+        {
+          "step": 4,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "HAVING COUNT(*) > 10",
+            "Action": "Filter out small cities"
+          },
+          "explanation": "Discards city groups with 10 or fewer customers, retaining only cities with > 10."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects city and customer_count."
+        },
+        {
+          "step": 6,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "ORDER BY customer_count DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Sorts qualified cities from highest customer count down to lowest."
         }
       ]
     },
     "qas": [
       {
         "id": "q-41-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Cities having more than 10 customers' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Cities having more than 10 customers', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM customers;"
+        "category": "💡 Interview Notes",
+        "question": "Why must HAVING be used instead of WHERE in this query?",
+        "whatInterviewerChecks": "Core understanding of SQL clause execution sequence.",
+        "bestReplyScript": "Because COUNT(*) is an aggregate metric calculated after grouping. In SQL execution flow, WHERE runs BEFORE grouping happens and cannot evaluate aggregate totals. HAVING runs AFTER GROUP BY and is designed to filter aggregated groups.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) can be evaluated inside WHERE.",
+        "keyPoints": ["WHERE runs before grouping", "HAVING runs after aggregation", "Aggregate functions only permitted in HAVING"],
+        "codeSnippet": "GROUP BY city HAVING COUNT(*) > 10"
+      },
+      {
+        "id": "q-41-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(customer_id)?",
+        "whatInterviewerChecks": "NULL semantics in aggregate counting.",
+        "bestReplyScript": "COUNT(*) counts all rows in each group regardless of whether columns contain NULL values. COUNT(customer_id) counts only rows where customer_id is NOT NULL. When customer_id is a non-null Primary Key, both yield identical results and execution plans.",
+        "commonMistakesToAvoid": "Believing COUNT(*) is always slower than COUNT(column).",
+        "keyPoints": ["COUNT(*) counts all rows", "COUNT(col) ignores NULLs", "Both identical on Primary Keys"],
+        "codeSnippet": "COUNT(*) vs COUNT(customer_id)"
+      },
+      {
+        "id": "q-41-3",
+        "category": "💡 Interview Notes",
+        "question": "Can we filter out inactive customers before grouping by city?",
+        "whatInterviewerChecks": "Combining WHERE and HAVING in one query.",
+        "bestReplyScript": "Yes! We can write WHERE status = 'Active' before GROUP BY city. WHERE filters individual customer rows first (reducing memory), and HAVING COUNT(*) > 10 filters the aggregated city counts afterwards.",
+        "commonMistakesToAvoid": "Thinking HAVING eliminates the need for WHERE.",
+        "keyPoints": ["WHERE filters input rows first", "HAVING filters collapsed groups", "Combining both optimizes performance"],
+        "codeSnippet": "WHERE status = 'Active' GROUP BY city HAVING COUNT(*) > 10"
+      },
+      {
+        "id": "q-41-4",
+        "category": "💡 Interview Notes",
+        "question": "How does GROUP BY handle rows with NULL in the city column?",
+        "whatInterviewerChecks": "Handling of NULL values in grouping.",
+        "bestReplyScript": "In SQL, all rows with NULL in the grouping column are clustered together into a single group with city = NULL. If that NULL group has > 10 rows, it would be returned unless filtered out via WHERE city IS NOT NULL.",
+        "commonMistakesToAvoid": "Thinking each NULL gets its own separate group.",
+        "keyPoints": ["All NULLs clustered into one group", "Treated as equal for GROUP BY", "Use WHERE city IS NOT NULL if unwanted"],
+        "codeSnippet": "WHERE city IS NOT NULL"
+      },
+      {
+        "id": "q-41-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Logical database processing pipeline.",
+        "bestReplyScript": "1. FROM customers -> 2. GROUP BY city -> 3. Aggregate COUNT(*) -> 4. HAVING COUNT(*) > 10 -> 5. SELECT city, customer_count -> 6. ORDER BY customer_count DESC.",
+        "commonMistakesToAvoid": "Listing SELECT before GROUP BY or HAVING.",
+        "keyPoints": ["FROM -> GROUP BY -> AGGREGATE -> HAVING -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-41-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Cities having more than 10 customers' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Cities having more than 10 customers', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM customers;"
+        "category": "💡 Interview Notes",
+        "question": "Why must HAVING be used instead of WHERE in this query?",
+        "whatInterviewerChecks": "Core understanding of SQL clause execution sequence.",
+        "bestReplyScript": "Because COUNT(*) is an aggregate metric calculated after grouping. In SQL execution flow, WHERE runs BEFORE grouping happens and cannot evaluate aggregate totals. HAVING runs AFTER GROUP BY and is designed to filter aggregated groups.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) can be evaluated inside WHERE.",
+        "keyPoints": ["WHERE runs before grouping", "HAVING runs after aggregation", "Aggregate functions only permitted in HAVING"],
+        "codeSnippet": "GROUP BY city HAVING COUNT(*) > 10"
+      },
+      {
+        "id": "q-41-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(customer_id)?",
+        "whatInterviewerChecks": "NULL semantics in aggregate counting.",
+        "bestReplyScript": "COUNT(*) counts all rows in each group regardless of whether columns contain NULL values. COUNT(customer_id) counts only rows where customer_id is NOT NULL. When customer_id is a non-null Primary Key, both yield identical results and execution plans.",
+        "commonMistakesToAvoid": "Believing COUNT(*) is always slower than COUNT(column).",
+        "keyPoints": ["COUNT(*) counts all rows", "COUNT(col) ignores NULLs", "Both identical on Primary Keys"],
+        "codeSnippet": "COUNT(*) vs COUNT(customer_id)"
+      },
+      {
+        "id": "q-41-3",
+        "category": "💡 Interview Notes",
+        "question": "Can we filter out inactive customers before grouping by city?",
+        "whatInterviewerChecks": "Combining WHERE and HAVING in one query.",
+        "bestReplyScript": "Yes! We can write WHERE status = 'Active' before GROUP BY city. WHERE filters individual customer rows first (reducing memory), and HAVING COUNT(*) > 10 filters the aggregated city counts afterwards.",
+        "commonMistakesToAvoid": "Thinking HAVING eliminates the need for WHERE.",
+        "keyPoints": ["WHERE filters input rows first", "HAVING filters collapsed groups", "Combining both optimizes performance"],
+        "codeSnippet": "WHERE status = 'Active' GROUP BY city HAVING COUNT(*) > 10"
+      },
+      {
+        "id": "q-41-4",
+        "category": "💡 Interview Notes",
+        "question": "How does GROUP BY handle rows with NULL in the city column?",
+        "whatInterviewerChecks": "Handling of NULL values in grouping.",
+        "bestReplyScript": "In SQL, all rows with NULL in the grouping column are clustered together into a single group with city = NULL. If that NULL group has > 10 rows, it would be returned unless filtered out via WHERE city IS NOT NULL.",
+        "commonMistakesToAvoid": "Thinking each NULL gets its own separate group.",
+        "keyPoints": ["All NULLs clustered into one group", "Treated as equal for GROUP BY", "Use WHERE city IS NOT NULL if unwanted"],
+        "codeSnippet": "WHERE city IS NOT NULL"
+      },
+      {
+        "id": "q-41-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Logical database processing pipeline.",
+        "bestReplyScript": "1. FROM customers -> 2. GROUP BY city -> 3. Aggregate COUNT(*) -> 4. HAVING COUNT(*) > 10 -> 5. SELECT city, customer_count -> 6. ORDER BY customer_count DESC.",
+        "commonMistakesToAvoid": "Listing SELECT before GROUP BY or HAVING.",
+        "keyPoints": ["FROM -> GROUP BY -> AGGREGATE -> HAVING -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-41-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using WHERE with COUNT()",
+        "description": "Attempting to filter customer counts with WHERE COUNT(*) > 10.",
+        "badSnippet": "SELECT city, COUNT(*) FROM customers WHERE COUNT(*) > 10 GROUP BY city;",
+        "failingInput": "SQL query parser",
+        "consequence": "❌ Error: misuse of aggregate: COUNT() not allowed in WHERE.",
+        "howToFix": "Use HAVING COUNT(*) > 10.",
+        "mistake": "Aggregate filter in WHERE clause",
+        "whyItHappens": "Forgetting WHERE executes before rows are grouped."
+      },
+      {
+        "id": "m-41-2",
+        "title": "2. Forgetting GROUP BY city",
+        "description": "Calling COUNT(*) with city without a GROUP BY clause.",
+        "badSnippet": "SELECT city, COUNT(*) FROM customers HAVING COUNT(*) > 10;",
+        "failingInput": "Multi-city dataset",
+        "consequence": "Returns an arbitrary single city with total table count instead of city-by-city counts.",
+        "howToFix": "Add GROUP BY city before HAVING.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically infers grouping from selected dimensions."
+      },
+      {
+        "id": "m-41-3",
+        "title": "3. Using >= 10 Instead of Strict > 10",
+        "description": "Writing HAVING COUNT(*) >= 10 when the requirement asks for more than 10 customers.",
+        "badSnippet": "HAVING COUNT(*) >= 10",
+        "failingInput": "City with exactly 10 customers",
+        "consequence": "Includes cities with 10 customers, causing test case failure.",
+        "howToFix": "Use strict inequality: HAVING COUNT(*) > 10.",
+        "mistake": "Inclusive inequality error",
+        "whyItHappens": "Misinterpreting 'more than 10' as 'at least 10'."
+      },
+      {
+        "id": "m-41-4",
+        "title": "4. Omitting DESC in ORDER BY",
+        "description": "Writing ORDER BY customer_count without the DESC keyword.",
+        "badSnippet": "ORDER BY customer_count;",
+        "failingInput": "Top cities leaderboard requirement",
+        "consequence": "Sorts in ascending order, showing the smallest qualifying city first.",
+        "howToFix": "Add DESC: ORDER BY customer_count DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting that ORDER BY defaults to ASC."
+      },
+      {
+        "id": "m-41-5",
+        "title": "5. Sorting by Un-aliased Non-Grouped Column",
+        "description": "Attempting to sort by customer_name or customer_id after grouping by city.",
+        "badSnippet": "ORDER BY customer_name DESC;",
+        "failingInput": "Grouped query execution",
+        "consequence": "Fails or returns nondeterministic results because customer_name is collapsed.",
+        "howToFix": "Sort by the aggregate column: ORDER BY customer_count DESC.",
+        "mistake": "Sorting by non-grouped attribute",
+        "whyItHappens": "Confusing row-level attributes with group-level metrics."
       }
     ]
   },
   "42": {
     "id": "sql-42",
-    "title": "Product categories with highest sales",
+    "title": "Product Categories with Highest Sales",
     "levelNumber": 42,
     "problemId": 42,
-    "problemTitle": "Product categories with highest sales",
+    "problemTitle": "Product Categories with Highest Sales",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
+      "Flipkart",
+      "Walmart",
+      "Target",
       "Google",
       "Microsoft",
+      "Apple",
       "Meta",
-      "TCS"
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM products ORDER BY 1 DESC LIMIT 5;",
+      "code": "SELECT category_name,\n       SUM(sales_amount) AS total_sales\nFROM sales\nGROUP BY category_name\nORDER BY total_sales DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM sales",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Product categories with highest sales' and validates schema column names."
+          "explanation": "Scans all transaction records from the sales table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY category_name",
+            "Action": "Partition into merchandise categories"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Clusters transaction records by unique product category (Electronics, Clothing, Footwear)."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "SUM(sales_amount)",
+            "Action": "Aggregate revenue totals"
+          },
+          "explanation": "Adds together all sales_amount values in each category bucket."
+        },
+        {
+          "step": 4,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects category_name and the aggregated total_sales."
+        },
+        {
+          "step": 5,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY total_sales DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Ranks categories from highest sales revenue down to lowest."
         }
       ]
     },
     "qas": [
       {
         "id": "q-42-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Product categories with highest sales' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Product categories with highest sales', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM products ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "What does SUM() do and how does it handle NULL values?",
+        "whatInterviewerChecks": "Aggregation math and NULL handling.",
+        "bestReplyScript": "SUM() calculates the mathematical total of all non-NULL numeric values in a column. It automatically ignores NULLs. If all rows in a group are NULL, or if the table is empty, SUM() returns NULL (unlike COUNT() which returns 0).",
+        "commonMistakesToAvoid": "Assuming SUM() treats NULLs as 0 or returns 0 on an empty set.",
+        "keyPoints": ["Adds numeric values", "Ignores NULL rows", "Returns NULL if all values in group are NULL"],
+        "codeSnippet": "SUM(sales_amount) -- ignores NULLs"
+      },
+      {
+        "id": "q-42-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the key difference between COUNT() and SUM()?",
+        "whatInterviewerChecks": "Core distinctions between row counting and numeric summation.",
+        "bestReplyScript": "COUNT() calculates the total quantity of items or rows (e.g. 5 orders). SUM() adds together the actual values stored inside numeric columns (e.g. ₹85,000 total sales revenue).",
+        "commonMistakesToAvoid": "Using COUNT() when financial or quantitative summation is requested.",
+        "keyPoints": ["COUNT() counts rows/occurrences", "SUM() totals numeric quantities", "COUNT() works on all types, SUM() only numeric"],
+        "codeSnippet": "COUNT(order_id) vs SUM(order_amount)"
+      },
+      {
+        "id": "q-42-3",
+        "category": "💡 Interview Notes",
+        "question": "Can SUM() be used on VARCHAR or DATE columns?",
+        "whatInterviewerChecks": "Data type constraints for aggregate functions.",
+        "bestReplyScript": "No. In relational databases, SUM() strictly requires numeric operands (INTEGER, REAL, FLOAT, DECIMAL). Attempting to pass text or dates causes an invalid operand type or syntax error.",
+        "commonMistakesToAvoid": "Thinking SQL will automatically cast strings to numbers inside SUM().",
+        "keyPoints": ["Strictly numeric operands", "Fails on VARCHAR/DATE", "Must CAST() explicitly if numbers stored as text"],
+        "codeSnippet": "SUM(CAST(amount_str AS REAL))"
+      },
+      {
+        "id": "q-42-4",
+        "category": "💡 Interview Notes",
+        "question": "Why is ORDER BY total_sales DESC allowed if SELECT executes after WHERE/GROUP BY?",
+        "whatInterviewerChecks": "Understanding of query execution lifecycle.",
+        "bestReplyScript": "In the standard SQL execution pipeline, ORDER BY evaluates at the very end — AFTER the SELECT clause has already projected columns and assigned aliases. Therefore, column aliases created in SELECT (like total_sales) are fully accessible in ORDER BY.",
+        "commonMistakesToAvoid": "Thinking ORDER BY cannot use column aliases created in SELECT.",
+        "keyPoints": ["ORDER BY executes after SELECT", "Column aliases fully accessible", "Clean and readable"],
+        "codeSnippet": "SELECT ... AS total_sales ... ORDER BY total_sales DESC;"
+      },
+      {
+        "id": "q-42-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the complete execution pipeline for this query?",
+        "whatInterviewerChecks": "Mastery of query evaluation order.",
+        "bestReplyScript": "1. FROM sales -> 2. GROUP BY category_name -> 3. Aggregate SUM(sales_amount) -> 4. SELECT category_name, total_sales -> 5. ORDER BY total_sales DESC.",
+        "commonMistakesToAvoid": "Thinking sorting happens before grouping or summing.",
+        "keyPoints": ["FROM -> GROUP BY -> SUM() -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-42-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Product categories with highest sales' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Product categories with highest sales', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM products ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "What does SUM() do and how does it handle NULL values?",
+        "whatInterviewerChecks": "Aggregation math and NULL handling.",
+        "bestReplyScript": "SUM() calculates the mathematical total of all non-NULL numeric values in a column. It automatically ignores NULLs. If all rows in a group are NULL, or if the table is empty, SUM() returns NULL (unlike COUNT() which returns 0).",
+        "commonMistakesToAvoid": "Assuming SUM() treats NULLs as 0 or returns 0 on an empty set.",
+        "keyPoints": ["Adds numeric values", "Ignores NULL rows", "Returns NULL if all values in group are NULL"],
+        "codeSnippet": "SUM(sales_amount) -- ignores NULLs"
+      },
+      {
+        "id": "q-42-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the key difference between COUNT() and SUM()?",
+        "whatInterviewerChecks": "Core distinctions between row counting and numeric summation.",
+        "bestReplyScript": "COUNT() calculates the total quantity of items or rows (e.g. 5 orders). SUM() adds together the actual values stored inside numeric columns (e.g. ₹85,000 total sales revenue).",
+        "commonMistakesToAvoid": "Using COUNT() when financial or quantitative summation is requested.",
+        "keyPoints": ["COUNT() counts rows/occurrences", "SUM() totals numeric quantities", "COUNT() works on all types, SUM() only numeric"],
+        "codeSnippet": "COUNT(order_id) vs SUM(order_amount)"
+      },
+      {
+        "id": "q-42-3",
+        "category": "💡 Interview Notes",
+        "question": "Can SUM() be used on VARCHAR or DATE columns?",
+        "whatInterviewerChecks": "Data type constraints for aggregate functions.",
+        "bestReplyScript": "No. In relational databases, SUM() strictly requires numeric operands (INTEGER, REAL, FLOAT, DECIMAL). Attempting to pass text or dates causes an invalid operand type or syntax error.",
+        "commonMistakesToAvoid": "Thinking SQL will automatically cast strings to numbers inside SUM().",
+        "keyPoints": ["Strictly numeric operands", "Fails on VARCHAR/DATE", "Must CAST() explicitly if numbers stored as text"],
+        "codeSnippet": "SUM(CAST(amount_str AS REAL))"
+      },
+      {
+        "id": "q-42-4",
+        "category": "💡 Interview Notes",
+        "question": "Why is ORDER BY total_sales DESC allowed if SELECT executes after WHERE/GROUP BY?",
+        "whatInterviewerChecks": "Understanding of query execution lifecycle.",
+        "bestReplyScript": "In the standard SQL execution pipeline, ORDER BY evaluates at the very end — AFTER the SELECT clause has already projected columns and assigned aliases. Therefore, column aliases created in SELECT (like total_sales) are fully accessible in ORDER BY.",
+        "commonMistakesToAvoid": "Thinking ORDER BY cannot use column aliases created in SELECT.",
+        "keyPoints": ["ORDER BY executes after SELECT", "Column aliases fully accessible", "Clean and readable"],
+        "codeSnippet": "SELECT ... AS total_sales ... ORDER BY total_sales DESC;"
+      },
+      {
+        "id": "q-42-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the complete execution pipeline for this query?",
+        "whatInterviewerChecks": "Mastery of query evaluation order.",
+        "bestReplyScript": "1. FROM sales -> 2. GROUP BY category_name -> 3. Aggregate SUM(sales_amount) -> 4. SELECT category_name, total_sales -> 5. ORDER BY total_sales DESC.",
+        "commonMistakesToAvoid": "Thinking sorting happens before grouping or summing.",
+        "keyPoints": ["FROM -> GROUP BY -> SUM() -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-42-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY category_name",
+        "description": "Calling SUM() alongside category_name without a GROUP BY clause.",
+        "badSnippet": "SELECT category_name, SUM(sales_amount) FROM sales;",
+        "failingInput": "Multi-category dataset",
+        "consequence": "Collapses the entire table into one row with total company sales and an arbitrary category name.",
+        "howToFix": "Add GROUP BY category_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically detects and groups by non-aggregated columns."
+      },
+      {
+        "id": "m-42-2",
+        "title": "2. Using ASC Instead of DESC for Revenue Leaderboard",
+        "description": "Writing ORDER BY total_sales without DESC keyword.",
+        "badSnippet": "ORDER BY total_sales;",
+        "failingInput": "Top grossing categories requirement",
+        "consequence": "Sorts in ascending order, displaying lowest selling categories first.",
+        "howToFix": "Specify DESC: ORDER BY total_sales DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting SQL defaults to ASC when no direction is specified."
+      },
+      {
+        "id": "m-42-3",
+        "title": "3. Using COUNT() Instead of SUM()",
+        "description": "Writing COUNT(sales_amount) instead of SUM(sales_amount).",
+        "badSnippet": "SELECT category_name, COUNT(sales_amount) AS total_sales FROM sales GROUP BY category_name;",
+        "failingInput": "Financial revenue calculation",
+        "consequence": "Counts transactions rather than dollar amounts, producing misleading metrics.",
+        "howToFix": "Use SUM(sales_amount) to add numeric values.",
+        "mistake": "Wrong aggregate function",
+        "whyItHappens": "Confusing volume counting with monetary accumulation."
+      },
+      {
+        "id": "m-42-4",
+        "title": "4. Spelling / Syntax Typo in SUM()",
+        "description": "Typing SMU(sales_amount) or SUM [sales_amount].",
+        "badSnippet": "SELECT category_name, SMU(sales_amount) FROM sales;",
+        "failingInput": "SQL query parser",
+        "consequence": "❌ Syntax error: no such function SMU.",
+        "howToFix": "Use standard function syntax: SUM(sales_amount).",
+        "mistake": "Function syntax typo",
+        "whyItHappens": "Typographical slip during fast querying."
+      },
+      {
+        "id": "m-42-5",
+        "title": "5. Applying SUM() to Non-Numeric Columns",
+        "description": "Writing SUM(category_name) or SUM(region).",
+        "badSnippet": "SELECT SUM(category_name) FROM sales;",
+        "failingInput": "String data type",
+        "consequence": "Returns 0.0 in SQLite or raises a fatal operand type mismatch in strict databases (PostgreSQL/MySQL).",
+        "howToFix": "Only apply SUM() to numeric columns like sales_amount.",
+        "mistake": "Invalid data type for aggregation",
+        "whyItHappens": "Misunderstanding mathematical function requirements."
       }
     ]
   },
   "43": {
     "id": "sql-43",
-    "title": "Customers with more than 5 orders",
+    "title": "Customers with More Than 5 Orders",
     "levelNumber": 43,
     "problemId": 43,
-    "problemTitle": "Customers with more than 5 orders",
+    "problemTitle": "Customers with More Than 5 Orders",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
+      "Flipkart",
+      "Uber",
+      "DoorDash",
       "Google",
       "Microsoft",
+      "Shopify",
       "Meta",
-      "TCS"
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM orders;",
+      "code": "SELECT customer_id,\n       customer_name,\n       COUNT(*) AS total_orders\nFROM orders\nGROUP BY customer_id, customer_name\nHAVING COUNT(*) > 5\nORDER BY total_orders DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM orders",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Customers with more than 5 orders' and validates schema column names."
+          "explanation": "Scans all order transactions from the orders table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 5,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY customer_id, customer_name",
+            "Action": "Partition by shopper identity"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Clusters order transactions by both customer_id and customer_name."
         },
         {
           "step": 3,
+          "lineNumber": 3,
+          "vars": {
+            "Phase": "COUNT(*)",
+            "Action": "Aggregate order counts"
+          },
+          "explanation": "Counts total orders placed in each customer bucket."
+        },
+        {
+          "step": 4,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "HAVING COUNT(*) > 5",
+            "Action": "Filter out casual shoppers"
+          },
+          "explanation": "Discards customer groups with 5 or fewer orders, keeping only shoppers with strictly > 5."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects customer_id, customer_name, and total_orders."
+        },
+        {
+          "step": 6,
+          "lineNumber": 7,
+          "vars": {
+            "Phase": "ORDER BY total_orders DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Ranks qualifying customers from highest order count to lowest."
         }
       ]
     },
     "qas": [
       {
         "id": "q-43-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Customers with more than 5 orders' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Customers with more than 5 orders', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM orders;"
+        "category": "💡 Interview Notes",
+        "question": "Why do we GROUP BY both customer_id and customer_name?",
+        "whatInterviewerChecks": "ANSI SQL standard grouping rules and non-aggregated SELECT columns.",
+        "bestReplyScript": "In standard ANSI SQL, every non-aggregated column appearing in the SELECT clause must be included in the GROUP BY clause. Because we project both customer_id and customer_name, we must list both in GROUP BY to ensure query portability and prevent ambiguous multi-row value errors across strict database engines like PostgreSQL, Oracle, and SQL Server.",
+        "commonMistakesToAvoid": "Omitting customer_name from GROUP BY and relying on non-standard MySQL/SQLite loose grouping modes.",
+        "keyPoints": ["ANSI SQL requirement", "All non-aggregate SELECT columns must be in GROUP BY", "Ensures strict cross-database compatibility"],
+        "codeSnippet": "GROUP BY customer_id, customer_name"
+      },
+      {
+        "id": "q-43-2",
+        "category": "💡 Interview Notes",
+        "question": "Can COUNT(*) be replaced with COUNT(order_id)?",
+        "whatInterviewerChecks": "Understanding of Primary Key nullability in aggregate counting.",
+        "bestReplyScript": "Yes. Because order_id is the Primary Key of the orders table, it is guaranteed to be NOT NULL and unique per row. Therefore, COUNT(order_id) and COUNT(*) produce identical count metrics and identical query execution plans.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) is slower than COUNT(order_id).",
+        "keyPoints": ["order_id is Primary Key (never NULL)", "Produces identical counts", "COUNT(*) is idiomatic and clean"],
+        "codeSnippet": "COUNT(*) vs COUNT(order_id)"
+      },
+      {
+        "id": "q-43-3",
+        "category": "💡 Interview Notes",
+        "question": "Why does HAVING COUNT(*) > 5 work while WHERE COUNT(*) > 5 fails?",
+        "whatInterviewerChecks": "SQL query lifecycle and order of execution.",
+        "bestReplyScript": "WHERE filters individual rows BEFORE they are grouped, meaning aggregate counts do not yet exist when WHERE runs. HAVING evaluates AFTER GROUP BY collapses rows into groups, allowing it to filter directly on aggregated metrics like COUNT(*).",
+        "commonMistakesToAvoid": "Attempting to put aggregate functions into the WHERE clause.",
+        "keyPoints": ["WHERE evaluates before grouping", "HAVING evaluates after grouping", "Aggregate metrics only accessible in HAVING"],
+        "codeSnippet": "WHERE (row filter) -> GROUP BY -> HAVING (group filter)"
+      },
+      {
+        "id": "q-43-4",
+        "category": "💡 Interview Notes",
+        "question": "What happens if two different customers share the exact same customer_name?",
+        "whatInterviewerChecks": "Composite grouping and duplicate resolution.",
+        "bestReplyScript": "Because we group by both customer_id AND customer_name, the distinct customer_id ensures they are never merged together. If we had grouped only by customer_name, two different customers with the name 'Rahul' would have had their orders incorrectly combined.",
+        "commonMistakesToAvoid": "Grouping solely by customer_name when customer_id is available.",
+        "keyPoints": ["Grouping by ID prevents collision of identical names", "Preserves relational entity integrity"],
+        "codeSnippet": "GROUP BY customer_id, customer_name -- prevents name collisions"
+      },
+      {
+        "id": "q-43-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query optimizer pipeline stages.",
+        "bestReplyScript": "1. FROM orders -> 2. GROUP BY customer_id, customer_name -> 3. Aggregate COUNT(*) -> 4. HAVING COUNT(*) > 5 -> 5. SELECT customer_id, customer_name, total_orders -> 6. ORDER BY total_orders DESC.",
+        "commonMistakesToAvoid": "Listing SELECT before HAVING or GROUP BY.",
+        "keyPoints": ["FROM -> GROUP BY -> COUNT(*) -> HAVING -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-43-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Customers with more than 5 orders' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Customers with more than 5 orders', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM orders;"
+        "category": "💡 Interview Notes",
+        "question": "Why do we GROUP BY both customer_id and customer_name?",
+        "whatInterviewerChecks": "ANSI SQL standard grouping rules and non-aggregated SELECT columns.",
+        "bestReplyScript": "In standard ANSI SQL, every non-aggregated column appearing in the SELECT clause must be included in the GROUP BY clause. Because we project both customer_id and customer_name, we must list both in GROUP BY to ensure query portability and prevent ambiguous multi-row value errors across strict database engines like PostgreSQL, Oracle, and SQL Server.",
+        "commonMistakesToAvoid": "Omitting customer_name from GROUP BY and relying on non-standard MySQL/SQLite loose grouping modes.",
+        "keyPoints": ["ANSI SQL requirement", "All non-aggregate SELECT columns must be in GROUP BY", "Ensures strict cross-database compatibility"],
+        "codeSnippet": "GROUP BY customer_id, customer_name"
+      },
+      {
+        "id": "q-43-2",
+        "category": "💡 Interview Notes",
+        "question": "Can COUNT(*) be replaced with COUNT(order_id)?",
+        "whatInterviewerChecks": "Understanding of Primary Key nullability in aggregate counting.",
+        "bestReplyScript": "Yes. Because order_id is the Primary Key of the orders table, it is guaranteed to be NOT NULL and unique per row. Therefore, COUNT(order_id) and COUNT(*) produce identical count metrics and identical query execution plans.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) is slower than COUNT(order_id).",
+        "keyPoints": ["order_id is Primary Key (never NULL)", "Produces identical counts", "COUNT(*) is idiomatic and clean"],
+        "codeSnippet": "COUNT(*) vs COUNT(order_id)"
+      },
+      {
+        "id": "q-43-3",
+        "category": "💡 Interview Notes",
+        "question": "Why does HAVING COUNT(*) > 5 work while WHERE COUNT(*) > 5 fails?",
+        "whatInterviewerChecks": "SQL query lifecycle and order of execution.",
+        "bestReplyScript": "WHERE filters individual rows BEFORE they are grouped, meaning aggregate counts do not yet exist when WHERE runs. HAVING evaluates AFTER GROUP BY collapses rows into groups, allowing it to filter directly on aggregated metrics like COUNT(*).",
+        "commonMistakesToAvoid": "Attempting to put aggregate functions into the WHERE clause.",
+        "keyPoints": ["WHERE evaluates before grouping", "HAVING evaluates after grouping", "Aggregate metrics only accessible in HAVING"],
+        "codeSnippet": "WHERE (row filter) -> GROUP BY -> HAVING (group filter)"
+      },
+      {
+        "id": "q-43-4",
+        "category": "💡 Interview Notes",
+        "question": "What happens if two different customers share the exact same customer_name?",
+        "whatInterviewerChecks": "Composite grouping and duplicate resolution.",
+        "bestReplyScript": "Because we group by both customer_id AND customer_name, the distinct customer_id ensures they are never merged together. If we had grouped only by customer_name, two different customers with the name 'Rahul' would have had their orders incorrectly combined.",
+        "commonMistakesToAvoid": "Grouping solely by customer_name when customer_id is available.",
+        "keyPoints": ["Grouping by ID prevents collision of identical names", "Preserves relational entity integrity"],
+        "codeSnippet": "GROUP BY customer_id, customer_name -- prevents name collisions"
+      },
+      {
+        "id": "q-43-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query optimizer pipeline stages.",
+        "bestReplyScript": "1. FROM orders -> 2. GROUP BY customer_id, customer_name -> 3. Aggregate COUNT(*) -> 4. HAVING COUNT(*) > 5 -> 5. SELECT customer_id, customer_name, total_orders -> 6. ORDER BY total_orders DESC.",
+        "commonMistakesToAvoid": "Listing SELECT before HAVING or GROUP BY.",
+        "keyPoints": ["FROM -> GROUP BY -> COUNT(*) -> HAVING -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-43-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using WHERE with COUNT()",
+        "description": "Writing WHERE COUNT(*) > 5 instead of HAVING COUNT(*) > 5.",
+        "badSnippet": "SELECT customer_id, customer_name, COUNT(*) FROM orders WHERE COUNT(*) > 5 GROUP BY customer_id, customer_name;",
+        "failingInput": "SQL query parser",
+        "consequence": "❌ Error: misuse of aggregate: COUNT() not allowed in WHERE.",
+        "howToFix": "Move aggregate predicate to HAVING: HAVING COUNT(*) > 5.",
+        "mistake": "Aggregate filter in WHERE clause",
+        "whyItHappens": "Forgetting that WHERE executes before records are grouped."
+      },
+      {
+        "id": "m-43-2",
+        "title": "2. Omitting customer_name from GROUP BY",
+        "description": "Grouping solely by customer_id while selecting customer_name.",
+        "badSnippet": "SELECT customer_id, customer_name, COUNT(*) FROM orders GROUP BY customer_id HAVING COUNT(*) > 5;",
+        "failingInput": "Standard ANSI SQL database (PostgreSQL/SQL Server)",
+        "consequence": "❌ Error: column customer_name must appear in the GROUP BY clause or be used in an aggregate function.",
+        "howToFix": "Include both columns: GROUP BY customer_id, customer_name.",
+        "mistake": "Un-aggregated column missing in GROUP BY",
+        "whyItHappens": "Assuming primary key uniqueness excuses other selected dimensions."
+      },
+      {
+        "id": "m-43-3",
+        "title": "3. Using >= 5 Instead of Strict > 5",
+        "description": "Writing HAVING COUNT(*) >= 5 when the requirement states more than 5 orders.",
+        "badSnippet": "HAVING COUNT(*) >= 5",
+        "failingInput": "Customer with exactly 5 orders",
+        "consequence": "Incorrectly returns customers with 5 orders, failing automated test suites.",
+        "howToFix": "Use strict inequality: HAVING COUNT(*) > 5.",
+        "mistake": "Inclusive inequality error",
+        "whyItHappens": "Confusing 'more than 5' with 'at least 5'."
+      },
+      {
+        "id": "m-43-4",
+        "title": "4. Using ASC Instead of DESC in ORDER BY",
+        "description": "Writing ORDER BY total_orders ASC or omitting DESC.",
+        "badSnippet": "ORDER BY total_orders;",
+        "failingInput": "Loyalty tier leaderboard",
+        "consequence": "Sorts in ascending order, showing shoppers with the fewest orders first.",
+        "howToFix": "Specify DESC: ORDER BY total_orders DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting SQL defaults to ASC when no keyword is specified."
+      },
+      {
+        "id": "m-43-5",
+        "title": "5. Grouping Only by customer_name",
+        "description": "Writing GROUP BY customer_name without customer_id.",
+        "badSnippet": "SELECT customer_id, customer_name, COUNT(*) FROM orders GROUP BY customer_name;",
+        "failingInput": "Multiple customers with common names (e.g. John Smith)",
+        "consequence": "Merges orders from completely different people into a single count.",
+        "howToFix": "Always include customer_id in grouping: GROUP BY customer_id, customer_name.",
+        "mistake": "Grouping by non-unique identifier",
+        "whyItHappens": "Assuming names are globally unique."
       }
     ]
   },
   "44": {
     "id": "sql-44",
-    "title": "Branches with highest profit",
+    "title": "Branches with Highest Profit",
     "levelNumber": 44,
     "problemId": 44,
-    "problemTitle": "Branches with highest profit",
+    "problemTitle": "Branches with Highest Profit",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
+      "Walmart",
+      "Costco",
+      "Target",
       "Google",
       "Microsoft",
+      "Apple",
       "Meta",
-      "TCS"
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;",
+      "code": "SELECT branch_name,\n       SUM(selling_price - cost_price) AS total_profit\nFROM sales\nGROUP BY branch_name\nORDER BY total_profit DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM sales",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Branches with highest profit' and validates schema column names."
+          "explanation": "Scans all branch transaction records from the sales table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 2,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "Row Expression Evaluation",
+            "Action": "selling_price - cost_price"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Evaluates net profit for each transaction line item (e.g. ₹500 - ₹300 = ₹200)."
         },
         {
           "step": 3,
+          "lineNumber": 4,
+          "vars": {
+            "Phase": "GROUP BY branch_name",
+            "Action": "Partition into branch locations"
+          },
+          "explanation": "Clusters transaction records by branch (Bangalore, Delhi, Mumbai)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "SUM(Profit)",
+            "Action": "Aggregate branch profits"
+          },
+          "explanation": "Adds together all row-level profit figures within each branch partition."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects branch_name and the calculated total_profit."
+        },
+        {
+          "step": 6,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY total_profit DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Ranks branches from highest cumulative profit down to lowest."
         }
       ]
     },
     "qas": [
       {
         "id": "q-44-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Branches with highest profit' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Branches with highest profit', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "Can mathematical expressions be used directly inside SUM()?",
+        "whatInterviewerChecks": "Understanding of arithmetic evaluation inside aggregate functions.",
+        "bestReplyScript": "Yes. ANSI SQL allows standard mathematical operations (addition, subtraction, multiplication, division) inside aggregate functions. The expression inside the parenthesis (e.g., selling_price - cost_price) is computed for each individual row, and SUM() then accumulates those row-level results into the group total.",
+        "commonMistakesToAvoid": "Thinking you must create an explicit subquery or CTE to compute row-level profit before aggregating.",
+        "keyPoints": ["Expressions valid inside SUM()", "Evaluated row-by-row before aggregation", "Clean, concise ANSI SQL syntax"],
+        "codeSnippet": "SUM(selling_price - cost_price) AS total_profit"
+      },
+      {
+        "id": "q-44-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUM(SP - CP) and SUM(SP) - SUM(CP)?",
+        "whatInterviewerChecks": "Distributive law in SQL aggregation and performance implications.",
+        "bestReplyScript": "Mathematically, both formulas yield identical totals: (a - b) + (c - d) = (a + c) - (b + d). SUM(SP - CP) evaluates a single accumulator across row differences, whereas SUM(SP) - SUM(CP) maintains two accumulators and subtracts once at the end. SUM(SP - CP) is preferred in interviews for readability and clarity of intent.",
+        "commonMistakesToAvoid": "Believing one formula is mathematically different from the other.",
+        "keyPoints": ["Mathematically identical", "Both evaluate in O(N) time", "SUM(SP - CP) is cleaner and more readable"],
+        "codeSnippet": "SUM(SP - CP) vs (SUM(SP) - SUM(CP))"
+      },
+      {
+        "id": "q-44-3",
+        "category": "💡 Interview Notes",
+        "question": "How does NULL in either cost_price or selling_price affect the result?",
+        "whatInterviewerChecks": "NULL propagation in arithmetic expressions and aggregate functions.",
+        "bestReplyScript": "In SQL, any arithmetic operation involving a NULL yields NULL (e.g., 500 - NULL = NULL). Then, SUM() ignores NULL values. To ensure rows with missing costs or prices don't corrupt calculations, wrap them in COALESCE: SUM(COALESCE(selling_price, 0) - COALESCE(cost_price, 0)).",
+        "commonMistakesToAvoid": "Assuming NULL is automatically converted to 0 in subtraction.",
+        "keyPoints": ["Arithmetic with NULL yields NULL", "SUM ignores NULLs", "Use COALESCE() to provide default fallback values"],
+        "codeSnippet": "SUM(COALESCE(selling_price, 0) - COALESCE(cost_price, 0))"
+      },
+      {
+        "id": "q-44-4",
+        "category": "💡 Interview Notes",
+        "question": "Why is ORDER BY total_profit DESC valid if total_profit is defined in SELECT?",
+        "whatInterviewerChecks": "Order of execution in SQL queries.",
+        "bestReplyScript": "In SQL logical execution order, ORDER BY executes at Step 6, which is strictly AFTER Step 5 (SELECT). Because SELECT has already materialized and aliased total_profit, the alias is fully recognized and available to the ORDER BY clause.",
+        "commonMistakesToAvoid": "Believing ORDER BY cannot access aliases created in SELECT.",
+        "keyPoints": ["ORDER BY executes after SELECT", "Column aliases fully accessible", "Clean and maintainable code"],
+        "codeSnippet": "SELECT ... AS total_profit ... ORDER BY total_profit DESC"
+      },
+      {
+        "id": "q-44-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM sales -> 2. Compute selling_price - cost_price for each record -> 3. GROUP BY branch_name -> 4. Aggregate SUM() per branch -> 5. SELECT branch_name, total_profit -> 6. ORDER BY total_profit DESC.",
+        "commonMistakesToAvoid": "Claiming grouping happens before row-level arithmetic evaluation.",
+        "keyPoints": ["FROM -> Compute row profit -> GROUP BY -> SUM() -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> EXPRESSION -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-44-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Branches with highest profit' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Branches with highest profit', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "Can mathematical expressions be used directly inside SUM()?",
+        "whatInterviewerChecks": "Understanding of arithmetic evaluation inside aggregate functions.",
+        "bestReplyScript": "Yes. ANSI SQL allows standard mathematical operations (addition, subtraction, multiplication, division) inside aggregate functions. The expression inside the parenthesis (e.g., selling_price - cost_price) is computed for each individual row, and SUM() then accumulates those row-level results into the group total.",
+        "commonMistakesToAvoid": "Thinking you must create an explicit subquery or CTE to compute row-level profit before aggregating.",
+        "keyPoints": ["Expressions valid inside SUM()", "Evaluated row-by-row before aggregation", "Clean, concise ANSI SQL syntax"],
+        "codeSnippet": "SUM(selling_price - cost_price) AS total_profit"
+      },
+      {
+        "id": "q-44-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between SUM(SP - CP) and SUM(SP) - SUM(CP)?",
+        "whatInterviewerChecks": "Distributive law in SQL aggregation and performance implications.",
+        "bestReplyScript": "Mathematically, both formulas yield identical totals: (a - b) + (c - d) = (a + c) - (b + d). SUM(SP - CP) evaluates a single accumulator across row differences, whereas SUM(SP) - SUM(CP) maintains two accumulators and subtracts once at the end. SUM(SP - CP) is preferred in interviews for readability and clarity of intent.",
+        "commonMistakesToAvoid": "Believing one formula is mathematically different from the other.",
+        "keyPoints": ["Mathematically identical", "Both evaluate in O(N) time", "SUM(SP - CP) is cleaner and more readable"],
+        "codeSnippet": "SUM(SP - CP) vs (SUM(SP) - SUM(CP))"
+      },
+      {
+        "id": "q-44-3",
+        "category": "💡 Interview Notes",
+        "question": "How does NULL in either cost_price or selling_price affect the result?",
+        "whatInterviewerChecks": "NULL propagation in arithmetic expressions and aggregate functions.",
+        "bestReplyScript": "In SQL, any arithmetic operation involving a NULL yields NULL (e.g., 500 - NULL = NULL). Then, SUM() ignores NULL values. To ensure rows with missing costs or prices don't corrupt calculations, wrap them in COALESCE: SUM(COALESCE(selling_price, 0) - COALESCE(cost_price, 0)).",
+        "commonMistakesToAvoid": "Assuming NULL is automatically converted to 0 in subtraction.",
+        "keyPoints": ["Arithmetic with NULL yields NULL", "SUM ignores NULLs", "Use COALESCE() to provide default fallback values"],
+        "codeSnippet": "SUM(COALESCE(selling_price, 0) - COALESCE(cost_price, 0))"
+      },
+      {
+        "id": "q-44-4",
+        "category": "💡 Interview Notes",
+        "question": "Why is ORDER BY total_profit DESC valid if total_profit is defined in SELECT?",
+        "whatInterviewerChecks": "Order of execution in SQL queries.",
+        "bestReplyScript": "In SQL logical execution order, ORDER BY executes at Step 6, which is strictly AFTER Step 5 (SELECT). Because SELECT has already materialized and aliased total_profit, the alias is fully recognized and available to the ORDER BY clause.",
+        "commonMistakesToAvoid": "Believing ORDER BY cannot access aliases created in SELECT.",
+        "keyPoints": ["ORDER BY executes after SELECT", "Column aliases fully accessible", "Clean and maintainable code"],
+        "codeSnippet": "SELECT ... AS total_profit ... ORDER BY total_profit DESC"
+      },
+      {
+        "id": "q-44-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM sales -> 2. Compute selling_price - cost_price for each record -> 3. GROUP BY branch_name -> 4. Aggregate SUM() per branch -> 5. SELECT branch_name, total_profit -> 6. ORDER BY total_profit DESC.",
+        "commonMistakesToAvoid": "Claiming grouping happens before row-level arithmetic evaluation.",
+        "keyPoints": ["FROM -> Compute row profit -> GROUP BY -> SUM() -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> EXPRESSION -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-44-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Inverting the Profit Formula",
+        "description": "Writing SUM(cost_price - selling_price) instead of SUM(selling_price - cost_price).",
+        "badSnippet": "SUM(cost_price - selling_price) AS total_profit",
+        "failingInput": "Profitable branch dataset",
+        "consequence": "Produces negative profit numbers (net loss) instead of positive earnings.",
+        "howToFix": "Profit = Selling Price − Cost Price: SUM(selling_price - cost_price).",
+        "mistake": "Inverted mathematical operands",
+        "whyItHappens": "Confusing revenue inflow with expense outflow."
+      },
+      {
+        "id": "m-44-2",
+        "title": "2. Omitting SUM() Aggregator",
+        "description": "Selecting selling_price - cost_price without wrapping in SUM().",
+        "badSnippet": "SELECT branch_name, selling_price - cost_price AS total_profit FROM sales GROUP BY branch_name;",
+        "failingInput": "Multi-sale branch dataset",
+        "consequence": "Returns the profit of an arbitrary single row instead of the total branch profit.",
+        "howToFix": "Wrap in SUM(): SUM(selling_price - cost_price).",
+        "mistake": "Missing aggregation function",
+        "whyItHappens": "Forgetting that grouping requires aggregate functions to collapse multiple rows."
+      },
+      {
+        "id": "m-44-3",
+        "title": "3. Forgetting GROUP BY branch_name",
+        "description": "Executing SUM() on profit without a GROUP BY clause.",
+        "badSnippet": "SELECT branch_name, SUM(selling_price - cost_price) FROM sales;",
+        "failingInput": "Multiple branches dataset",
+        "consequence": "Collapses the entire company sales into a single row with an arbitrary branch name.",
+        "howToFix": "Add GROUP BY branch_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically groups by the non-aggregated column in SELECT."
+      },
+      {
+        "id": "m-44-4",
+        "title": "4. Using ASC Instead of DESC for Profit Ranking",
+        "description": "Writing ORDER BY total_profit without specifying DESC.",
+        "badSnippet": "ORDER BY total_profit;",
+        "failingInput": "Profitability leaderboard",
+        "consequence": "Sorts in ascending order, displaying the lowest profit branch first.",
+        "howToFix": "Add DESC: ORDER BY total_profit DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting that ORDER BY defaults to ASC."
+      },
+      {
+        "id": "m-44-5",
+        "title": "5. Ranking by Gross Revenue Instead of Net Profit",
+        "description": "Writing ORDER BY SUM(selling_price) DESC.",
+        "badSnippet": "ORDER BY SUM(selling_price) DESC;",
+        "failingInput": "High revenue branch with even higher costs",
+        "consequence": "Ranks branches by revenue rather than profit, distorting actual financial performance.",
+        "howToFix": "Order by total profit: ORDER BY total_profit DESC.",
+        "mistake": "Sorting by wrong business metric",
+        "whyItHappens": "Confusing gross sales volume with net profitability."
       }
     ]
   },
   "45": {
     "id": "sql-45",
-    "title": "States with highest customers",
+    "title": "States with Highest Customers",
     "levelNumber": 45,
     "problemId": 45,
-    "problemTitle": "States with highest customers",
+    "problemTitle": "States with Highest Customers",
     "difficulty": "Easy",
     "companyTags": [
       "Amazon",
+      "Flipkart",
+      "Walmart",
+      "Uber",
       "Google",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "Swiggy",
+      "Zomato",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM customers ORDER BY 1 DESC LIMIT 5;",
+      "code": "SELECT state,\n       COUNT(*) AS total_customers\nFROM customers\nGROUP BY state\nORDER BY total_customers DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM customers",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'States with highest customers' and validates schema column names."
+          "explanation": "Scans demographic customer profile records from the customers table."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY state",
+            "Action": "Partition into geographic states"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Clusters customer records by distinct state values (Karnataka, Delhi, Maharashtra)."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*)",
+            "Action": "Count customers per state"
+          },
+          "explanation": "Tallies all registered customer records within each regional state partition."
+        },
+        {
+          "step": 4,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects the state name and its calculated total_customers metric."
+        },
+        {
+          "step": 5,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY total_customers DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Sorts the aggregated states from largest customer count (Karnataka: 4) down to smallest (Maharashtra: 1)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-45-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'States with highest customers' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'States with highest customers', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM customers ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "What does COUNT(*) count and how does it handle NULLs?",
+        "whatInterviewerChecks": "Row-level aggregation rules and NULL behavior in COUNT(*).",
+        "bestReplyScript": "COUNT(*) counts all rows in each group, regardless of whether individual columns contain NULL values. Even if a customer has NULL in email or age, COUNT(*) increments the total count for their state group.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) skips rows that contain NULL columns.",
+        "keyPoints": ["Counts all rows per group", "Unconditional row count", "Does not ignore rows with NULL attributes"],
+        "codeSnippet": "COUNT(*) AS total_customers"
+      },
+      {
+        "id": "q-45-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(customer_id)?",
+        "whatInterviewerChecks": "Column-specific counting vs row-level counting.",
+        "bestReplyScript": "COUNT(*) counts every row in the partition. COUNT(customer_id) counts only rows where customer_id IS NOT NULL. Because customer_id is a Primary Key (guaranteed NOT NULL), both yield identical numbers and query plans, but COUNT(*) is the industry-standard idiom for row counts.",
+        "commonMistakesToAvoid": "Thinking COUNT(column) is always identical to COUNT(*) on nullable columns.",
+        "keyPoints": ["COUNT(*) counts all tuples", "COUNT(col) ignores NULLs in that column", "Identical when column is Primary Key"],
+        "codeSnippet": "COUNT(*) vs COUNT(customer_id)"
+      },
+      {
+        "id": "q-45-3",
+        "category": "💡 Interview Notes",
+        "question": "What happens if some customers have NULL in the state column?",
+        "whatInterviewerChecks": "Grouping behavior on NULL values in ANSI SQL.",
+        "bestReplyScript": "In ANSI SQL, GROUP BY treats all NULL values as belonging to a single group. If there are customers with NULL state, the query outputs a row with NULL as state and the count of such customers. To exclude them, add WHERE state IS NOT NULL before GROUP BY.",
+        "commonMistakesToAvoid": "Assuming NULL values are omitted by GROUP BY automatically.",
+        "keyPoints": ["GROUP BY merges all NULLs into one group", "Use WHERE state IS NOT NULL to exclude missing regions"],
+        "codeSnippet": "WHERE state IS NOT NULL -- filter before GROUP BY"
+      },
+      {
+        "id": "q-45-4",
+        "category": "💡 Interview Notes",
+        "question": "Why can ORDER BY use total_customers when WHERE cannot?",
+        "whatInterviewerChecks": "SQL query evaluation phases.",
+        "bestReplyScript": "ORDER BY executes at Step 5, after SELECT has already evaluated expressions and defined the alias total_customers. WHERE executes at Step 2 before SELECT, so it cannot reference aliases created in SELECT or aggregated metrics.",
+        "commonMistakesToAvoid": "Attempting to use SELECT aliases in WHERE or GROUP BY clauses.",
+        "keyPoints": ["ORDER BY executes after SELECT", "SELECT aliases are valid in ORDER BY", "WHERE executes before SELECT"],
+        "codeSnippet": "SELECT ... AS total_customers ... ORDER BY total_customers DESC"
+      },
+      {
+        "id": "q-45-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Mastery of relational algebra evaluation order.",
+        "bestReplyScript": "1. FROM customers -> 2. GROUP BY state -> 3. Aggregate COUNT(*) per state -> 4. SELECT state, total_customers -> 5. ORDER BY total_customers DESC.",
+        "commonMistakesToAvoid": "Thinking SELECT runs before GROUP BY or COUNT(*).",
+        "keyPoints": ["FROM -> GROUP BY -> COUNT(*) -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-45-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'States with highest customers' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'States with highest customers', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM customers ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "What does COUNT(*) count and how does it handle NULLs?",
+        "whatInterviewerChecks": "Row-level aggregation rules and NULL behavior in COUNT(*).",
+        "bestReplyScript": "COUNT(*) counts all rows in each group, regardless of whether individual columns contain NULL values. Even if a customer has NULL in email or age, COUNT(*) increments the total count for their state group.",
+        "commonMistakesToAvoid": "Thinking COUNT(*) skips rows that contain NULL columns.",
+        "keyPoints": ["Counts all rows per group", "Unconditional row count", "Does not ignore rows with NULL attributes"],
+        "codeSnippet": "COUNT(*) AS total_customers"
+      },
+      {
+        "id": "q-45-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the difference between COUNT(*) and COUNT(customer_id)?",
+        "whatInterviewerChecks": "Column-specific counting vs row-level counting.",
+        "bestReplyScript": "COUNT(*) counts every row in the partition. COUNT(customer_id) counts only rows where customer_id IS NOT NULL. Because customer_id is a Primary Key (guaranteed NOT NULL), both yield identical numbers and query plans, but COUNT(*) is the industry-standard idiom for row counts.",
+        "commonMistakesToAvoid": "Thinking COUNT(column) is always identical to COUNT(*) on nullable columns.",
+        "keyPoints": ["COUNT(*) counts all tuples", "COUNT(col) ignores NULLs in that column", "Identical when column is Primary Key"],
+        "codeSnippet": "COUNT(*) vs COUNT(customer_id)"
+      },
+      {
+        "id": "q-45-3",
+        "category": "💡 Interview Notes",
+        "question": "What happens if some customers have NULL in the state column?",
+        "whatInterviewerChecks": "Grouping behavior on NULL values in ANSI SQL.",
+        "bestReplyScript": "In ANSI SQL, GROUP BY treats all NULL values as belonging to a single group. If there are customers with NULL state, the query outputs a row with NULL as state and the count of such customers. To exclude them, add WHERE state IS NOT NULL before GROUP BY.",
+        "commonMistakesToAvoid": "Assuming NULL values are omitted by GROUP BY automatically.",
+        "keyPoints": ["GROUP BY merges all NULLs into one group", "Use WHERE state IS NOT NULL to exclude missing regions"],
+        "codeSnippet": "WHERE state IS NOT NULL -- filter before GROUP BY"
+      },
+      {
+        "id": "q-45-4",
+        "category": "💡 Interview Notes",
+        "question": "Why can ORDER BY use total_customers when WHERE cannot?",
+        "whatInterviewerChecks": "SQL query evaluation phases.",
+        "bestReplyScript": "ORDER BY executes at Step 5, after SELECT has already evaluated expressions and defined the alias total_customers. WHERE executes at Step 2 before SELECT, so it cannot reference aliases created in SELECT or aggregated metrics.",
+        "commonMistakesToAvoid": "Attempting to use SELECT aliases in WHERE or GROUP BY clauses.",
+        "keyPoints": ["ORDER BY executes after SELECT", "SELECT aliases are valid in ORDER BY", "WHERE executes before SELECT"],
+        "codeSnippet": "SELECT ... AS total_customers ... ORDER BY total_customers DESC"
+      },
+      {
+        "id": "q-45-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Mastery of relational algebra evaluation order.",
+        "bestReplyScript": "1. FROM customers -> 2. GROUP BY state -> 3. Aggregate COUNT(*) per state -> 4. SELECT state, total_customers -> 5. ORDER BY total_customers DESC.",
+        "commonMistakesToAvoid": "Thinking SELECT runs before GROUP BY or COUNT(*).",
+        "keyPoints": ["FROM -> GROUP BY -> COUNT(*) -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-45-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY state",
+        "description": "Calling COUNT(*) alongside state without a GROUP BY clause.",
+        "badSnippet": "SELECT state, COUNT(*) FROM customers;",
+        "failingInput": "Multi-state customer database",
+        "consequence": "Collapses the entire table into one row with total customers and an arbitrary state name.",
+        "howToFix": "Add GROUP BY state.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically partitions by non-aggregated columns."
+      },
+      {
+        "id": "m-45-2",
+        "title": "2. Using ASC Instead of DESC",
+        "description": "Writing ORDER BY total_customers ASC or omitting DESC.",
+        "badSnippet": "ORDER BY total_customers;",
+        "failingInput": "Demographic leaderboard requirement",
+        "consequence": "Sorts in ascending order, displaying states with the fewest customers first.",
+        "howToFix": "Specify DESC: ORDER BY total_customers DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting SQL defaults to ASC when no keyword is specified."
+      },
+      {
+        "id": "m-45-3",
+        "title": "3. Typo in COUNT Function",
+        "description": "Typing COUNTT(*), CUNT(*), or COUNT(ALL).",
+        "badSnippet": "SELECT state, COUNTT(*) FROM customers GROUP BY state;",
+        "failingInput": "SQL query parser",
+        "consequence": "❌ Error: no such function COUNTT.",
+        "howToFix": "Use standard spelling: COUNT(*).",
+        "mistake": "Function syntax typo",
+        "whyItHappens": "Fast typing slips."
+      },
+      {
+        "id": "m-45-4",
+        "title": "4. Using COUNT(column) on Nullable Columns",
+        "description": "Using COUNT(email) or COUNT(phone) instead of COUNT(*).",
+        "badSnippet": "SELECT state, COUNT(phone) FROM customers GROUP BY state;",
+        "failingInput": "Customers who haven't added a phone number",
+        "consequence": "Under-counts the actual customer population in states with missing phone numbers.",
+        "howToFix": "Use COUNT(*) or COUNT(customer_id) on the Primary Key.",
+        "mistake": "Counting nullable attribute",
+        "whyItHappens": "Not realizing COUNT(col) discards NULL rows."
+      },
+      {
+        "id": "m-45-5",
+        "title": "5. Ordering by State Name Instead of Customer Count",
+        "description": "Writing ORDER BY state DESC instead of ORDER BY total_customers DESC.",
+        "badSnippet": "ORDER BY state DESC;",
+        "failingInput": "State customer ranking",
+        "consequence": "Sorts alphabetically by state name instead of ranking by customer population.",
+        "howToFix": "Order by customer count: ORDER BY total_customers DESC.",
+        "mistake": "Sorting by wrong column",
+        "whyItHappens": "Confusing alphabetical sorting with numerical population ranking."
       }
     ]
   },
   "46": {
     "id": "sql-46",
-    "title": "Monthly sales summary",
+    "title": "Monthly Sales Summary",
     "levelNumber": 46,
     "problemId": 46,
-    "problemTitle": "Monthly sales summary",
-    "difficulty": "Easy",
+    "problemTitle": "Monthly Sales Summary",
+    "difficulty": "Medium",
     "companyTags": [
       "Amazon",
+      "Stripe",
+      "Shopify",
+      "Flipkart",
       "Google",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "PayPal",
+      "Uber",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
+      "code": "SELECT MONTH(order_date) AS month,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY MONTH(order_date)\nORDER BY month;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM orders",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Monthly sales summary' and validates schema column names."
+          "explanation": "Scans all completed order transactions from the orders table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "Row Expression Evaluation",
+            "Action": "MONTH(order_date)"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Extracts the numerical month value (e.g., '2025-01-05' -> 1, '2025-02-10' -> 2, '2025-03-08' -> 3)."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "GROUP BY MONTH(order_date)",
+            "Action": "Bucket by month integer"
+          },
+          "explanation": "Partitions transaction records into distinct month clusters (Month 1, Month 2, Month 3)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*) & SUM(total_amount)",
+            "Action": "Aggregate monthly volume and revenue"
+          },
+          "explanation": "Computes order volume count and sums total revenue per monthly partition (e.g. Month 1: 2 orders, ₹1200 sales)."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects month, total_orders, and total_sales."
+        },
+        {
+          "step": 6,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "ORDER BY month",
+            "Action": "Sort chronological"
+          },
+          "explanation": "Sorts the monthly summaries in ascending calendar order (1, 2, 3)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-46-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Monthly sales summary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Monthly sales summary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does MONTH() return and can it be used in GROUP BY?",
+        "whatInterviewerChecks": "Understanding of SQL scalar date functions in aggregation clauses.",
+        "bestReplyScript": "MONTH(date_column) extracts the integer month value (1 through 12). Because scalar functions evaluate deterministically for every row, ANSI SQL fully permits expressions like GROUP BY MONTH(order_date) to bucket rows by their extracted month component.",
+        "commonMistakesToAvoid": "Thinking GROUP BY only accepts raw column names rather than scalar expressions.",
+        "keyPoints": ["Returns integer 1–12", "Valid inside GROUP BY expressions", "Partitions rows by month number"],
+        "codeSnippet": "GROUP BY MONTH(order_date)"
+      },
+      {
+        "id": "q-46-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the ANSI SQL standard equivalent of MySQL's MONTH()?",
+        "whatInterviewerChecks": "Knowledge of cross-database compatibility and ANSI SQL standards.",
+        "bestReplyScript": "The ANSI SQL standard syntax is EXTRACT(MONTH FROM order_date). It is standard across PostgreSQL, Oracle, SQLite (via strftime), and modern cloud warehouses like Snowflake and BigQuery. In MySQL, both EXTRACT and MONTH() are supported.",
+        "commonMistakesToAvoid": "Assuming MONTH() is universal across all SQL database engines.",
+        "keyPoints": ["EXTRACT(MONTH FROM date) is ANSI SQL", "Supported in PostgreSQL, Oracle, Snowflake", "MONTH() is popular MySQL shorthand"],
+        "codeSnippet": "EXTRACT(MONTH FROM order_date) AS month"
+      },
+      {
+        "id": "q-46-3",
+        "category": "💡 Interview Notes",
+        "question": "Can COUNT(*) and SUM(total_amount) be used in the same query?",
+        "whatInterviewerChecks": "Multi-aggregate aggregation in relational algebra.",
+        "bestReplyScript": "Yes. SQL allows executing multiple distinct aggregate functions simultaneously over the same partition. During the single aggregation pass over each month's rows, the engine increments a counter for COUNT(*) and accumulates total_amount for SUM().",
+        "commonMistakesToAvoid": "Believing separate queries or CTEs are needed to compute multiple aggregates.",
+        "keyPoints": ["Multiple aggregates computed in single pass", "Zero extra I/O overhead", "Combine COUNT, SUM, AVG, MIN, MAX easily"],
+        "codeSnippet": "SELECT COUNT(*), SUM(total_amount) ... GROUP BY ..."
+      },
+      {
+        "id": "q-46-4",
+        "category": "💡 Interview Notes",
+        "question": "What happens if orders span across multiple years?",
+        "whatInterviewerChecks": "Real-world temporal data modeling and interview edge cases.",
+        "bestReplyScript": "If the table contains orders from 2024 and 2025, grouping solely by MONTH(order_date) will combine January 2024 and January 2025 into Month 1. In production multi-year systems, we must group by both YEAR and MONTH: GROUP BY YEAR(order_date), MONTH(order_date) or use date truncation like DATE_FORMAT(order_date, '%Y-%m').",
+        "commonMistakesToAvoid": "Forgetting that MONTH() ignores the calendar year.",
+        "keyPoints": ["MONTH() alone merges same months from different years", "Group by (YEAR, MONTH) for multi-year datasets", "Shows senior architectural awareness"],
+        "codeSnippet": "GROUP BY YEAR(order_date), MONTH(order_date)"
+      },
+      {
+        "id": "q-46-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM orders -> 2. Evaluate MONTH(order_date) per row -> 3. GROUP BY MONTH(order_date) -> 4. Aggregate COUNT(*) and SUM(total_amount) per group -> 5. SELECT month, total_orders, total_sales -> 6. ORDER BY month ASC.",
+        "commonMistakesToAvoid": "Believing SELECT evaluates before GROUP BY.",
+        "keyPoints": ["FROM -> Row Expression -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> EXPRESSION -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-46-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Monthly sales summary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Monthly sales summary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does MONTH() return and can it be used in GROUP BY?",
+        "whatInterviewerChecks": "Understanding of SQL scalar date functions in aggregation clauses.",
+        "bestReplyScript": "MONTH(date_column) extracts the integer month value (1 through 12). Because scalar functions evaluate deterministically for every row, ANSI SQL fully permits expressions like GROUP BY MONTH(order_date) to bucket rows by their extracted month component.",
+        "commonMistakesToAvoid": "Thinking GROUP BY only accepts raw column names rather than scalar expressions.",
+        "keyPoints": ["Returns integer 1–12", "Valid inside GROUP BY expressions", "Partitions rows by month number"],
+        "codeSnippet": "GROUP BY MONTH(order_date)"
+      },
+      {
+        "id": "q-46-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the ANSI SQL standard equivalent of MySQL's MONTH()?",
+        "whatInterviewerChecks": "Knowledge of cross-database compatibility and ANSI SQL standards.",
+        "bestReplyScript": "The ANSI SQL standard syntax is EXTRACT(MONTH FROM order_date). It is standard across PostgreSQL, Oracle, SQLite (via strftime), and modern cloud warehouses like Snowflake and BigQuery. In MySQL, both EXTRACT and MONTH() are supported.",
+        "commonMistakesToAvoid": "Assuming MONTH() is universal across all SQL database engines.",
+        "keyPoints": ["EXTRACT(MONTH FROM date) is ANSI SQL", "Supported in PostgreSQL, Oracle, Snowflake", "MONTH() is popular MySQL shorthand"],
+        "codeSnippet": "EXTRACT(MONTH FROM order_date) AS month"
+      },
+      {
+        "id": "q-46-3",
+        "category": "💡 Interview Notes",
+        "question": "Can COUNT(*) and SUM(total_amount) be used in the same query?",
+        "whatInterviewerChecks": "Multi-aggregate aggregation in relational algebra.",
+        "bestReplyScript": "Yes. SQL allows executing multiple distinct aggregate functions simultaneously over the same partition. During the single aggregation pass over each month's rows, the engine increments a counter for COUNT(*) and accumulates total_amount for SUM().",
+        "commonMistakesToAvoid": "Believing separate queries or CTEs are needed to compute multiple aggregates.",
+        "keyPoints": ["Multiple aggregates computed in single pass", "Zero extra I/O overhead", "Combine COUNT, SUM, AVG, MIN, MAX easily"],
+        "codeSnippet": "SELECT COUNT(*), SUM(total_amount) ... GROUP BY ..."
+      },
+      {
+        "id": "q-46-4",
+        "category": "💡 Interview Notes",
+        "question": "What happens if orders span across multiple years?",
+        "whatInterviewerChecks": "Real-world temporal data modeling and interview edge cases.",
+        "bestReplyScript": "If the table contains orders from 2024 and 2025, grouping solely by MONTH(order_date) will combine January 2024 and January 2025 into Month 1. In production multi-year systems, we must group by both YEAR and MONTH: GROUP BY YEAR(order_date), MONTH(order_date) or use date truncation like DATE_FORMAT(order_date, '%Y-%m').",
+        "commonMistakesToAvoid": "Forgetting that MONTH() ignores the calendar year.",
+        "keyPoints": ["MONTH() alone merges same months from different years", "Group by (YEAR, MONTH) for multi-year datasets", "Shows senior architectural awareness"],
+        "codeSnippet": "GROUP BY YEAR(order_date), MONTH(order_date)"
+      },
+      {
+        "id": "q-46-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM orders -> 2. Evaluate MONTH(order_date) per row -> 3. GROUP BY MONTH(order_date) -> 4. Aggregate COUNT(*) and SUM(total_amount) per group -> 5. SELECT month, total_orders, total_sales -> 6. ORDER BY month ASC.",
+        "commonMistakesToAvoid": "Believing SELECT evaluates before GROUP BY.",
+        "keyPoints": ["FROM -> Row Expression -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> EXPRESSION -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-46-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY Clause",
+        "description": "Calling aggregate functions with MONTH(order_date) without a GROUP BY.",
+        "badSnippet": "SELECT MONTH(order_date), COUNT(*), SUM(total_amount) FROM orders;",
+        "failingInput": "Multi-month order table",
+        "consequence": "Collapses the entire table into a single row with total company orders and arbitrary month.",
+        "howToFix": "Add GROUP BY MONTH(order_date).",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically partitions by projected date expressions."
+      },
+      {
+        "id": "m-46-2",
+        "title": "2. Sorting by Sales Instead of Month",
+        "description": "Writing ORDER BY total_sales DESC when chronological ordering is required.",
+        "badSnippet": "ORDER BY total_sales DESC;",
+        "failingInput": "Monthly financial report requirements",
+        "consequence": "Sorts by highest revenue month instead of chronological order (Jan -> Dec).",
+        "howToFix": "Sort by month: ORDER BY month ASC (or ORDER BY month).",
+        "mistake": "Sorting by wrong column",
+        "whyItHappens": "Assuming top-revenue leaderboard is always requested."
+      },
+      {
+        "id": "m-46-3",
+        "title": "3. Forgetting SUM(total_amount)",
+        "description": "Only computing COUNT(*) and omitting the total sales aggregate.",
+        "badSnippet": "SELECT MONTH(order_date) AS month, COUNT(*) AS total_orders FROM orders GROUP BY MONTH(order_date);",
+        "failingInput": "Executive monthly sales requirements",
+        "consequence": "Fails required schema output by missing the total_sales column.",
+        "howToFix": "Include SUM(total_amount) AS total_sales in SELECT.",
+        "mistake": "Missing required aggregate column",
+        "whyItHappens": "Overlooking the dual-metric requirement."
+      },
+      {
+        "id": "m-46-4",
+        "title": "4. Passing Non-Date Columns to MONTH()",
+        "description": "Writing MONTH(customer_id) or MONTH(status).",
+        "badSnippet": "SELECT MONTH(status) FROM orders;",
+        "failingInput": "String or numerical status column",
+        "consequence": "Produces NULL values or causes database execution errors.",
+        "howToFix": "Only pass valid DATE, DATETIME, or TIMESTAMP columns to MONTH().",
+        "mistake": "Invalid column datatype for date function",
+        "whyItHappens": "Column confusion in tables with multiple columns."
+      },
+      {
+        "id": "m-46-5",
+        "title": "5. Grouping by order_date Instead of Month",
+        "description": "Writing GROUP BY order_date.",
+        "badSnippet": "SELECT MONTH(order_date), COUNT(*), SUM(total_amount) FROM orders GROUP BY order_date;",
+        "failingInput": "Orders placed on different days in the same month",
+        "consequence": "Creates separate groups for every single day rather than aggregating by month.",
+        "howToFix": "Group by the extracted month expression: GROUP BY MONTH(order_date).",
+        "mistake": "Grouping by wrong level of granularity",
+        "whyItHappens": "Forgetting to wrap the date column in MONTH() inside the GROUP BY clause."
       }
     ]
   },
   "47": {
     "id": "sql-47",
-    "title": "Yearly sales summary",
+    "title": "Yearly Sales Summary",
     "levelNumber": 47,
     "problemId": 47,
-    "problemTitle": "Yearly sales summary",
-    "difficulty": "Easy",
+    "problemTitle": "Yearly Sales Summary",
+    "difficulty": "Medium",
     "companyTags": [
       "Amazon",
-      "Google",
+      "Apple",
       "Microsoft",
-      "Meta",
-      "TCS"
+      "Google",
+      "Stripe",
+      "Goldman Sachs",
+      "Morgan Stanley",
+      "JPMorgan",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
+      "code": "SELECT YEAR(order_date) AS year,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY YEAR(order_date)\nORDER BY year;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM orders",
+            "Action": "Read table records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Yearly sales summary' and validates schema column names."
+          "explanation": "Scans historical multi-year customer orders from the orders table."
         },
         {
           "step": 2,
           "lineNumber": 1,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "Row Expression Evaluation",
+            "Action": "YEAR(order_date)"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Extracts the 4-digit calendar year (e.g. '2023-01-10' -> 2023, '2024-02-20' -> 2024, '2025-03-12' -> 2025)."
         },
         {
           "step": 3,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "GROUP BY YEAR(order_date)",
+            "Action": "Partition into annual cohorts"
+          },
+          "explanation": "Clusters transaction records into annual buckets (Year 2023, Year 2024, Year 2025)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "COUNT(*) & SUM(total_amount)",
+            "Action": "Aggregate yearly volume and revenue"
+          },
+          "explanation": "Computes annual order count and sums gross revenue (2023: 2 orders, ₹2000; 2024: 2 orders, ₹2400; 2025: 1 order, ₹2000)."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Format output columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects year, total_orders, and total_sales."
+        },
+        {
+          "step": 6,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "ORDER BY year",
+            "Action": "Sort chronological"
+          },
+          "explanation": "Sorts the annual summaries in chronological order from earliest to latest year."
         }
       ]
     },
     "qas": [
       {
         "id": "q-47-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Yearly sales summary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Yearly sales summary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does YEAR() return and can it be used in GROUP BY?",
+        "whatInterviewerChecks": "Understanding of year date part extraction and aggregation in SQL.",
+        "bestReplyScript": "YEAR(date_column) extracts the 4-digit integer year (e.g., 2023, 2024). Because it evaluates deterministically per row, ANSI SQL allows it directly inside GROUP BY YEAR(order_date) to group records into annual cohorts.",
+        "commonMistakesToAvoid": "Thinking year extraction requires string functions like SUBSTR(order_date, 1, 4).",
+        "keyPoints": ["Extracts 4-digit integer year", "Directly valid in GROUP BY", "Groups rows into annual cohorts"],
+        "codeSnippet": "GROUP BY YEAR(order_date)"
+      },
+      {
+        "id": "q-47-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the ANSI SQL standard alternative to YEAR()?",
+        "whatInterviewerChecks": "Cross-database portability and SQL standard knowledge.",
+        "bestReplyScript": "The ANSI SQL standard equivalent is EXTRACT(YEAR FROM order_date). It is portable and standard across PostgreSQL, Oracle, SQLite, and cloud warehouses like Snowflake and BigQuery.",
+        "commonMistakesToAvoid": "Assuming MySQL-specific functions like YEAR() work out-of-the-box in PostgreSQL or Oracle.",
+        "keyPoints": ["EXTRACT(YEAR FROM date) is ANSI SQL standard", "Universal across PostgreSQL, Oracle, Snowflake", "Portable enterprise code"],
+        "codeSnippet": "EXTRACT(YEAR FROM order_date) AS year"
+      },
+      {
+        "id": "q-47-3",
+        "category": "💡 Interview Notes",
+        "question": "Can multiple aggregate functions run simultaneously per year?",
+        "whatInterviewerChecks": "Relational aggregation performance and query execution.",
+        "bestReplyScript": "Yes. Multiple aggregations like COUNT(*), SUM(total_amount), and AVG(total_amount) execute concurrently during a single scan of the annual group, avoiding any duplicate disk or memory I/O.",
+        "commonMistakesToAvoid": "Using separate queries or CTEs to calculate order volume and sales volume separately.",
+        "keyPoints": ["Single pass execution", "No extra memory or disk I/O overhead", "Combine COUNT, SUM, AVG seamlessly"],
+        "codeSnippet": "SELECT COUNT(*), SUM(total_amount), AVG(total_amount) ... GROUP BY ..."
+      },
+      {
+        "id": "q-47-4",
+        "category": "💡 Interview Notes",
+        "question": "How do you calculate Year-over-Year (YoY) revenue growth?",
+        "whatInterviewerChecks": "Advanced financial SQL analytics and window functions.",
+        "bestReplyScript": "To compute YoY growth, wrap the query in a CTE and use the LAG() window function: (total_sales - LAG(total_sales) OVER (ORDER BY year)) / LAG(total_sales) OVER (ORDER BY year) * 100. This computes the percentage increase compared to the previous year.",
+        "commonMistakesToAvoid": "Attempting self-joins without considering missing calendar years.",
+        "keyPoints": ["Use LAG() window function", "Calculate YoY growth percentage", "High-frequency staff/senior interview question"],
+        "codeSnippet": "LAG(total_sales) OVER (ORDER BY year)"
+      },
+      {
+        "id": "q-47-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM orders -> 2. Evaluate YEAR(order_date) per row -> 3. GROUP BY YEAR(order_date) -> 4. Aggregate COUNT(*) and SUM(total_amount) per year group -> 5. SELECT year, total_orders, total_sales -> 6. ORDER BY year ASC.",
+        "commonMistakesToAvoid": "Believing ORDER BY executes before SELECT or aggregation.",
+        "keyPoints": ["FROM -> Row Expression -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> EXPRESSION -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-47-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Yearly sales summary' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Yearly sales summary', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;"
+        "category": "💡 Interview Notes",
+        "question": "What does YEAR() return and can it be used in GROUP BY?",
+        "whatInterviewerChecks": "Understanding of year date part extraction and aggregation in SQL.",
+        "bestReplyScript": "YEAR(date_column) extracts the 4-digit integer year (e.g., 2023, 2024). Because it evaluates deterministically per row, ANSI SQL allows it directly inside GROUP BY YEAR(order_date) to group records into annual cohorts.",
+        "commonMistakesToAvoid": "Thinking year extraction requires string functions like SUBSTR(order_date, 1, 4).",
+        "keyPoints": ["Extracts 4-digit integer year", "Directly valid in GROUP BY", "Groups rows into annual cohorts"],
+        "codeSnippet": "GROUP BY YEAR(order_date)"
+      },
+      {
+        "id": "q-47-2",
+        "category": "💡 Interview Notes",
+        "question": "What is the ANSI SQL standard alternative to YEAR()?",
+        "whatInterviewerChecks": "Cross-database portability and SQL standard knowledge.",
+        "bestReplyScript": "The ANSI SQL standard equivalent is EXTRACT(YEAR FROM order_date). It is portable and standard across PostgreSQL, Oracle, SQLite, and cloud warehouses like Snowflake and BigQuery.",
+        "commonMistakesToAvoid": "Assuming MySQL-specific functions like YEAR() work out-of-the-box in PostgreSQL or Oracle.",
+        "keyPoints": ["EXTRACT(YEAR FROM date) is ANSI SQL standard", "Universal across PostgreSQL, Oracle, Snowflake", "Portable enterprise code"],
+        "codeSnippet": "EXTRACT(YEAR FROM order_date) AS year"
+      },
+      {
+        "id": "q-47-3",
+        "category": "💡 Interview Notes",
+        "question": "Can multiple aggregate functions run simultaneously per year?",
+        "whatInterviewerChecks": "Relational aggregation performance and query execution.",
+        "bestReplyScript": "Yes. Multiple aggregations like COUNT(*), SUM(total_amount), and AVG(total_amount) execute concurrently during a single scan of the annual group, avoiding any duplicate disk or memory I/O.",
+        "commonMistakesToAvoid": "Using separate queries or CTEs to calculate order volume and sales volume separately.",
+        "keyPoints": ["Single pass execution", "No extra memory or disk I/O overhead", "Combine COUNT, SUM, AVG seamlessly"],
+        "codeSnippet": "SELECT COUNT(*), SUM(total_amount), AVG(total_amount) ... GROUP BY ..."
+      },
+      {
+        "id": "q-47-4",
+        "category": "💡 Interview Notes",
+        "question": "How do you calculate Year-over-Year (YoY) revenue growth?",
+        "whatInterviewerChecks": "Advanced financial SQL analytics and window functions.",
+        "bestReplyScript": "To compute YoY growth, wrap the query in a CTE and use the LAG() window function: (total_sales - LAG(total_sales) OVER (ORDER BY year)) / LAG(total_sales) OVER (ORDER BY year) * 100. This computes the percentage increase compared to the previous year.",
+        "commonMistakesToAvoid": "Attempting self-joins without considering missing calendar years.",
+        "keyPoints": ["Use LAG() window function", "Calculate YoY growth percentage", "High-frequency staff/senior interview question"],
+        "codeSnippet": "LAG(total_sales) OVER (ORDER BY year)"
+      },
+      {
+        "id": "q-47-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM orders -> 2. Evaluate YEAR(order_date) per row -> 3. GROUP BY YEAR(order_date) -> 4. Aggregate COUNT(*) and SUM(total_amount) per year group -> 5. SELECT year, total_orders, total_sales -> 6. ORDER BY year ASC.",
+        "commonMistakesToAvoid": "Believing ORDER BY executes before SELECT or aggregation.",
+        "keyPoints": ["FROM -> Row Expression -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> EXPRESSION -> GROUP BY -> AGGREGATE -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-47-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY Clause",
+        "description": "Calling aggregate functions with YEAR(order_date) without a GROUP BY.",
+        "badSnippet": "SELECT YEAR(order_date), COUNT(*), SUM(total_amount) FROM orders;",
+        "failingInput": "Multi-year orders database",
+        "consequence": "Collapses the entire table into a single row with overall totals and an arbitrary year.",
+        "howToFix": "Add GROUP BY YEAR(order_date).",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically partitions by projected year expression."
+      },
+      {
+        "id": "m-47-2",
+        "title": "2. Using MONTH() Instead of YEAR()",
+        "description": "Writing GROUP BY MONTH(order_date) instead of YEAR(order_date).",
+        "badSnippet": "SELECT MONTH(order_date) AS year, COUNT(*), SUM(total_amount) FROM orders GROUP BY MONTH(order_date);",
+        "failingInput": "Annual summary requirement",
+        "consequence": "Produces monthly partitions (1–12) instead of yearly cohorts (2023, 2024, 2025).",
+        "howToFix": "Use YEAR(order_date).",
+        "mistake": "Wrong date part function",
+        "whyItHappens": "Copy-pasting previous monthly query without updating function call."
+      },
+      {
+        "id": "m-47-3",
+        "title": "3. Sorting by total_sales Instead of year",
+        "description": "Writing ORDER BY total_sales DESC when chronological sorting is required.",
+        "badSnippet": "ORDER BY total_sales DESC;",
+        "failingInput": "Annual report chronological order requirement",
+        "consequence": "Ranks years by revenue volume instead of chronological sequence.",
+        "howToFix": "Order chronologically: ORDER BY year ASC (or ORDER BY year).",
+        "mistake": "Sorting by wrong column",
+        "whyItHappens": "Confusing revenue leaderboard sorting with chronological reporting."
+      },
+      {
+        "id": "m-47-4",
+        "title": "4. Passing Non-Date Columns to YEAR()",
+        "description": "Writing YEAR(customer_id) or YEAR(status).",
+        "badSnippet": "SELECT YEAR(customer_name) FROM orders;",
+        "failingInput": "String customer name column",
+        "consequence": "Produces NULL or causes database execution errors.",
+        "howToFix": "Only pass valid DATE, DATETIME, or TIMESTAMP columns to YEAR().",
+        "mistake": "Invalid column datatype for date function",
+        "whyItHappens": "Typo in column name selection."
+      },
+      {
+        "id": "m-47-5",
+        "title": "5. Missing SUM() Aggregate Metric",
+        "description": "Writing only COUNT(*) and omitting annual revenue sum.",
+        "badSnippet": "SELECT YEAR(order_date) AS year, COUNT(*) AS total_orders FROM orders GROUP BY YEAR(order_date);",
+        "failingInput": "Annual executive revenue requirements",
+        "consequence": "Omits the total_sales column required by the problem statement.",
+        "howToFix": "Include SUM(total_amount) AS total_sales in SELECT.",
+        "mistake": "Missing required aggregate column",
+        "whyItHappens": "Overlooking the dual-metric requirement."
       }
     ]
   },
   "48": {
     "id": "sql-48",
-    "title": "Products sold more than 100 times",
+    "title": "Products Sold More Than 100 Times",
     "levelNumber": 48,
     "problemId": 48,
-    "problemTitle": "Products sold more than 100 times",
-    "difficulty": "Easy",
+    "problemTitle": "Products Sold More Than 100 Times",
+    "difficulty": "Medium",
     "companyTags": [
       "Amazon",
-      "Google",
-      "Microsoft",
-      "Meta",
-      "TCS"
+      "Walmart",
+      "Target",
+      "Shopify",
+      "Flipkart",
+      "Uber Eats",
+      "DoorDash",
+      "Instacart",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM products;",
+      "code": "SELECT product_id,\n       product_name,\n       SUM(quantity) AS total_quantity\nFROM sales\nGROUP BY product_id, product_name\nHAVING SUM(quantity) > 100\nORDER BY total_quantity DESC;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM sales",
+            "Action": "Scan order line items"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Products sold more than 100 times' and validates schema column names."
+          "explanation": "Reads all product line items from the sales table (Laptop: 20, Laptop: 30, Mouse: 15, Laptop: 60, Keyboard: 25)."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 5,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY product_id, product_name",
+            "Action": "Cluster items into product buckets"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Clusters transaction rows into product groups (101: Laptop, 102: Mouse, 103: Keyboard)."
         },
         {
           "step": 3,
+          "lineNumber": 3,
+          "vars": {
+            "Phase": "SUM(quantity)",
+            "Action": "Accumulate units sold"
+          },
+          "explanation": "Sums units sold per product (Laptop: 20 + 30 + 60 = 110, Mouse: 15, Keyboard: 25)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "HAVING SUM(quantity) > 100",
+            "Action": "Filter aggregated groups"
+          },
+          "explanation": "Filters groups: Laptop (110 > 100 -> Keep ✅), Mouse (15 > 100 -> Discard ❌), Keyboard (25 > 100 -> Discard ❌)."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT Projection",
+            "Action": "Project columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects product_id (101), product_name ('Laptop'), and total_quantity (110)."
+        },
+        {
+          "step": 6,
+          "lineNumber": 7,
+          "vars": {
+            "Phase": "ORDER BY total_quantity DESC",
+            "Action": "Rank descending"
+          },
+          "explanation": "Sorts qualifying best-sellers in descending order by total quantity."
         }
       ]
     },
     "qas": [
       {
         "id": "q-48-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Products sold more than 100 times' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Products sold more than 100 times', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM products;"
+        "category": "💡 Interview Notes",
+        "question": "Why is SUM(quantity) used instead of COUNT(*) or COUNT(quantity)?",
+        "whatInterviewerChecks": "Understanding of unit aggregation vs transaction frequency.",
+        "bestReplyScript": "Each order row records a specific batch quantity (e.g. 20 laptops, 60 laptops). SUM(quantity) aggregates the total numerical units sold. In contrast, COUNT(*) merely counts the number of order transactions without accounting for unit volume per transaction.",
+        "commonMistakesToAvoid": "Using COUNT() when the question asks for total volume or quantity sold.",
+        "keyPoints": ["SUM() adds numerical units sold", "COUNT() counts rows/order events", "Required for accurate volume inventory metrics"],
+        "codeSnippet": "SUM(quantity) AS total_quantity"
+      },
+      {
+        "id": "q-48-2",
+        "category": "💡 Interview Notes",
+        "question": "Why must HAVING be used instead of WHERE for filtering total quantity?",
+        "whatInterviewerChecks": "Mastery of SQL relational execution order and aggregate filtering.",
+        "bestReplyScript": "WHERE executes before grouping (Step 2), filtering individual raw rows before aggregates exist. Because total_quantity is the result of SUM(quantity) computed over groups, it can only be filtered after GROUP BY using HAVING (Step 4). Attempting WHERE SUM(quantity) > 100 causes a SQL syntax error.",
+        "commonMistakesToAvoid": "Attempting to filter aggregate functions inside the WHERE clause.",
+        "keyPoints": ["WHERE filters raw rows before grouping", "HAVING filters aggregated groups after GROUP BY", "Aggregates are illegal in WHERE"],
+        "codeSnippet": "HAVING SUM(quantity) > 100"
+      },
+      {
+        "id": "q-48-3",
+        "category": "💡 Interview Notes",
+        "question": "Why are both product_id and product_name included in GROUP BY?",
+        "whatInterviewerChecks": "ANSI SQL standard GROUP BY column matching rules.",
+        "bestReplyScript": "Under standard ANSI SQL, every non-aggregated column in the SELECT clause must be included in the GROUP BY clause. Grouping by both product_id and product_name ensures deterministic projection and prevents grouping errors on standard SQL engines like PostgreSQL and Oracle.",
+        "commonMistakesToAvoid": "Omitting product_name from GROUP BY and relying on non-standard MySQL ONLY_FULL_GROUP_BY disablement.",
+        "keyPoints": ["ANSI standard requires all non-aggregated SELECT columns in GROUP BY", "Prevents indeterminate values", "Guarantees portable code"],
+        "codeSnippet": "GROUP BY product_id, product_name"
+      },
+      {
+        "id": "q-48-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING use the column alias total_quantity?",
+        "whatInterviewerChecks": "Engine-specific SQL dialect differences vs ANSI portability.",
+        "bestReplyScript": "In MySQL, HAVING total_quantity > 100 is supported as an extension. However, in standard ANSI SQL and engines like PostgreSQL, Oracle, and SQL Server, aliases defined in SELECT are not yet available when HAVING executes. For interview and production portability, always write HAVING SUM(quantity) > 100.",
+        "commonMistakesToAvoid": "Assuming column aliases in SELECT work inside HAVING across all SQL engines.",
+        "keyPoints": ["MySQL allows alias in HAVING", "PostgreSQL/Oracle/SQL Server reject alias in HAVING", "HAVING SUM(...) is universally portable"],
+        "codeSnippet": "HAVING SUM(quantity) > 100"
+      },
+      {
+        "id": "q-48-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Relational algebra query lifecycle mastery.",
+        "bestReplyScript": "1. FROM sales -> 2. GROUP BY product_id, product_name -> 3. Calculate SUM(quantity) -> 4. HAVING SUM(quantity) > 100 -> 5. SELECT product_id, product_name, total_quantity -> 6. ORDER BY total_quantity DESC.",
+        "commonMistakesToAvoid": "Thinking SELECT evaluates before HAVING.",
+        "keyPoints": ["FROM -> GROUP BY -> AGGREGATE -> HAVING -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> SUM -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-48-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Products sold more than 100 times' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Products sold more than 100 times', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM products;"
+        "category": "💡 Interview Notes",
+        "question": "Why is SUM(quantity) used instead of COUNT(*) or COUNT(quantity)?",
+        "whatInterviewerChecks": "Understanding of unit aggregation vs transaction frequency.",
+        "bestReplyScript": "Each order row records a specific batch quantity (e.g. 20 laptops, 60 laptops). SUM(quantity) aggregates the total numerical units sold. In contrast, COUNT(*) merely counts the number of order transactions without accounting for unit volume per transaction.",
+        "commonMistakesToAvoid": "Using COUNT() when the question asks for total volume or quantity sold.",
+        "keyPoints": ["SUM() adds numerical units sold", "COUNT() counts rows/order events", "Required for accurate volume inventory metrics"],
+        "codeSnippet": "SUM(quantity) AS total_quantity"
+      },
+      {
+        "id": "q-48-2",
+        "category": "💡 Interview Notes",
+        "question": "Why must HAVING be used instead of WHERE for filtering total quantity?",
+        "whatInterviewerChecks": "Mastery of SQL relational execution order and aggregate filtering.",
+        "bestReplyScript": "WHERE executes before grouping (Step 2), filtering individual raw rows before aggregates exist. Because total_quantity is the result of SUM(quantity) computed over groups, it can only be filtered after GROUP BY using HAVING (Step 4). Attempting WHERE SUM(quantity) > 100 causes a SQL syntax error.",
+        "commonMistakesToAvoid": "Attempting to filter aggregate functions inside the WHERE clause.",
+        "keyPoints": ["WHERE filters raw rows before grouping", "HAVING filters aggregated groups after GROUP BY", "Aggregates are illegal in WHERE"],
+        "codeSnippet": "HAVING SUM(quantity) > 100"
+      },
+      {
+        "id": "q-48-3",
+        "category": "💡 Interview Notes",
+        "question": "Why are both product_id and product_name included in GROUP BY?",
+        "whatInterviewerChecks": "ANSI SQL standard GROUP BY column matching rules.",
+        "bestReplyScript": "Under standard ANSI SQL, every non-aggregated column in the SELECT clause must be included in the GROUP BY clause. Grouping by both product_id and product_name ensures deterministic projection and prevents grouping errors on standard SQL engines like PostgreSQL and Oracle.",
+        "commonMistakesToAvoid": "Omitting product_name from GROUP BY and relying on non-standard MySQL ONLY_FULL_GROUP_BY disablement.",
+        "keyPoints": ["ANSI standard requires all non-aggregated SELECT columns in GROUP BY", "Prevents indeterminate values", "Guarantees portable code"],
+        "codeSnippet": "GROUP BY product_id, product_name"
+      },
+      {
+        "id": "q-48-4",
+        "category": "💡 Interview Notes",
+        "question": "Can HAVING use the column alias total_quantity?",
+        "whatInterviewerChecks": "Engine-specific SQL dialect differences vs ANSI portability.",
+        "bestReplyScript": "In MySQL, HAVING total_quantity > 100 is supported as an extension. However, in standard ANSI SQL and engines like PostgreSQL, Oracle, and SQL Server, aliases defined in SELECT are not yet available when HAVING executes. For interview and production portability, always write HAVING SUM(quantity) > 100.",
+        "commonMistakesToAvoid": "Assuming column aliases in SELECT work inside HAVING across all SQL engines.",
+        "keyPoints": ["MySQL allows alias in HAVING", "PostgreSQL/Oracle/SQL Server reject alias in HAVING", "HAVING SUM(...) is universally portable"],
+        "codeSnippet": "HAVING SUM(quantity) > 100"
+      },
+      {
+        "id": "q-48-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Relational algebra query lifecycle mastery.",
+        "bestReplyScript": "1. FROM sales -> 2. GROUP BY product_id, product_name -> 3. Calculate SUM(quantity) -> 4. HAVING SUM(quantity) > 100 -> 5. SELECT product_id, product_name, total_quantity -> 6. ORDER BY total_quantity DESC.",
+        "commonMistakesToAvoid": "Thinking SELECT evaluates before HAVING.",
+        "keyPoints": ["FROM -> GROUP BY -> AGGREGATE -> HAVING -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> SUM -> HAVING -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-48-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using WHERE with SUM()",
+        "description": "Attempting to filter aggregate sums using WHERE SUM(quantity) > 100.",
+        "badSnippet": "SELECT product_name, SUM(quantity) FROM sales WHERE SUM(quantity) > 100 GROUP BY product_name;",
+        "failingInput": "SQL query parser",
+        "consequence": "❌ SQL Error: misuse of aggregate function SUM() in WHERE clause.",
+        "howToFix": "Use HAVING after GROUP BY: HAVING SUM(quantity) > 100.",
+        "mistake": "Using WHERE with aggregate function",
+        "whyItHappens": "Not understanding that WHERE evaluates before groups and aggregates are formed."
+      },
+      {
+        "id": "m-48-2",
+        "title": "2. Forgetting GROUP BY Clause",
+        "description": "Calling SUM(quantity) alongside product_id and product_name without GROUP BY.",
+        "badSnippet": "SELECT product_id, product_name, SUM(quantity) FROM sales HAVING SUM(quantity) > 100;",
+        "failingInput": "Multi-product sales table",
+        "consequence": "Collapses the entire table into a single row with overall totals and an arbitrary product.",
+        "howToFix": "Add GROUP BY product_id, product_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL automatically partitions rows by selected dimension columns."
+      },
+      {
+        "id": "m-48-3",
+        "title": "3. Using COUNT() Instead of SUM()",
+        "description": "Writing COUNT(quantity) > 100 or COUNT(*) > 100.",
+        "badSnippet": "HAVING COUNT(quantity) > 100;",
+        "failingInput": "Products with small number of large volume orders",
+        "consequence": "Filters based on number of sales transactions rather than total units sold.",
+        "howToFix": "Use SUM(quantity) to accumulate units sold.",
+        "mistake": "Confusing COUNT and SUM",
+        "whyItHappens": "Misinterpreting 'sold more than 100 times' as transaction count rather than quantity sold."
+      },
+      {
+        "id": "m-48-4",
+        "title": "4. Sorting in Ascending Order",
+        "description": "Writing ORDER BY total_quantity ASC or omitting DESC.",
+        "badSnippet": "ORDER BY total_quantity ASC;",
+        "failingInput": "Best-seller leaderboard",
+        "consequence": "Places the lowest-selling products at the top of the output.",
+        "howToFix": "Sort descending: ORDER BY total_quantity DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "Forgetting SQL defaults to ASC when no direction is specified."
+      },
+      {
+        "id": "m-48-5",
+        "title": "5. Using >= 100 Instead of > 100",
+        "description": "Writing HAVING SUM(quantity) >= 100 when strictly more than 100 is specified.",
+        "badSnippet": "HAVING SUM(quantity) >= 100;",
+        "failingInput": "Product with exactly 100 units sold",
+        "consequence": "Incorrectly includes products with exactly 100 units.",
+        "howToFix": "Use strict inequality: HAVING SUM(quantity) > 100.",
+        "mistake": "Boundary condition off-by-one error",
+        "whyItHappens": "Careless reading of 'more than' vs 'at least'."
       }
     ]
   },
   "49": {
     "id": "sql-49",
-    "title": "Average age by city",
+    "title": "Average Age by City",
     "levelNumber": 49,
     "problemId": 49,
-    "problemTitle": "Average age by city",
-    "difficulty": "Easy",
+    "problemTitle": "Average Age by City",
+    "difficulty": "Medium",
     "companyTags": [
+      "Swiggy",
+      "Zomato",
       "Amazon",
-      "Google",
-      "Microsoft",
-      "Meta",
-      "TCS"
+      "Uber",
+      "Flipkart",
+      "Paytm",
+      "PolicyBazaar",
+      "TCS",
+      "Infosys",
+      "Wipro"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees;",
+      "code": "SELECT city,\n       ROUND(AVG(age), 2) AS average_age\nFROM customers\nGROUP BY city\nORDER BY city;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM customers",
+            "Action": "Scan customer table"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Average age by city' and validates schema column names."
+          "explanation": "Reads demographic customer records (Rahul/Bangalore/25, Priya/Bangalore/35, Amit/Delhi/20, Neha/Delhi/30, Rohan/Mumbai/40)."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY city",
+            "Action": "Partition records by urban territory"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Clusters customer rows into city groups (Bangalore: [25, 35], Delhi: [20, 30], Mumbai: [40])."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "AVG(age)",
+            "Action": "Compute arithmetic mean age"
+          },
+          "explanation": "Calculates arithmetic mean per city (Bangalore: (25+35)/2 = 30.0, Delhi: (20+30)/2 = 25.0, Mumbai: 40/1 = 40.0)."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "ROUND(..., 2)",
+            "Action": "Round precision"
+          },
+          "explanation": "Formats the mean values to 2 decimal places (30.00, 25.00, 40.00)."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT city, average_age",
+            "Action": "Project final columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Projects city name and formatted average_age alias."
+        },
+        {
+          "step": 6,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY city",
+            "Action": "Sort alphabetically"
+          },
+          "explanation": "Sorts city groups alphabetically: Bangalore (30.00) -> Delhi (25.00) -> Mumbai (40.00)."
         }
       ]
     },
     "qas": [
       {
         "id": "q-49-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Average age by city' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Average age by city', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What does AVG() do and how does it handle NULL values?",
+        "whatInterviewerChecks": "Understanding of arithmetic aggregation and NULL semantics.",
+        "bestReplyScript": "AVG(column) computes the arithmetic mean by dividing the sum of values by the count of non-NULL values: SUM(column) / COUNT(column). It automatically ignores NULL values entirely, meaning NULL rows do not skew the numerator or inflate the denominator.",
+        "commonMistakesToAvoid": "Thinking AVG() treats NULL as 0.",
+        "keyPoints": ["Calculates arithmetic mean", "Ignores NULLs automatically", "Equivalent to SUM(col) / COUNT(col)"],
+        "codeSnippet": "AVG(age)"
+      },
+      {
+        "id": "q-49-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is ROUND(AVG(age), 2) necessary?",
+        "whatInterviewerChecks": "Floating-point precision knowledge and clean output formatting.",
+        "bestReplyScript": "Floating point division frequently produces repeating or irrational decimal values (e.g. 33.333333333333336). ROUND(number, 2) formats the number to exactly 2 decimal places (e.g. 33.33), making it readable and compliant with corporate dashboard formatting standards.",
+        "commonMistakesToAvoid": "Leaving unrounded floating point calculations in production customer reports.",
+        "keyPoints": ["Eliminates repeating decimals", "Standardizes precision for reports", "Second parameter specifies decimal places"],
+        "codeSnippet": "ROUND(AVG(age), 2) AS average_age"
+      },
+      {
+        "id": "q-49-3",
+        "category": "💡 Interview Notes",
+        "question": "Can AVG() be used without GROUP BY?",
+        "whatInterviewerChecks": "Table-wide aggregation concepts.",
+        "bestReplyScript": "Yes. When used without GROUP BY, AVG() treats the entire table as a single partition and returns a scalar single-row result representing the grand average across all customers.",
+        "commonMistakesToAvoid": "Believing aggregate functions strictly require a GROUP BY clause to function.",
+        "keyPoints": ["Valid without GROUP BY", "Treats entire table as one partition", "Returns single scalar value"],
+        "codeSnippet": "SELECT ROUND(AVG(age), 2) FROM customers;"
+      },
+      {
+        "id": "q-49-4",
+        "category": "💡 Interview Notes",
+        "question": "How do you filter cities with an average age over 30?",
+        "whatInterviewerChecks": "WHERE vs HAVING with calculated averages.",
+        "bestReplyScript": "Because average_age is an aggregate expression, filtering it requires the HAVING clause placed after GROUP BY: HAVING AVG(age) > 30. Placing this condition in WHERE causes a syntax error because WHERE executes before group averages are computed.",
+        "commonMistakesToAvoid": "Writing WHERE AVG(age) > 30.",
+        "keyPoints": ["Use HAVING AVG(age) > 30", "Cannot filter aggregates in WHERE", "HAVING evaluates post-aggregation"],
+        "codeSnippet": "HAVING AVG(age) > 30"
+      },
+      {
+        "id": "q-49-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM customers -> 2. GROUP BY city -> 3. Calculate AVG(age) -> 4. Evaluate ROUND(..., 2) -> 5. SELECT city, average_age -> 6. ORDER BY city ASC.",
+        "commonMistakesToAvoid": "Thinking ORDER BY evaluates before SELECT.",
+        "keyPoints": ["FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY"
       }
     ],
     "questions": [
       {
         "id": "q-49-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Average age by city' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Average age by city', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees;"
+        "category": "💡 Interview Notes",
+        "question": "What does AVG() do and how does it handle NULL values?",
+        "whatInterviewerChecks": "Understanding of arithmetic aggregation and NULL semantics.",
+        "bestReplyScript": "AVG(column) computes the arithmetic mean by dividing the sum of values by the count of non-NULL values: SUM(column) / COUNT(column). It automatically ignores NULL values entirely, meaning NULL rows do not skew the numerator or inflate the denominator.",
+        "commonMistakesToAvoid": "Thinking AVG() treats NULL as 0.",
+        "keyPoints": ["Calculates arithmetic mean", "Ignores NULLs automatically", "Equivalent to SUM(col) / COUNT(col)"],
+        "codeSnippet": "AVG(age)"
+      },
+      {
+        "id": "q-49-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is ROUND(AVG(age), 2) necessary?",
+        "whatInterviewerChecks": "Floating-point precision knowledge and clean output formatting.",
+        "bestReplyScript": "Floating point division frequently produces repeating or irrational decimal values (e.g. 33.333333333333336). ROUND(number, 2) formats the number to exactly 2 decimal places (e.g. 33.33), making it readable and compliant with corporate dashboard formatting standards.",
+        "commonMistakesToAvoid": "Leaving unrounded floating point calculations in production customer reports.",
+        "keyPoints": ["Eliminates repeating decimals", "Standardizes precision for reports", "Second parameter specifies decimal places"],
+        "codeSnippet": "ROUND(AVG(age), 2) AS average_age"
+      },
+      {
+        "id": "q-49-3",
+        "category": "💡 Interview Notes",
+        "question": "Can AVG() be used without GROUP BY?",
+        "whatInterviewerChecks": "Table-wide aggregation concepts.",
+        "bestReplyScript": "Yes. When used without GROUP BY, AVG() treats the entire table as a single partition and returns a scalar single-row result representing the grand average across all customers.",
+        "commonMistakesToAvoid": "Believing aggregate functions strictly require a GROUP BY clause to function.",
+        "keyPoints": ["Valid without GROUP BY", "Treats entire table as one partition", "Returns single scalar value"],
+        "codeSnippet": "SELECT ROUND(AVG(age), 2) FROM customers;"
+      },
+      {
+        "id": "q-49-4",
+        "category": "💡 Interview Notes",
+        "question": "How do you filter cities with an average age over 30?",
+        "whatInterviewerChecks": "WHERE vs HAVING with calculated averages.",
+        "bestReplyScript": "Because average_age is an aggregate expression, filtering it requires the HAVING clause placed after GROUP BY: HAVING AVG(age) > 30. Placing this condition in WHERE causes a syntax error because WHERE executes before group averages are computed.",
+        "commonMistakesToAvoid": "Writing WHERE AVG(age) > 30.",
+        "keyPoints": ["Use HAVING AVG(age) > 30", "Cannot filter aggregates in WHERE", "HAVING evaluates post-aggregation"],
+        "codeSnippet": "HAVING AVG(age) > 30"
+      },
+      {
+        "id": "q-49-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM customers -> 2. GROUP BY city -> 3. Calculate AVG(age) -> 4. Evaluate ROUND(..., 2) -> 5. SELECT city, average_age -> 6. ORDER BY city ASC.",
+        "commonMistakesToAvoid": "Thinking ORDER BY evaluates before SELECT.",
+        "keyPoints": ["FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY"],
+        "codeSnippet": "FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY"
       }
     ],
     "mistakes": [
       {
         "id": "m-49-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Forgetting GROUP BY Clause",
+        "description": "Calling AVG(age) alongside city without a GROUP BY clause.",
+        "badSnippet": "SELECT city, ROUND(AVG(age), 2) FROM customers;",
+        "failingInput": "Multi-city customer table",
+        "consequence": "Collapses the entire table into a single row with overall table average and an arbitrary city.",
+        "howToFix": "Add GROUP BY city.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming SQL partitions by city automatically."
+      },
+      {
+        "id": "m-49-2",
+        "title": "2. Forgetting ROUND()",
+        "description": "Omitting ROUND(..., 2) and outputting raw unformatted decimals.",
+        "badSnippet": "SELECT city, AVG(age) AS average_age FROM customers GROUP BY city;",
+        "failingInput": "Demographic report requiring 2 decimal places",
+        "consequence": "Produces long floating-point decimals (e.g. 33.333333333333336) failing strict schema matching.",
+        "howToFix": "Wrap AVG(age) with ROUND(AVG(age), 2).",
+        "mistake": "Unrounded floating point output",
+        "whyItHappens": "Overlooking the rounding requirement in problem specifications."
+      },
+      {
+        "id": "m-49-3",
+        "title": "3. Using COUNT() Instead of AVG()",
+        "description": "Writing COUNT(age) instead of AVG(age).",
+        "badSnippet": "SELECT city, COUNT(age) FROM customers GROUP BY city;",
+        "failingInput": "Age calculation requirements",
+        "consequence": "Counts the number of customers in each city rather than finding the mean age.",
+        "howToFix": "Use AVG(age) to calculate the arithmetic mean.",
+        "mistake": "Confusing COUNT and AVG",
+        "whyItHappens": "Conflating headcount volume with arithmetic averages."
+      },
+      {
+        "id": "m-49-4",
+        "title": "4. Sorting by average_age Instead of city",
+        "description": "Writing ORDER BY average_age DESC when alphabetical sorting is required.",
+        "badSnippet": "ORDER BY average_age DESC;",
+        "failingInput": "Alphabetical city listing requirement",
+        "consequence": "Orders results by customer age ranking instead of alphabetical city name (A-Z).",
+        "howToFix": "Sort by city: ORDER BY city ASC (or ORDER BY city).",
+        "mistake": "Sorting by wrong column",
+        "whyItHappens": "Assuming leaderboard sorting by metric is always preferred."
+      },
+      {
+        "id": "m-49-5",
+        "title": "5. Applying ROUND with Wrong Precision",
+        "description": "Writing ROUND(AVG(age), 0) or ROUND(AVG(age), 1).",
+        "badSnippet": "ROUND(AVG(age), 0)",
+        "failingInput": "Two decimal place precision requirement",
+        "consequence": "Truncates decimal places to whole integers or single decimals.",
+        "howToFix": "Pass 2 as the second argument: ROUND(AVG(age), 2).",
+        "mistake": "Incorrect rounding precision parameter",
+        "whyItHappens": "Careless typing of the rounding precision parameter."
       }
     ]
   },
   "50": {
     "id": "sql-50",
-    "title": "Highest salary department",
+    "title": "Highest Salary Department",
     "levelNumber": 50,
     "problemId": 50,
-    "problemTitle": "Highest salary department",
-    "difficulty": "Easy",
+    "problemTitle": "Highest Salary Department",
+    "difficulty": "Medium",
     "companyTags": [
-      "Amazon",
       "Google",
-      "Microsoft",
       "Meta",
-      "TCS"
+      "Microsoft",
+      "Amazon",
+      "Apple",
+      "Netflix",
+      "Salesforce",
+      "Goldman Sachs",
+      "TCS",
+      "Infosys"
     ],
     "tracing": {
-      "code": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;",
+      "code": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nORDER BY average_salary DESC\nLIMIT 1;",
       "steps": [
         {
           "step": 1,
-          "lineNumber": 1,
+          "lineNumber": 3,
           "vars": {
-            "QueryEngine": "Parsing SQL AST",
-            "Statement": "SELECT"
+            "Phase": "FROM employees",
+            "Action": "Read employee payroll records"
           },
-          "explanation": "The SQLite engine parses the query syntax for 'Highest salary department' and validates schema column names."
+          "explanation": "Scans employees table (John: IT/70k, Alice: IT/90k, Bob: HR/50k, Emma: HR/60k, David: Finance/100k, Sophia: Finance/110k)."
         },
         {
           "step": 2,
-          "lineNumber": 1,
+          "lineNumber": 4,
           "vars": {
-            "BTreeScan": "Scanning Index/Table",
-            "RowsMatched": "All tuples matching WHERE clause"
+            "Phase": "GROUP BY department_name",
+            "Action": "Cluster rows into departments"
           },
-          "explanation": "The storage engine scans data pages and filters tuples based on predicate conditions."
+          "explanation": "Clusters employees into groups: IT [70k, 90k], HR [50k, 60k], Finance [100k, 110k]."
         },
         {
           "step": 3,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "AVG(salary)",
+            "Action": "Compute departmental average"
+          },
+          "explanation": "Averages salary per department: IT = 80000, HR = 55000, Finance = 105000."
+        },
+        {
+          "step": 4,
+          "lineNumber": 2,
+          "vars": {
+            "Phase": "ROUND(..., 2)",
+            "Action": "Format precision"
+          },
+          "explanation": "Rounds averages to 2 decimal places (Finance: 105000.00, IT: 80000.00, HR: 55000.00)."
+        },
+        {
+          "step": 5,
           "lineNumber": 1,
           "vars": {
-            "Projection": "Output Tuple Buffer",
-            "Format": "Pipe Delimited Table"
+            "Phase": "SELECT department_name, average_salary",
+            "Action": "Project candidate columns"
           },
-          "explanation": "The projection engine formats selected columns into tabular output records."
+          "explanation": "Prepares projection columns with alias average_salary."
+        },
+        {
+          "step": 6,
+          "lineNumber": 5,
+          "vars": {
+            "Phase": "ORDER BY average_salary DESC",
+            "Action": "Sort descending"
+          },
+          "explanation": "Ranks departments descending: 1. Finance (105000.00), 2. IT (80000.00), 3. HR (55000.00)."
+        },
+        {
+          "step": 7,
+          "lineNumber": 6,
+          "vars": {
+            "Phase": "LIMIT 1",
+            "Action": "Isolate top row"
+          },
+          "explanation": "Extracts the top row (Finance, 105000.00) and discards subsequent rows."
         }
       ]
     },
     "qas": [
       {
         "id": "q-50-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Highest salary department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Highest salary department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "Why is AVG() used instead of MAX()?",
+        "whatInterviewerChecks": "Aggregate metric semantics (group mean vs individual outlier).",
+        "bestReplyScript": "AVG(salary) calculates the overall average compensation across all employees in that department. MAX(salary) would only find the single highest individual earner in the company, which could be an outlier executive in a department where everyone else is underpaid.",
+        "commonMistakesToAvoid": "Writing MAX(salary) when asked for the department with the highest average salary.",
+        "keyPoints": ["AVG() measures group central tendency", "MAX() reflects single highest individual outlier", "Crucial distinction in compensation analytics"],
+        "codeSnippet": "AVG(salary)"
+      },
+      {
+        "id": "q-50-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is ORDER BY average_salary DESC necessary with LIMIT 1?",
+        "whatInterviewerChecks": "Understanding of relational ordering guarantees and LIMIT.",
+        "bestReplyScript": "Relational database tables and aggregate groupings have no inherent ordering. Without ORDER BY average_salary DESC, LIMIT 1 would return an arbitrary department. Sorting descending guarantees that the top-paying department occupies row #1.",
+        "commonMistakesToAvoid": "Using LIMIT 1 without an ORDER BY clause.",
+        "keyPoints": ["Relational sets have no default order", "ORDER BY DESC pushes maximum value to top", "LIMIT 1 safely grabs the highest"],
+        "codeSnippet": "ORDER BY average_salary DESC LIMIT 1"
+      },
+      {
+        "id": "q-50-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you handle ties if two departments share the highest average salary?",
+        "whatInterviewerChecks": "Advanced window functions vs scalar LIMIT.",
+        "bestReplyScript": "LIMIT 1 will return only one department arbitrarily. In production or senior interviews, if ties must be included, wrap the aggregation in a CTE or subquery and filter using DENSE_RANK(): WHERE DENSE_RANK() OVER (ORDER BY average_salary DESC) = 1.",
+        "commonMistakesToAvoid": "Assuming LIMIT 1 automatically includes ties.",
+        "keyPoints": ["LIMIT 1 picks one arbitrary tie", "DENSE_RANK() = 1 preserves all tied winners", "Frequent follow-up question by interviewers"],
+        "codeSnippet": "DENSE_RANK() OVER (ORDER BY average_salary DESC) = 1"
+      },
+      {
+        "id": "q-50-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the ANSI SQL standard alternative to LIMIT 1?",
+        "whatInterviewerChecks": "Cross-database SQL standard knowledge.",
+        "bestReplyScript": "The ANSI SQL standard syntax is FETCH FIRST 1 ROW ONLY (or FETCH FIRST 1 ROW WITH TIES to handle ties). It is supported in modern PostgreSQL, Oracle 12c+, and DB2.",
+        "commonMistakesToAvoid": "Assuming LIMIT is part of original ANSI SQL standard.",
+        "keyPoints": ["FETCH FIRST 1 ROW ONLY is ANSI SQL standard", "FETCH FIRST 1 ROW WITH TIES handles duplicates", "Universal in modern enterprise engines"],
+        "codeSnippet": "FETCH FIRST 1 ROW ONLY"
+      },
+      {
+        "id": "q-50-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM employees -> 2. GROUP BY department_name -> 3. Calculate AVG(salary) -> 4. Evaluate ROUND(..., 2) -> 5. SELECT department_name, average_salary -> 6. ORDER BY average_salary DESC -> 7. LIMIT 1.",
+        "commonMistakesToAvoid": "Thinking LIMIT executes before ORDER BY.",
+        "keyPoints": ["FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY -> LIMIT"],
+        "codeSnippet": "FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY -> LIMIT"
       }
     ],
     "questions": [
       {
         "id": "q-50-1",
-        "category": "Database Architecture & Execution Plan",
-        "question": "How does the database engine execute 'Highest salary department' internally?",
-        "whatInterviewerChecks": "Understanding of query parsing, logical optimization, index scans, and execution trees.",
-        "bestReplyScript": "When executing 'Highest salary department', the query optimizer creates a logical plan (Parser -> Analyzer -> Optimizer -> Physical Plan). It checks for available B-Tree indexes on predicate columns to avoid full table scans, materializes filtered tuples into memory buffers, and projects requested columns.",
-        "commonMistakesToAvoid": "Thinking SQL executes procedurally line-by-line instead of declaratively via relational algebra optimizer.",
-        "keyPoints": [
-          "B-Tree Index Scan",
-          "Relational Projection",
-          "Memory Buffer Materialization"
-        ],
-        "codeSnippet": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;"
+        "category": "💡 Interview Notes",
+        "question": "Why is AVG() used instead of MAX()?",
+        "whatInterviewerChecks": "Aggregate metric semantics (group mean vs individual outlier).",
+        "bestReplyScript": "AVG(salary) calculates the overall average compensation across all employees in that department. MAX(salary) would only find the single highest individual earner in the company, which could be an outlier executive in a department where everyone else is underpaid.",
+        "commonMistakesToAvoid": "Writing MAX(salary) when asked for the department with the highest average salary.",
+        "keyPoints": ["AVG() measures group central tendency", "MAX() reflects single highest individual outlier", "Crucial distinction in compensation analytics"],
+        "codeSnippet": "AVG(salary)"
+      },
+      {
+        "id": "q-50-2",
+        "category": "💡 Interview Notes",
+        "question": "Why is ORDER BY average_salary DESC necessary with LIMIT 1?",
+        "whatInterviewerChecks": "Understanding of relational ordering guarantees and LIMIT.",
+        "bestReplyScript": "Relational database tables and aggregate groupings have no inherent ordering. Without ORDER BY average_salary DESC, LIMIT 1 would return an arbitrary department. Sorting descending guarantees that the top-paying department occupies row #1.",
+        "commonMistakesToAvoid": "Using LIMIT 1 without an ORDER BY clause.",
+        "keyPoints": ["Relational sets have no default order", "ORDER BY DESC pushes maximum value to top", "LIMIT 1 safely grabs the highest"],
+        "codeSnippet": "ORDER BY average_salary DESC LIMIT 1"
+      },
+      {
+        "id": "q-50-3",
+        "category": "💡 Interview Notes",
+        "question": "How do you handle ties if two departments share the highest average salary?",
+        "whatInterviewerChecks": "Advanced window functions vs scalar LIMIT.",
+        "bestReplyScript": "LIMIT 1 will return only one department arbitrarily. In production or senior interviews, if ties must be included, wrap the aggregation in a CTE or subquery and filter using DENSE_RANK(): WHERE DENSE_RANK() OVER (ORDER BY average_salary DESC) = 1.",
+        "commonMistakesToAvoid": "Assuming LIMIT 1 automatically includes ties.",
+        "keyPoints": ["LIMIT 1 picks one arbitrary tie", "DENSE_RANK() = 1 preserves all tied winners", "Frequent follow-up question by interviewers"],
+        "codeSnippet": "DENSE_RANK() OVER (ORDER BY average_salary DESC) = 1"
+      },
+      {
+        "id": "q-50-4",
+        "category": "💡 Interview Notes",
+        "question": "What is the ANSI SQL standard alternative to LIMIT 1?",
+        "whatInterviewerChecks": "Cross-database SQL standard knowledge.",
+        "bestReplyScript": "The ANSI SQL standard syntax is FETCH FIRST 1 ROW ONLY (or FETCH FIRST 1 ROW WITH TIES to handle ties). It is supported in modern PostgreSQL, Oracle 12c+, and DB2.",
+        "commonMistakesToAvoid": "Assuming LIMIT is part of original ANSI SQL standard.",
+        "keyPoints": ["FETCH FIRST 1 ROW ONLY is ANSI SQL standard", "FETCH FIRST 1 ROW WITH TIES handles duplicates", "Universal in modern enterprise engines"],
+        "codeSnippet": "FETCH FIRST 1 ROW ONLY"
+      },
+      {
+        "id": "q-50-5",
+        "category": "💡 Interview Notes",
+        "question": "What is the logical execution order of this query?",
+        "whatInterviewerChecks": "Query lifecycle pipeline mastery.",
+        "bestReplyScript": "1. FROM employees -> 2. GROUP BY department_name -> 3. Calculate AVG(salary) -> 4. Evaluate ROUND(..., 2) -> 5. SELECT department_name, average_salary -> 6. ORDER BY average_salary DESC -> 7. LIMIT 1.",
+        "commonMistakesToAvoid": "Thinking LIMIT executes before ORDER BY.",
+        "keyPoints": ["FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY -> LIMIT"],
+        "codeSnippet": "FROM -> GROUP BY -> AVG -> ROUND -> SELECT -> ORDER BY -> LIMIT"
       }
     ],
     "mistakes": [
       {
         "id": "m-50-1",
-        "title": "Using SELECT * in Production Code",
-        "description": "Wildcard selection increases I/O and prevents covering index optimization.",
-        "badSnippet": "SELECT * FROM employees WHERE department_id = 1;",
-        "failingInput": "10 Million Row Production Table",
-        "consequence": "High memory footprint and elevated disk I/O.",
-        "howToFix": "Explicitly list required column names (e.g. SELECT employee_id, first_name) to reduce network payload and leverage covering indexes.",
-        "mistake": "Using SELECT * in Production Code",
-        "whyItHappens": "Developers use wildcard selection during prototyping for convenience."
+        "title": "1. Using MAX(salary) Instead of AVG(salary)",
+        "description": "Writing MAX(salary) instead of AVG(salary).",
+        "badSnippet": "SELECT department_name, MAX(salary) FROM employees GROUP BY department_name;",
+        "failingInput": "Department with one highly paid executive and low median salaries",
+        "consequence": "Finds highest individual salary rather than the department with highest average salary.",
+        "howToFix": "Use AVG(salary).",
+        "mistake": "Using wrong aggregate function",
+        "whyItHappens": "Confusing highest individual wage with highest departmental average."
+      },
+      {
+        "id": "m-50-2",
+        "title": "2. Forgetting GROUP BY Clause",
+        "description": "Calling AVG(salary) alongside department_name without GROUP BY.",
+        "badSnippet": "SELECT department_name, ROUND(AVG(salary), 2) FROM employees ORDER BY 2 DESC LIMIT 1;",
+        "failingInput": "Multi-department organization",
+        "consequence": "Collapses the entire company into a single row with overall company average and arbitrary department.",
+        "howToFix": "Add GROUP BY department_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming aggregation automatically aggregates per distinct department name."
+      },
+      {
+        "id": "m-50-3",
+        "title": "3. Using ASC Instead of DESC",
+        "description": "Writing ORDER BY average_salary ASC or omitting DESC.",
+        "badSnippet": "ORDER BY average_salary ASC LIMIT 1;",
+        "failingInput": "Salary department query",
+        "consequence": "Returns the lowest-paying department instead of the highest-paying one.",
+        "howToFix": "Sort descending: ORDER BY average_salary DESC.",
+        "mistake": "Wrong sort direction",
+        "whyItHappens": "SQL defaults to ASC when DESC is omitted."
+      },
+      {
+        "id": "m-50-4",
+        "title": "4. Forgetting LIMIT 1",
+        "description": "Omitting LIMIT 1 from the final query.",
+        "badSnippet": "SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name ORDER BY average_salary DESC;",
+        "failingInput": "Single record requirement",
+        "consequence": "Returns every department in the company instead of only the top one.",
+        "howToFix": "Append LIMIT 1 to isolate the top record.",
+        "mistake": "Missing LIMIT clause",
+        "whyItHappens": "Forgetting that 'find the department' requests a single record."
+      },
+      {
+        "id": "m-50-5",
+        "title": "5. Forgetting ROUND(..., 2)",
+        "description": "Omitting ROUND and leaving floating point decimals in the output.",
+        "badSnippet": "SELECT department_name, AVG(salary) AS average_salary FROM employees GROUP BY department_name ORDER BY average_salary DESC LIMIT 1;",
+        "failingInput": "Formatted report requirement",
+        "consequence": "Produces raw recurring floating point numbers failing expected format.",
+        "howToFix": "Wrap with ROUND(AVG(salary), 2).",
+        "mistake": "Missing ROUND function",
+        "whyItHappens": "Overlooking precision requirements in the prompt."
       }
     ]
   },

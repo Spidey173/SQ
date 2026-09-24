@@ -944,5 +944,424 @@
     "difficulty": "Easy",
     "track": "fundamentals",
     "code_id": "Basics-035"
+  },
+  {
+    "level_number": 36,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Group Employees by Department",
+    "story": "Company leadership requires a headcount report summarizing the total number of employees working across each department. Instead of listing individual employees, group records by department and compute headcounts sorted alphabetically.",
+    "objective": "Write an SQL query to display department_name along with employee_count (number of employees in each department), sorted by department_name in ascending order.",
+    "starter_code": "-- Problem #SQL-001: Group Employees by Department\n-- Write your SQL query below\n\n",
+    "expected_output": "department_name | employee_count\n--------------------------------\nEngineering | 3\nFinance | 1\nHR | 1\nMarketing | 1\nSales | 2",
+    "hints": [
+      "Use GROUP BY department_name to organize records into department groups.",
+      "Use COUNT(*) AS employee_count to count rows within each group.",
+      "Sort the final output with ORDER BY department_name ASC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT department_name, COUNT(*) AS employee_count FROM employees GROUP BY department_name ORDER BY department_name;",
+        "hidden": false,
+        "description": "Group employees by department and count headcounts"
+      }
+    ],
+    "explanation": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nORDER BY department_name;\n\n🔍 Query Breakdown\nLine 1: SELECT department_name,\n- Retrieves the department name attribute.\nLine 2: COUNT(*) AS employee_count\n- Counts total records in each group with alias employee_count.\nLine 3: FROM employees\n- Target employees table.\nLine 4: GROUP BY department_name\n- Clusters rows sharing the same department.\nLine 5: ORDER BY department_name;\n- Sorts alphabetically.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees\nStep 2: GROUP BY department_name\nStep 3: COUNT(*)\nStep 4: SELECT department_name, employee_count\nStep 5: ORDER BY department_name",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-001"
+  },
+  {
+    "level_number": 37,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Group Students by Class",
+    "story": "The school administration wants to review total student enrollment figures broken down by class. Instead of reviewing individual student transcripts, group all student records by class and calculate the enrollment strength of each class.",
+    "objective": "Write an SQL query to display each class_name along with the number of students enrolled (student_count), sorted by class_name in ascending order.",
+    "starter_code": "-- Problem #SQL-002: Group Students by Class\n-- Write your SQL query below\n\n",
+    "expected_output": "class_name | student_count\n--------------------------\nClass A | 3\nClass B | 2",
+    "hints": [
+      "Use GROUP BY class_name to organize student records into class groups.",
+      "Use COUNT(*) AS student_count to count rows within each class group.",
+      "Sort the final output with ORDER BY class_name ASC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT class_name, COUNT(*) AS student_count FROM students GROUP BY class_name ORDER BY class_name;",
+        "hidden": false,
+        "description": "Group students by class and count enrollments"
+      }
+    ],
+    "explanation": "SELECT class_name,\n       COUNT(*) AS student_count\nFROM students\nGROUP BY class_name\nORDER BY class_name;\n\n🔍 Query Breakdown\nLine 1: SELECT class_name,\n- Retrieves the class name identifier.\nLine 2: COUNT(*) AS student_count\n- Counts every student enrolled in each class group.\nLine 3: FROM students\n- Target students table.\nLine 4: GROUP BY class_name\n- Clusters rows belonging to the same class.\nLine 5: ORDER BY class_name;\n- Sorts alphabetically.\n\n⚙️ SQL Execution Order:\nStep 1: FROM students\nStep 2: GROUP BY class_name\nStep 3: COUNT(*)\nStep 4: SELECT class_name, student_count\nStep 5: ORDER BY class_name",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-002"
+  },
+  {
+    "level_number": 38,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Count Employees per Department",
+    "story": "Executive management needs a workforce distribution overview to identify which departments possess the highest headcounts and which teams may require additional hiring. Group employee records by department and display total counts in descending order.",
+    "objective": "Write an SQL query to count the number of employees working in every department. Return department_name and total_employees, sorted by total_employees in descending order.",
+    "starter_code": "-- Problem #SQL-003: Count Employees per Department\n-- Write your SQL query below\n\n",
+    "expected_output": "department_name | total_employees\n---------------------------------\nEngineering | 3\nSales | 2\nMarketing | 1\nHR | 1\nFinance | 1",
+    "hints": [
+      "Use GROUP BY department_name to organize records into department groups.",
+      "Use COUNT(*) AS total_employees to calculate each department's total headcount.",
+      "Sort results from highest to lowest using ORDER BY total_employees DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT department_name, COUNT(*) AS total_employees FROM employees GROUP BY department_name ORDER BY total_employees DESC;",
+        "hidden": false,
+        "description": "Count employees per department sorted by total employees descending"
+      }
+    ],
+    "explanation": "SELECT department_name,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_name\nORDER BY total_employees DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT department_name,\n- Retrieves each department name.\nLine 2: COUNT(*) AS total_employees\n- Counts employees in every department with alias total_employees.\nLine 3: FROM employees\n- Reads employee records.\nLine 4: GROUP BY department_name\n- Creates one group per department.\nLine 5: ORDER BY total_employees DESC;\n- Sorts departments from highest headcount to lowest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees\nStep 2: GROUP BY department_name\nStep 3: COUNT(*)\nStep 4: SELECT department_name, total_employees\nStep 5: ORDER BY total_employees DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-003"
+  },
+  {
+    "level_number": 39,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Departments Having More Than 5 Employees",
+    "story": "Human Resources and Facilities Management are planning floor expansions across corporate offices. To prioritize office allocation, identify large business divisions with a substantial workforce—specifically departments employing more than 5 team members.",
+    "objective": "Write an SQL query to find departments that have more than 5 employees. Return department_name and employee_count, sorted by employee_count in descending order.",
+    "starter_code": "-- Problem #SQL-004: Departments Having More Than 5 Employees\n-- Write your SQL query below\n\n",
+    "expected_output": "department_name | employee_count\n--------------------------------\nHR | 6",
+    "hints": [
+      "Use GROUP BY department_name to aggregate records per department.",
+      "Calculate headcounts using COUNT(*) AS employee_count.",
+      "Filter the aggregated groups using HAVING COUNT(*) > 5 (remember WHERE cannot filter aggregates).",
+      "Sort results from largest to smallest using ORDER BY employee_count DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT department_name, COUNT(*) AS employee_count FROM employees GROUP BY department_name HAVING COUNT(*) > 5 ORDER BY employee_count DESC;",
+        "hidden": false,
+        "description": "Find departments having more than 5 employees"
+      }
+    ],
+    "explanation": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nHAVING COUNT(*) > 5\nORDER BY employee_count DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT department_name,\n- Retrieves the department name.\nLine 2: COUNT(*) AS employee_count\n- Counts employees in each department group.\nLine 3: FROM employees\n- Reads employee records.\nLine 4: GROUP BY department_name\n- Clusters rows into department groups.\nLine 5: HAVING COUNT(*) > 5\n- Keeps only groups whose employee count strictly exceeds 5.\nLine 6: ORDER BY employee_count DESC;\n- Sorts from largest headcount to smallest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees\nStep 2: GROUP BY department_name\nStep 3: COUNT(*)\nStep 4: HAVING COUNT(*) > 5\nStep 5: SELECT department_name, employee_count\nStep 6: ORDER BY employee_count DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-004"
+  },
+  {
+    "level_number": 40,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Departments with Average Salary Greater Than ₹50,000",
+    "story": "Finance and Compensation committees are conducting annual payroll benchmarking. They want to identify departments where average compensation exceeds ₹50,000 to review overall budget allocations and talent investment.",
+    "objective": "Write an SQL query to find departments whose average employee salary is greater than ₹50,000. Return department_name and average_salary, rounded to 2 decimal places, sorted by average_salary in descending order.",
+    "starter_code": "-- Problem #SQL-005: Departments with Average Salary Greater Than ₹50,000\n-- Write your SQL query below\n\n",
+    "expected_output": "department_name | average_salary\n--------------------------------\nEngineering | 98333.33\nSales | 85000.0\nHR | 75000.0\nFinance | 70000.0\nMarketing | 55000.0",
+    "hints": [
+      "Use GROUP BY department_name to partition employee records by department.",
+      "Calculate and round average salaries using ROUND(AVG(salary), 2) AS average_salary.",
+      "Filter departments with average pay above 50,000 using HAVING AVG(salary) > 50000.",
+      "Sort results from highest average salary to lowest using ORDER BY average_salary DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name HAVING AVG(salary) > 50000 ORDER BY average_salary DESC;",
+        "hidden": false,
+        "description": "Find departments with average salary greater than 50000"
+      }
+    ],
+    "explanation": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nHAVING AVG(salary) > 50000\nORDER BY average_salary DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT department_name,\n- Retrieves the department name.\nLine 2: ROUND(AVG(salary), 2) AS average_salary\n- Computes the average salary for each department and rounds it to 2 decimal places.\nLine 3: FROM employees\n- Reads employee records.\nLine 4: GROUP BY department_name\n- Clusters rows into distinct department groups.\nLine 5: HAVING AVG(salary) > 50000\n- Discards department groups whose average salary is 50,000 or lower.\nLine 6: ORDER BY average_salary DESC;\n- Sorts the qualified departments from highest average salary to lowest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees\nStep 2: GROUP BY department_name\nStep 3: AVG(salary)\nStep 4: HAVING AVG(salary) > 50000\nStep 5: SELECT department_name, ROUND(AVG(salary), 2)\nStep 6: ORDER BY average_salary DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-005"
+  },
+  {
+    "level_number": 41,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Cities Having More Than 10 Customers",
+    "story": "The digital marketing and logistics teams are identifying metropolitan regions with the highest density of shoppers to optimize promotional campaigns, target local fulfillment centers, and negotiate regional delivery partnerships. Identify all cities where more than 10 customers reside.",
+    "objective": "Write an SQL query to find cities where more than 10 customers live. Return city and customer_count, sorted by customer_count in descending order.",
+    "starter_code": "-- Problem #SQL-006: Cities Having More Than 10 Customers\n-- Write your SQL query below\n\n",
+    "expected_output": "city | customer_count\n---------------------\nBangalore | 15\nDelhi | 12",
+    "hints": [
+      "Use GROUP BY city to aggregate customer records per municipality.",
+      "Calculate customer counts using COUNT(*) AS customer_count.",
+      "Filter out smaller cities using HAVING COUNT(*) > 10.",
+      "Sort results from highest customer count to lowest using ORDER BY customer_count DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT city, COUNT(*) AS customer_count FROM customers GROUP BY city HAVING COUNT(*) > 10 ORDER BY customer_count DESC;",
+        "hidden": false,
+        "description": "Find cities where more than 10 customers live"
+      }
+    ],
+    "explanation": "SELECT city,\n       COUNT(*) AS customer_count\nFROM customers\nGROUP BY city\nHAVING COUNT(*) > 10\nORDER BY customer_count DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT city,\n- Retrieves the city name.\nLine 2: COUNT(*) AS customer_count\n- Counts total customers per city group and renames as customer_count.\nLine 3: FROM customers\n- Reads all customer records.\nLine 4: GROUP BY city\n- Organizes individual customer rows into city groups.\nLine 5: HAVING COUNT(*) > 10\n- Filters grouped results to keep only cities with strictly more than 10 customers.\nLine 6: ORDER BY customer_count DESC;\n- Sorts cities from largest customer population down to lowest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM customers\nStep 2: GROUP BY city\nStep 3: COUNT(*)\nStep 4: HAVING COUNT(*) > 10\nStep 5: SELECT city, customer_count\nStep 6: ORDER BY customer_count DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-006"
+  },
+  {
+    "level_number": 42,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Product Categories with Highest Sales",
+    "story": "E-commerce category managers need to understand which merchandise sectors drive the highest gross merchandise value (GMV). By aggregating transactions by product category, the retail merchandise team can optimize supplier contracts, inventory storage, and marketing spend.",
+    "objective": "Write an SQL query to calculate the total sales for each product category. Return category_name and total_sales, sorted from highest to lowest sales.",
+    "starter_code": "-- Problem #SQL-007: Product Categories with Highest Sales\n-- Write your SQL query below\n\n",
+    "expected_output": "category_name | total_sales\n----------------------------\nElectronics | 85000.0\nClothing | 5000.0\nFootwear | 4000.0",
+    "hints": [
+      "Group sales transactions by category using GROUP BY category_name.",
+      "Calculate total revenue using SUM(sales_amount) AS total_sales.",
+      "Sort results from highest grossing category to lowest using ORDER BY total_sales DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT category_name, SUM(sales_amount) AS total_sales FROM sales GROUP BY category_name ORDER BY total_sales DESC;",
+        "hidden": false,
+        "description": "Calculate total sales for each product category"
+      }
+    ],
+    "explanation": "SELECT category_name,\n       SUM(sales_amount) AS total_sales\nFROM sales\nGROUP BY category_name\nORDER BY total_sales DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT category_name,\n- Retrieves the merchandise category name.\nLine 2: SUM(sales_amount) AS total_sales\n- Adds up all transaction amounts for each category and aliases the metric as total_sales.\nLine 3: FROM sales\n- Reads transactional records from the sales table.\nLine 4: GROUP BY category_name\n- Clusters individual orders by product category.\nLine 5: ORDER BY total_sales DESC;\n- Ranks product categories from highest revenue to lowest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM sales\nStep 2: GROUP BY category_name\nStep 3: SUM(sales_amount)\nStep 4: SELECT category_name, total_sales\nStep 5: ORDER BY total_sales DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-007"
+  },
+  {
+    "level_number": 43,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Customers with More Than 5 Orders",
+    "story": "The loyalty rewards and VIP customer experience team is launching an exclusive tier for frequent shoppers. To qualify for priority shipping, dedicated account management, and early sale access, members must have completed more than 5 lifetime orders. Identify eligible shoppers.",
+    "objective": "Write an SQL query to find customers who have placed more than 5 orders. Return customer_id, customer_name, and total_orders, sorted by total_orders in descending order.",
+    "starter_code": "-- Problem #SQL-008: Customers with More Than 5 Orders\n-- Write your SQL query below\n\n",
+    "expected_output": "customer_id | customer_name | total_orders\n-------------------------------------------\n101 | Rahul | 6",
+    "hints": [
+      "Group orders by both customer_id and customer_name using GROUP BY customer_id, customer_name.",
+      "Count total order records using COUNT(*) AS total_orders.",
+      "Filter for frequent buyers using HAVING COUNT(*) > 5.",
+      "Sort results from most active to least using ORDER BY total_orders DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT customer_id, customer_name, COUNT(*) AS total_orders FROM orders GROUP BY customer_id, customer_name HAVING COUNT(*) > 5 ORDER BY total_orders DESC;",
+        "hidden": false,
+        "description": "Find customers with more than 5 orders"
+      }
+    ],
+    "explanation": "SELECT customer_id,\n       customer_name,\n       COUNT(*) AS total_orders\nFROM orders\nGROUP BY customer_id, customer_name\nHAVING COUNT(*) > 5\nORDER BY total_orders DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT customer_id, customer_name,\n- Retrieves the customer's unique identifier and full name.\nLine 2: COUNT(*) AS total_orders\n- Counts total purchase orders for each grouped customer and aliases as total_orders.\nLine 3: FROM orders\n- Reads transactional records from the orders table.\nLine 4: GROUP BY customer_id, customer_name\n- Groups rows by both unique ID and name to satisfy ANSI SQL projection standards.\nLine 5: HAVING COUNT(*) > 5\n- Filters grouped records post-aggregation to retain only shoppers with strictly more than 5 orders.\nLine 6: ORDER BY total_orders DESC;\n- Ranks customers from highest order count to lowest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM orders\nStep 2: GROUP BY customer_id, customer_name\nStep 3: COUNT(*)\nStep 4: HAVING COUNT(*) > 5\nStep 5: SELECT customer_id, customer_name, total_orders\nStep 6: ORDER BY total_orders DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-008"
+  },
+  {
+    "level_number": 44,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Branches with Highest Profit",
+    "story": "Corporate retail executives are conducting a quarterly branch network profitability review. Rather than simply reviewing top-line revenue, executive management needs to examine net profitability by calculating gross profit margins (selling price minus cost price) across regional branch locations.",
+    "objective": "Write an SQL query to calculate the total profit earned by each branch. Return branch_name and total_profit, sorted by total_profit in descending order.",
+    "starter_code": "-- Problem #SQL-009: Branches with Highest Profit\n-- Write your SQL query below\n\n",
+    "expected_output": "branch_name | total_profit\n--------------------------\nBangalore | 400.0\nDelhi | 350.0\nMumbai | 100.0",
+    "hints": [
+      "Calculate transaction profit inside SUM: SUM(selling_price - cost_price) AS total_profit.",
+      "Group records by branch location using GROUP BY branch_name.",
+      "Sort results from most profitable to least using ORDER BY total_profit DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT branch_name, SUM(selling_price - cost_price) AS total_profit FROM sales GROUP BY branch_name ORDER BY total_profit DESC;",
+        "hidden": false,
+        "description": "Calculate total profit earned by each branch"
+      }
+    ],
+    "explanation": "SELECT branch_name,\n       SUM(selling_price - cost_price) AS total_profit\nFROM sales\nGROUP BY branch_name\nORDER BY total_profit DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT branch_name,\n- Retrieves the branch location name.\nLine 2: SUM(selling_price - cost_price) AS total_profit\n- Evaluates row-level profit (selling_price - cost_price) and sums the result across each branch, aliasing as total_profit.\nLine 3: FROM sales\n- Reads transactional records from the sales table.\nLine 4: GROUP BY branch_name\n- Clusters records into individual branch partitions.\nLine 5: ORDER BY total_profit DESC;\n- Ranks branches from highest total profit to lowest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM sales\nStep 2: Calculate selling_price - cost_price for each record\nStep 3: GROUP BY branch_name\nStep 4: SUM() profit for each branch\nStep 5: SELECT branch_name, total_profit\nStep 6: ORDER BY total_profit DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-009"
+  },
+  {
+    "level_number": 45,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "States with Highest Customers",
+    "story": "The growth marketing and regional operations division is planning its annual regional marketing campaign and logistics hub expansion. To maximize return on ad spend and optimize warehousing logistics, management needs to identify which geographic states hold the largest customer footprint.",
+    "objective": "Write an SQL query to count the number of customers in every state. Return state and total_customers, sorted from highest to lowest number of customers.",
+    "starter_code": "-- Problem #SQL-010: States with Highest Customers\n-- Write your SQL query below\n\n",
+    "expected_output": "state | total_customers\n-----------------------\nKarnataka | 4\nDelhi | 2\nMaharashtra | 1",
+    "hints": [
+      "Select the state column.",
+      "Count customer records using COUNT(*) AS total_customers.",
+      "Group rows by geographic region using GROUP BY state.",
+      "Sort results from largest customer base to smallest using ORDER BY total_customers DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT state, COUNT(*) AS total_customers FROM customers GROUP BY state ORDER BY total_customers DESC;",
+        "hidden": false,
+        "description": "Count number of customers in every state"
+      }
+    ],
+    "explanation": "SELECT state,\n       COUNT(*) AS total_customers\nFROM customers\nGROUP BY state\nORDER BY total_customers DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT state,\n- Retrieves the customer's state or region name.\nLine 2: COUNT(*) AS total_customers\n- Tallies all customer accounts registered within each state and aliases as total_customers.\nLine 3: FROM customers\n- Reads demographic profiles from the customers table.\nLine 4: GROUP BY state\n- Partitions user records into distinct state clusters.\nLine 5: ORDER BY total_customers DESC;\n- Ranks states from largest customer concentration down to smallest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM customers\nStep 2: GROUP BY state\nStep 3: COUNT(*) per state\nStep 4: SELECT state, total_customers\nStep 5: ORDER BY total_customers DESC",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-010"
+  },
+  {
+    "level_number": 46,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Monthly Sales Summary",
+    "story": "Financial analysts in executive operations are preparing the annual corporate board review. To analyze business seasonality and quarter-over-quarter trends, leadership needs a monthly breakdown showing total order volume and aggregate gross sales generated in each month.",
+    "objective": "Write an SQL query to calculate the monthly sales summary. Return month, total_orders, and total_sales, sorted by month in ascending order.",
+    "starter_code": "-- Problem #SQL-011: Monthly Sales Summary\n-- Write your SQL query below\n\n",
+    "expected_output": "month | total_orders | total_sales\n----------------------------------\n1 | 2 | 1200.0\n2 | 2 | 1300.0\n3 | 1 | 600.0",
+    "hints": [
+      "Extract the month number using MONTH(order_date) AS month (or EXTRACT(MONTH FROM order_date)).",
+      "Count total orders using COUNT(*) AS total_orders.",
+      "Calculate total sales volume using SUM(total_amount) AS total_sales.",
+      "Group orders by month using GROUP BY MONTH(order_date).",
+      "Sort chronologically using ORDER BY month ASC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT MONTH(order_date) AS month, COUNT(*) AS total_orders, SUM(total_amount) AS total_sales FROM orders GROUP BY MONTH(order_date) ORDER BY month;",
+        "hidden": false,
+        "description": "Calculate monthly sales summary"
+      }
+    ],
+    "explanation": "SELECT MONTH(order_date) AS month,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY MONTH(order_date)\nORDER BY month;\n\n🔍 Query Breakdown\nLine 1: SELECT MONTH(order_date) AS month,\n- Extracts the integer month number (1–12) from order_date and aliases as month.\nLine 2: COUNT(*) AS total_orders\n- Tallies the total number of customer orders completed in each month.\nLine 3: SUM(total_amount) AS total_sales\n- Computes the aggregate sales revenue generated per month.\nLine 4: FROM orders\n- Reads transactional orders data.\nLine 5: GROUP BY MONTH(order_date)\n- Partitions transactions by the extracted month number.\nLine 6: ORDER BY month;\n- Sorts output chronologically from January (1) to December (12).\n\n⚙️ SQL Execution Order:\nStep 1: FROM orders\nStep 2: Extract MONTH(order_date)\nStep 3: GROUP BY MONTH(order_date)\nStep 4: COUNT(*) & SUM(total_amount)\nStep 5: SELECT month, total_orders, total_sales\nStep 6: ORDER BY month",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-011"
+  },
+  {
+    "level_number": 47,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Yearly Sales Summary",
+    "story": "The board of directors is reviewing multi-year enterprise performance for its long-term strategic plan. To evaluate top-line revenue trajectories and customer adoption across operating cycles, executives require an annual summary of total order volume and cumulative gross sales.",
+    "objective": "Write an SQL query to calculate the yearly sales summary. Return year, total_orders, and total_sales, sorted by year in ascending order.",
+    "starter_code": "-- Problem #SQL-012: Yearly Sales Summary\n-- Write your SQL query below\n\n",
+    "expected_output": "year | total_orders | total_sales\n---------------------------------\n2023 | 2 | 2000.0\n2024 | 2 | 2400.0\n2025 | 1 | 2000.0",
+    "hints": [
+      "Extract the calendar year using YEAR(order_date) AS year (or EXTRACT(YEAR FROM order_date)).",
+      "Count total orders per year using COUNT(*) AS total_orders.",
+      "Calculate total sales revenue using SUM(total_amount) AS total_sales.",
+      "Group orders by year using GROUP BY YEAR(order_date).",
+      "Sort chronologically using ORDER BY year ASC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT YEAR(order_date) AS year, COUNT(*) AS total_orders, SUM(total_amount) AS total_sales FROM orders GROUP BY YEAR(order_date) ORDER BY year;",
+        "hidden": false,
+        "description": "Calculate yearly sales summary"
+      }
+    ],
+    "explanation": "SELECT YEAR(order_date) AS year,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY YEAR(order_date)\nORDER BY year;\n\n🔍 Query Breakdown\nLine 1: SELECT YEAR(order_date) AS year,\n- Extracts the integer calendar year (e.g. 2023, 2024, 2025) and aliases as year.\nLine 2: COUNT(*) AS total_orders\n- Counts all orders placed within each calendar year.\nLine 3: SUM(total_amount) AS total_sales\n- Calculates total gross sales revenue per year.\nLine 4: FROM orders\n- Reads transactional orders data.\nLine 5: GROUP BY YEAR(order_date)\n- Partitions records into annual cohorts.\nLine 6: ORDER BY year;\n- Sorts years chronologically from earliest to latest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM orders\nStep 2: Extract YEAR(order_date)\nStep 3: GROUP BY YEAR(order_date)\nStep 4: COUNT(*) & SUM(total_amount)\nStep 5: SELECT year, total_orders, total_sales\nStep 6: ORDER BY year",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-012"
+  },
+  {
+    "level_number": 48,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Products Sold More Than 100 Times",
+    "story": "The supply chain and procurement teams at an e-commerce giant are optimizing replenishment cycles ahead of peak sales seasons. To allocate warehouse shelving and negotiate volume discounts with vendors, analysts need to isolate high-velocity catalog items that have sold over 100 aggregate units.",
+    "objective": "Write an SQL query to find products that have been sold more than 100 times. Return product_id, product_name, and total_quantity, sorted by total_quantity in descending order.",
+    "starter_code": "-- Problem #SQL-013: Products Sold More Than 100 Times\n-- Write your SQL query below\n\n",
+    "expected_output": "product_id | product_name | total_quantity\n------------------------------------------\n101 | Laptop | 110",
+    "hints": [
+      "Aggregate sales by product: GROUP BY product_id, product_name.",
+      "Calculate total quantity sold using SUM(quantity) AS total_quantity.",
+      "Filter aggregated results using HAVING SUM(quantity) > 100.",
+      "Sort from highest to lowest volume using ORDER BY total_quantity DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT product_id, product_name, SUM(quantity) AS total_quantity FROM sales GROUP BY product_id, product_name HAVING SUM(quantity) > 100 ORDER BY total_quantity DESC;",
+        "hidden": false,
+        "description": "Find products sold more than 100 times"
+      }
+    ],
+    "explanation": "SELECT product_id,\n       product_name,\n       SUM(quantity) AS total_quantity\nFROM sales\nGROUP BY product_id, product_name\nHAVING SUM(quantity) > 100\nORDER BY total_quantity DESC;\n\n🔍 Query Breakdown\nLine 1: SELECT product_id, product_name,\n- Retrieves the unique product identifier and descriptive catalog name.\nLine 2: SUM(quantity) AS total_quantity\n- Sums up all units sold across individual transaction lines and aliases as total_quantity.\nLine 3: FROM sales\n- Reads transactional line-item order records.\nLine 4: GROUP BY product_id, product_name\n- Clusters rows belonging to identical product entities.\nLine 5: HAVING SUM(quantity) > 100\n- Filters the aggregated groups, discarding products with total volume <= 100.\nLine 6: ORDER BY total_quantity DESC;\n- Ranks qualifying best-sellers from highest total quantity to lowest.\n\n⚙️ SQL Execution Order:\nStep 1: FROM sales\nStep 2: GROUP BY product_id, product_name\nStep 3: SUM(quantity)\nStep 4: HAVING SUM(quantity) > 100\nStep 5: SELECT product_id, product_name, total_quantity\nStep 6: ORDER BY total_quantity DESC",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-013"
+  },
+  {
+    "level_number": 49,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Average Age by City",
+    "story": "The regional marketing and consumer research team is conducting demographic profiling to tailor promotional campaigns and localized product offerings. To understand customer maturity across urban markets, analysts need to compute the average customer age for each city, rounded cleanly for executive reporting.",
+    "objective": "Write an SQL query to calculate the average age of customers in each city. Return city and average_age, rounded to 2 decimal places, sorted alphabetically by city.",
+    "starter_code": "-- Problem #SQL-014: Average Age by City\n-- Write your SQL query below\n\n",
+    "expected_output": "city | average_age\n--------------------\nBangalore | 30.0\nDelhi | 25.0\nMumbai | 40.0",
+    "hints": [
+      "Select the city dimension: SELECT city, ...",
+      "Calculate the arithmetic mean of age: AVG(age).",
+      "Round the mean to two decimal places: ROUND(AVG(age), 2) AS average_age.",
+      "Group rows by city: GROUP BY city.",
+      "Sort cities alphabetically: ORDER BY city ASC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT city, ROUND(AVG(age), 2) AS average_age FROM customers GROUP BY city ORDER BY city;",
+        "hidden": false,
+        "description": "Calculate average age by city"
+      }
+    ],
+    "explanation": "SELECT city,\n       ROUND(AVG(age), 2) AS average_age\nFROM customers\nGROUP BY city\nORDER BY city;\n\n🔍 Query Breakdown\nLine 1: SELECT city,\n- Projects the urban center name.\nLine 2: ROUND(AVG(age), 2) AS average_age\n- Computes the arithmetic mean age across all customers within each city, rounds to 2 decimal places, and aliases as average_age.\nLine 3: FROM customers\n- Reads customer demographic records.\nLine 4: GROUP BY city\n- Clusters records into geographic city groups.\nLine 5: ORDER BY city;\n- Sorts output alphabetically from A to Z.\n\n⚙️ SQL Execution Order:\nStep 1: FROM customers\nStep 2: GROUP BY city\nStep 3: AVG(age)\nStep 4: ROUND(..., 2)\nStep 5: SELECT city, average_age\nStep 6: ORDER BY city",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-014"
+  },
+  {
+    "level_number": 50,
+    "chapter_id": 2,
+    "chapter_title": "Module 2: Aggregation & Grouping",
+    "title": "Highest Salary Department",
+    "story": "Corporate human resources and financial compensation committees are reviewing organizational department benchmarks to audit competitive pay scales. Leadership needs to identify which operational department commands the highest average compensation package across its headcount.",
+    "objective": "Write an SQL query to find the department with the highest average salary. Return department_name and average_salary, rounded to 2 decimal places. Return only one record.",
+    "starter_code": "-- Problem #SQL-015: Highest Salary Department\n-- Write your SQL query below\n\n",
+    "expected_output": "department_name | average_salary\n--------------------------------\nFinance | 105000.0",
+    "hints": [
+      "Group employees by their department: GROUP BY department_name.",
+      "Calculate the average compensation: AVG(salary).",
+      "Round the average to two decimal places: ROUND(AVG(salary), 2) AS average_salary.",
+      "Sort in descending order to place the highest average first: ORDER BY average_salary DESC.",
+      "Limit output to only the top record: LIMIT 1."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name ORDER BY average_salary DESC LIMIT 1;",
+        "hidden": false,
+        "description": "Find department with highest average salary"
+      }
+    ],
+    "explanation": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nORDER BY average_salary DESC\nLIMIT 1;\n\n🔍 Query Breakdown\nLine 1: SELECT department_name,\n- Retrieves the department title.\nLine 2: ROUND(AVG(salary), 2) AS average_salary\n- Computes the average salary across all employees in each department, rounds to 2 decimal places, and aliases as average_salary.\nLine 3: FROM employees\n- Reads employee payroll records.\nLine 4: GROUP BY department_name\n- Partitions employees into department buckets.\nLine 5: ORDER BY average_salary DESC\n- Ranks departments from highest average compensation to lowest.\nLine 6: LIMIT 1;\n- Returns solely the top-ranking department.\n\n⚙️ SQL Execution Order:\nStep 1: FROM employees\nStep 2: GROUP BY department_name\nStep 3: AVG(salary)\nStep 4: ROUND(..., 2)\nStep 5: SELECT department_name, average_salary\nStep 6: ORDER BY average_salary DESC\nStep 7: LIMIT 1",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-015"
   }
 ]

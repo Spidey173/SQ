@@ -91,6 +91,7 @@ CREATE TABLE IF NOT EXISTS students (
     first_name TEXT,
     last_name TEXT,
     class TEXT,
+    class_name TEXT,
     marks REAL,
     age INTEGER,
     city TEXT
@@ -177,11 +178,11 @@ INSERT INTO sales VALUES (4, 13, '2024-02-14', 3, 1050.00, 'West', 3);
 INSERT INTO sales VALUES (5, 10, '2024-03-01', 2, 2400.00, 'North', 3);
 
 -- Students & Courses
-INSERT INTO students VALUES (1, 'Alex', 'Turner', 'Class A', 92.5, 16, 'Chicago');
-INSERT INTO students VALUES (2, 'Bella', 'Hadid', 'Class A', 88.0, 17, 'New York');
-INSERT INTO students VALUES (3, 'Chris', 'Evans', 'Class B', 74.5, 16, 'Boston');
-INSERT INTO students VALUES (4, 'Daniel', 'Craig', 'Class B', 95.0, 17, 'Chicago');
-INSERT INTO students VALUES (5, 'Ella', 'Purnell', 'Class A', 61.0, 16, 'New York');
+INSERT INTO students VALUES (1, 'Alex', 'Turner', 'Class A', 'Class A', 92.5, 16, 'Chicago');
+INSERT INTO students VALUES (2, 'Bella', 'Hadid', 'Class A', 'Class A', 88.0, 17, 'New York');
+INSERT INTO students VALUES (3, 'Chris', 'Evans', 'Class B', 'Class B', 74.5, 16, 'Boston');
+INSERT INTO students VALUES (4, 'Daniel', 'Craig', 'Class B', 'Class B', 95.0, 17, 'Chicago');
+INSERT INTO students VALUES (5, 'Ella', 'Purnell', 'Class A', 'Class A', 61.0, 16, 'New York');
 
 -- Branches
 INSERT INTO branches VALUES (1, 'Downtown Main', 'New York', 450000.00);
@@ -213,6 +214,47 @@ def execute_sql_in_sandbox(
     conn = sqlite3.connect(":memory:")
     cursor = conn.cursor()
 
+    # Register custom SQL helper functions commonly used in MySQL/PostgreSQL/Oracle
+    def _sql_month(val):
+        if not val:
+            return None
+        parts = str(val).strip().split("-")
+        if len(parts) >= 2:
+            try:
+                return int(parts[1])
+            except ValueError:
+                pass
+        return None
+
+    def _sql_year(val):
+        if not val:
+            return None
+        parts = str(val).strip().split("-")
+        if len(parts) >= 1:
+            try:
+                return int(parts[0])
+            except ValueError:
+                pass
+        return None
+
+    def _sql_day(val):
+        if not val:
+            return None
+        parts = str(val).strip().split(" ")[0].split("-")
+        if len(parts) >= 3:
+            try:
+                return int(parts[2])
+            except ValueError:
+                pass
+        return None
+
+    conn.create_function("MONTH", 1, _sql_month)
+    conn.create_function("month", 1, _sql_month)
+    conn.create_function("YEAR", 1, _sql_year)
+    conn.create_function("year", 1, _sql_year)
+    conn.create_function("DAY", 1, _sql_day)
+    conn.create_function("day", 1, _sql_day)
+
     # Attach execution timeout handler to prevent infinite loops (e.g. recursive CTEs)
     deadline = time.perf_counter() + timeout_seconds
 
@@ -240,6 +282,11 @@ def execute_sql_in_sandbox(
 
         # Gracefully handle accidental trailing comma right before FROM clause (e.g., SELECT col1, col2, FROM tbl)
         cleaned_no_comments = re.sub(r",\s*(FROM\b)", r" \1", cleaned_no_comments, flags=re.IGNORECASE)
+
+        # Support ANSI SQL EXTRACT(MONTH/YEAR/DAY FROM date_column) by rewriting to MONTH()/YEAR()/DAY()
+        cleaned_no_comments = re.sub(r"\bEXTRACT\s*\(\s*MONTH\s+FROM\s+([a-zA-Z0-9_.]+)\s*\)", r"MONTH(\1)", cleaned_no_comments, flags=re.IGNORECASE)
+        cleaned_no_comments = re.sub(r"\bEXTRACT\s*\(\s*YEAR\s+FROM\s+([a-zA-Z0-9_.]+)\s*\)", r"YEAR(\1)", cleaned_no_comments, flags=re.IGNORECASE)
+        cleaned_no_comments = re.sub(r"\bEXTRACT\s*\(\s*DAY\s+FROM\s+([a-zA-Z0-9_.]+)\s*\)", r"DAY(\1)", cleaned_no_comments, flags=re.IGNORECASE)
 
         if not cleaned_no_comments:
             return {

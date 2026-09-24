@@ -364,152 +364,152 @@ export const ALL_50_SOLUTIONS: Record<string, ProblemSolutionRecord> = {
   "36": {
     "code_id": "SQL-001",
     "levelNumber": 36,
-    "title": "Group employees by department",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Group Employees by Department",
+    "optimalCode": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nORDER BY department_name;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Group employees by department' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Group employees by department is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, COUNT(*) AS employee_count FROM employees GROUP BY department_name ORDER BY department_name, grouping employees by department and counting total headcounts.",
+    "keyTakeaway": "GROUP BY clusters rows sharing common column values, enabling aggregate functions like COUNT() to compute per-group totals."
   },
   "37": {
     "code_id": "SQL-002",
     "levelNumber": 37,
-    "title": "Group students by class",
-    "optimalCode": "SELECT * FROM students;",
+    "title": "Group Students by Class",
+    "optimalCode": "SELECT class_name,\n       COUNT(*) AS student_count\nFROM students\nGROUP BY class_name\nORDER BY class_name;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Group students by class' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Group students by class is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT class_name, COUNT(*) AS student_count FROM students GROUP BY class_name ORDER BY class_name, grouping student records by class and computing enrollment counts.",
+    "keyTakeaway": "GROUP BY partitions student records by class_name, enabling COUNT(*) to count total enrollments per class."
   },
   "38": {
     "code_id": "SQL-003",
     "levelNumber": 38,
-    "title": "Count employees per department",
-    "optimalCode": "SELECT department_id, COUNT(*) AS total FROM employees GROUP BY department_id;",
+    "title": "Count Employees per Department",
+    "optimalCode": "SELECT department_name,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_name\nORDER BY total_employees DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Count employees per department' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Count employees per department is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, COUNT(*) AS total_employees FROM employees GROUP BY department_name ORDER BY total_employees DESC, grouping employee records by department and sorting from largest to smallest headcount.",
+    "keyTakeaway": "ORDER BY ... DESC sorts aggregate group counts from highest to lowest, surfacing the largest groups first."
   },
   "39": {
     "code_id": "SQL-004",
     "levelNumber": 39,
-    "title": "Departments having more than 5 employees",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Departments Having More Than 5 Employees",
+    "optimalCode": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nHAVING COUNT(*) > 5\nORDER BY employee_count DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Departments having more than 5 employees' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Departments having more than 5 employees is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, COUNT(*) AS employee_count FROM employees GROUP BY department_name HAVING COUNT(*) > 5 ORDER BY employee_count DESC, filtering department groups having more than 5 members.",
+    "keyTakeaway": "HAVING filters aggregated groups after GROUP BY, whereas WHERE filters individual rows before grouping."
   },
   "40": {
     "code_id": "SQL-005",
     "levelNumber": 40,
-    "title": "Departments with average salary > 50,000",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Departments with Average Salary Greater Than ₹50,000",
+    "optimalCode": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nHAVING AVG(salary) > 50000\nORDER BY average_salary DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Departments with average salary > 50,000' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Departments with average salary > 50,000 is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name HAVING AVG(salary) > 50000 ORDER BY average_salary DESC, calculating department average compensation, rounding to 2 decimal places, and ranking highest to lowest.",
+    "keyTakeaway": "AVG() calculates mean values ignoring NULLs, ROUND(..., 2) formats clean decimals, and HAVING filters aggregates after GROUP BY."
   },
   "41": {
     "code_id": "SQL-006",
     "levelNumber": 41,
-    "title": "Cities having more than 10 customers",
-    "optimalCode": "SELECT * FROM customers;",
+    "title": "Cities Having More Than 10 Customers",
+    "optimalCode": "SELECT city,\n       COUNT(*) AS customer_count\nFROM customers\nGROUP BY city\nHAVING COUNT(*) > 10\nORDER BY customer_count DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Cities having more than 10 customers' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Cities having more than 10 customers is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT city, COUNT(*) AS customer_count FROM customers GROUP BY city HAVING COUNT(*) > 10 ORDER BY customer_count DESC, grouping customers by city and filtering for cities with more than 10 customers sorted in descending order.",
+    "keyTakeaway": "GROUP BY partitions records by category/location, COUNT(*) aggregates totals, and HAVING filters aggregated group metrics."
   },
   "42": {
     "code_id": "SQL-007",
     "levelNumber": 42,
-    "title": "Product categories with highest sales",
-    "optimalCode": "SELECT * FROM products ORDER BY 1 DESC LIMIT 5;",
+    "title": "Product Categories with Highest Sales",
+    "optimalCode": "SELECT category_name,\n       SUM(sales_amount) AS total_sales\nFROM sales\nGROUP BY category_name\nORDER BY total_sales DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Product categories with highest sales' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Product categories with highest sales is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT category_name, SUM(sales_amount) AS total_sales FROM sales GROUP BY category_name ORDER BY total_sales DESC, grouping transactions by category, summing sales revenues, and ranking categories from highest grossing to lowest.",
+    "keyTakeaway": "SUM() computes total numeric values per group, ignoring NULLs, and ORDER BY DESC orders categories from highest revenue to lowest."
   },
   "43": {
     "code_id": "SQL-008",
     "levelNumber": 43,
-    "title": "Customers with more than 5 orders",
-    "optimalCode": "SELECT * FROM orders;",
+    "title": "Customers with More Than 5 Orders",
+    "optimalCode": "SELECT customer_id,\n       customer_name,\n       COUNT(*) AS total_orders\nFROM orders\nGROUP BY customer_id, customer_name\nHAVING COUNT(*) > 5\nORDER BY total_orders DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Customers with more than 5 orders' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Customers with more than 5 orders is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT customer_id, customer_name, COUNT(*) AS total_orders FROM orders GROUP BY customer_id, customer_name HAVING COUNT(*) > 5 ORDER BY total_orders DESC, aggregating orders per customer, filtering for customers with more than 5 orders, and ordering descending.",
+    "keyTakeaway": "All non-aggregated columns in SELECT must be included in GROUP BY in standard ANSI SQL, and HAVING filters aggregated counts."
   },
   "44": {
     "code_id": "SQL-009",
     "levelNumber": 44,
-    "title": "Branches with highest profit",
-    "optimalCode": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;",
+    "title": "Branches with Highest Profit",
+    "optimalCode": "SELECT branch_name,\n       SUM(selling_price - cost_price) AS total_profit\nFROM sales\nGROUP BY branch_name\nORDER BY total_profit DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Branches with highest profit' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Branches with highest profit is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT branch_name, SUM(selling_price - cost_price) AS total_profit FROM sales GROUP BY branch_name ORDER BY total_profit DESC, evaluating row-level profit per transaction, summing per branch, and sorting branches by total profitability in descending order.",
+    "keyTakeaway": "SUM() accepts calculated expressions like (selling_price - cost_price) to compute totals over derived metrics per group."
   },
   "45": {
     "code_id": "SQL-010",
     "levelNumber": 45,
-    "title": "States with highest customers",
-    "optimalCode": "SELECT * FROM customers ORDER BY 1 DESC LIMIT 5;",
+    "title": "States with Highest Customers",
+    "optimalCode": "SELECT state,\n       COUNT(*) AS total_customers\nFROM customers\nGROUP BY state\nORDER BY total_customers DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'States with highest customers' using SQLite execution planner.",
-    "keyTakeaway": "Mastering States with highest customers is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT state, COUNT(*) AS total_customers FROM customers GROUP BY state ORDER BY total_customers DESC, aggregating user records per state and sorting by total customer count in descending order.",
+    "keyTakeaway": "COUNT(*) tallies all rows per state group, and ORDER BY DESC orders regions from largest customer base to smallest."
   },
   "46": {
     "code_id": "SQL-011",
     "levelNumber": 46,
-    "title": "Monthly sales summary",
-    "optimalCode": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
+    "title": "Monthly Sales Summary",
+    "optimalCode": "SELECT MONTH(order_date) AS month,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY MONTH(order_date)\nORDER BY month;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Monthly sales summary' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Monthly sales summary is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT MONTH(order_date) AS month, COUNT(*) AS total_orders, SUM(total_amount) AS total_sales FROM orders GROUP BY MONTH(order_date) ORDER BY month, extracting the month component from order_date, aggregating order counts and sales amounts, and sorting chronologically.",
+    "keyTakeaway": "MONTH() (or EXTRACT(MONTH FROM date)) extracts numerical months from dates, enabling temporal grouping and chronological reporting with ORDER BY month."
   },
   "47": {
     "code_id": "SQL-012",
     "levelNumber": 47,
-    "title": "Yearly sales summary",
-    "optimalCode": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
+    "title": "Yearly Sales Summary",
+    "optimalCode": "SELECT YEAR(order_date) AS year,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY YEAR(order_date)\nORDER BY year;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Yearly sales summary' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Yearly sales summary is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT YEAR(order_date) AS year, COUNT(*) AS total_orders, SUM(total_amount) AS total_sales FROM orders GROUP BY YEAR(order_date) ORDER BY year, extracting the 4-digit year component, aggregating annual order volumes and revenues, and ordering chronologically.",
+    "keyTakeaway": "YEAR() (or EXTRACT(YEAR FROM date)) extracts annual cohorts from date values, ideal for multi-year trend analysis and executive financial reporting."
   },
   "48": {
     "code_id": "SQL-013",
     "levelNumber": 48,
-    "title": "Products sold more than 100 times",
-    "optimalCode": "SELECT * FROM products;",
+    "title": "Products Sold More Than 100 Times",
+    "optimalCode": "SELECT product_id,\n       product_name,\n       SUM(quantity) AS total_quantity\nFROM sales\nGROUP BY product_id, product_name\nHAVING SUM(quantity) > 100\nORDER BY total_quantity DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Products sold more than 100 times' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Products sold more than 100 times is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT product_id, product_name, SUM(quantity) AS total_quantity FROM sales GROUP BY product_id, product_name HAVING SUM(quantity) > 100 ORDER BY total_quantity DESC, clustering sales by product entity, aggregating sold quantities, filtering via HAVING for volumes > 100, and ranking highest volume first.",
+    "keyTakeaway": "HAVING filters aggregated groups after GROUP BY evaluation, whereas WHERE filters individual raw rows before grouping occurs."
   },
   "49": {
     "code_id": "SQL-014",
     "levelNumber": 49,
-    "title": "Average age by city",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Average Age by City",
+    "optimalCode": "SELECT city,\n       ROUND(AVG(age), 2) AS average_age\nFROM customers\nGROUP BY city\nORDER BY city;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Average age by city' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Average age by city is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT city, ROUND(AVG(age), 2) AS average_age FROM customers GROUP BY city ORDER BY city, grouping customers by city, computing the arithmetic mean age with AVG(age), rounding the result to 2 decimal places with ROUND(..., 2), and ordering alphabetically by city name.",
+    "keyTakeaway": "AVG() calculates the arithmetic mean of numeric columns while ignoring NULLs, and ROUND(..., 2) formats floating point results for clean presentation."
   },
   "50": {
     "code_id": "SQL-015",
     "levelNumber": 50,
-    "title": "Highest salary department",
-    "optimalCode": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Highest salary department' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Highest salary department is essential for database query optimization and relational data analysis."
+    "title": "Highest Salary Department",
+    "optimalCode": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nORDER BY average_salary DESC\nLIMIT 1;",
+    "timeComplexity": "O(N + G log G)",
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name ORDER BY average_salary DESC LIMIT 1, aggregating average compensation per department, sorting the groups descending by average salary, and returning the single top-earning department.",
+    "keyTakeaway": "Combining GROUP BY with aggregate functions, ORDER BY DESC, and LIMIT 1 is the standard SQL pattern for locating top-performing entities across groups."
   },
   "51": {
     "code_id": "SQL-016",
@@ -5364,152 +5364,152 @@ export const ALL_50_SOLUTIONS: Record<string, ProblemSolutionRecord> = {
   "SQL-001": {
     "code_id": "SQL-001",
     "levelNumber": 36,
-    "title": "Group employees by department",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Group Employees by Department",
+    "optimalCode": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nORDER BY department_name;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Group employees by department' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Group employees by department is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, COUNT(*) AS employee_count FROM employees GROUP BY department_name ORDER BY department_name, grouping employees by department and counting total headcounts.",
+    "keyTakeaway": "GROUP BY clusters rows sharing common column values, enabling aggregate functions like COUNT() to compute per-group totals."
   },
   "SQL-002": {
     "code_id": "SQL-002",
     "levelNumber": 37,
-    "title": "Group students by class",
-    "optimalCode": "SELECT * FROM students;",
+    "title": "Group Students by Class",
+    "optimalCode": "SELECT class_name,\n       COUNT(*) AS student_count\nFROM students\nGROUP BY class_name\nORDER BY class_name;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Group students by class' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Group students by class is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT class_name, COUNT(*) AS student_count FROM students GROUP BY class_name ORDER BY class_name, grouping student records by class and computing enrollment counts.",
+    "keyTakeaway": "GROUP BY partitions student records by class_name, enabling COUNT(*) to count total enrollments per class."
   },
   "SQL-003": {
     "code_id": "SQL-003",
     "levelNumber": 38,
-    "title": "Count employees per department",
-    "optimalCode": "SELECT department_id, COUNT(*) AS total FROM employees GROUP BY department_id;",
+    "title": "Count Employees per Department",
+    "optimalCode": "SELECT department_name,\n       COUNT(*) AS total_employees\nFROM employees\nGROUP BY department_name\nORDER BY total_employees DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Count employees per department' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Count employees per department is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, COUNT(*) AS total_employees FROM employees GROUP BY department_name ORDER BY total_employees DESC, grouping employee records by department and sorting from largest to smallest headcount.",
+    "keyTakeaway": "ORDER BY ... DESC sorts aggregate group counts from highest to lowest, surfacing the largest groups first."
   },
   "SQL-004": {
     "code_id": "SQL-004",
     "levelNumber": 39,
-    "title": "Departments having more than 5 employees",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Departments Having More Than 5 Employees",
+    "optimalCode": "SELECT department_name,\n       COUNT(*) AS employee_count\nFROM employees\nGROUP BY department_name\nHAVING COUNT(*) > 5\nORDER BY employee_count DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Departments having more than 5 employees' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Departments having more than 5 employees is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, COUNT(*) AS employee_count FROM employees GROUP BY department_name HAVING COUNT(*) > 5 ORDER BY employee_count DESC, filtering department groups having more than 5 members.",
+    "keyTakeaway": "HAVING filters aggregated groups after GROUP BY, whereas WHERE filters individual rows before grouping."
   },
   "SQL-005": {
     "code_id": "SQL-005",
     "levelNumber": 40,
-    "title": "Departments with average salary > 50,000",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Departments with Average Salary Greater Than ₹50,000",
+    "optimalCode": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nHAVING AVG(salary) > 50000\nORDER BY average_salary DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Departments with average salary > 50,000' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Departments with average salary > 50,000 is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name HAVING AVG(salary) > 50000 ORDER BY average_salary DESC, calculating department average compensation, rounding to 2 decimal places, and ranking highest to lowest.",
+    "keyTakeaway": "AVG() calculates mean values ignoring NULLs, ROUND(..., 2) formats clean decimals, and HAVING filters aggregates after GROUP BY."
   },
   "SQL-006": {
     "code_id": "SQL-006",
     "levelNumber": 41,
-    "title": "Cities having more than 10 customers",
-    "optimalCode": "SELECT * FROM customers;",
+    "title": "Cities Having More Than 10 Customers",
+    "optimalCode": "SELECT city,\n       COUNT(*) AS customer_count\nFROM customers\nGROUP BY city\nHAVING COUNT(*) > 10\nORDER BY customer_count DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Cities having more than 10 customers' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Cities having more than 10 customers is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT city, COUNT(*) AS customer_count FROM customers GROUP BY city HAVING COUNT(*) > 10 ORDER BY customer_count DESC, grouping customers by city and filtering for cities with more than 10 customers sorted in descending order.",
+    "keyTakeaway": "GROUP BY partitions records by category/location, COUNT(*) aggregates totals, and HAVING filters aggregated group metrics."
   },
   "SQL-007": {
     "code_id": "SQL-007",
     "levelNumber": 42,
-    "title": "Product categories with highest sales",
-    "optimalCode": "SELECT * FROM products ORDER BY 1 DESC LIMIT 5;",
+    "title": "Product Categories with Highest Sales",
+    "optimalCode": "SELECT category_name,\n       SUM(sales_amount) AS total_sales\nFROM sales\nGROUP BY category_name\nORDER BY total_sales DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Product categories with highest sales' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Product categories with highest sales is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT category_name, SUM(sales_amount) AS total_sales FROM sales GROUP BY category_name ORDER BY total_sales DESC, grouping transactions by category, summing sales revenues, and ranking categories from highest grossing to lowest.",
+    "keyTakeaway": "SUM() computes total numeric values per group, ignoring NULLs, and ORDER BY DESC orders categories from highest revenue to lowest."
   },
   "SQL-008": {
     "code_id": "SQL-008",
     "levelNumber": 43,
-    "title": "Customers with more than 5 orders",
-    "optimalCode": "SELECT * FROM orders;",
+    "title": "Customers with More Than 5 Orders",
+    "optimalCode": "SELECT customer_id,\n       customer_name,\n       COUNT(*) AS total_orders\nFROM orders\nGROUP BY customer_id, customer_name\nHAVING COUNT(*) > 5\nORDER BY total_orders DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Customers with more than 5 orders' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Customers with more than 5 orders is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT customer_id, customer_name, COUNT(*) AS total_orders FROM orders GROUP BY customer_id, customer_name HAVING COUNT(*) > 5 ORDER BY total_orders DESC, aggregating orders per customer, filtering for customers with more than 5 orders, and ordering descending.",
+    "keyTakeaway": "All non-aggregated columns in SELECT must be included in GROUP BY in standard ANSI SQL, and HAVING filters aggregated counts."
   },
   "SQL-009": {
     "code_id": "SQL-009",
     "levelNumber": 44,
-    "title": "Branches with highest profit",
-    "optimalCode": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;",
+    "title": "Branches with Highest Profit",
+    "optimalCode": "SELECT branch_name,\n       SUM(selling_price - cost_price) AS total_profit\nFROM sales\nGROUP BY branch_name\nORDER BY total_profit DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Branches with highest profit' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Branches with highest profit is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT branch_name, SUM(selling_price - cost_price) AS total_profit FROM sales GROUP BY branch_name ORDER BY total_profit DESC, evaluating row-level profit per transaction, summing per branch, and sorting branches by total profitability in descending order.",
+    "keyTakeaway": "SUM() accepts calculated expressions like (selling_price - cost_price) to compute totals over derived metrics per group."
   },
   "SQL-010": {
     "code_id": "SQL-010",
     "levelNumber": 45,
-    "title": "States with highest customers",
-    "optimalCode": "SELECT * FROM customers ORDER BY 1 DESC LIMIT 5;",
+    "title": "States with Highest Customers",
+    "optimalCode": "SELECT state,\n       COUNT(*) AS total_customers\nFROM customers\nGROUP BY state\nORDER BY total_customers DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'States with highest customers' using SQLite execution planner.",
-    "keyTakeaway": "Mastering States with highest customers is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT state, COUNT(*) AS total_customers FROM customers GROUP BY state ORDER BY total_customers DESC, aggregating user records per state and sorting by total customer count in descending order.",
+    "keyTakeaway": "COUNT(*) tallies all rows per state group, and ORDER BY DESC orders regions from largest customer base to smallest."
   },
   "SQL-011": {
     "code_id": "SQL-011",
     "levelNumber": 46,
-    "title": "Monthly sales summary",
-    "optimalCode": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
+    "title": "Monthly Sales Summary",
+    "optimalCode": "SELECT MONTH(order_date) AS month,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY MONTH(order_date)\nORDER BY month;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Monthly sales summary' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Monthly sales summary is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT MONTH(order_date) AS month, COUNT(*) AS total_orders, SUM(total_amount) AS total_sales FROM orders GROUP BY MONTH(order_date) ORDER BY month, extracting the month component from order_date, aggregating order counts and sales amounts, and sorting chronologically.",
+    "keyTakeaway": "MONTH() (or EXTRACT(MONTH FROM date)) extracts numerical months from dates, enabling temporal grouping and chronological reporting with ORDER BY month."
   },
   "SQL-012": {
     "code_id": "SQL-012",
     "levelNumber": 47,
-    "title": "Yearly sales summary",
-    "optimalCode": "SELECT *, COUNT(*) AS count FROM sales GROUP BY 1;",
+    "title": "Yearly Sales Summary",
+    "optimalCode": "SELECT YEAR(order_date) AS year,\n       COUNT(*) AS total_orders,\n       SUM(total_amount) AS total_sales\nFROM orders\nGROUP BY YEAR(order_date)\nORDER BY year;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Yearly sales summary' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Yearly sales summary is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT YEAR(order_date) AS year, COUNT(*) AS total_orders, SUM(total_amount) AS total_sales FROM orders GROUP BY YEAR(order_date) ORDER BY year, extracting the 4-digit year component, aggregating annual order volumes and revenues, and ordering chronologically.",
+    "keyTakeaway": "YEAR() (or EXTRACT(YEAR FROM date)) extracts annual cohorts from date values, ideal for multi-year trend analysis and executive financial reporting."
   },
   "SQL-013": {
     "code_id": "SQL-013",
     "levelNumber": 48,
-    "title": "Products sold more than 100 times",
-    "optimalCode": "SELECT * FROM products;",
+    "title": "Products Sold More Than 100 Times",
+    "optimalCode": "SELECT product_id,\n       product_name,\n       SUM(quantity) AS total_quantity\nFROM sales\nGROUP BY product_id, product_name\nHAVING SUM(quantity) > 100\nORDER BY total_quantity DESC;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Products sold more than 100 times' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Products sold more than 100 times is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT product_id, product_name, SUM(quantity) AS total_quantity FROM sales GROUP BY product_id, product_name HAVING SUM(quantity) > 100 ORDER BY total_quantity DESC, clustering sales by product entity, aggregating sold quantities, filtering via HAVING for volumes > 100, and ranking highest volume first.",
+    "keyTakeaway": "HAVING filters aggregated groups after GROUP BY evaluation, whereas WHERE filters individual raw rows before grouping occurs."
   },
   "SQL-014": {
     "code_id": "SQL-014",
     "levelNumber": 49,
-    "title": "Average age by city",
-    "optimalCode": "SELECT * FROM employees;",
+    "title": "Average Age by City",
+    "optimalCode": "SELECT city,\n       ROUND(AVG(age), 2) AS average_age\nFROM customers\nGROUP BY city\nORDER BY city;",
     "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Average age by city' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Average age by city is essential for database query optimization and relational data analysis."
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT city, ROUND(AVG(age), 2) AS average_age FROM customers GROUP BY city ORDER BY city, grouping customers by city, computing the arithmetic mean age with AVG(age), rounding the result to 2 decimal places with ROUND(..., 2), and ordering alphabetically by city name.",
+    "keyTakeaway": "AVG() calculates the arithmetic mean of numeric columns while ignoring NULLs, and ROUND(..., 2) formats floating point results for clean presentation."
   },
   "SQL-015": {
     "code_id": "SQL-015",
     "levelNumber": 50,
-    "title": "Highest salary department",
-    "optimalCode": "SELECT * FROM employees ORDER BY 1 DESC LIMIT 5;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Highest salary department' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Highest salary department is essential for database query optimization and relational data analysis."
+    "title": "Highest Salary Department",
+    "optimalCode": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nORDER BY average_salary DESC\nLIMIT 1;",
+    "timeComplexity": "O(N + G log G)",
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name ORDER BY average_salary DESC LIMIT 1, aggregating average compensation per department, sorting the groups descending by average salary, and returning the single top-earning department.",
+    "keyTakeaway": "Combining GROUP BY with aggregate functions, ORDER BY DESC, and LIMIT 1 is the standard SQL pattern for locating top-performing entities across groups."
   },
   "SQL-016": {
     "code_id": "SQL-016",

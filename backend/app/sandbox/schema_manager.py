@@ -78,6 +78,7 @@ TABLE_DDL: Dict[str, str] = {
     first_name TEXT,
     last_name TEXT,
     class TEXT,
+    class_name TEXT,
     marks REAL,
     age INTEGER,
     city TEXT
@@ -144,11 +145,11 @@ INSERT INTO sales VALUES (2, 11, '2024-01-15', 2, 1600.00, 'South', 3);
 INSERT INTO sales VALUES (3, 12, '2024-02-01', 1, 250.00, 'East', 5);
 INSERT INTO sales VALUES (4, 13, '2024-02-14', 3, 1050.00, 'West', 3);
 INSERT INTO sales VALUES (5, 10, '2024-03-01', 2, 2400.00, 'North', 3);""",
-    "students": """INSERT INTO students VALUES (1, 'Alex', 'Turner', 'Class A', 92.5, 16, 'Chicago');
-INSERT INTO students VALUES (2, 'Bella', 'Hadid', 'Class A', 88.0, 17, 'New York');
-INSERT INTO students VALUES (3, 'Chris', 'Evans', 'Class B', 74.5, 16, 'Boston');
-INSERT INTO students VALUES (4, 'Daniel', 'Craig', 'Class B', 95.0, 17, 'Chicago');
-INSERT INTO students VALUES (5, 'Ella', 'Purnell', 'Class A', 61.0, 16, 'New York');""",
+    "students": """INSERT INTO students VALUES (1, 'Alex', 'Turner', 'Class A', 'Class A', 92.5, 16, 'Chicago');
+INSERT INTO students VALUES (2, 'Bella', 'Hadid', 'Class A', 'Class A', 88.0, 17, 'New York');
+INSERT INTO students VALUES (3, 'Chris', 'Evans', 'Class B', 'Class B', 74.5, 16, 'Boston');
+INSERT INTO students VALUES (4, 'Daniel', 'Craig', 'Class B', 'Class B', 95.0, 17, 'Chicago');
+INSERT INTO students VALUES (5, 'Ella', 'Purnell', 'Class A', 'Class A', 61.0, 16, 'New York');""",
     "courses": """INSERT INTO courses VALUES (101, 'Computer Science', 4);
 INSERT INTO courses VALUES (102, 'Mathematics', 3);
 INSERT INTO courses VALUES (103, 'Physics', 4);""",
@@ -193,13 +194,216 @@ def generate_setup_sql_for_challenge(title: str, objective: str = "", starter_co
     parts = ["-- Step 1: Database Schema & Data Setup", "-- Run this script to create and populate the practice database tables.\n"]
     
     for tbl in tables:
-        ddl = TABLE_DDL.get(tbl)
-        seed = TABLE_SEED.get(tbl)
-        if ddl:
-            parts.append(f"-- Table: {tbl}\nDROP TABLE IF EXISTS {tbl};")
-            parts.append(ddl)
-        if seed:
-            parts.append(f"\n-- Sample Data: {tbl}\n{seed}\n")
+            if tbl == "employees" and "highest salary department" in (title + " " + objective).lower():
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department_name TEXT,
+    salary REAL
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 'IT', 70000);
+INSERT INTO employees VALUES (2, 'Alice', 'IT', 90000);
+INSERT INTO employees VALUES (3, 'Bob', 'HR', 50000);
+INSERT INTO employees VALUES (4, 'Emma', 'HR', 60000);
+INSERT INTO employees VALUES (5, 'David', 'Finance', 100000);
+INSERT INTO employees VALUES (6, 'Sophia', 'Finance', 110000);
+""")
+                continue
+
+            if tbl == "orders" and "yearly sales summary" in (title + " " + objective).lower():
+                parts.append("""-- Table: orders
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    order_date DATE,
+    total_amount REAL
+);
+
+-- Sample Data: orders
+INSERT INTO orders VALUES (1, '2023-01-10', 800);
+INSERT INTO orders VALUES (2, '2023-05-15', 1200);
+INSERT INTO orders VALUES (3, '2024-02-20', 1500);
+INSERT INTO orders VALUES (4, '2024-07-08', 900);
+INSERT INTO orders VALUES (5, '2025-03-12', 2000);
+""")
+                continue
+
+            if tbl == "orders" and "monthly sales summary" in (title + " " + objective).lower():
+                parts.append("""-- Table: orders
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    order_date DATE,
+    total_amount REAL
+);
+
+-- Sample Data: orders
+INSERT INTO orders VALUES (1, '2025-01-05', 500);
+INSERT INTO orders VALUES (2, '2025-01-15', 700);
+INSERT INTO orders VALUES (3, '2025-02-10', 900);
+INSERT INTO orders VALUES (4, '2025-02-18', 400);
+INSERT INTO orders VALUES (5, '2025-03-08', 600);
+""")
+                continue
+
+            if tbl == "orders" and "more than 5 orders" in (title + " " + objective).lower():
+                parts.append("""-- Table: orders
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    customer_name TEXT,
+    order_date DATE,
+    total_amount REAL,
+    status TEXT
+);
+
+-- Sample Data: orders
+INSERT INTO orders VALUES (1, 101, 'Rahul', '2024-01-10', 1500.00, 'Completed');
+INSERT INTO orders VALUES (2, 101, 'Rahul', '2024-01-15', 2500.00, 'Completed');
+INSERT INTO orders VALUES (3, 102, 'Priya', '2024-01-20', 800.00, 'Completed');
+INSERT INTO orders VALUES (4, 101, 'Rahul', '2024-02-01', 1200.00, 'Completed');
+INSERT INTO orders VALUES (5, 103, 'Amit', '2024-02-14', 450.00, 'Completed');
+INSERT INTO orders VALUES (6, 101, 'Rahul', '2024-02-20', 3100.00, 'Completed');
+INSERT INTO orders VALUES (7, 102, 'Priya', '2024-03-01', 950.00, 'Completed');
+INSERT INTO orders VALUES (8, 101, 'Rahul', '2024-03-05', 1800.00, 'Completed');
+INSERT INTO orders VALUES (9, 101, 'Rahul', '2024-03-12', 2200.00, 'Completed');
+INSERT INTO orders VALUES (10, 102, 'Priya', '2024-03-15', 1100.00, 'Completed');
+""")
+                continue
+
+            if tbl == "customers" and "average age by city" in (title + " " + objective).lower():
+                parts.append("""-- Table: customers
+DROP TABLE IF EXISTS customers;
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT,
+    age INTEGER
+);
+
+-- Sample Data: customers
+INSERT INTO customers VALUES (1, 'Rahul', 'Bangalore', 25);
+INSERT INTO customers VALUES (2, 'Priya', 'Bangalore', 35);
+INSERT INTO customers VALUES (3, 'Amit', 'Delhi', 20);
+INSERT INTO customers VALUES (4, 'Neha', 'Delhi', 30);
+INSERT INTO customers VALUES (5, 'Rohan', 'Mumbai', 40);
+""")
+                continue
+
+            if tbl == "customers" and "states with highest customers" in (title + " " + objective).lower():
+                parts.append("""-- Table: customers
+DROP TABLE IF EXISTS customers;
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    state TEXT
+);
+
+-- Sample Data: customers
+INSERT INTO customers VALUES (1, 'Rahul', 'Karnataka');
+INSERT INTO customers VALUES (2, 'Priya', 'Delhi');
+INSERT INTO customers VALUES (3, 'Ankit', 'Karnataka');
+INSERT INTO customers VALUES (4, 'Neha', 'Maharashtra');
+INSERT INTO customers VALUES (5, 'Rohan', 'Karnataka');
+INSERT INTO customers VALUES (6, 'Sneha', 'Delhi');
+INSERT INTO customers VALUES (7, 'Amit', 'Karnataka');
+""")
+                continue
+
+            if tbl == "sales" and "more than 100 times" in (title + " " + objective).lower():
+                parts.append("""-- Table: sales
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    order_id INTEGER PRIMARY KEY,
+    product_id INTEGER,
+    product_name TEXT,
+    quantity INTEGER
+);
+
+-- Sample Data: sales
+INSERT INTO sales VALUES (1, 101, 'Laptop', 20);
+INSERT INTO sales VALUES (2, 101, 'Laptop', 30);
+INSERT INTO sales VALUES (3, 102, 'Mouse', 15);
+INSERT INTO sales VALUES (4, 101, 'Laptop', 60);
+INSERT INTO sales VALUES (5, 103, 'Keyboard', 25);
+""")
+                continue
+
+            if tbl == "sales" and "branch_name" in (title + " " + objective + " " + starter_code).lower():
+                parts.append("""-- Table: sales
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    branch_name TEXT,
+    cost_price REAL,
+    selling_price REAL
+);
+
+-- Sample Data: sales
+INSERT INTO sales VALUES (1, 'Bangalore', 300, 500);
+INSERT INTO sales VALUES (2, 'Bangalore', 700, 900);
+INSERT INTO sales VALUES (3, 'Delhi', 400, 600);
+INSERT INTO sales VALUES (4, 'Delhi', 500, 650);
+INSERT INTO sales VALUES (5, 'Mumbai', 800, 900);
+""")
+                continue
+
+            if tbl == "sales" and "category_name" in (title + " " + objective + " " + starter_code).lower():
+                parts.append("""-- Table: sales
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    category_name TEXT,
+    sales_amount REAL
+);
+
+-- Sample Data: sales
+INSERT INTO sales VALUES (1, 'Electronics', 50000);
+INSERT INTO sales VALUES (2, 'Electronics', 30000);
+INSERT INTO sales VALUES (3, 'Clothing', 2000);
+INSERT INTO sales VALUES (4, 'Electronics', 5000);
+INSERT INTO sales VALUES (5, 'Clothing', 3000);
+INSERT INTO sales VALUES (6, 'Footwear', 4000);
+""")
+                continue
+
+            ddl = TABLE_DDL.get(tbl)
+            seed = TABLE_SEED.get(tbl)
+            if ddl:
+                parts.append(f"-- Table: {tbl}\nDROP TABLE IF EXISTS {tbl};")
+                parts.append(ddl)
+            if seed:
+                parts.append(f"\n-- Sample Data: {tbl}\n{seed}\n")
+                if tbl == "employees" and "more than 5 employees" in (title + " " + objective).lower():
+                    extra_employees = """
+INSERT INTO employees VALUES (9, 'Chris', 'Evans', 'chris.e@email.com', '555-0109', '2021-02-15', 'HR Recruiter', 65000, 6, 104, 'HR', 31, 'Boston', 'Male', 'MA');
+INSERT INTO employees VALUES (10, 'Mike', 'Ross', 'mike.r@email.com', '555-0110', '2022-05-10', 'HR Associate', 58000, 6, 104, 'HR', 27, 'Boston', 'Male', 'MA');
+INSERT INTO employees VALUES (11, 'Kevin', 'Hart', 'kevin.h@email.com', '555-0111', '2020-11-20', 'HR Generalist', 62000, 6, 104, 'HR', 34, 'Boston', 'Male', 'MA');
+INSERT INTO employees VALUES (12, 'Sophia', 'Loren', 'sophia.l@email.com', '555-0112', '2019-08-14', 'HR Specialist', 71000, 6, 104, 'HR', 36, 'Boston', 'Female', 'MA');
+INSERT INTO employees VALUES (13, 'Tom', 'Hanks', 'tom.h@email.com', '555-0113', '2018-04-18', 'HR Director', 95000, NULL, 104, 'HR', 45, 'Boston', 'Male', 'MA');
+"""
+                    parts.append(f"-- Additional Department Records for Headcount Practice:\n{extra_employees}\n")
+                if tbl == "customers" and "more than 10 customers" in (title + " " + objective).lower():
+                    extra_cust_lines = []
+                    cid = 6
+                    for i in range(1, 16):
+                        extra_cust_lines.append(f"INSERT INTO customers VALUES ({cid}, 'BangaloreCust{i}', 'Kumar', 'b_cust{i}@example.com', 'Bangalore', 'KA', 'India', 28, 'Regular');")
+                        cid += 1
+                    for i in range(1, 13):
+                        extra_cust_lines.append(f"INSERT INTO customers VALUES ({cid}, 'DelhiCust{i}', 'Sharma', 'd_cust{i}@example.com', 'Delhi', 'DL', 'India', 30, 'Regular');")
+                        cid += 1
+                    for i in range(1, 9):
+                        extra_cust_lines.append(f"INSERT INTO customers VALUES ({cid}, 'MumbaiCust{i}', 'Patel', 'm_cust{i}@example.com', 'Mumbai', 'MH', 'India', 32, 'Regular');")
+                        cid += 1
+                    for i in range(1, 6):
+                        extra_cust_lines.append(f"INSERT INTO customers VALUES ({cid}, 'ChennaiCust{i}', 'Rao', 'c_cust{i}@example.com', 'Chennai', 'TN', 'India', 27, 'Regular');")
+                        cid += 1
+                    parts.append(f"-- Additional City Customers for Grouping Practice:\n" + "\n".join(extra_cust_lines) + "\n")
             
     return "\n".join(parts)
 
