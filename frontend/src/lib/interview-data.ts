@@ -52,7 +52,8 @@ export interface ProblemInterviewDataset {
 
 export type ProblemStudyData = ProblemInterviewDataset;
 
-export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
+export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
+
   "1": {
     "id": "sql-1",
     "title": "Select all columns from a table",
@@ -219,6 +220,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "2": {
     "id": "sql-2",
     "title": "Select Specific Columns",
@@ -365,6 +367,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "3": {
     "id": "sql-3",
     "title": "Filter Rows Using WHERE",
@@ -574,6 +577,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "4": {
     "id": "sql-4",
     "title": "Use Multiple Conditions with AND",
@@ -783,6 +787,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "5": {
     "id": "sql-5",
     "title": "Use Multiple Conditions with OR",
@@ -992,6 +997,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "6": {
     "id": "sql-6",
     "title": "Sort Data Using ORDER BY",
@@ -1201,6 +1207,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "7": {
     "id": "sql-7",
     "title": "Limit the Number of Rows (LIMIT)",
@@ -1410,6 +1417,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "8": {
     "id": "sql-8",
     "title": "Find Distinct Values (DISTINCT)",
@@ -1630,6 +1638,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "9": {
     "id": "sql-9",
     "title": "Count Total Records (COUNT())",
@@ -1850,6 +1859,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "10": {
     "id": "sql-10",
     "title": "Find the Maximum Value (MAX())",
@@ -2070,6 +2080,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "11": {
     "id": "sql-11",
     "title": "Find the Minimum Value (MIN())",
@@ -2310,6 +2321,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "12": {
     "id": "sql-12",
     "title": "Find the Total Sum (SUM())",
@@ -2550,6 +2562,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "13": {
     "id": "sql-13",
     "title": "Calculate the Average (AVG())",
@@ -2799,6 +2812,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "14": {
     "id": "sql-14",
     "title": "Group Data Using GROUP BY",
@@ -3050,6 +3064,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "15": {
     "id": "sql-15",
     "title": "Filter Groups Using HAVING",
@@ -3301,6 +3316,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "16": {
     "id": "sql-16",
     "title": "Retrieve Matching Records Using INNER JOIN",
@@ -3553,6 +3569,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "17": {
     "id": "sql-17",
     "title": "Retrieve All Records from the Left Table Using LEFT JOIN",
@@ -3805,6 +3822,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "18": {
     "id": "sql-18",
     "title": "Retrieve All Records from the Right Table Using RIGHT JOIN",
@@ -4057,6 +4075,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "19": {
     "id": "sql-19",
     "title": "Retrieve All Records from Both Tables Using FULL OUTER JOIN",
@@ -4309,6 +4328,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "20": {
     "id": "sql-20",
     "title": "Join a Table with Itself Using SELF JOIN",
@@ -4561,6 +4581,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "21": {
     "id": "sql-21",
     "title": "Combine Results of Two Queries Using UNION",
@@ -4813,6 +4834,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "22": {
     "id": "sql-22",
     "title": "Combine Results of Two Queries Using UNION ALL",
@@ -5065,6 +5087,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "23": {
     "id": "sql-23",
     "title": "Filter Records Using the LIKE Operator",
@@ -5299,6 +5322,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "24": {
     "id": "sql-24",
     "title": "Filter Records Using the IN Operator",
@@ -5533,6 +5557,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "25": {
     "id": "sql-25",
     "title": "Filter Records Using the BETWEEN Operator",
@@ -5767,6 +5792,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "26": {
     "id": "sql-26",
     "title": "Find Records with Missing Values Using IS NULL",
@@ -6001,6 +6027,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "27": {
     "id": "sql-27",
     "title": "Find Records with Non-NULL Values Using IS NOT NULL",
@@ -6235,6 +6262,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "28": {
     "id": "sql-28",
     "title": "Use CASE WHEN to Display Conditional Values",
@@ -6469,6 +6497,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "29": {
     "id": "sql-29",
     "title": "Round Decimal Values Using ROUND()",
@@ -6703,6 +6732,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "30": {
     "id": "sql-30",
     "title": "Find the Length of a String Using LENGTH()",
@@ -6937,6 +6967,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "31": {
     "id": "sql-31",
     "title": "Convert Text to Uppercase and Lowercase Using UPPER() and LOWER()",
@@ -7169,6 +7200,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "32": {
     "id": "sql-32",
     "title": "Extract Part of a String Using SUBSTRING()",
@@ -7401,6 +7433,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "33": {
     "id": "sql-33",
     "title": "Replace Part of a String Using REPLACE()",
@@ -7633,6 +7666,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "34": {
     "id": "sql-34",
     "title": "Replace NULL Values Using COALESCE()",
@@ -7866,6 +7900,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "35": {
     "id": "sql-35",
     "title": "Display the Current Date and Time",
@@ -8099,6 +8134,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "36": {
     "id": "sql-36",
     "title": "Group Employees by Department",
@@ -8350,6 +8386,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "37": {
     "id": "sql-37",
     "title": "Group Students by Class",
@@ -8601,6 +8638,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "38": {
     "id": "sql-38",
     "title": "Count Employees per Department",
@@ -8832,6 +8870,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "39": {
     "id": "sql-39",
     "title": "Departments Having More Than 5 Employees",
@@ -9072,6 +9111,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "40": {
     "id": "sql-40",
     "title": "Departments with Average Salary Greater Than ₹50,000",
@@ -9312,6 +9352,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "41": {
     "id": "sql-41",
     "title": "Cities Having More Than 10 Customers",
@@ -9552,6 +9593,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "42": {
     "id": "sql-42",
     "title": "Product Categories with Highest Sales",
@@ -9783,6 +9825,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "43": {
     "id": "sql-43",
     "title": "Customers with More Than 5 Orders",
@@ -10023,6 +10066,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "44": {
     "id": "sql-44",
     "title": "Branches with Highest Profit",
@@ -10263,6 +10307,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "45": {
     "id": "sql-45",
     "title": "States with Highest Customers",
@@ -10494,6 +10539,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "46": {
     "id": "sql-46",
     "title": "Monthly Sales Summary",
@@ -10734,6 +10780,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "47": {
     "id": "sql-47",
     "title": "Yearly Sales Summary",
@@ -10974,6 +11021,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "48": {
     "id": "sql-48",
     "title": "Products Sold More Than 100 Times",
@@ -11214,6 +11262,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "49": {
     "id": "sql-49",
     "title": "Average Age by City",
@@ -11454,6 +11503,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "50": {
     "id": "sql-50",
     "title": "Highest Salary Department",
@@ -11703,6 +11753,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "51": {
     "id": "sql-51",
     "title": "Lowest Salary Department",
@@ -11952,6 +12003,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "52": {
     "id": "sql-52",
     "title": "Average Marks Above 80",
@@ -12201,6 +12253,7 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
       }
     ]
   },
+
   "53": {
     "id": "sql-53",
     "title": "Groups Using Multiple Columns",
@@ -12435,6 +12488,3 @@ export const ALL_50_INTERVIEW_DATA: Record<number, ProblemInterviewDataset> = {
 };
 
 export const ALL_50_STUDY_DATA = ALL_50_INTERVIEW_DATA;
-
-
-
