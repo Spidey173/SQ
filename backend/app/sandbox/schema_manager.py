@@ -194,6 +194,67 @@ def generate_setup_sql_for_challenge(title: str, objective: str = "", starter_co
     parts = ["-- Step 1: Database Schema & Data Setup", "-- Run this script to create and populate the practice database tables.\n"]
     
     for tbl in tables:
+            if tbl == "employees" and "lowest salary department" in (title + " " + objective).lower():
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department_name TEXT,
+    salary REAL
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 'IT', 70000);
+INSERT INTO employees VALUES (2, 'Alice', 'IT', 90000);
+INSERT INTO employees VALUES (3, 'Bob', 'HR', 50000);
+INSERT INTO employees VALUES (4, 'Emma', 'HR', 60000);
+INSERT INTO employees VALUES (5, 'David', 'Finance', 100000);
+INSERT INTO employees VALUES (6, 'Sophia', 'Finance', 110000);
+""")
+                continue
+
+            if tbl == "employees" and "groups using multiple columns" in (title + " " + objective).lower():
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department_name TEXT,
+    city TEXT,
+    salary REAL
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 'IT', 'Bangalore', 70000);
+INSERT INTO employees VALUES (2, 'Alice', 'IT', 'Bangalore', 90000);
+INSERT INTO employees VALUES (3, 'Bob', 'IT', 'Delhi', 60000);
+INSERT INTO employees VALUES (4, 'Emma', 'HR', 'Delhi', 50000);
+INSERT INTO employees VALUES (5, 'David', 'HR', 'Mumbai', 100000);
+INSERT INTO employees VALUES (6, 'Sophia', 'HR', 'Mumbai', 110000);
+""")
+                continue
+
+            if tbl == "students" and "average marks above 80" in (title + " " + objective).lower():
+                parts.append("""-- Table: students
+DROP TABLE IF EXISTS students;
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    student_name TEXT,
+    class_name TEXT,
+    marks REAL
+);
+
+-- Sample Data: students
+INSERT INTO students VALUES (1, 'Rahul', '10A', 90);
+INSERT INTO students VALUES (2, 'Priya', '10A', 80);
+INSERT INTO students VALUES (3, 'Amit', '10B', 70);
+INSERT INTO students VALUES (4, 'Neha', '10B', 75);
+INSERT INTO students VALUES (5, 'Rohan', '10C', 95);
+INSERT INTO students VALUES (6, 'Sneha', '10C', 90);
+""")
+                continue
+
             if tbl == "employees" and "highest salary department" in (title + " " + objective).lower():
                 parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;

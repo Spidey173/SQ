@@ -233,9 +233,9 @@ function CurriculumExplorerContent() {
                   ? 'bg-[#222222] text-[#FF6B00] font-bold border border-[#3A3A3A]'
                   : 'text-[#888888] hover:text-[#D4D4D4]'
                 }`}
-              title="Core SQL: Modules 3–7 (SQL-001 through SQL-120: Joins, Aggregations, Window Functions, CTEs)"
+              title="Core SQL: Joins, Aggregations, Window Functions, CTEs"
             >
-              CORE SQL (120)
+              CORE SQL
             </button>
             <button
               onClick={() => {
@@ -246,9 +246,9 @@ function CurriculumExplorerContent() {
                   ? 'bg-[#222222] text-[#A855F7] font-bold border border-[#3A3A3A]'
                   : 'text-[#888888] hover:text-[#D4D4D4]'
                 }`}
-              title="Advanced SQL: Modules 8–12 (SQL-121 through SQL-215: CASE, String, Date/Time, Deduplication, Analytics)"
+              title="Advanced SQL: CASE, String, Date/Time, Deduplication, Analytics"
             >
-              ADVANCED SQL (95)
+              ADVANCED SQL
             </button>
             <button
               onClick={() => {
@@ -261,7 +261,7 @@ function CurriculumExplorerContent() {
                 }`}
               title="Beginner Fundamentals: Modules 1 & 2 (Basics-001 through Basics-035)"
             >
-              FUNDAMENTALS (35)
+              FUNDAMENTALS
             </button>
             <button
               onClick={() => {
@@ -272,9 +272,9 @@ function CurriculumExplorerContent() {
                   ? 'bg-[#222222] text-[#38BDF8] font-bold border border-[#3A3A3A]'
                   : 'text-[#888888] hover:text-[#D4D4D4]'
                 }`}
-              title="Master Section: Top 250 SQL Masterclass Challenges (001 through 250)"
+              title="Master Section: Top SQL Masterclass Challenges"
             >
-              MASTER (001–250)
+              MASTER
             </button>
           </div>
 
