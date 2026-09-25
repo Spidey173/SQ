@@ -2224,94 +2224,10 @@
     "level_number": 81,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
-    "title": "Combine Two Tables",
-    "story": "In identity and contact management systems, individual demographic records are decoupled from physical location addresses. Every registered individual must be preserved in corporate directory rosters, with location data seamlessly attached when present and represented as NULL when unavailable.",
-    "objective": "Write a SQL query to report firstName, lastName, city, and state for each person in the Person table. If a person's address is not available in the Address table, report NULL for city and state.",
-    "starter_code": "-- Problem #Pro-001: Combine Two Tables\n-- Write your SQL query below\n\n",
-    "expected_output": "firstName | lastName | city | state\n---------------------------------------\nAllen | Wang | NULL | NULL\nBob | Alice | New York City | New York",
-    "hints": [
-      "Use a LEFT JOIN from Person to Address matching on personId: FROM Person AS p LEFT JOIN Address AS a ON p.personId = a.personId.",
-      "A LEFT JOIN ensures all persons remain in the output even if they do not have an address record.",
-      "Project p.firstName, p.lastName, a.city, and a.state.",
-      "Unmatched address fields will automatically evaluate to NULL."
-    ],
-    "test_cases": [
-      {
-        "input": "",
-        "expected": "SELECT p.firstName, p.lastName, a.city, a.state FROM Person AS p LEFT JOIN Address AS a ON p.personId = a.personId;",
-        "hidden": false,
-        "description": "Combine Person and Address tables using a LEFT JOIN"
-      }
-    ],
-    "explanation": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT p.firstName, p.lastName, a.city, a.state\n- Projects first and last name from Person alongside city and state from Address.\nLine 2: FROM Person AS p\n- Establishes Person as the primary left table whose rows must all be preserved.\nLine 3: LEFT JOIN Address AS a\n- Joins the Address table, keeping unmatched rows from Person.\nLine 4: ON p.personId = a.personId;\n- Matches each individual to their corresponding address record by the common personId foreign key.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person AS p\nStep 2: LEFT JOIN Address AS a ON p.personId = a.personId\nStep 3: SELECT p.firstName, p.lastName, a.city, a.state",
-    "difficulty": "Easy",
-    "track": "master",
-    "code_id": "Pro-001"
-  },
-  {
-    "level_number": 82,
-    "chapter_id": 13,
-    "chapter_title": "Module 13: Master SQL Solutions",
-    "title": "Employees Earning More Than Their Managers",
-    "story": "In corporate compensation analytics, detecting compensation inversions where direct reports out-earn their supervisors is a key auditing task. By self-joining employee records against supervisor records, the query isolates staff members commanding salaries strictly exceeding their designated manager.",
-    "objective": "Write an SQL query to find employees whose salary is strictly greater than their manager's salary. Return the employee's name with column alias Employee.",
-    "starter_code": "-- Problem #Pro-002: Employees Earning More Than Their Managers\n-- Write your SQL query below\n\n",
-    "expected_output": "Employee\n--------\nJoe",
-    "hints": [
-      "Perform a SELF JOIN on the Employee table: FROM Employee AS e JOIN Employee AS m ON e.managerId = m.id.",
-      "Alias the first instance as e (representing the employee) and the second instance as m (representing the manager).",
-      "Filter for strictly greater salary: WHERE e.salary > m.salary.",
-      "Select e.name with alias Employee: SELECT e.name AS Employee."
-    ],
-    "test_cases": [
-      {
-        "input": "",
-        "expected": "SELECT e.name AS Employee FROM Employee AS e JOIN Employee AS m ON e.managerId = m.id WHERE e.salary > m.salary;",
-        "hidden": false,
-        "description": "Find employees earning more than their manager using a self join"
-      }
-    ],
-    "explanation": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.name AS Employee\n- Projects the name of the qualifying employee, aliased as Employee.\nLine 2: FROM Employee AS e\n- References the Employee table under alias e representing direct reports.\nLine 3: JOIN Employee AS m ON e.managerId = m.id\n- Self-joins the same table under alias m representing managers, matching the employee's managerId to the manager's id.\nLine 4: WHERE e.salary > m.salary;\n- Filters for cases where the employee's compensation strictly exceeds their manager's compensation.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Employee AS e\nStep 2: JOIN Employee AS m ON e.managerId = m.id\nStep 3: WHERE e.salary > m.salary\nStep 4: SELECT e.name AS Employee",
-    "difficulty": "Easy",
-    "track": "master",
-    "code_id": "Pro-002"
-  },
-  {
-    "level_number": 83,
-    "chapter_id": 13,
-    "chapter_title": "Module 13: Master SQL Solutions",
-    "title": "Duplicate Emails",
-    "story": "User identity registry services and marketing subscription platforms frequently experience duplicate user signups. Identifying redundant email addresses is crucial for identity deduplication and maintaining data cleanliness across production environments.",
-    "objective": "Write a SQL query to report all duplicate email addresses from the Person table. Return the result table in any order with column alias Email.",
-    "starter_code": "-- Problem #Pro-003: Duplicate Emails\n-- Write your SQL query below\n\n",
-    "expected_output": "Email\n----------------\na@leetcode.com",
-    "hints": [
-      "Group rows by email address using GROUP BY email.",
-      "Use the HAVING clause to filter groups after aggregation: HAVING COUNT(*) > 1.",
-      "Do not use WHERE to filter aggregated counts, as WHERE executes before GROUP BY.",
-      "Select email with column alias Email: SELECT email AS Email."
-    ],
-    "test_cases": [
-      {
-        "input": "",
-        "expected": "SELECT email AS Email FROM Person GROUP BY email HAVING COUNT(*) > 1;",
-        "hidden": false,
-        "description": "Find duplicate email addresses using GROUP BY and HAVING"
-      }
-    ],
-    "explanation": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT email AS Email\n- Projects the duplicate email address, aliased as Email.\nLine 2: FROM Person\n- Reads candidate user rows from the Person table.\nLine 3: GROUP BY email\n- Groups identical email strings into single aggregation buckets.\nLine 4: HAVING COUNT(*) > 1;\n- Evaluates post-aggregation count per bucket, retaining only those appearing more than once.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person\nStep 2: GROUP BY email\nStep 3: HAVING COUNT(*) > 1\nStep 4: SELECT email AS Email",
-    "difficulty": "Easy",
-    "track": "master",
-    "code_id": "Pro-003"
-  },
-  {
-    "level_number": 84,
-    "chapter_id": 13,
-    "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Delete Duplicate Emails",
     "story": "In enterprise customer relationship management and identity resolution pipelines, duplicate email registrations lead to fragmented customer histories and skewed marketing metrics. Data hygiene scripts must purge redundant records from the table in-place while strictly retaining the earliest created entry (lowest primary key id) for each unique address.",
     "objective": "Write a SQL query to delete all duplicate email records from the Person table, keeping only the record with the smallest id for each unique email.",
-    "starter_code": "-- Problem #Pro-004: Delete Duplicate Emails\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-001: Delete Duplicate Emails\n-- Write your SQL query below\n\n",
     "expected_output": "id | email\n--------------------\n1 | john@mail.com\n2 | bob@mail.com\n4 | alice@mail.com",
     "hints": [
       "Self-join the Person table to compare records sharing the exact same email: FROM Person p1 JOIN Person p2 ON p1.email = p2.email.",
@@ -2330,16 +2246,16 @@
     "explanation": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: DELETE p1\n- Instructs the database engine to remove rows only from the table instance designated by alias p1.\nLine 2: FROM Person p1\n- Designates the first instance of Person as the candidate pool for deletion.\nLine 3: JOIN Person p2\n- Self-joins against a second copy of Person representing comparison reference rows.\nLine 4: ON p1.email = p2.email\n- Matches records having identical email addresses.\nLine 5: AND p1.id > p2.id;\n- Matches only when p1's id is strictly greater than p2's id, protecting the minimum id from deletion.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person p1\nStep 2: JOIN Person p2 ON p1.email = p2.email\nStep 3: AND p1.id > p2.id\nStep 4: DELETE matching rows from p1",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-004"
+    "code_id": "Pro-001"
   },
   {
-    "level_number": 85,
+    "level_number": 82,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Rising Temperature",
     "story": "Meteorological observational networks and climate time-series telemetry analyze daily thermal fluctuations. Identifying anomalies where a station reports warmer temperatures relative to the strictly preceding day requires comparing consecutive daily date records within the same telemetry log.",
     "objective": "Write a SQL query to find all dates where the temperature was higher than the previous day's (yesterday's) temperature. Return the id column in any order.",
-    "starter_code": "-- Problem #Pro-005: Rising Temperature\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-002: Rising Temperature\n-- Write your SQL query below\n\n",
     "expected_output": "id\n--\n2\n4",
     "hints": [
       "Perform a SELF JOIN on the Weather table: FROM Weather w1 JOIN Weather w2.",
@@ -2359,16 +2275,16 @@
     "explanation": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT w1.id\n- Projects the identifier of the observation day satisfying the thermal increase condition.\nLine 2: FROM Weather w1\n- Treats w1 as today's weather record.\nLine 3: JOIN Weather w2\n- Self-joins a second instance w2 representing yesterday's weather record.\nLine 4: ON DATEDIFF(w1.recordDate, w2.recordDate) = 1\n- Aligns records that are separated by exactly one calendar day (today - yesterday = 1).\nLine 5: WHERE w1.temperature > w2.temperature;\n- Filters for days where today's recorded temperature is strictly higher than yesterday's.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Weather w1\nStep 2: JOIN Weather w2 ON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nStep 3: WHERE w1.temperature > w2.temperature\nStep 4: SELECT w1.id",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-005"
+    "code_id": "Pro-002"
   },
   {
-    "level_number": 86,
+    "level_number": 83,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Game Play Analysis I",
     "story": "In mobile gaming and digital entertainment analytics, player lifecycle telemetry is recorded each time an account connects to game servers. Determining the exact cohort onboarding timestamp for retention and churn modeling requires isolating each individual player's initial registration or first recorded login event.",
     "objective": "Write a SQL query to find the first login date for every player from the Activity table. Return player_id and first_login in any order.",
-    "starter_code": "-- Problem #Pro-006: Game Play Analysis I\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-003: Game Play Analysis I\n-- Write your SQL query below\n\n",
     "expected_output": "player_id | first_login\n-----------------------\n1 | 2016-03-01\n2 | 2017-06-25\n3 | 2016-03-02",
     "hints": [
       "Group records by each distinct player using GROUP BY player_id.",
@@ -2387,16 +2303,16 @@
     "explanation": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT player_id, MIN(event_date) AS first_login\n- Projects each player ID alongside their chronologically earliest login date.\nLine 2: FROM Activity\n- Scans gaming telemetry session logs from the Activity table.\nLine 3: GROUP BY player_id;\n- Clusters rows belonging to the same player into distinct aggregation groups.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Activity\nStep 2: GROUP BY player_id\nStep 3: MIN(event_date)\nStep 4: SELECT player_id, MIN(event_date) AS first_login",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-006"
+    "code_id": "Pro-003"
   },
   {
-    "level_number": 87,
+    "level_number": 84,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Game Play Analysis II",
     "story": "Understanding player hardware preferences and platform onboarding channels is essential for client-side game optimization. Product teams need to analyze which specific device type or gaming platform each player utilized during their absolute first recorded connection session.",
     "objective": "Write a SQL query to report the device that each player used on their first login from the Activity table. Return player_id and device_id in any order.",
-    "starter_code": "-- Problem #Pro-007: Game Play Analysis II\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-004: Game Play Analysis II\n-- Write your SQL query below\n\n",
     "expected_output": "player_id | device_id\n---------------------\n1 | 2\n2 | 1\n3 | 4",
     "hints": [
       "First find each player's earliest login date using a subquery: (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id).",
@@ -2415,16 +2331,16 @@
     "explanation": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT a.player_id, a.device_id\n- Projects player ID and their initial registration hardware device.\nLine 2: FROM Activity a\n- Scans base Activity rows.\nLine 3-10: JOIN (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id) f\n- Subquery calculates the earliest login date for each distinct player.\nLine 11-12: ON a.player_id = f.player_id AND a.event_date = f.first_login;\n- Joins the aggregate result back to the original table, matching on both player ID and exact first event date to extract the corresponding device_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: Execute subquery f (GROUP BY player_id, compute MIN(event_date))\nStep 2: FROM Activity a JOIN f\nStep 3: Apply ON conditions (a.player_id = f.player_id AND a.event_date = f.first_login)\nStep 4: SELECT a.player_id, a.device_id",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-007"
+    "code_id": "Pro-004"
   },
   {
-    "level_number": 88,
+    "level_number": 85,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Employee Bonus",
     "story": "Corporate payroll auditing and human capital compensation platforms need to verify quarterly incentive disbursements. Identifying employees who received either modest bonuses under ,000 or were completely omitted from bonus distributions is essential for parity compliance.",
     "objective": "Write a SQL query to report the name and bonus of every employee whose bonus is strictly less than 1000 or who has no bonus record at all. Return the result table in any order.",
-    "starter_code": "-- Problem #Pro-008: Employee Bonus\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-005: Employee Bonus\n-- Write your SQL query below\n\n",
     "expected_output": "name | bonus\n-----------\nBrad | NULL\nJohn | NULL\nDan | 500",
     "hints": [
       "Use a LEFT JOIN between Employee and Bonus so employees without bonus records are preserved: FROM Employee e LEFT JOIN Bonus b ON e.empId = b.empId.",
@@ -2444,16 +2360,16 @@
     "explanation": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;\n\n\ud83d\udd0d Query Breakdown\nLine 1-2: SELECT e.name, b.bonus\n- Projects the employee name alongside their bonus amount (or NULL).\nLine 3: FROM Employee e\n- Scans all employee master records.\nLine 4-5: LEFT JOIN Bonus b ON e.empId = b.empId\n- Retains all employees, populating unmatched bonus fields with NULL.\nLine 6-7: WHERE b.bonus < 1000 OR b.bonus IS NULL;\n- Retains employees who either received less than 1000 or received no bonus at all.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Employee e\nStep 2: LEFT JOIN Bonus b ON e.empId = b.empId\nStep 3: WHERE b.bonus < 1000 OR b.bonus IS NULL\nStep 4: SELECT e.name, b.bonus",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-008"
+    "code_id": "Pro-005"
   },
   {
-    "level_number": 89,
+    "level_number": 86,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Find Customer Referee",
     "story": "Marketing referral programs reward brand advocates for acquiring new users. When auditing referral attribution data or running non-referred organic customer analyses, segmentation queries must isolate customers who were either referred by anyone other than a specific disqualified promoter (id = 2) or signed up organically without any referrer at all.",
     "objective": "Write a SQL query to return the names of customers who were not referred by the customer with id = 2 or were not referred by anyone (referee_id is NULL). Return the result table in any order.",
-    "starter_code": "-- Problem #Pro-009: Find Customer Referee\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-006: Find Customer Referee\n-- Write your SQL query below\n\n",
     "expected_output": "name\n----\nWill\nJane\nBill\nZack",
     "hints": [
       "In SQL three-valued logic, NULL <> 2 evaluates to UNKNOWN, which the WHERE clause automatically discards.",
@@ -2473,16 +2389,16 @@
     "explanation": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT name\n- Projects the name of qualifying customers.\nLine 2: FROM Customer\n- Scans records from the Customer table.\nLine 3: WHERE referee_id <> 2\n- Matches customers who were referred by someone whose identifier is not 2.\nLine 4: OR referee_id IS NULL;\n- Preserves customers who signed up organically without any referrer (referee_id IS NULL).\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Customer\nStep 2: WHERE referee_id <> 2 OR referee_id IS NULL\nStep 3: SELECT name",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-009"
+    "code_id": "Pro-006"
   },
   {
-    "level_number": 90,
+    "level_number": 87,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Customer Placing the Largest Number of Orders",
     "story": "E-commerce order processing pipelines track retail fulfillment metrics and customer lifetime activity. Identifying the single highest-volume customer by total completed orders enables VIP rewards enrollment and dedicated loyalty support dispatch.",
     "objective": "Write a SQL query to find the customer who has placed the largest number of orders from the Orders table. Return customer_number. Exactly one customer is guaranteed to have the maximum count.",
-    "starter_code": "-- Problem #Pro-010: Customer Placing the Largest Number of Orders\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-007: Customer Placing the Largest Number of Orders\n-- Write your SQL query below\n\n",
     "expected_output": "customer_number\n---------------\n3",
     "hints": [
       "Group transactions by each distinct customer using GROUP BY customer_number.",
@@ -2502,16 +2418,16 @@
     "explanation": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT customer_number\n- Projects the customer identifier of the highest-volume buyer.\nLine 2: FROM Orders\n- Scans order transaction records from the Orders table.\nLine 3: GROUP BY customer_number\n- Aggregates orders into distinct buckets per customer.\nLine 4: ORDER BY COUNT(*) DESC\n- Sorts customer groups in descending order based on total orders placed.\nLine 5: LIMIT 1;\n- Truncates output to retrieve only the top customer ranking first.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Orders\nStep 2: GROUP BY customer_number\nStep 3: COUNT(*)\nStep 4: ORDER BY COUNT(*) DESC\nStep 5: LIMIT 1\nStep 6: SELECT customer_number",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-010"
+    "code_id": "Pro-007"
   },
   {
-    "level_number": 91,
+    "level_number": 88,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Big Countries",
     "story": "Global macroeconomic organizations and demographic census bureaus categorize sovereign states according to territorial expanse and population density. Flagging large nation states that possess either vast geographical territory or massive resident populations is essential for international aid allocations and trade treaty scoping.",
     "objective": "Write a SQL query to report the name, population, and area of big countries from the World table. A country is big if its area is at least 3,000,000 or its population is at least 25,000,000. Return the result in any order.",
-    "starter_code": "-- Problem #Pro-011: Big Countries\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-008: Big Countries\n-- Write your SQL query below\n\n",
     "expected_output": "name | population | area\n------------------------\nAfghanistan | 25500100 | 652230\nAlgeria | 37100000 | 2381741",
     "hints": [
       "Use the OR logical operator because satisfying either boundary threshold qualifies the country as big.",
@@ -2530,16 +2446,16 @@
     "explanation": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;\n\n\ud83d\udd0d Query Breakdown\nLine 1-4: SELECT name, population, area\n- Projects the country name, total population count, and geographical area.\nLine 5: FROM World\n- Scans demographic records from the World catalog.\nLine 6: WHERE area >= 3000000\n- Filters for countries spanning at least 3 million square units of land.\nLine 7: OR population >= 25000000;\n- Includes countries with at least 25 million citizens, even if their area is below 3M.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM World\nStep 2: WHERE area >= 3000000 OR population >= 25000000\nStep 3: SELECT name, population, area",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-011"
+    "code_id": "Pro-008"
   },
   {
-    "level_number": 92,
+    "level_number": 89,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Classes With at Least 5 Students",
     "story": "Academic scheduling registrars and university curriculum departments audit course registration headcounts prior to the start of each semester. Any elective or lecture section failing to meet the minimum threshold of 5 enrolled students must be evaluated for cancellation or consolidation.",
     "objective": "Write a SQL query to find all classes that have at least 5 students from the Courses table. Return the class column in any order.",
-    "starter_code": "-- Problem #Pro-012: Classes With at Least 5 Students\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-009: Classes With at Least 5 Students\n-- Write your SQL query below\n\n",
     "expected_output": "class\n-----\nMath",
     "hints": [
       "Group enrollment records by academic subject using GROUP BY class.",
@@ -2558,16 +2474,16 @@
     "explanation": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT class\n- Projects the name of qualifying academic courses.\nLine 2: FROM Courses\n- Scans student course enrollment records.\nLine 3: GROUP BY class\n- Partitions student enrollments into distinct course buckets.\nLine 4: HAVING COUNT(student) >= 5;\n- Filters grouped partitions to retain only classes with an enrollment headcount of 5 or more.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Courses\nStep 2: GROUP BY class\nStep 3: COUNT(student)\nStep 4: HAVING COUNT(student) >= 5\nStep 5: SELECT class",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-012"
+    "code_id": "Pro-009"
   },
   {
-    "level_number": 93,
+    "level_number": 90,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Friend Requests I: Overall Acceptance Rate",
     "story": "Social network growth engineering teams closely monitor engagement funnel metrics to gauge community receptivity. The overall friend request acceptance rate evaluates how effectively outgoing invitations convert into mutual connections, requiring distinct request-pair counting and division-by-zero protection.",
     "objective": "Write a SQL query to find the overall acceptance rate of friend requests, defined as the number of distinct accepted requests divided by the number of distinct requests sent. Round the result to 2 decimal places. If there are no friend requests, return 0.00.",
-    "starter_code": "-- Problem #Pro-013: Friend Requests I: Overall Acceptance Rate\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-010: Friend Requests I: Overall Acceptance Rate\n-- Write your SQL query below\n\n",
     "expected_output": "accept_rate\n-----------\n0.67",
     "hints": [
       "Count distinct accepted pairs: (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a).",
@@ -2587,16 +2503,16 @@
     "explanation": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;\n\n\ud83d\udd0d Query Breakdown\nStep 1: (SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r)\n- Computes the total count of distinct (sender, recipient) invitations.\nStep 2: (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a)\n- Computes the total count of distinct accepted friendship pairings.\nStep 3: Multiplies by 1.0 and divides by NULLIF(sent, 0) to avoid division-by-zero errors.\nStep 4: IFNULL(..., 0.0) replaces NULL with 0.0 if no requests exist.\nStep 5: ROUND(..., 2) rounds the quotient to 2 decimal places.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: Compute distinct FriendRequest pairs\nStep 2: Compute distinct RequestAccepted pairs\nStep 3: Divide accepted / sent\nStep 4: IFNULL fallback to 0.0\nStep 5: ROUND to 2 decimals\nStep 6: SELECT AS accept_rate",
     "difficulty": "Easy",
     "track": "master",
-    "code_id": "Pro-013"
+    "code_id": "Pro-010"
   },
   {
-    "level_number": 94,
+    "level_number": 91,
     "chapter_id": 13,
     "chapter_title": "Module 13: Master SQL Solutions",
     "title": "Consecutive Available Seats",
     "story": "Theater ticketing platforms and airline reservation services empower couples and families to purchase adjacent seats without gaps. Detecting consecutive available seats requires inspecting neighboring seat rows using self-joins or lag/lead adjacency calculations.",
     "objective": "Write a SQL query to find all seats that are part of at least one pair of consecutive available seats from the Cinema table. Return seat_id sorted by seat_id in ascending order.",
-    "starter_code": "-- Problem #Pro-014: Consecutive Available Seats\n-- Write your SQL query below\n\n",
+    "starter_code": "-- Problem #Pro-011: Consecutive Available Seats\n-- Write your SQL query below\n\n",
     "expected_output": "seat_id\n-------\n3\n4\n5",
     "hints": [
       "Perform a self join on Cinema: Cinema c1 JOIN Cinema c2.",
@@ -2616,6 +2532,258 @@
     "explanation": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1-2: SELECT DISTINCT c1.seat_id\n- Selects distinct seat identifiers to prevent duplicates when a seat neighbors two free seats.\nLine 3-4: FROM Cinema c1 JOIN Cinema c2\n- Self-joins the Cinema table to pair each seat against potential neighbor seats.\nLine 5: ON ABS(c1.seat_id - c2.seat_id) = 1\n- Joins seats whose absolute difference in seat_id is exactly 1 (immediate neighbors).\nLine 6-7: WHERE c1.free = 1 AND c2.free = 1\n- Filters matches to only keep pairs where both seats are currently unoccupied (free = 1).\nLine 8: ORDER BY c1.seat_id;\n- Sorts resulting seat numbers in ascending order.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Cinema c1 JOIN Cinema c2\nStep 2: ON ABS(c1.seat_id - c2.seat_id) = 1\nStep 3: WHERE c1.free = 1 AND c2.free = 1\nStep 4: SELECT DISTINCT c1.seat_id\nStep 5: ORDER BY c1.seat_id",
     "difficulty": "Easy",
     "track": "master",
+    "code_id": "Pro-011"
+  },
+  {
+    "level_number": 92,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Shortest Distance in a Line",
+    "story": "Geospatial mapping software and numerical coordinate indexing systems calculate pairwise proximity vectors between coordinates positioned along a linear axis. Computing the minimum distance across arbitrary discrete points requires symmetric self-joining and minimum interval aggregation.",
+    "objective": "Write a SQL query to find the shortest distance between any two distinct points from the Point table. Return the result column as shortest.",
+    "starter_code": "-- Problem #Pro-012: Shortest Distance in a Line\n-- Write your SQL query below\n\n",
+    "expected_output": "shortest\n--------\n1",
+    "hints": [
+      "Perform a self join on Point: Point p1 JOIN Point p2.",
+      "To prevent comparing a point with itself and avoid duplicate pairwise calculations, join on p1.x < p2.x.",
+      "Since p2.x > p1.x, the distance is naturally positive: p2.x - p1.x (or ABS(p1.x - p2.x) if using p1.x <> p2.x).",
+      "Aggregate over all pairs using the MIN() function: MIN(p2.x - p1.x) AS shortest."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT MIN(p2.x - p1.x) AS shortest FROM Point p1 JOIN Point p2 ON p1.x < p2.x;",
+        "hidden": false,
+        "description": "Find shortest distance between any two distinct points using self join with p1.x < p2.x and MIN()"
+      }
+    ],
+    "explanation": "SELECT\n    MIN(p2.x - p1.x) AS shortest\nFROM Point p1\nJOIN Point p2\nON p1.x < p2.x;\n\n\ud83d\udd0d Query Breakdown\nLine 1-2: SELECT MIN(p2.x - p1.x) AS shortest\n- Calculates the difference between larger and smaller coordinates and aggregates the minimum across all pairs.\nLine 3-4: FROM Point p1 JOIN Point p2\n- Self-joins the Point table to form pairwise point combinations.\nLine 5: ON p1.x < p2.x;\n- Restricts pairs to strictly ascending pairs (p1.x < p2.x), cutting comparison space in half, eliminating self-comparisons, and guaranteeing positive distance without needing ABS().\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Point p1 JOIN Point p2\nStep 2: ON p1.x < p2.x\nStep 3: Compute difference (p2.x - p1.x)\nStep 4: MIN()\nStep 5: SELECT AS shortest",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-012"
+  },
+  {
+    "level_number": 93,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Biggest Single Number",
+    "story": "Financial fraud detection and duplicate accounting audit algorithms flag transactional amounts that occur strictly once versus recurring batch amounts. Extracting the maximum unique solitary value requires group-frequency filtering and scalar aggregation over subquery projections.",
+    "objective": "Write a SQL query to find the largest single number from the MyNumbers table. A single number is a number that appears exactly once. If there is no single number, return NULL.",
+    "starter_code": "-- Problem #Pro-013: Biggest Single Number\n-- Write your SQL query below\n\n",
+    "expected_output": "num\n---\n5",
+    "hints": [
+      "Use GROUP BY num and HAVING COUNT(*) = 1 in an inner subquery to isolate numbers that appear exactly once.",
+      "Wrap the derived table with an outer query using MAX(num): SELECT MAX(num) AS num FROM (...) AS SingleNumbers.",
+      "If no number appears exactly once, MAX() over an empty result set automatically returns NULL, fulfilling the requirement.",
+      "Alias the returned column as num."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT MAX(num) AS num FROM (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1) AS SingleNumbers;",
+        "hidden": false,
+        "description": "Find the largest single number appearing exactly once with NULL fallback"
+      }
+    ],
+    "explanation": "SELECT\n    MAX(num) AS num\nFROM (\n    SELECT num\n    FROM MyNumbers\n    GROUP BY num\n    HAVING COUNT(*) = 1\n) AS SingleNumbers;\n\n\ud83d\udd0d Query Breakdown\nLines 3-7: (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1) AS SingleNumbers\n- Aggregates by number, counts occurrences, and filters out duplicates, retaining only solitary numbers.\nLines 1-2: SELECT MAX(num) AS num\n- Finds the maximum value among all isolated solitary numbers. If the inner subquery produces 0 rows, MAX() gracefully evaluates to NULL.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM MyNumbers\nStep 2: GROUP BY num\nStep 3: HAVING COUNT(*) = 1\nStep 4: Form derived table SingleNumbers\nStep 5: MAX(num)\nStep 6: SELECT AS num",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-013"
+  },
+  {
+    "level_number": 94,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Not Boring Movies",
+    "story": "Entertainment streaming recommendation engines curate high-quality cinema selections for homepage carousels by filtering out poorly tagged or uninteresting titles while applying algorithmic alternating ID sharding rules. Outputting top entertainment picks requires compound boolean filtering and descending rating sorting.",
+    "objective": "Write a SQL query to report all movies that have an odd-numbered id and whose description is not equal to \"boring\" from the Cinema table. Return the result table ordered by rating in descending order.",
+    "starter_code": "-- Problem #Pro-014: Not Boring Movies\n-- Write your SQL query below\n\n",
+    "expected_output": "id | movie | description | rating\n---------------------------------\n5 | House Card | Interesting | 9.1\n1 | War | great 3D | 8.9",
+    "hints": [
+      "Filter for odd movie IDs using the modulo operator: id % 2 = 1 (or MOD(id, 2) = 1).",
+      "Filter out boring movies using the inequality operator: description <> 'boring' (or description != 'boring').",
+      "Combine both boolean conditions using the logical AND operator.",
+      "Order the qualifying results by rating in descending order: ORDER BY rating DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT id, movie, description, rating FROM Cinema WHERE id % 2 = 1 AND description <> 'boring' ORDER BY rating DESC;",
+        "hidden": false,
+        "description": "Filter movies with odd ID and non-boring description sorted by rating DESC"
+      }
+    ],
+    "explanation": "SELECT\n    id,\n    movie,\n    description,\n    rating\nFROM Cinema\nWHERE id % 2 = 1\n  AND description <> 'boring'\nORDER BY rating DESC;\n\n\ud83d\udd0d Query Breakdown\nLines 1-5: SELECT id, movie, description, rating\n- Projects all required movie attribute columns.\nLine 6: FROM Cinema\n- Scans movie catalog records.\nLine 7: WHERE id % 2 = 1\n- Restricts records to odd-numbered primary keys using the modulo operator.\nLine 8: AND description <> 'boring'\n- Excludes any movie with description 'boring'.\nLine 9: ORDER BY rating DESC;\n- Sorts the qualifying movie titles from highest rating to lowest.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Cinema\nStep 2: WHERE id % 2 = 1 AND description <> 'boring'\nStep 3: SELECT id, movie, description, rating\nStep 4: ORDER BY rating DESC",
+    "difficulty": "Easy",
+    "track": "master",
     "code_id": "Pro-014"
+  },
+  {
+    "level_number": 95,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Combine Two Tables",
+    "story": "User profile directory services synchronize core identity credentials with geographic residential metadata across distributed relational databases. When individuals have not yet registered or provided a residential mailing location, identity records must still be preserved without omission using outer relational joins.",
+    "objective": "Write a SQL query to report the firstName, lastName, city, and state for each person in the Person table. If the address of a personId is not present in the Address table, report NULL for city and state.",
+    "starter_code": "-- Problem #Pro-015: Combine Two Tables\n-- Write your SQL query below\n\n",
+    "expected_output": "firstName | lastName | city | state\n-----------------------------------\nAllen | Wang | NULL | NULL\nBob | Alice | New York City | New York",
+    "hints": [
+      "Use a LEFT JOIN between Person and Address so that all individuals from Person are retained even if they lack an address.",
+      "Join on the foreign key relation: ON p.personId = a.personId.",
+      "Select the requested fields: p.firstName, p.lastName, a.city, and a.state.",
+      "Missing addresses will automatically evaluate to NULL in the joined columns."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT p.firstName, p.lastName, a.city, a.state FROM Person p LEFT JOIN Address a ON p.personId = a.personId;",
+        "hidden": false,
+        "description": "Combine Person and Address using LEFT JOIN to preserve individuals with missing addresses"
+      }
+    ],
+    "explanation": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person p\nLEFT JOIN Address a\nON p.personId = a.personId;\n\n\ud83d\udd0d Query Breakdown\nLines 1-5: SELECT p.firstName, p.lastName, a.city, a.state\n- Projects first and last name from Person and city/state from Address.\nLine 6: FROM Person p\n- Establishes Person as the primary (left) table.\nLine 7: LEFT JOIN Address a\n- Preserves every row in Person, even those with no match in Address.\nLine 8: ON p.personId = a.personId;\n- Equates records sharing the same personId foreign key relationship.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person p\nStep 2: LEFT JOIN Address a ON p.personId = a.personId\nStep 3: Missing address rows populated with NULL\nStep 4: SELECT p.firstName, p.lastName, a.city, a.state",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-015"
+  },
+  {
+    "level_number": 96,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Employees Earning More Than Their Managers",
+    "story": "Enterprise organizational reporting charts track managerial hierarchy and compensation structures across departments. Identifying talent whose compensation surpasses direct line supervisors involves self-joining corporate directory tables on hierarchical manager foreign keys.",
+    "objective": "Write a SQL query to find employees who earn more than their managers from the Employee table. Return the result table with column name Employee in any order.",
+    "starter_code": "-- Problem #Pro-016: Employees Earning More Than Their Managers\n-- Write your SQL query below\n\n",
+    "expected_output": "Employee\n--------\nJoe",
+    "hints": [
+      "Perform a self join on Employee: Employee e JOIN Employee m.",
+      "Match each employee to their supervisor: ON e.managerId = m.id.",
+      "Filter where the employee salary strictly exceeds the manager salary: WHERE e.salary > m.salary.",
+      "Select and alias the employee name column as Employee: SELECT e.name AS Employee."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.name AS Employee FROM Employee e JOIN Employee m ON e.managerId = m.id WHERE e.salary > m.salary;",
+        "hidden": false,
+        "description": "Find employees earning more than their managers using self join"
+      }
+    ],
+    "explanation": "SELECT\n    e.name AS Employee\nFROM Employee e\nJOIN Employee m\nON e.managerId = m.id\nWHERE e.salary > m.salary;\n\n\ud83d\udd0d Query Breakdown\nLines 1-2: SELECT e.name AS Employee\n- Projects the employee's name and aliases the column as Employee.\nLine 3: FROM Employee e\n- Scans the Employee table representing individual contributors.\nLine 4: JOIN Employee m\n- Self-joins the same Employee table representing supervisors/managers.\nLine 5: ON e.managerId = m.id\n- Links the employee's managerId to the manager's primary key id.\nLine 6: WHERE e.salary > m.salary;\n- Filters pairs to retain only employees earning strictly more than their direct manager.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Employee e JOIN Employee m\nStep 2: ON e.managerId = m.id\nStep 3: WHERE e.salary > m.salary\nStep 4: SELECT e.name AS Employee",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-016"
+  },
+  {
+    "level_number": 97,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Duplicate Emails",
+    "story": "Identity verification and user registration pipelines audit subscriber registries to detect fraudulent multi-accounting and duplicate sign-ups. Flagging repeated contact channels requires partitioning accounts by email and filtering for aggregate group frequencies greater than one.",
+    "objective": "Write a SQL query to find all duplicate email addresses from the Person table. A duplicate email is one that appears more than once. Return the result table with column name email in any order.",
+    "starter_code": "-- Problem #Pro-017: Duplicate Emails\n-- Write your SQL query below\n\n",
+    "expected_output": "email\n--------------------\na@leetcode.com",
+    "hints": [
+      "Group rows by email address using GROUP BY email.",
+      "Count occurrences of each email within its group.",
+      "Filter aggregated groups using HAVING COUNT(*) > 1 (or COUNT(email) > 1).",
+      "Select the email column: SELECT email FROM Person GROUP BY email HAVING COUNT(*) > 1;"
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT email FROM Person GROUP BY email HAVING COUNT(*) > 1;",
+        "hidden": false,
+        "description": "Find duplicate emails using GROUP BY and HAVING COUNT(*) > 1"
+      }
+    ],
+    "explanation": "SELECT\n    email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;\n\n\ud83d\udd0d Query Breakdown\nLine 1-2: SELECT email\n- Projects the duplicate email address.\nLine 3: FROM Person\n- Scans the user contact directory.\nLine 4: GROUP BY email\n- Consolidates identical email values into discrete frequency groups.\nLine 5: HAVING COUNT(*) > 1;\n- Evaluates the group cardinality post-aggregation and filters out unique (solitary) emails, keeping only duplicates.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person\nStep 2: GROUP BY email\nStep 3: Aggregate row counts per group (COUNT(*))\nStep 4: Filter groups where COUNT(*) > 1 via HAVING\nStep 5: SELECT email",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-017"
+  },
+  {
+    "level_number": 98,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Sales Person",
+    "story": "Corporate enterprise vendor compliance systems audit partner relations to verify whether sales representatives have ever serviced restricted or competitor organizations. Identifying reps with clean records against restricted accounts requires relational subquery negation across multi-table foreign keys.",
+    "objective": "Write a SQL query to find the names of all salespersons who did not have any orders with the company named \"RED\". Return the result table with column name name in any order.",
+    "starter_code": "-- Problem #Pro-018: Sales Person\n-- Write your SQL query below\n\n",
+    "expected_output": "name\n----\nAmy\nMark\nPam",
+    "hints": [
+      "Find sales_id values of reps who sold to company RED: JOIN Orders o and Company c ON o.com_id = c.com_id WHERE c.name = 'RED'.",
+      "Filter the SalesPerson table using NOT IN to exclude those reps.",
+      "Reps who have no orders at all (like Pam) will naturally not be in the subquery and will be included.",
+      "Select the name column: SELECT name FROM SalesPerson WHERE sales_id NOT IN (...);"
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT name FROM SalesPerson WHERE sales_id NOT IN (SELECT o.sales_id FROM Orders o JOIN Company c ON o.com_id = c.com_id WHERE c.name = 'RED');",
+        "hidden": false,
+        "description": "Find salespersons who never placed orders with company RED"
+      }
+    ],
+    "explanation": "SELECT name\nFROM SalesPerson\nWHERE sales_id NOT IN (\n    SELECT o.sales_id\n    FROM Orders o\n    JOIN Company c\n    ON o.com_id = c.com_id\n    WHERE c.name = 'RED'\n);\n\n\ud83d\udd0d Query Breakdown\nLines 3-8: Subquery (Orders JOIN Company WHERE c.name = 'RED')\n- Connects Orders with Company and selects the sales_id of all reps who placed at least one order with RED.\nLine 2: FROM SalesPerson\n- Scans all sales representatives.\nLine 3: WHERE sales_id NOT IN (...)\n- Excludes reps who serviced company RED, keeping those who only sold to other companies or placed zero orders.\nLine 1: SELECT name\n- Emits the salesperson names.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: Subquery joins Orders and Company where c.name = 'RED'\nStep 2: Collect list of disqualified sales_ids\nStep 3: Outer query scans SalesPerson\nStep 4: WHERE sales_id NOT IN (disqualified sales_ids)\nStep 5: SELECT name",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-018"
+  },
+  {
+    "level_number": 99,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Customers Who Never Order",
+    "story": "E-commerce lifecycle marketing engines analyze registered user engagement to trigger onboarding retention campaigns for accounts that have never completed a checkout transaction. Isolating inactive buyers requires preserving all customer records and filtering for absent order activity using outer joins.",
+    "objective": "Write a SQL query to find all customers who never placed an order from the Customers and Orders tables. Return the customer name with column header Customers in any order.",
+    "starter_code": "-- Problem #Pro-019: Customers Who Never Order\n-- Write your SQL query below\n\n",
+    "expected_output": "Customers\n---------\nHenry\nMax",
+    "hints": [
+      "Use a LEFT JOIN from Customers c to Orders o matching on c.id = o.customerId.",
+      "Customers who never placed an order will have NULL in all columns from the Orders table.",
+      "Filter for unmatched rows using WHERE o.id IS NULL (or WHERE o.customerId IS NULL).",
+      "Select and alias the customer name: SELECT c.name AS Customers."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT c.name AS Customers FROM Customers c LEFT JOIN Orders o ON c.id = o.customerId WHERE o.id IS NULL;",
+        "hidden": false,
+        "description": "Find customers with zero orders using LEFT JOIN and IS NULL"
+      }
+    ],
+    "explanation": "SELECT\n    c.name AS Customers\nFROM Customers c\nLEFT JOIN Orders o\nON c.id = o.customerId\nWHERE o.id IS NULL;\n\n\ud83d\udd0d Query Breakdown\nLines 1-2: SELECT c.name AS Customers\n- Projects the customer's name aliased as Customers.\nLine 3: FROM Customers c\n- Designates Customers as the left table whose entire population is evaluated.\nLine 4: LEFT JOIN Orders o\n- Joins Orders, retaining all customers regardless of whether order records exist.\nLine 5: ON c.id = o.customerId\n- Equates customer primary key to order foreign key customerId.\nLine 6: WHERE o.id IS NULL;\n- Filters out customers who have placed orders, keeping only those where order data is absent (NULL).\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Customers c LEFT JOIN Orders o\nStep 2: ON c.id = o.customerId\nStep 3: WHERE o.id IS NULL\nStep 4: SELECT c.name AS Customers",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-019"
+  },
+  {
+    "level_number": 100,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Triangle Judgement",
+    "story": "Computational geometry and CAD engineering systems evaluate structural mesh segments to verify whether sets of three linear boundaries satisfy triangular polygon constraints. Applying the triangle inequality theorem requires validating three concurrent additive inequalities using conditional branching expressions.",
+    "objective": "Write a SQL query to determine whether the three sides can form a triangle from the Triangle table. Return the result table with columns x, y, z, and triangle containing 'Yes' or 'No' in any order.",
+    "starter_code": "-- Problem #Pro-020: Triangle Judgement\n-- Write your SQL query below\n\n",
+    "expected_output": "x | y | z | triangle\n--------------------\n13 | 15 | 30 | No\n10 | 20 | 15 | Yes",
+    "hints": [
+      "Apply the Triangle Inequality Theorem: The sum of any two sides must be strictly greater than the third side.",
+      "Check all three conditions: x + y > z AND x + z > y AND y + z > x.",
+      "Use a CASE WHEN expression returning 'Yes' when all three conditions are satisfied, and 'No' otherwise.",
+      "Select x, y, z, and alias the CASE expression as triangle."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT x, y, z, CASE WHEN x + y > z AND x + z > y AND y + z > x THEN 'Yes' ELSE 'No' END AS triangle FROM Triangle;",
+        "hidden": false,
+        "description": "Determine if three segments form a triangle using CASE WHEN"
+      }
+    ],
+    "explanation": "SELECT\n    x,\n    y,\n    z,\n    CASE\n        WHEN x + y > z\n         AND x + z > y\n         AND y + z > x\n        THEN 'Yes'\n        ELSE 'No'\n    END AS triangle\nFROM Triangle;\n\n\ud83d\udd0d Query Breakdown\nLines 1-4: SELECT x, y, z\n- Projects the original segment lengths.\nLines 5-11: CASE ... END AS triangle\n- Evaluates the Triangle Inequality Theorem where the sum of any two sides must strictly exceed the remaining side.\n- When all 3 inequalities hold true, outputs 'Yes'; otherwise falls through to ELSE 'No'.\nLine 12: FROM Triangle;\n- Scans each record in the Triangle table.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Triangle\nStep 2: Evaluate CASE WHEN conditions on each row\nStep 3: SELECT x, y, z, and evaluated triangle column",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-020"
   }
 ]

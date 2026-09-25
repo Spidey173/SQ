@@ -15,7 +15,7 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "code_id": "Basics-001",
     "levelNumber": 1,
     "title": "Select All Columns",
-    "optimalCode": "SELECT * FROM table_name;",
+    "optimalCode": "SELECT * FROM employees;",
     "timeComplexity": "O(N)",
     "spaceComplexity": "O(N)",
     "explanation": "The query executes standard ANSI SQL operations for 'Select all columns from a table' using SQLite execution planner.",
@@ -815,36 +815,6 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
   "Pro-001": {
     "code_id": "Pro-001",
     "levelNumber": 81,
-    "title": "Combine Two Tables",
-    "optimalCode": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
-    "timeComplexity": "O(N + M)",
-    "spaceComplexity": "O(Result Set)",
-    "explanation": "Executes SELECT p.firstName, p.lastName, a.city, a.state FROM Person AS p LEFT JOIN Address AS a ON p.personId = a.personId, preserving all individuals in Person while joining their corresponding location details when available.",
-    "keyTakeaway": "A LEFT JOIN preserves every row from the primary left relation, populating unmatched right relation columns with NULL values."
-  },
-  "Pro-002": {
-    "code_id": "Pro-002",
-    "levelNumber": 82,
-    "title": "Employees Earning More Than Their Managers",
-    "optimalCode": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(Result Set)",
-    "explanation": "Executes SELECT e.name AS Employee FROM Employee AS e JOIN Employee AS m ON e.managerId = m.id WHERE e.salary > m.salary, using a self-join to align each employee with their respective supervisor and isolating those whose salary strictly exceeds their manager's.",
-    "keyTakeaway": "A self-join links hierarchical rows residing within the same physical relation by pairing a parent foreign key (managerId) with a primary key (id)."
-  },
-  "Pro-003": {
-    "code_id": "Pro-003",
-    "levelNumber": 83,
-    "title": "Duplicate Emails",
-    "optimalCode": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(Result Set)",
-    "explanation": "Executes SELECT email AS Email FROM Person GROUP BY email HAVING COUNT(*) > 1, aggregating identical email entries into groups and filtering for those appearing more than once in linear O(N) time.",
-    "keyTakeaway": "HAVING filters groups post-aggregation, making it the canonical clause for evaluating group cardinality thresholds like COUNT(*) > 1."
-  },
-  "Pro-004": {
-    "code_id": "Pro-004",
-    "levelNumber": 84,
     "title": "Delete Duplicate Emails",
     "optimalCode": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;",
     "timeComplexity": "O(N log N)",
@@ -852,9 +822,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes DELETE p1 FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id > p2.id, self-joining the table on matching email addresses and deleting the record with the strictly larger primary key id.",
     "keyTakeaway": "Multi-table DELETE syntax with a self-join purges duplicate records in-place while cleanly retaining the record with the minimum identifier."
   },
-  "Pro-005": {
-    "code_id": "Pro-005",
-    "levelNumber": 85,
+  "Pro-002": {
+    "code_id": "Pro-002",
+    "levelNumber": 82,
     "title": "Rising Temperature",
     "optimalCode": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
     "timeComplexity": "O(N log N)",
@@ -862,9 +832,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT w1.id FROM Weather w1 JOIN Weather w2 ON DATEDIFF(w1.recordDate, w2.recordDate) = 1 WHERE w1.temperature > w2.temperature, self-joining weather records on exactly consecutive calendar dates and returning dates where temperatures rose strictly above the preceding day.",
     "keyTakeaway": "Joining on `DATEDIFF(today, yesterday) = 1` enforces strict calendar adjacency regardless of gaps or non-consecutive primary key IDs."
   },
-  "Pro-006": {
-    "code_id": "Pro-006",
-    "levelNumber": 86,
+  "Pro-003": {
+    "code_id": "Pro-003",
+    "levelNumber": 83,
     "title": "Game Play Analysis I",
     "optimalCode": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;",
     "timeComplexity": "O(N)",
@@ -872,9 +842,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id, aggregating each player's session records to isolate their chronologically earliest login timestamp.",
     "keyTakeaway": "Applying MIN() on date columns grouped by an entity identifier is the standard relational design pattern for cohort onboarding and first-touch attribution."
   },
-  "Pro-007": {
-    "code_id": "Pro-007",
-    "levelNumber": 87,
+  "Pro-004": {
+    "code_id": "Pro-004",
+    "levelNumber": 84,
     "title": "Game Play Analysis II",
     "optimalCode": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;",
     "timeComplexity": "O(N log N)",
@@ -882,9 +852,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT a.player_id, a.device_id FROM Activity a JOIN (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id) f ON a.player_id = f.player_id AND a.event_date = f.first_login, calculating each player's earliest login date and joining back to the source table to recover the associated hardware device ID.",
     "keyTakeaway": "When an aggregate like MIN() is needed alongside other unaggregated row attributes, computing the aggregate in a subquery and joining back on the composite key is the canonical pattern."
   },
-  "Pro-008": {
-    "code_id": "Pro-008",
-    "levelNumber": 88,
+  "Pro-005": {
+    "code_id": "Pro-005",
+    "levelNumber": 85,
     "title": "Employee Bonus",
     "optimalCode": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;",
     "timeComplexity": "O(N + M)",
@@ -892,9 +862,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT e.name, b.bonus FROM Employee e LEFT JOIN Bonus b ON e.empId = b.empId WHERE b.bonus < 1000 OR b.bonus IS NULL, performing a left join to ensure employees without bonus records are preserved as NULL and retained alongside bonuses strictly below 1000.",
     "keyTakeaway": "In three-valued logic, `NULL < 1000` evaluates to UNKNOWN (excluded by WHERE); you must explicitly handle missing rows with `OR col IS NULL` or `COALESCE()`."
   },
-  "Pro-009": {
-    "code_id": "Pro-009",
-    "levelNumber": 89,
+  "Pro-006": {
+    "code_id": "Pro-006",
+    "levelNumber": 86,
     "title": "Find Customer Referee",
     "optimalCode": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;",
     "timeComplexity": "O(N)",
@@ -902,9 +872,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT name FROM Customer WHERE referee_id <> 2 OR referee_id IS NULL, filtering for customers not referred by id 2 while explicitly preserving NULL values which would otherwise evaluate to UNKNOWN and be dropped.",
     "keyTakeaway": "Because comparisons with NULL evaluate to UNKNOWN, any inequality check (col <> value) drops NULL rows unless explicitly accompanied by `OR col IS NULL`."
   },
-  "Pro-010": {
-    "code_id": "Pro-010",
-    "levelNumber": 90,
+  "Pro-007": {
+    "code_id": "Pro-007",
+    "levelNumber": 87,
     "title": "Customer Placing the Largest Number of Orders",
     "optimalCode": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;",
     "timeComplexity": "O(N log N)",
@@ -912,9 +882,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT customer_number FROM Orders GROUP BY customer_number ORDER BY COUNT(*) DESC LIMIT 1, aggregating order records per customer, sorting in descending order of order frequency, and retaining the top single customer.",
     "keyTakeaway": "The aggregation pattern `GROUP BY ... ORDER BY COUNT(*) DESC LIMIT 1` is the standard relational technique for isolating the mode or highest-frequency entity."
   },
-  "Pro-011": {
-    "code_id": "Pro-011",
-    "levelNumber": 91,
+  "Pro-008": {
+    "code_id": "Pro-008",
+    "levelNumber": 88,
     "title": "Big Countries",
     "optimalCode": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;",
     "timeComplexity": "O(N)",
@@ -922,9 +892,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT name, population, area FROM World WHERE area >= 3000000 OR population >= 25000000, filtering for countries that qualify as large on either geographic expanse (>= 3M) or demographic scale (>= 25M).",
     "keyTakeaway": "The logical OR operator returns rows satisfying either boundary condition, whereas >= includes the exact boundary threshold itself."
   },
-  "Pro-012": {
-    "code_id": "Pro-012",
-    "levelNumber": 92,
+  "Pro-009": {
+    "code_id": "Pro-009",
+    "levelNumber": 89,
     "title": "Classes With at Least 5 Students",
     "optimalCode": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;",
     "timeComplexity": "O(N log N)",
@@ -932,9 +902,9 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT class FROM Courses GROUP BY class HAVING COUNT(student) >= 5, partitioning course enrollments by class and filtering the post-aggregation groups with HAVING to retain only classes with 5 or more students.",
     "keyTakeaway": "While WHERE filters individual rows before grouping, HAVING filters aggregated groups after GROUP BY and supports aggregate functions like COUNT()."
   },
-  "Pro-013": {
-    "code_id": "Pro-013",
-    "levelNumber": 93,
+  "Pro-010": {
+    "code_id": "Pro-010",
+    "levelNumber": 90,
     "title": "Friend Requests I: Overall Acceptance Rate",
     "optimalCode": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;",
     "timeComplexity": "O(N + M)",
@@ -942,15 +912,105 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes scalar subqueries counting distinct accepted friendship pairs and distinct sent request pairs, dividing them with floating-point precision, handling zero requests with IFNULL/NULLIF, and rounding the final rate to 2 decimal places.",
     "keyTakeaway": "Ratios comparing counts from independent tables should use scalar subqueries, floating-point coercion (* 1.0), and NULLIF/IFNULL to prevent division-by-zero crashes."
   },
-  "Pro-014": {
-    "code_id": "Pro-014",
-    "levelNumber": 94,
+  "Pro-011": {
+    "code_id": "Pro-011",
+    "levelNumber": 91,
     "title": "Consecutive Available Seats",
     "optimalCode": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;",
     "timeComplexity": "O(N²)",
     "spaceComplexity": "O(Result Set)",
     "explanation": "Executes a self join on Cinema matching adjacent seats where ABS(c1.seat_id - c2.seat_id) = 1 and both are free, deduplicating with DISTINCT and sorting by seat_id.",
     "keyTakeaway": "Adjacency conditions on row IDs within the same table can be cleanly expressed via self joins with ABS(id1 - id2) = 1, coupled with DISTINCT to deduplicate overlapping neighbor pairs."
+  },
+  "Pro-012": {
+    "code_id": "Pro-012",
+    "levelNumber": 92,
+    "title": "Shortest Distance in a Line",
+    "optimalCode": "SELECT\n    MIN(p2.x - p1.x) AS shortest\nFROM Point p1\nJOIN Point p2\nON p1.x < p2.x;",
+    "timeComplexity": "O(N²)",
+    "spaceComplexity": "O(1)",
+    "explanation": "Executes a self join pairing distinct points in ascending order (p1.x < p2.x) to avoid duplicate calculations and self-pairing, finding the minimum positive distance with MIN().",
+    "keyTakeaway": "Joining on `p1.val < p2.val` halves the comparison search space and inherently guarantees positive differences without requiring `ABS()`."
+  },
+  "Pro-013": {
+    "code_id": "Pro-013",
+    "levelNumber": 93,
+    "title": "Biggest Single Number",
+    "optimalCode": "SELECT\n    MAX(num) AS num\nFROM (\n    SELECT num\n    FROM MyNumbers\n    GROUP BY num\n    HAVING COUNT(*) = 1\n) AS SingleNumbers;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes a subquery grouping numbers and retaining only solitary unique values with HAVING COUNT(*) = 1, then computes MAX(num) in the outer query which automatically evaluates to NULL if no single number exists.",
+    "keyTakeaway": "Wrapping an aggregation query that filters unique values inside an outer `SELECT MAX(...)` guarantees a clean `NULL` return when the filtered subquery produces 0 rows."
+  },
+  "Pro-014": {
+    "code_id": "Pro-014",
+    "levelNumber": 94,
+    "title": "Not Boring Movies",
+    "optimalCode": "SELECT\n    id,\n    movie,\n    description,\n    rating\nFROM Cinema\nWHERE id % 2 = 1\n  AND description <> 'boring'\nORDER BY rating DESC;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(1)",
+    "explanation": "Executes SELECT id, movie, description, rating FROM Cinema WHERE id % 2 = 1 AND description <> 'boring' ORDER BY rating DESC, filtering for odd-numbered primary keys and non-boring descriptions, then sorting by rating descending.",
+    "keyTakeaway": "Modulo `id % 2 = 1` filters odd numerical values, while `<>` excludes targeted string tokens in the WHERE clause prior to sorting."
+  },
+  "Pro-015": {
+    "code_id": "Pro-015",
+    "levelNumber": 95,
+    "title": "Combine Two Tables",
+    "optimalCode": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person p\nLEFT JOIN Address a\nON p.personId = a.personId;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes a LEFT JOIN from Person to Address on personId, retaining all individuals regardless of whether they have a corresponding record in the Address table and filling unmatched rows with NULL.",
+    "keyTakeaway": "A LEFT JOIN preserves every row from the primary (left) table and substitutes NULL for missing columns from the secondary table."
+  },
+  "Pro-016": {
+    "code_id": "Pro-016",
+    "levelNumber": 96,
+    "title": "Employees Earning More Than Their Managers",
+    "optimalCode": "SELECT\n    e.name AS Employee\nFROM Employee e\nJOIN Employee m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes a self join on Employee matching each employee's managerId with their manager's id, filtering where the employee salary is greater than the manager salary.",
+    "keyTakeaway": "Self joins enable hierarchical relationships (like employee to supervisor) to be traversed within a single table using distinct table aliases."
+  },
+  "Pro-017": {
+    "code_id": "Pro-017",
+    "levelNumber": 97,
+    "title": "Duplicate Emails",
+    "optimalCode": "SELECT\n    email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT email FROM Person GROUP BY email HAVING COUNT(*) > 1, grouping rows by email and retaining only those groups whose frequency strictly exceeds 1.",
+    "keyTakeaway": "Use `GROUP BY col HAVING COUNT(*) > 1` to isolate duplicate values across rows in SQL."
+  },
+  "Pro-018": {
+    "code_id": "Pro-018",
+    "levelNumber": 98,
+    "title": "Sales Person",
+    "optimalCode": "SELECT name\nFROM SalesPerson\nWHERE sales_id NOT IN (\n    SELECT o.sales_id\n    FROM Orders o\n    JOIN Company c\n    ON o.com_id = c.com_id\n    WHERE c.name = 'RED'\n);",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT name FROM SalesPerson WHERE sales_id NOT IN (subquery), finding all sales_id tied to orders from company 'RED' via a JOIN between Orders and Company, then excluding them.",
+    "keyTakeaway": "To exclude entities associated with a specific criterion, collect their IDs in an inner subquery and filter the main entity table using `NOT IN` or `NOT EXISTS`."
+  },
+  "Pro-019": {
+    "code_id": "Pro-019",
+    "levelNumber": 99,
+    "title": "Customers Who Never Order",
+    "optimalCode": "SELECT\n    c.name AS Customers\nFROM Customers c\nLEFT JOIN Orders o\nON c.id = o.customerId\nWHERE o.id IS NULL;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes a LEFT JOIN from Customers to Orders on c.id = o.customerId and filters with WHERE o.id IS NULL to isolate customers who have no recorded orders.",
+    "keyTakeaway": "A LEFT JOIN combined with a `WHERE right_table.id IS NULL` check is the canonical SQL anti-join pattern to discover missing relationships."
+  },
+  "Pro-020": {
+    "code_id": "Pro-020",
+    "levelNumber": 100,
+    "title": "Triangle Judgement",
+    "optimalCode": "SELECT\n    x,\n    y,\n    z,\n    CASE\n        WHEN x + y > z\n         AND x + z > y\n         AND y + z > x\n        THEN 'Yes'\n        ELSE 'No'\n    END AS triangle\nFROM Triangle;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "explanation": "Executes a CASE WHEN expression checking the triangle inequality theorem (x + y > z AND x + z > y AND y + z > x), returning 'Yes' if all three conditions are met and 'No' otherwise.",
+    "keyTakeaway": "The Triangle Inequality Theorem requires strictly greater (>) comparisons across all three pairwise combinations within a CASE statement."
   }};
 
 export const ALL_50_SOLUTIONS: Record<string, any> = {

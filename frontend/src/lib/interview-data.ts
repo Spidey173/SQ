@@ -69,7 +69,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
       "TCS"
     ],
     "tracing": {
-      "code": "SELECT * FROM table_name;",
+      "code": "SELECT * FROM employees;",
       "steps": [
         {
           "step": 1,
@@ -17944,574 +17944,10 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
       ]
   },
   "81": {
-      "id": "pro-81",
-      "title": "Combine Two Tables",
-      "levelNumber": 81,
-      "problemId": 81,
-      "problemTitle": "Combine Two Tables",
-      "difficulty": "Easy",
-      "companyTags": [
-          "Amazon",
-          "Apple",
-          "Facebook",
-          "Google",
-          "Microsoft"
-      ],
-      "tracing": {
-          "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
-          "steps": [
-              {
-                  "step": 1,
-                  "lineNumber": 6,
-                  "vars": {
-                      "Phase": "FROM Person AS p",
-                      "Action": "Read left table Person"
-                  },
-                  "explanation": "Reads 2 persons: 1 (Wang, Allen) and 2 (Alice, Bob)."
-              },
-              {
-                  "step": 2,
-                  "lineNumber": 7,
-                  "vars": {
-                      "Phase": "LEFT JOIN Address AS a",
-                      "Action": "Match on personId"
-                  },
-                  "explanation": "Person 1 has no matching Address (city/state set to NULL). Person 2 matches Address 1 ('New York City', 'New York')."
-              },
-              {
-                  "step": 3,
-                  "lineNumber": 1,
-                  "vars": {
-                      "Phase": "SELECT",
-                      "Action": "Project columns"
-                  },
-                  "explanation": "Projects (Allen, Wang, NULL, NULL) and (Bob, Alice, New York City, New York)."
-              }
-          ]
-      },
-      "questions": [
-          {
-              "id": "q-81-1",
-              "category": "💡 Interview Notes",
-              "question": "Why is a LEFT JOIN required here instead of an INNER JOIN?",
-              "whatInterviewerChecks": "Understanding of outer joins and NULL preservation.",
-              "bestReplyScript": "The problem specifically mandates that every person must appear in the final output, regardless of whether address information exists. An INNER JOIN discards any person who lacks a matching row in Address. A LEFT JOIN preserves all rows from Person, automatically populating missing address attributes with NULL.",
-              "commonMistakesToAvoid": "Using INNER JOIN which silently filters out persons without addresses.",
-              "keyPoints": [
-                  "LEFT JOIN preserves all left-table rows unconditionally",
-                  "INNER JOIN discards unmatched rows",
-                  "Missing right-table columns naturally evaluate to NULL"
-              ],
-              "codeSnippet": "FROM Person p LEFT JOIN Address a ON p.personId = a.personId"
-          },
-          {
-              "id": "q-81-2",
-              "category": "💡 Interview Notes",
-              "question": "What happens if a person has multiple address records in Address?",
-              "whatInterviewerChecks": "Understanding of cardinality in relational joins.",
-              "bestReplyScript": "A LEFT JOIN with a 1-to-many relationship causes the person row to duplicate for each matching address row. If business requirements dictate returning only one primary address per person, we would need to deduplicate or aggregate, for example using ROW_NUMBER() OVER (PARTITION BY personId ORDER BY addressId DESC).",
-              "commonMistakesToAvoid": "Assuming LEFT JOIN always returns exactly the count of left table rows.",
-              "keyPoints": [
-                  "1-to-many joins duplicate the left record per right match",
-                  "Use window functions or DISTINCT if deduplication is required"
-              ],
-              "codeSnippet": "ROW_NUMBER() OVER (PARTITION BY personId ORDER BY addressId DESC)"
-          }
-      ],
-      "mistakes": [
-          {
-              "id": "m-81-1",
-              "title": "1. Using INNER JOIN instead of LEFT JOIN",
-              "description": "Writing INNER JOIN Address a ON p.personId = a.personId.",
-              "badSnippet": "FROM Person p INNER JOIN Address a ON p.personId = a.personId",
-              "failingInput": "Person with personId = 1 (no address)",
-              "consequence": "Allen Wang is completely dropped from the query results.",
-              "howToFix": "Use LEFT JOIN to retain unmatched persons with NULL fields.",
-              "mistake": "Unintended row filtering",
-              "whyItHappens": "Forgetting that INNER JOIN requires matches on both sides."
-          },
-          {
-              "id": "m-81-2",
-              "title": "2. Joining on mismatched keys",
-              "description": "Writing ON p.personId = a.addressId.",
-              "badSnippet": "ON p.personId = a.addressId",
-              "failingInput": "Records where addressId does not equal personId",
-              "consequence": "Incorrectly links persons to arbitrary addresses based on surrogate primary keys.",
-              "howToFix": "Equate the shared foreign key: p.personId = a.personId.",
-              "mistake": "Foreign key confusion",
-              "whyItHappens": "Confusing the child table's primary key (addressId) with its foreign key (personId)."
-          }
-      ]
-  },
-  "Pro-001": {
-      "id": "pro-81",
-      "title": "Combine Two Tables",
-      "levelNumber": 81,
-      "problemId": 81,
-      "problemTitle": "Combine Two Tables",
-      "difficulty": "Easy",
-      "companyTags": [
-          "Amazon",
-          "Apple",
-          "Facebook",
-          "Google",
-          "Microsoft"
-      ],
-      "tracing": {
-          "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
-          "steps": [
-              {
-                  "step": 1,
-                  "lineNumber": 6,
-                  "vars": {
-                      "Phase": "FROM Person AS p",
-                      "Action": "Read left table Person"
-                  },
-                  "explanation": "Reads 2 persons: 1 (Wang, Allen) and 2 (Alice, Bob)."
-              },
-              {
-                  "step": 2,
-                  "lineNumber": 7,
-                  "vars": {
-                      "Phase": "LEFT JOIN Address AS a",
-                      "Action": "Match on personId"
-                  },
-                  "explanation": "Person 1 has no matching Address (city/state set to NULL). Person 2 matches Address 1 ('New York City', 'New York')."
-              },
-              {
-                  "step": 3,
-                  "lineNumber": 1,
-                  "vars": {
-                      "Phase": "SELECT",
-                      "Action": "Project columns"
-                  },
-                  "explanation": "Projects (Allen, Wang, NULL, NULL) and (Bob, Alice, New York City, New York)."
-              }
-          ]
-      },
-      "questions": [
-          {
-              "id": "q-81-1",
-              "category": "💡 Interview Notes",
-              "question": "Why is a LEFT JOIN required here instead of an INNER JOIN?",
-              "whatInterviewerChecks": "Understanding of outer joins and NULL preservation.",
-              "bestReplyScript": "The problem specifically mandates that every person must appear in the final output, regardless of whether address information exists. An INNER JOIN discards any person who lacks a matching row in Address. A LEFT JOIN preserves all rows from Person, automatically populating missing address attributes with NULL.",
-              "commonMistakesToAvoid": "Using INNER JOIN which silently filters out persons without addresses.",
-              "keyPoints": [
-                  "LEFT JOIN preserves all left-table rows unconditionally",
-                  "INNER JOIN discards unmatched rows",
-                  "Missing right-table columns naturally evaluate to NULL"
-              ],
-              "codeSnippet": "FROM Person p LEFT JOIN Address a ON p.personId = a.personId"
-          }
-      ],
-      "mistakes": [
-          {
-              "id": "m-81-1",
-              "title": "1. Using INNER JOIN instead of LEFT JOIN",
-              "description": "Writing INNER JOIN Address a ON p.personId = a.personId.",
-              "badSnippet": "FROM Person p INNER JOIN Address a ON p.personId = a.personId",
-              "failingInput": "Person with personId = 1 (no address)",
-              "consequence": "Allen Wang is completely dropped from the query results.",
-              "howToFix": "Use LEFT JOIN to retain unmatched persons with NULL fields.",
-              "mistake": "Unintended row filtering",
-              "whyItHappens": "Forgetting that INNER JOIN requires matches on both sides."
-          }
-      ]
-  },
-  "82": {
-      "id": "pro-82",
-      "title": "Employees Earning More Than Their Managers",
-      "levelNumber": 82,
-      "problemId": 82,
-      "problemTitle": "Employees Earning More Than Their Managers",
-      "difficulty": "Easy",
-      "companyTags": [
-          "Amazon",
-          "Bloomberg",
-          "Facebook",
-          "Google",
-          "Uber"
-      ],
-      "tracing": {
-          "code": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
-          "steps": [
-              {
-                  "step": 1,
-                  "lineNumber": 2,
-                  "vars": {
-                      "Phase": "FROM Employee AS e",
-                      "Action": "Read employees"
-                  },
-                  "explanation": "Reads 4 employees: 1 Joe (70k, mgr 3), 2 Henry (80k, mgr 4), 3 Sam (60k, mgr NULL), 4 Max (90k, mgr NULL)."
-              },
-              {
-                  "step": 2,
-                  "lineNumber": 3,
-                  "vars": {
-                      "Phase": "JOIN Employee AS m",
-                      "Action": "Match e.managerId = m.id"
-                  },
-                  "explanation": "Joe (70k) matches manager Sam (60k). Henry (80k) matches manager Max (90k). Sam and Max have no managers."
-              },
-              {
-                  "step": 3,
-                  "lineNumber": 5,
-                  "vars": {
-                      "Phase": "WHERE e.salary > m.salary",
-                      "Action": "Compare salaries"
-                  },
-                  "explanation": "Joe (70k) > Sam (60k) is TRUE. Henry (80k) > Max (90k) is FALSE."
-              },
-              {
-                  "step": 4,
-                  "lineNumber": 1,
-                  "vars": {
-                      "Phase": "SELECT",
-                      "Action": "Emit results"
-                  },
-                  "explanation": "Returns single qualifying employee: 'Joe'."
-              }
-          ]
-      },
-      "questions": [
-          {
-              "id": "q-82-1",
-              "category": "💡 Interview Notes",
-              "question": "What is a self-join and why is it necessary for employee-manager comparisons?",
-              "whatInterviewerChecks": "Understanding of self-joins and recursive relational schemas.",
-              "bestReplyScript": "A self-join is a standard join in which a table is joined with itself. In relational databases, hierarchical structures like employee-manager relationships are typically modeled in a single table using an adjacency list pattern (with a managerId foreign key pointing to the same table's id primary key). To compare an employee attribute against their manager's attribute in a single query, we must instantiate two separate aliases of the table—one representing the employee and one representing the manager.",
-              "commonMistakesToAvoid": "Equating e.id = m.id which mistakenly joins the employee to themselves.",
-              "keyPoints": [
-                  "Adjacency list patterns in single tables require self-joins",
-                  "Aliases (e and m) distinguish between child and parent roles",
-                  "Condition e.managerId = m.id correctly aligns employee to manager"
-              ],
-              "codeSnippet": "FROM Employee e JOIN Employee m ON e.managerId = m.id"
-          },
-          {
-              "id": "q-82-2",
-              "category": "💡 Interview Notes",
-              "question": "Why is INNER JOIN used rather than LEFT JOIN in this query?",
-              "whatInterviewerChecks": "Join selection reasoning based on NULL semantics.",
-              "bestReplyScript": "Employees without a manager have `managerId IS NULL` (such as the CEO). Since NULL cannot be greater than any value (NULL comparisons evaluate to UNKNOWN), employees without managers could never satisfy `e.salary > m.salary`. An INNER JOIN naturally filters out employees without managers at join time, which is more efficient than performing an outer join and discarding them in the WHERE clause.",
-              "commonMistakesToAvoid": "Assuming LEFT JOIN is always required when managerId can be NULL.",
-              "keyPoints": [
-                  "Unmanaged employees cannot satisfy a salary comparison",
-                  "INNER JOIN prunes NULL foreign keys early in the query pipeline"
-              ],
-              "codeSnippet": "WHERE e.salary > m.salary"
-          }
-      ],
-      "mistakes": [
-          {
-              "id": "m-82-1",
-              "title": "1. Joining on identical primary keys",
-              "description": "Writing ON e.id = m.id instead of e.managerId = m.id.",
-              "badSnippet": "ON e.id = m.id",
-              "failingInput": "Employee table with salaries",
-              "consequence": "Compares an employee's salary with their own salary; e.salary > m.salary evaluates to false for all rows.",
-              "howToFix": "Match the employee's managerId with the manager's id: e.managerId = m.id.",
-              "mistake": "Self-comparison key error",
-              "whyItHappens": "Conflating the employee's primary identifier with the supervisor's identifier."
-          },
-          {
-              "id": "m-82-2",
-              "title": "2. Inverted inequality",
-              "description": "Writing e.salary < m.salary.",
-              "badSnippet": "WHERE e.salary < m.salary",
-              "failingInput": "Henry (80k) with manager Max (90k)",
-              "consequence": "Returns employees earning less than their managers instead of more.",
-              "howToFix": "Use strictly greater-than: e.salary > m.salary.",
-              "mistake": "Reversed filter logic",
-              "whyItHappens": "Misreading the problem requirement for higher compensation."
-          }
-      ]
-  },
-  "Pro-002": {
-      "id": "pro-82",
-      "title": "Employees Earning More Than Their Managers",
-      "levelNumber": 82,
-      "problemId": 82,
-      "problemTitle": "Employees Earning More Than Their Managers",
-      "difficulty": "Easy",
-      "companyTags": [
-          "Amazon",
-          "Bloomberg",
-          "Facebook",
-          "Google",
-          "Uber"
-      ],
-      "tracing": {
-          "code": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
-          "steps": [
-              {
-                  "step": 1,
-                  "lineNumber": 2,
-                  "vars": {
-                      "Phase": "FROM Employee AS e",
-                      "Action": "Read employees"
-                  },
-                  "explanation": "Reads 4 employees: 1 Joe (70k, mgr 3), 2 Henry (80k, mgr 4), 3 Sam (60k, mgr NULL), 4 Max (90k, mgr NULL)."
-              },
-              {
-                  "step": 2,
-                  "lineNumber": 3,
-                  "vars": {
-                      "Phase": "JOIN Employee AS m",
-                      "Action": "Match e.managerId = m.id"
-                  },
-                  "explanation": "Joe (70k) matches manager Sam (60k). Henry (80k) matches manager Max (90k). Sam and Max have no managers."
-              },
-              {
-                  "step": 3,
-                  "lineNumber": 5,
-                  "vars": {
-                      "Phase": "WHERE e.salary > m.salary",
-                      "Action": "Compare salaries"
-                  },
-                  "explanation": "Joe (70k) > Sam (60k) is TRUE. Henry (80k) > Max (90k) is FALSE."
-              },
-              {
-                  "step": 4,
-                  "lineNumber": 1,
-                  "vars": {
-                      "Phase": "SELECT",
-                      "Action": "Emit results"
-                  },
-                  "explanation": "Returns single qualifying employee: 'Joe'."
-              }
-          ]
-      },
-      "questions": [
-          {
-              "id": "q-82-1",
-              "category": "💡 Interview Notes",
-              "question": "What is a self-join and why is it necessary for employee-manager comparisons?",
-              "whatInterviewerChecks": "Understanding of self-joins and recursive relational schemas.",
-              "bestReplyScript": "A self-join is a standard join in which a table is joined with itself. In relational databases, hierarchical structures like employee-manager relationships are typically modeled in a single table using an adjacency list pattern (with a managerId foreign key pointing to the same table's id primary key). To compare an employee attribute against their manager's attribute in a single query, we must instantiate two separate aliases of the table—one representing the employee and one representing the manager.",
-              "commonMistakesToAvoid": "Equating e.id = m.id which mistakenly joins the employee to themselves.",
-              "keyPoints": [
-                  "Adjacency list patterns in single tables require self-joins",
-                  "Aliases (e and m) distinguish between child and parent roles",
-                  "Condition e.managerId = m.id correctly aligns employee to manager"
-              ],
-              "codeSnippet": "FROM Employee e JOIN Employee m ON e.managerId = m.id"
-          }
-      ],
-      "mistakes": [
-          {
-              "id": "m-82-1",
-              "title": "1. Joining on identical primary keys",
-              "description": "Writing ON e.id = m.id instead of e.managerId = m.id.",
-              "badSnippet": "ON e.id = m.id",
-              "failingInput": "Employee table with salaries",
-              "consequence": "Compares an employee's salary with their own salary; e.salary > m.salary evaluates to false for all rows.",
-              "howToFix": "Match the employee's managerId with the manager's id: e.managerId = m.id.",
-              "mistake": "Self-comparison key error",
-              "whyItHappens": "Conflating the employee's primary identifier with the supervisor's identifier."
-          }
-      ]
-  },
-  "83": {
-      "id": "pro-83",
-      "title": "Duplicate Emails",
-      "levelNumber": 83,
-      "problemId": 83,
-      "problemTitle": "Duplicate Emails",
-      "difficulty": "Easy",
-      "companyTags": [
-          "Amazon",
-          "Apple",
-          "Facebook",
-          "Google",
-          "Microsoft"
-      ],
-      "tracing": {
-          "code": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
-          "steps": [
-              {
-                  "step": 1,
-                  "lineNumber": 2,
-                  "vars": {
-                      "Phase": "FROM Person",
-                      "Action": "Read table"
-                  },
-                  "explanation": "Reads 3 rows: 1 ('a@leetcode.com'), 2 ('b@leetcode.com'), 3 ('a@leetcode.com')."
-              },
-              {
-                  "step": 2,
-                  "lineNumber": 3,
-                  "vars": {
-                      "Phase": "GROUP BY email",
-                      "Action": "Group rows by email"
-                  },
-                  "explanation": "Formed groups: 'a@leetcode.com' (count = 2) and 'b@leetcode.com' (count = 1)."
-              },
-              {
-                  "step": 3,
-                  "lineNumber": 4,
-                  "vars": {
-                      "Phase": "HAVING COUNT(*) > 1",
-                      "Action": "Filter groups"
-                  },
-                  "explanation": "'a@leetcode.com' (2 > 1) -> KEEP. 'b@leetcode.com' (1 > 1) -> DISCARD."
-              },
-              {
-                  "step": 4,
-                  "lineNumber": 1,
-                  "vars": {
-                      "Phase": "SELECT email AS Email",
-                      "Action": "Project result"
-                  },
-                  "explanation": "Returns single duplicate email: 'a@leetcode.com'."
-              }
-          ]
-      },
-      "questions": [
-          {
-              "id": "q-83-1",
-              "category": "💡 Interview Notes",
-              "question": "Why use HAVING instead of WHERE?",
-              "whatInterviewerChecks": "Understanding of the SQL logical execution pipeline.",
-              "bestReplyScript": "The WHERE clause filters individual rows before grouping takes place, so aggregate functions like COUNT(*) are not available in WHERE. The HAVING clause filters groups after the GROUP BY aggregation has calculated bucket statistics, making HAVING the only correct clause for filtering on group counts.",
-              "commonMistakesToAvoid": "Writing WHERE COUNT(*) > 1.",
-              "keyPoints": [
-                  "WHERE filters individual rows before grouping",
-                  "HAVING filters aggregated groups after grouping",
-                  "Aggregate functions cannot be placed in the WHERE clause"
-              ],
-              "codeSnippet": "GROUP BY email HAVING COUNT(*) > 1"
-          },
-          {
-              "id": "q-83-2",
-              "category": "💡 Interview Notes",
-              "question": "Can duplicate emails be detected without using GROUP BY?",
-              "whatInterviewerChecks": "Knowledge of alternative SQL idioms.",
-              "bestReplyScript": "Yes. One can use a self-join `SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id != p2.id` or a correlated EXISTS subquery. However, `GROUP BY email HAVING COUNT(*) > 1` is cleaner, more declarative, and typically executes in a single O(N) hash-aggregate pass.",
-              "commonMistakesToAvoid": "Forgetting DISTINCT when using a self-join.",
-              "keyPoints": [
-                  "Self-join is possible but requires DISTINCT to prevent duplicate output rows",
-                  "GROUP BY + HAVING is the standard canonical SQL approach"
-              ],
-              "codeSnippet": "SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id != p2.id"
-          }
-      ],
-      "mistakes": [
-          {
-              "id": "m-83-1",
-              "title": "1. Using WHERE with COUNT(*)",
-              "description": "Writing WHERE COUNT(*) > 1.",
-              "badSnippet": "WHERE COUNT(*) > 1",
-              "failingInput": "Query execution",
-              "consequence": "Database engine throws a syntax error: misuse of aggregate function in WHERE.",
-              "howToFix": "Use the HAVING clause after GROUP BY: HAVING COUNT(*) > 1.",
-              "mistake": "Aggregate in WHERE clause",
-              "whyItHappens": "Misunderstanding the order of operations between filtering and grouping."
-          },
-          {
-              "id": "m-83-2",
-              "title": "2. Omitting GROUP BY",
-              "description": "Writing SELECT email FROM Person HAVING COUNT(*) > 1.",
-              "badSnippet": "SELECT email FROM Person HAVING COUNT(*) > 1",
-              "failingInput": "Query execution",
-              "consequence": "SQL error or aggregates entire table into a single row without distinct email breakdown.",
-              "howToFix": "Include GROUP BY email before HAVING.",
-              "mistake": "Missing grouping specification",
-              "whyItHappens": "Forgetting that group aggregate conditions require defining the grouping key."
-          }
-      ]
-  },
-  "Pro-003": {
-      "id": "pro-83",
-      "title": "Duplicate Emails",
-      "levelNumber": 83,
-      "problemId": 83,
-      "problemTitle": "Duplicate Emails",
-      "difficulty": "Easy",
-      "companyTags": [
-          "Amazon",
-          "Apple",
-          "Facebook",
-          "Google",
-          "Microsoft"
-      ],
-      "tracing": {
-          "code": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
-          "steps": [
-              {
-                  "step": 1,
-                  "lineNumber": 2,
-                  "vars": {
-                      "Phase": "FROM Person",
-                      "Action": "Read table"
-                  },
-                  "explanation": "Reads 3 rows: 1 ('a@leetcode.com'), 2 ('b@leetcode.com'), 3 ('a@leetcode.com')."
-              },
-              {
-                  "step": 2,
-                  "lineNumber": 3,
-                  "vars": {
-                      "Phase": "GROUP BY email",
-                      "Action": "Group rows by email"
-                  },
-                  "explanation": "Formed groups: 'a@leetcode.com' (count = 2) and 'b@leetcode.com' (count = 1)."
-              },
-              {
-                  "step": 3,
-                  "lineNumber": 4,
-                  "vars": {
-                      "Phase": "HAVING COUNT(*) > 1",
-                      "Action": "Filter groups"
-                  },
-                  "explanation": "'a@leetcode.com' (2 > 1) -> KEEP. 'b@leetcode.com' (1 > 1) -> DISCARD."
-              },
-              {
-                  "step": 4,
-                  "lineNumber": 1,
-                  "vars": {
-                      "Phase": "SELECT email AS Email",
-                      "Action": "Project result"
-                  },
-                  "explanation": "Returns single duplicate email: 'a@leetcode.com'."
-              }
-          ]
-      },
-      "questions": [
-          {
-              "id": "q-83-1",
-              "category": "💡 Interview Notes",
-              "question": "Why use HAVING instead of WHERE?",
-              "whatInterviewerChecks": "Understanding of the SQL logical execution pipeline.",
-              "bestReplyScript": "The WHERE clause filters individual rows before grouping takes place, so aggregate functions like COUNT(*) are not available in WHERE. The HAVING clause filters groups after the GROUP BY aggregation has calculated bucket statistics, making HAVING the only correct clause for filtering on group counts.",
-              "commonMistakesToAvoid": "Writing WHERE COUNT(*) > 1.",
-              "keyPoints": [
-                  "WHERE filters individual rows before grouping",
-                  "HAVING filters aggregated groups after grouping",
-                  "Aggregate functions cannot be placed in the WHERE clause"
-              ],
-              "codeSnippet": "GROUP BY email HAVING COUNT(*) > 1"
-          }
-      ],
-      "mistakes": [
-          {
-              "id": "m-83-1",
-              "title": "1. Using WHERE with COUNT(*)",
-              "description": "Writing WHERE COUNT(*) > 1.",
-              "badSnippet": "WHERE COUNT(*) > 1",
-              "failingInput": "Query execution",
-              "consequence": "Database engine throws a syntax error: misuse of aggregate function in WHERE.",
-              "howToFix": "Use the HAVING clause after GROUP BY: HAVING COUNT(*) > 1.",
-              "mistake": "Aggregate in WHERE clause",
-              "whyItHappens": "Misunderstanding the order of operations between filtering and grouping."
-          }
-      ]
-  },
-  "84": {
-      "id": "pro-84",
+    "id": "pro-81",
       "title": "Delete Duplicate Emails",
-      "levelNumber": 84,
-      "problemId": 84,
+      "levelNumber": 81,
+      "problemId": 81,
       "problemTitle": "Delete Duplicate Emails",
       "difficulty": "Easy",
       "companyTags": [
@@ -18608,11 +18044,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-004": {
-      "id": "pro-84",
+  "Pro-001": {
+    "id": "pro-81",
       "title": "Delete Duplicate Emails",
-      "levelNumber": 84,
-      "problemId": 84,
+      "levelNumber": 81,
+      "problemId": 81,
       "problemTitle": "Delete Duplicate Emails",
       "difficulty": "Easy",
       "companyTags": [
@@ -18685,11 +18121,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "85": {
-      "id": "pro-85",
+  "82": {
+    "id": "pro-82",
       "title": "Rising Temperature",
-      "levelNumber": 85,
-      "problemId": 85,
+      "levelNumber": 82,
+      "problemId": 82,
       "problemTitle": "Rising Temperature",
       "difficulty": "Easy",
       "companyTags": [
@@ -18786,11 +18222,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-005": {
-      "id": "pro-85",
+  "Pro-002": {
+    "id": "pro-82",
       "title": "Rising Temperature",
-      "levelNumber": 85,
-      "problemId": 85,
+      "levelNumber": 82,
+      "problemId": 82,
       "problemTitle": "Rising Temperature",
       "difficulty": "Easy",
       "companyTags": [
@@ -18863,11 +18299,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "86": {
-      "id": "pro-86",
+  "83": {
+    "id": "pro-83",
       "title": "Game Play Analysis I",
-      "levelNumber": 86,
-      "problemId": 86,
+      "levelNumber": 83,
+      "problemId": 83,
       "problemTitle": "Game Play Analysis I",
       "difficulty": "Easy",
       "companyTags": [
@@ -18973,11 +18409,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-006": {
-      "id": "pro-86",
+  "Pro-003": {
+    "id": "pro-83",
       "title": "Game Play Analysis I",
-      "levelNumber": 86,
-      "problemId": 86,
+      "levelNumber": 83,
+      "problemId": 83,
       "problemTitle": "Game Play Analysis I",
       "difficulty": "Easy",
       "companyTags": [
@@ -19059,11 +18495,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "87": {
-      "id": "pro-87",
+  "84": {
+    "id": "pro-84",
       "title": "Game Play Analysis II",
-      "levelNumber": 87,
-      "problemId": 87,
+      "levelNumber": 84,
+      "problemId": 84,
       "problemTitle": "Game Play Analysis II",
       "difficulty": "Easy",
       "companyTags": [
@@ -19160,11 +18596,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-007": {
-      "id": "pro-87",
+  "Pro-004": {
+    "id": "pro-84",
       "title": "Game Play Analysis II",
-      "levelNumber": 87,
-      "problemId": 87,
+      "levelNumber": 84,
+      "problemId": 84,
       "problemTitle": "Game Play Analysis II",
       "difficulty": "Easy",
       "companyTags": [
@@ -19237,11 +18673,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "88": {
-      "id": "pro-88",
+  "85": {
+    "id": "pro-85",
       "title": "Employee Bonus",
-      "levelNumber": 88,
-      "problemId": 88,
+      "levelNumber": 85,
+      "problemId": 85,
       "problemTitle": "Employee Bonus",
       "difficulty": "Easy",
       "companyTags": [
@@ -19337,11 +18773,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-008": {
-      "id": "pro-88",
+  "Pro-005": {
+    "id": "pro-85",
       "title": "Employee Bonus",
-      "levelNumber": 88,
-      "problemId": 88,
+      "levelNumber": 85,
+      "problemId": 85,
       "problemTitle": "Employee Bonus",
       "difficulty": "Easy",
       "companyTags": [
@@ -19413,11 +18849,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "89": {
-      "id": "pro-89",
+  "86": {
+    "id": "pro-86",
       "title": "Find Customer Referee",
-      "levelNumber": 89,
-      "problemId": 89,
+      "levelNumber": 86,
+      "problemId": 86,
       "problemTitle": "Find Customer Referee",
       "difficulty": "Easy",
       "companyTags": [
@@ -19513,11 +18949,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-009": {
-      "id": "pro-89",
+  "Pro-006": {
+    "id": "pro-86",
       "title": "Find Customer Referee",
-      "levelNumber": 89,
-      "problemId": 89,
+      "levelNumber": 86,
+      "problemId": 86,
       "problemTitle": "Find Customer Referee",
       "difficulty": "Easy",
       "companyTags": [
@@ -19589,11 +19025,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "90": {
-      "id": "pro-90",
+  "87": {
+    "id": "pro-87",
       "title": "Customer Placing the Largest Number of Orders",
-      "levelNumber": 90,
-      "problemId": 90,
+      "levelNumber": 87,
+      "problemId": 87,
       "problemTitle": "Customer Placing the Largest Number of Orders",
       "difficulty": "Easy",
       "companyTags": [
@@ -19690,11 +19126,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-010": {
-      "id": "pro-90",
+  "Pro-007": {
+    "id": "pro-87",
       "title": "Customer Placing the Largest Number of Orders",
-      "levelNumber": 90,
-      "problemId": 90,
+      "levelNumber": 87,
+      "problemId": 87,
       "problemTitle": "Customer Placing the Largest Number of Orders",
       "difficulty": "Easy",
       "companyTags": [
@@ -19767,11 +19203,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "91": {
-      "id": "pro-91",
+  "88": {
+    "id": "pro-88",
       "title": "Big Countries",
-      "levelNumber": 91,
-      "problemId": 91,
+      "levelNumber": 88,
+      "problemId": 88,
       "problemTitle": "Big Countries",
       "difficulty": "Easy",
       "companyTags": [
@@ -19869,11 +19305,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-011": {
-      "id": "pro-91",
+  "Pro-008": {
+    "id": "pro-88",
       "title": "Big Countries",
-      "levelNumber": 91,
-      "problemId": 91,
+      "levelNumber": 88,
+      "problemId": 88,
       "problemTitle": "Big Countries",
       "difficulty": "Easy",
       "companyTags": [
@@ -19947,11 +19383,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "92": {
-      "id": "pro-92",
+  "89": {
+    "id": "pro-89",
       "title": "Classes With at Least 5 Students",
-      "levelNumber": 92,
-      "problemId": 92,
+      "levelNumber": 89,
+      "problemId": 89,
       "problemTitle": "Classes With at Least 5 Students",
       "difficulty": "Easy",
       "companyTags": [
@@ -20047,11 +19483,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-012": {
-      "id": "pro-92",
+  "Pro-009": {
+    "id": "pro-89",
       "title": "Classes With at Least 5 Students",
-      "levelNumber": 92,
-      "problemId": 92,
+      "levelNumber": 89,
+      "problemId": 89,
       "problemTitle": "Classes With at Least 5 Students",
       "difficulty": "Easy",
       "companyTags": [
@@ -20123,11 +19559,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "93": {
-      "id": "pro-93",
+  "90": {
+    "id": "pro-90",
       "title": "Friend Requests I: Overall Acceptance Rate",
-      "levelNumber": 93,
-      "problemId": 93,
+      "levelNumber": 90,
+      "problemId": 90,
       "problemTitle": "Friend Requests I: Overall Acceptance Rate",
       "difficulty": "Easy",
       "companyTags": [
@@ -20224,11 +19660,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-013": {
-      "id": "pro-93",
+  "Pro-010": {
+    "id": "pro-90",
       "title": "Friend Requests I: Overall Acceptance Rate",
-      "levelNumber": 93,
-      "problemId": 93,
+      "levelNumber": 90,
+      "problemId": 90,
       "problemTitle": "Friend Requests I: Overall Acceptance Rate",
       "difficulty": "Easy",
       "companyTags": [
@@ -20299,11 +19735,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "94": {
-      "id": "pro-94",
+  "91": {
+    "id": "pro-91",
       "title": "Consecutive Available Seats",
-      "levelNumber": 94,
-      "problemId": 94,
+      "levelNumber": 91,
+      "problemId": 91,
       "problemTitle": "Consecutive Available Seats",
       "difficulty": "Easy",
       "companyTags": [
@@ -20400,11 +19836,11 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
           }
       ]
   },
-  "Pro-014": {
-      "id": "pro-94",
+  "Pro-011": {
+    "id": "pro-91",
       "title": "Consecutive Available Seats",
-      "levelNumber": 94,
-      "problemId": 94,
+      "levelNumber": 91,
+      "problemId": 91,
       "problemTitle": "Consecutive Available Seats",
       "difficulty": "Easy",
       "companyTags": [
@@ -20473,6 +19909,1607 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
               "howToFix": "Add DISTINCT: SELECT DISTINCT c1.seat_id.",
               "mistake": "Duplicate seat rows in output",
               "whyItHappens": "Overlooking that middle seats have two neighbors."
+          }
+      ]
+  },
+  "92": {
+    "id": "pro-92",
+      "title": "Shortest Distance in a Line",
+      "levelNumber": 92,
+      "problemId": 92,
+      "problemTitle": "Shortest Distance in a Line",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Twitter"
+      ],
+      "tracing": {
+          "code": "SELECT\n    MIN(p2.x - p1.x) AS shortest\nFROM Point p1\nJOIN Point p2\nON p1.x < p2.x;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Self Join (p1.x < p2.x)",
+                      "Action": "Pair points ascending"
+                  },
+                  "explanation": "Valid pairs: (-1, 0), (-1, 2), (0, 2). Self pairs and symmetric reverse pairs are pruned."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "Distance Calculation",
+                      "Action": "Evaluate differences"
+                  },
+                  "explanation": "(-1, 0) -> 0 - (-1) = 1; (-1, 2) -> 2 - (-1) = 3; (0, 2) -> 2 - 0 = 2."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "MIN() Aggregation",
+                      "Action": "Extract smallest distance"
+                  },
+                  "explanation": "MIN(1, 3, 2) = 1."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-95-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is `p1.x < p2.x` preferable to `p1.x <> p2.x`?",
+              "whatInterviewerChecks": "Query optimization principles and symmetric pair elimination.",
+              "bestReplyScript": "Using `p1.x < p2.x` ensures that we only pair each distinct combination of coordinates once in an ordered direction (e.g., comparing `-1` to `0`, but skipping `0` to `-1`). This cuts the comparison space in half, eliminates identical self-pairs (`p1.x = p2.x`), and guarantees that `p2.x - p1.x` is strictly positive, eliminating the need to invoke the `ABS()` function on every comparison.",
+              "commonMistakesToAvoid": "Using `p1.x = p2.x` (which yields 0) or using `<>` without `ABS()`.",
+              "keyPoints": [
+                  "Strict inequality avoids duplicate reverse pairs",
+                  "Guarantees positive difference without ABS() overhead",
+                  "Halves work for the join evaluation engine"
+              ],
+              "codeSnippet": "FROM Point p1 JOIN Point p2 ON p1.x < p2.x"
+          },
+          {
+              "id": "q-95-2",
+              "category": "💡 Interview Notes",
+              "question": "How can this query be optimized to O(N log N) using window functions?",
+              "whatInterviewerChecks": "Understanding 1D sorting properties and window function performance.",
+              "bestReplyScript": "On a 1D number line, the shortest distance between any two points must occur between two immediately adjacent neighbors when sorted. We can sort the points and use the `LEAD()` window function: `SELECT MIN(next_x - x) AS shortest FROM (SELECT x, LEAD(x) OVER (ORDER BY x) AS next_x FROM Point) t WHERE next_x IS NOT NULL;`. This reduces time complexity from O(N²) quadratic self-join down to O(N log N) sorting.",
+              "commonMistakesToAvoid": "Overlooking that the closest points on a number line must be adjacent after sorting.",
+              "keyPoints": [
+                  "Closest points on 1D line are always adjacent when sorted",
+                  "LEAD(x) OVER (ORDER BY x) compares adjacent neighbors",
+                  "Reduces complexity from O(N²) to O(N log N)"
+              ],
+              "codeSnippet": "SELECT MIN(next_x - x) AS shortest FROM (SELECT x, LEAD(x) OVER (ORDER BY x) next_x FROM Point) t WHERE next_x IS NOT NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-95-1",
+              "title": "1. Comparing a point to itself",
+              "description": "Joining on p1.x = p2.x or joining without a condition.",
+              "badSnippet": "ON p1.x = p2.x",
+              "failingInput": "Points [-1, 0, 2]",
+              "consequence": "Computes |p1.x - p1.x| = 0, returning 0 as the shortest distance.",
+              "howToFix": "Join on p1.x < p2.x.",
+              "mistake": "Self-comparison producing zero distance",
+              "whyItHappens": "Forgetting that a point cannot form a pair with itself."
+          },
+          {
+              "id": "m-95-2",
+              "title": "2. Missing ABS with <> condition",
+              "description": "Writing ON p1.x <> p2.x and MIN(p1.x - p2.x) without ABS.",
+              "badSnippet": "SELECT MIN(p1.x - p2.x) FROM Point p1 JOIN Point p2 ON p1.x <> p2.x",
+              "failingInput": "Points [-1, 0, 2]",
+              "consequence": "Produces negative differences (e.g. -1 - 2 = -3), returning -3 instead of 1.",
+              "howToFix": "Use p1.x < p2.x with (p2.x - p1.x), or wrap with ABS: MIN(ABS(p1.x - p2.x)).",
+              "mistake": "Unsigned distance violation",
+              "whyItHappens": "Assuming distances are always positive regardless of operand order."
+          }
+      ]
+  },
+  "Pro-012": {
+    "id": "pro-92",
+      "title": "Shortest Distance in a Line",
+      "levelNumber": 92,
+      "problemId": 92,
+      "problemTitle": "Shortest Distance in a Line",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Twitter"
+      ],
+      "tracing": {
+          "code": "SELECT\n    MIN(p2.x - p1.x) AS shortest\nFROM Point p1\nJOIN Point p2\nON p1.x < p2.x;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Self Join (p1.x < p2.x)",
+                      "Action": "Pair points ascending"
+                  },
+                  "explanation": "Valid pairs: (-1, 0), (-1, 2), (0, 2). Self pairs and symmetric reverse pairs are pruned."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "Distance Calculation",
+                      "Action": "Evaluate differences"
+                  },
+                  "explanation": "(-1, 0) -> 0 - (-1) = 1; (-1, 2) -> 2 - (-1) = 3; (0, 2) -> 2 - 0 = 2."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "MIN() Aggregation",
+                      "Action": "Extract smallest distance"
+                  },
+                  "explanation": "MIN(1, 3, 2) = 1."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-95-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is `p1.x < p2.x` preferable to `p1.x <> p2.x`?",
+              "whatInterviewerChecks": "Query optimization principles and symmetric pair elimination.",
+              "bestReplyScript": "Using `p1.x < p2.x` ensures that we only pair each distinct combination of coordinates once in an ordered direction (e.g., comparing `-1` to `0`, but skipping `0` to `-1`). This cuts the comparison space in half, eliminates identical self-pairs (`p1.x = p2.x`), and guarantees that `p2.x - p1.x` is strictly positive, eliminating the need to invoke the `ABS()` function on every comparison.",
+              "commonMistakesToAvoid": "Using `p1.x = p2.x` (which yields 0) or using `<>` without `ABS()`.",
+              "keyPoints": [
+                  "Strict inequality avoids duplicate reverse pairs",
+                  "Guarantees positive difference without ABS() overhead",
+                  "Halves work for the join evaluation engine"
+              ],
+              "codeSnippet": "FROM Point p1 JOIN Point p2 ON p1.x < p2.x"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-95-1",
+              "title": "1. Comparing a point to itself",
+              "description": "Joining on p1.x = p2.x or joining without a condition.",
+              "badSnippet": "ON p1.x = p2.x",
+              "failingInput": "Points [-1, 0, 2]",
+              "consequence": "Computes |p1.x - p1.x| = 0, returning 0 as the shortest distance.",
+              "howToFix": "Join on p1.x < p2.x.",
+              "mistake": "Self-comparison producing zero distance",
+              "whyItHappens": "Forgetting that a point cannot form a pair with itself."
+          }
+      ]
+  },
+  "93": {
+    "id": "pro-93",
+      "title": "Biggest Single Number",
+      "levelNumber": 93,
+      "problemId": 93,
+      "problemTitle": "Biggest Single Number",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    MAX(num) AS num\nFROM (\n    SELECT num\n    FROM MyNumbers\n    GROUP BY num\n    HAVING COUNT(*) = 1\n) AS SingleNumbers;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "GROUP BY num",
+                      "Action": "Partition numbers"
+                  },
+                  "explanation": "Group counts: 8 -> 2; 3 -> 2; 1 -> 1; 4 -> 1; 5 -> 1; 6 -> 2."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) = 1",
+                      "Action": "Filter single numbers"
+                  },
+                  "explanation": "Retained numbers: 1, 4, 5. (Duplicates 8, 3, 6 discarded)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "Outer MAX(num)",
+                      "Action": "Extract maximum solitary value"
+                  },
+                  "explanation": "MAX(1, 4, 5) = 5. (If inner query had 0 rows, MAX would produce NULL)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-96-1",
+              "category": "💡 Interview Notes",
+              "question": "Why wrap the query in an outer `SELECT MAX(num)` rather than using `ORDER BY num DESC LIMIT 1` on the subquery?",
+              "whatInterviewerChecks": "Edge case handling for empty sets and scalar aggregate semantics.",
+              "bestReplyScript": "If the table contains only duplicate numbers (e.g., all numbers appear at least twice), `SELECT num ... HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1` returns an empty result set of 0 rows. However, the problem specification strictly requires returning a row containing `NULL`. Wrapping the subquery in an outer `SELECT MAX(num)` is an aggregation query without a GROUP BY clause, which is guaranteed by SQL standards to always return exactly one row containing `NULL` when the input table is empty.",
+              "commonMistakesToAvoid": "Using LIMIT 1 directly on the grouped query, returning 0 rows instead of NULL on empty single sets.",
+              "keyPoints": [
+                  "LIMIT 1 on empty input returns 0 rows",
+                  "MAX() without GROUP BY returns 1 row with NULL",
+                  "Requirement demands 1 row with NULL if no single number exists"
+              ],
+              "codeSnippet": "SELECT MAX(num) AS num FROM (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1) AS SingleNumbers"
+          },
+          {
+              "id": "q-96-2",
+              "category": "💡 Interview Notes",
+              "question": "Can this be written using a scalar subquery in the SELECT clause?",
+              "whatInterviewerChecks": "Alternative SQL syntax and awareness of scalar subquery NULL evaluation.",
+              "bestReplyScript": "Yes, we can write: `SELECT (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1) AS num;`. In SQL, a scalar subquery placed inside the SELECT projection returns `NULL` automatically if it evaluates to zero rows, making it an elegant one-line alternative.",
+              "commonMistakesToAvoid": "Forgetting that a scalar subquery must return at most one column and one row.",
+              "keyPoints": [
+                  "Scalar subquery in SELECT evaluates to NULL on empty set",
+                  "Must return at most 1 column and 1 row",
+                  "Both approaches have equivalent performance on indexed columns"
+              ],
+              "codeSnippet": "SELECT (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1) AS num"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-96-1",
+              "title": "1. Using LIMIT 1 without NULL fallback",
+              "description": "Writing SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1.",
+              "badSnippet": "SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1",
+              "failingInput": "MyNumbers with only duplicates: [8, 8, 3, 3]",
+              "consequence": "Returns 0 rows instead of 1 row with NULL, failing the test case.",
+              "howToFix": "Wrap in SELECT MAX(num) FROM (...) or use a scalar SELECT subquery.",
+              "mistake": "Empty result set instead of NULL row",
+              "whyItHappens": "Not realizing that LIMIT 1 on an empty set yields 0 rows, not NULL."
+          },
+          {
+              "id": "m-96-2",
+              "title": "2. Using WHERE COUNT(*) = 1",
+              "description": "Writing WHERE COUNT(*) = 1 instead of HAVING.",
+              "badSnippet": "WHERE COUNT(*) = 1",
+              "failingInput": "MyNumbers table",
+              "consequence": "Throws SQL error (cannot use aggregate functions in WHERE).",
+              "howToFix": "Use HAVING COUNT(*) = 1 after GROUP BY num.",
+              "mistake": "Placing aggregate function in WHERE",
+              "whyItHappens": "Confusing row-level filtering with group-level aggregate filtering."
+          }
+      ]
+  },
+  "Pro-013": {
+    "id": "pro-93",
+      "title": "Biggest Single Number",
+      "levelNumber": 93,
+      "problemId": 93,
+      "problemTitle": "Biggest Single Number",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    MAX(num) AS num\nFROM (\n    SELECT num\n    FROM MyNumbers\n    GROUP BY num\n    HAVING COUNT(*) = 1\n) AS SingleNumbers;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "GROUP BY num",
+                      "Action": "Partition numbers"
+                  },
+                  "explanation": "Group counts: 8 -> 2; 3 -> 2; 1 -> 1; 4 -> 1; 5 -> 1; 6 -> 2."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) = 1",
+                      "Action": "Filter single numbers"
+                  },
+                  "explanation": "Retained numbers: 1, 4, 5. (Duplicates 8, 3, 6 discarded)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "Outer MAX(num)",
+                      "Action": "Extract maximum solitary value"
+                  },
+                  "explanation": "MAX(1, 4, 5) = 5. (If inner query had 0 rows, MAX would produce NULL)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-96-1",
+              "category": "💡 Interview Notes",
+              "question": "Why wrap the query in an outer `SELECT MAX(num)` rather than using `ORDER BY num DESC LIMIT 1` on the subquery?",
+              "whatInterviewerChecks": "Edge case handling for empty sets and scalar aggregate semantics.",
+              "bestReplyScript": "If the table contains only duplicate numbers (e.g., all numbers appear at least twice), `SELECT num ... HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1` returns an empty result set of 0 rows. However, the problem specification strictly requires returning a row containing `NULL`. Wrapping the subquery in an outer `SELECT MAX(num)` is an aggregation query without a GROUP BY clause, which is guaranteed by SQL standards to always return exactly one row containing `NULL` when the input table is empty.",
+              "commonMistakesToAvoid": "Using LIMIT 1 directly on the grouped query, returning 0 rows instead of NULL on empty single sets.",
+              "keyPoints": [
+                  "LIMIT 1 on empty input returns 0 rows",
+                  "MAX() without GROUP BY returns 1 row with NULL",
+                  "Requirement demands 1 row with NULL if no single number exists"
+              ],
+              "codeSnippet": "SELECT MAX(num) AS num FROM (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1) AS SingleNumbers"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-96-1",
+              "title": "1. Using LIMIT 1 without NULL fallback",
+              "description": "Writing SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1.",
+              "badSnippet": "SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1",
+              "failingInput": "MyNumbers with only duplicates: [8, 8, 3, 3]",
+              "consequence": "Returns 0 rows instead of 1 row with NULL, failing the test case.",
+              "howToFix": "Wrap in SELECT MAX(num) FROM (...) or use a scalar SELECT subquery.",
+              "mistake": "Empty result set instead of NULL row",
+              "whyItHappens": "Not realizing that LIMIT 1 on an empty set yields 0 rows, not NULL."
+          }
+      ]
+  },
+  "94": {
+    "id": "pro-94",
+      "title": "Not Boring Movies",
+      "levelNumber": 94,
+      "problemId": 94,
+      "problemTitle": "Not Boring Movies",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Google",
+          "Netflix",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT\n    id,\n    movie,\n    description,\n    rating\nFROM Cinema\nWHERE id % 2 = 1\n  AND description <> 'boring'\nORDER BY rating DESC;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "Parity Check (id % 2 = 1)",
+                      "Action": "Filter odd IDs"
+                  },
+                  "explanation": "Evaluating ids: 1 (odd ✅), 2 (even ❌), 3 (odd ✅), 4 (even ❌), 5 (odd ✅)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "Description Check",
+                      "Action": "Exclude 'boring'"
+                  },
+                  "explanation": "1 ('great 3D' ✅); 3 ('boring' ❌, DISCARD); 5 ('Interesting' ✅)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "ORDER BY rating DESC",
+                      "Action": "Sort descending"
+                  },
+                  "explanation": "Movie 5 (rating 9.1) comes first, followed by Movie 1 (rating 8.9)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-97-1",
+              "category": "💡 Interview Notes",
+              "question": "What is the difference between `<>` and `!=` in SQL?",
+              "whatInterviewerChecks": "ANSI SQL compliance and dialect familiarity.",
+              "bestReplyScript": "`<>` is the formal ISO standard SQL operator for 'not equal to' and is universally guaranteed to work across all relational database management systems. `!=` is an alternative inequality operator supported by many engines (like MySQL, Postgres, and SQLite), but `<>` remains the most portable and standard syntax.",
+              "commonMistakesToAvoid": "Assuming `!=` works in every legacy SQL environment without verification.",
+              "keyPoints": [
+                  "<> is ISO standard ANSI SQL syntax",
+                  "!= is widely supported syntactic sugar",
+                  "Both produce identical execution results"
+              ],
+              "codeSnippet": "WHERE description <> 'boring'"
+          },
+          {
+              "id": "q-97-2",
+              "category": "💡 Interview Notes",
+              "question": "How does NULL in the description column interact with `<> 'boring'`?",
+              "whatInterviewerChecks": "Three-valued logic (3VL) understanding in SQL predicates.",
+              "bestReplyScript": "In SQL, comparisons against NULL evaluate to `UNKNOWN` rather than TRUE or FALSE. Therefore, `NULL <> 'boring'` yields `UNKNOWN`, and the WHERE clause excludes that row. If business requirements mandated including movies with unknown/NULL descriptions, we would explicitly handle it using `AND (description <> 'boring' OR description IS NULL)`.",
+              "commonMistakesToAvoid": "Assuming NULL is not equal to 'boring' and would be automatically included.",
+              "keyPoints": [
+                  "Comparisons with NULL return UNKNOWN",
+                  "WHERE clause only accepts rows where condition is strictly TRUE",
+                  "Include NULL explicitly with OR col IS NULL if required"
+              ],
+              "codeSnippet": "AND (description <> 'boring' OR description IS NULL)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-97-1",
+              "title": "1. Using OR instead of AND",
+              "description": "Writing WHERE id % 2 = 1 OR description <> 'boring'.",
+              "badSnippet": "WHERE id % 2 = 1 OR description <> 'boring'",
+              "failingInput": "Movie 3 (id 3, 'boring') or Movie 2 (id 2, 'fiction')",
+              "consequence": "Includes even movies that are not boring and odd movies that ARE boring.",
+              "howToFix": "Use AND to enforce both rules simultaneously: WHERE id % 2 = 1 AND description <> 'boring'.",
+              "mistake": "Wrong boolean connective",
+              "whyItHappens": "Confusing compound requirements with alternative choices."
+          },
+          {
+              "id": "m-97-2",
+              "title": "2. Omitting DESC in ORDER BY",
+              "description": "Writing ORDER BY rating without DESC.",
+              "badSnippet": "ORDER BY rating",
+              "failingInput": "Ratings [9.1, 8.9]",
+              "consequence": "Sorts ascending, placing worst movies first (8.9 then 9.1).",
+              "howToFix": "Append DESC: ORDER BY rating DESC.",
+              "mistake": "Ascending order instead of descending",
+              "whyItHappens": "Forgetting that ORDER BY defaults to ASC."
+          }
+      ]
+  },
+  "Pro-014": {
+    "id": "pro-94",
+      "title": "Not Boring Movies",
+      "levelNumber": 94,
+      "problemId": 94,
+      "problemTitle": "Not Boring Movies",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Google",
+          "Netflix",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT\n    id,\n    movie,\n    description,\n    rating\nFROM Cinema\nWHERE id % 2 = 1\n  AND description <> 'boring'\nORDER BY rating DESC;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "Parity Check (id % 2 = 1)",
+                      "Action": "Filter odd IDs"
+                  },
+                  "explanation": "Evaluating ids: 1 (odd ✅), 2 (even ❌), 3 (odd ✅), 4 (even ❌), 5 (odd ✅)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "Description Check",
+                      "Action": "Exclude 'boring'"
+                  },
+                  "explanation": "1 ('great 3D' ✅); 3 ('boring' ❌, DISCARD); 5 ('Interesting' ✅)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "ORDER BY rating DESC",
+                      "Action": "Sort descending"
+                  },
+                  "explanation": "Movie 5 (rating 9.1) comes first, followed by Movie 1 (rating 8.9)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-97-1",
+              "category": "💡 Interview Notes",
+              "question": "What is the difference between `<>` and `!=` in SQL?",
+              "whatInterviewerChecks": "ANSI SQL compliance and dialect familiarity.",
+              "bestReplyScript": "`<>` is the formal ISO standard SQL operator for 'not equal to' and is universally guaranteed to work across all relational database management systems. `!=` is an alternative inequality operator supported by many engines (like MySQL, Postgres, and SQLite), but `<>` remains the most portable and standard syntax.",
+              "commonMistakesToAvoid": "Assuming `!=` works in every legacy SQL environment without verification.",
+              "keyPoints": [
+                  "<> is ISO standard ANSI SQL syntax",
+                  "!= is widely supported syntactic sugar",
+                  "Both produce identical execution results"
+              ],
+              "codeSnippet": "WHERE description <> 'boring'"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-97-1",
+              "title": "1. Using OR instead of AND",
+              "description": "Writing WHERE id % 2 = 1 OR description <> 'boring'.",
+              "badSnippet": "WHERE id % 2 = 1 OR description <> 'boring'",
+              "failingInput": "Movie 3 (id 3, 'boring') or Movie 2 (id 2, 'fiction')",
+              "consequence": "Includes even movies that are not boring and odd movies that ARE boring.",
+              "howToFix": "Use AND to enforce both rules simultaneously: WHERE id % 2 = 1 AND description <> 'boring'.",
+              "mistake": "Wrong boolean connective",
+              "whyItHappens": "Confusing compound requirements with alternative choices."
+          }
+      ]
+  },
+  "95": {
+    "id": "pro-95",
+      "title": "Combine Two Tables",
+      "levelNumber": 95,
+      "problemId": 95,
+      "problemTitle": "Combine Two Tables",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person p\nLEFT JOIN Address a\nON p.personId = a.personId;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM Person p",
+                      "Action": "Read left table"
+                  },
+                  "explanation": "Person rows: (1, Wang, Allen), (2, Alice, Bob)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "LEFT JOIN Address a",
+                      "Action": "Match on personId"
+                  },
+                  "explanation": "Person 1 -> No match in Address -> city=NULL, state=NULL. Person 2 -> Match in Address -> city='New York City', state='New York'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT Projection",
+                      "Action": "Emit final output rows"
+                  },
+                  "explanation": "Row 1: [Allen, Wang, NULL, NULL]; Row 2: [Bob, Alice, New York City, New York]."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-98-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a LEFT JOIN required here instead of an INNER JOIN?",
+              "whatInterviewerChecks": "Outer join mechanics and requirement compliance.",
+              "bestReplyScript": "The problem specifically demands that every person in the Person table be included in the output regardless of whether they have a registered address. An INNER JOIN discards rows from either table that lack a matching key in the other table, which would drop Allen from the report. A LEFT JOIN preserves all rows from the primary left table (Person) and fills missing fields from the right table with NULL.",
+              "commonMistakesToAvoid": "Using INNER JOIN and inadvertently dropping people without addresses.",
+              "keyPoints": [
+                  "LEFT JOIN preserves all left table records",
+                  "Unmatched right table columns evaluate to NULL",
+                  "INNER JOIN deletes unmatched records"
+              ],
+              "codeSnippet": "FROM Person p LEFT JOIN Address a ON p.personId = a.personId"
+          },
+          {
+              "id": "q-98-2",
+              "category": "💡 Interview Notes",
+              "question": "What happens if a single person has multiple addresses in the Address table?",
+              "whatInterviewerChecks": "One-to-many relationship join cardinality awareness.",
+              "bestReplyScript": "In a 1-to-many relationship, a LEFT JOIN will produce multiple rows for that single person—one row for each matching address. If the business requirement wanted only a primary address or single consolidated line, we would need to deduplicate or aggregate with `ROW_NUMBER()` or `GROUP_CONCAT()`.",
+              "commonMistakesToAvoid": "Assuming a JOIN always maintains a 1:1 row count without checking uniqueness.",
+              "keyPoints": [
+                  "1:N joins multiply rows for the parent entity",
+                  "If personId is unique in Address, row count matches Person",
+                  "Window functions like ROW_NUMBER() partition multiple addresses"
+              ],
+              "codeSnippet": "SELECT p.firstName, p.lastName, a.city, a.state FROM Person p LEFT JOIN Address a ON p.personId = a.personId"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-98-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Writing FROM Person p INNER JOIN Address a.",
+              "badSnippet": "FROM Person p INNER JOIN Address a ON p.personId = a.personId",
+              "failingInput": "Person without an address (e.g. Allen, personId 1)",
+              "consequence": "Omits Allen completely, returning 1 row instead of 2.",
+              "howToFix": "Change INNER JOIN to LEFT JOIN.",
+              "mistake": "Discarding unmatched parent entities",
+              "whyItHappens": "Forgetting that INNER JOIN requires matches on both sides."
+          },
+          {
+              "id": "m-98-2",
+              "title": "2. Joining on addressId instead of personId",
+              "description": "Writing ON p.personId = a.addressId.",
+              "badSnippet": "ON p.personId = a.addressId",
+              "failingInput": "Tables with different primary key sequences",
+              "consequence": "Joins person ID with address ID, creating invalid foreign key pairings.",
+              "howToFix": "Join on personId: ON p.personId = a.personId.",
+              "mistake": "Primary key mismatch with foreign key",
+              "whyItHappens": "Confusing primary keys across different tables."
+          }
+      ]
+  },
+  "Pro-015": {
+    "id": "pro-95",
+      "title": "Combine Two Tables",
+      "levelNumber": 95,
+      "problemId": 95,
+      "problemTitle": "Combine Two Tables",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person p\nLEFT JOIN Address a\nON p.personId = a.personId;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM Person p",
+                      "Action": "Read left table"
+                  },
+                  "explanation": "Person rows: (1, Wang, Allen), (2, Alice, Bob)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "LEFT JOIN Address a",
+                      "Action": "Match on personId"
+                  },
+                  "explanation": "Person 1 -> No match in Address -> city=NULL, state=NULL. Person 2 -> Match in Address -> city='New York City', state='New York'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT Projection",
+                      "Action": "Emit final output rows"
+                  },
+                  "explanation": "Row 1: [Allen, Wang, NULL, NULL]; Row 2: [Bob, Alice, New York City, New York]."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-98-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a LEFT JOIN required here instead of an INNER JOIN?",
+              "whatInterviewerChecks": "Outer join mechanics and requirement compliance.",
+              "bestReplyScript": "The problem specifically demands that every person in the Person table be included in the output regardless of whether they have a registered address. An INNER JOIN discards rows from either table that lack a matching key in the other table, which would drop Allen from the report. A LEFT JOIN preserves all rows from the primary left table (Person) and fills missing fields from the right table with NULL.",
+              "commonMistakesToAvoid": "Using INNER JOIN and inadvertently dropping people without addresses.",
+              "keyPoints": [
+                  "LEFT JOIN preserves all left table records",
+                  "Unmatched right table columns evaluate to NULL",
+                  "INNER JOIN deletes unmatched records"
+              ],
+              "codeSnippet": "FROM Person p LEFT JOIN Address a ON p.personId = a.personId"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-98-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Writing FROM Person p INNER JOIN Address a.",
+              "badSnippet": "FROM Person p INNER JOIN Address a ON p.personId = a.personId",
+              "failingInput": "Person without an address (e.g. Allen, personId 1)",
+              "consequence": "Omits Allen completely, returning 1 row instead of 2.",
+              "howToFix": "Change INNER JOIN to LEFT JOIN.",
+              "mistake": "Discarding unmatched parent entities",
+              "whyItHappens": "Forgetting that INNER JOIN requires matches on both sides."
+          }
+      ]
+  },
+  "96": {
+    "id": "pro-96",
+      "title": "Employees Earning More Than Their Managers",
+      "levelNumber": 96,
+      "problemId": 96,
+      "problemTitle": "Employees Earning More Than Their Managers",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    e.name AS Employee\nFROM Employee e\nJOIN Employee m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Self Join (e.managerId = m.id)",
+                      "Action": "Link employees to managers"
+                  },
+                  "explanation": "Matched pairs: (Joe 70k, Sam 60k), (Henry 80k, Max 90k). Sam and Max have managerId=NULL, excluded by INNER JOIN."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE e.salary > m.salary",
+                      "Action": "Salary comparison"
+                  },
+                  "explanation": "Joe: 70000 > 60000 (TRUE ✅). Henry: 80000 > 90000 (FALSE ❌)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT e.name AS Employee",
+                      "Action": "Emit matching names"
+                  },
+                  "explanation": "Output: [Joe]."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-99-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a self-join required for this problem?",
+              "whatInterviewerChecks": "Hierarchical modeling within a single table and self-join principles.",
+              "bestReplyScript": "Both the employees and their supervisors exist as rows within the exact same `Employee` table. To compare an attribute (salary) of an employee with an attribute of their manager, we must join the table to itself using two different aliases (`e` for employee, `m` for manager) on `e.managerId = m.id`.",
+              "commonMistakesToAvoid": "Attempting to solve this with a single table scan or joining on `e.id = m.id`.",
+              "keyPoints": [
+                  "Hierarchical data stored in single table requires self-join",
+                  "Different table aliases distinguish subordinate and manager roles",
+                  "ON condition equates child foreign key to parent primary key"
+              ],
+              "codeSnippet": "FROM Employee e JOIN Employee m ON e.managerId = m.id"
+          },
+          {
+              "id": "q-99-2",
+              "category": "💡 Interview Notes",
+              "question": "Can this be written using a correlated subquery, and how do they compare?",
+              "whatInterviewerChecks": "Query alternative patterns and execution plans.",
+              "bestReplyScript": "Yes, using: `SELECT e.name AS Employee FROM Employee e WHERE e.salary > (SELECT m.salary FROM Employee m WHERE m.id = e.managerId);`. While functionally equivalent, modern query optimizers usually unnest subqueries into joins; writing an explicit self-join is standard, readable, and often allows index nested loop or hash join optimization without subquery re-execution overhead.",
+              "commonMistakesToAvoid": "Thinking correlated subqueries are always faster than explicit joins.",
+              "keyPoints": [
+                  "Correlated subquery checks manager salary for each row",
+                  "Explicit JOIN makes execution plan transparent",
+                  "Both achieve O(N) when indexed properly"
+              ],
+              "codeSnippet": "SELECT e.name AS Employee FROM Employee e WHERE e.salary > (SELECT m.salary FROM Employee m WHERE m.id = e.managerId)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-99-1",
+              "title": "1. Joining on e.id = m.id",
+              "description": "Joining employee id with manager id directly.",
+              "badSnippet": "ON e.id = m.id",
+              "failingInput": "Employee table",
+              "consequence": "Compares each employee against themselves, where salary > salary is always FALSE.",
+              "howToFix": "Join on e.managerId = m.id.",
+              "mistake": "Self-comparison instead of manager comparison",
+              "whyItHappens": "Confusing primary key with foreign key relation."
+          },
+          {
+              "id": "m-99-2",
+              "title": "2. Reversing inequality (< instead of >)",
+              "description": "Writing WHERE e.salary < m.salary.",
+              "badSnippet": "WHERE e.salary < m.salary",
+              "failingInput": "Joe (70k > 60k) and Henry (80k < 90k)",
+              "consequence": "Returns Henry instead of Joe (underpaid employees instead of out-earning employees).",
+              "howToFix": "Use e.salary > m.salary.",
+              "mistake": "Reversed comparison direction",
+              "whyItHappens": "Misreading employee vs manager perspective."
+          }
+      ]
+  },
+  "Pro-016": {
+    "id": "pro-96",
+      "title": "Employees Earning More Than Their Managers",
+      "levelNumber": 96,
+      "problemId": 96,
+      "problemTitle": "Employees Earning More Than Their Managers",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    e.name AS Employee\nFROM Employee e\nJOIN Employee m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Self Join (e.managerId = m.id)",
+                      "Action": "Link employees to managers"
+                  },
+                  "explanation": "Matched pairs: (Joe 70k, Sam 60k), (Henry 80k, Max 90k). Sam and Max have managerId=NULL, excluded by INNER JOIN."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE e.salary > m.salary",
+                      "Action": "Salary comparison"
+                  },
+                  "explanation": "Joe: 70000 > 60000 (TRUE ✅). Henry: 80000 > 90000 (FALSE ❌)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT e.name AS Employee",
+                      "Action": "Emit matching names"
+                  },
+                  "explanation": "Output: [Joe]."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-99-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a self-join required for this problem?",
+              "whatInterviewerChecks": "Hierarchical modeling within a single table and self-join principles.",
+              "bestReplyScript": "Both the employees and their supervisors exist as rows within the exact same `Employee` table. To compare an attribute (salary) of an employee with an attribute of their manager, we must join the table to itself using two different aliases (`e` for employee, `m` for manager) on `e.managerId = m.id`.",
+              "commonMistakesToAvoid": "Attempting to solve this with a single table scan or joining on `e.id = m.id`.",
+              "keyPoints": [
+                  "Hierarchical data stored in single table requires self-join",
+                  "Different table aliases distinguish subordinate and manager roles",
+                  "ON condition equates child foreign key to parent primary key"
+              ],
+              "codeSnippet": "FROM Employee e JOIN Employee m ON e.managerId = m.id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-99-1",
+              "title": "1. Joining on e.id = m.id",
+              "description": "Joining employee id with manager id directly.",
+              "badSnippet": "ON e.id = m.id",
+              "failingInput": "Employee table",
+              "consequence": "Compares each employee against themselves, where salary > salary is always FALSE.",
+              "howToFix": "Join on e.managerId = m.id.",
+              "mistake": "Self-comparison instead of manager comparison",
+              "whyItHappens": "Confusing primary key with foreign key relation."
+          }
+      ]
+  },
+  "97": {
+    "id": "pro-97",
+      "title": "Duplicate Emails",
+      "levelNumber": 97,
+      "problemId": 97,
+      "problemTitle": "Duplicate Emails",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft",
+          "Twitter"
+      ],
+      "tracing": {
+          "code": "SELECT\n    email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "GROUP BY email",
+                      "Action": "Group identical emails"
+                  },
+                  "explanation": "Grouping results: 'a@leetcode.com' -> count: 2; 'b@leetcode.com' -> count: 1."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) > 1",
+                      "Action": "Filter duplicate groups"
+                  },
+                  "explanation": "2 > 1 (TRUE ✅, keep 'a@leetcode.com'); 1 > 1 (FALSE ❌, drop 'b@leetcode.com')."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "SELECT email",
+                      "Action": "Emit final email list"
+                  },
+                  "explanation": "Output: ['a@leetcode.com']."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-100-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use HAVING instead of WHERE to filter duplicate counts?",
+              "whatInterviewerChecks": "Understanding SQL logical query processing order and aggregation lifecycle.",
+              "bestReplyScript": "The `WHERE` clause filters individual rows before grouping occurs, at which point the aggregate function `COUNT(*)` does not yet exist. The `HAVING` clause is specifically evaluated after rows have been collected into buckets by `GROUP BY`, allowing us to filter groups based on aggregate statistics like `COUNT(*) > 1`.",
+              "commonMistakesToAvoid": "Attempting to write WHERE COUNT(*) > 1 and causing a syntax error.",
+              "keyPoints": [
+                  "WHERE operates on individual rows prior to GROUP BY",
+                  "HAVING operates on aggregated buckets after GROUP BY",
+                  "Aggregate functions like COUNT() cannot appear in WHERE"
+              ],
+              "codeSnippet": "GROUP BY email HAVING COUNT(*) > 1"
+          },
+          {
+              "id": "q-100-2",
+              "category": "💡 Interview Notes",
+              "question": "Can this be solved using a self-join or window function?",
+              "whatInterviewerChecks": "Query diversity, window functions, and deduplication patterns.",
+              "bestReplyScript": "Yes! With a self-join: `SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id <> p2.id;`. Or using window functions: `SELECT DISTINCT email FROM (SELECT email, COUNT(*) OVER (PARTITION BY email) AS cnt FROM Person) t WHERE cnt > 1;`. However, `GROUP BY email HAVING COUNT(*) > 1` is the cleanest, most idiomatic, and usually fastest ANSI SQL approach.",
+              "commonMistakesToAvoid": "Forgetting DISTINCT when using a self-join, which emits quadratic duplicates for triplicates.",
+              "keyPoints": [
+                  "Self-join checks for identical email with different primary keys",
+                  "Window function PARTITION BY counts frequency without collapsing rows",
+                  "GROUP BY + HAVING is the most direct and efficient pattern"
+              ],
+              "codeSnippet": "SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id <> p2.id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-100-1",
+              "title": "1. Using WHERE instead of HAVING",
+              "description": "Writing WHERE COUNT(*) > 1.",
+              "badSnippet": "WHERE COUNT(*) > 1",
+              "failingInput": "Person table",
+              "consequence": "Throws SQL syntax error (misuse of aggregate function in WHERE).",
+              "howToFix": "Move condition to HAVING: GROUP BY email HAVING COUNT(*) > 1.",
+              "mistake": "Aggregate in WHERE clause",
+              "whyItHappens": "Confusing row filtering with post-aggregation group filtering."
+          },
+          {
+              "id": "m-100-2",
+              "title": "2. Grouping by id instead of email",
+              "description": "Writing GROUP BY id HAVING COUNT(*) > 1.",
+              "badSnippet": "GROUP BY id HAVING COUNT(*) > 1",
+              "failingInput": "Table with duplicate emails under different IDs",
+              "consequence": "Returns 0 rows because each primary key id has a count of exactly 1.",
+              "howToFix": "Group by email: GROUP BY email.",
+              "mistake": "Grouping by unique primary key",
+              "whyItHappens": "Forgetting that primary keys can never produce group counts greater than 1."
+          }
+      ]
+  },
+  "Pro-017": {
+    "id": "pro-97",
+      "title": "Duplicate Emails",
+      "levelNumber": 97,
+      "problemId": 97,
+      "problemTitle": "Duplicate Emails",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft",
+          "Twitter"
+      ],
+      "tracing": {
+          "code": "SELECT\n    email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "GROUP BY email",
+                      "Action": "Group identical emails"
+                  },
+                  "explanation": "Grouping results: 'a@leetcode.com' -> count: 2; 'b@leetcode.com' -> count: 1."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) > 1",
+                      "Action": "Filter duplicate groups"
+                  },
+                  "explanation": "2 > 1 (TRUE ✅, keep 'a@leetcode.com'); 1 > 1 (FALSE ❌, drop 'b@leetcode.com')."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "SELECT email",
+                      "Action": "Emit final email list"
+                  },
+                  "explanation": "Output: ['a@leetcode.com']."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-100-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use HAVING instead of WHERE to filter duplicate counts?",
+              "whatInterviewerChecks": "Understanding SQL logical query processing order and aggregation lifecycle.",
+              "bestReplyScript": "The `WHERE` clause filters individual rows before grouping occurs, at which point the aggregate function `COUNT(*)` does not yet exist. The `HAVING` clause is specifically evaluated after rows have been collected into buckets by `GROUP BY`, allowing us to filter groups based on aggregate statistics like `COUNT(*) > 1`.",
+              "commonMistakesToAvoid": "Attempting to write WHERE COUNT(*) > 1 and causing a syntax error.",
+              "keyPoints": [
+                  "WHERE operates on individual rows prior to GROUP BY",
+                  "HAVING operates on aggregated buckets after GROUP BY",
+                  "Aggregate functions like COUNT() cannot appear in WHERE"
+              ],
+              "codeSnippet": "GROUP BY email HAVING COUNT(*) > 1"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-100-1",
+              "title": "1. Using WHERE instead of HAVING",
+              "description": "Writing WHERE COUNT(*) > 1.",
+              "badSnippet": "WHERE COUNT(*) > 1",
+              "failingInput": "Person table",
+              "consequence": "Throws SQL syntax error (misuse of aggregate function in WHERE).",
+              "howToFix": "Move condition to HAVING: GROUP BY email HAVING COUNT(*) > 1.",
+              "mistake": "Aggregate in WHERE clause",
+              "whyItHappens": "Confusing row filtering with post-aggregation group filtering."
+          }
+      ]
+  },
+  "98": {
+    "id": "pro-98",
+      "title": "Sales Person",
+      "levelNumber": 98,
+      "problemId": 98,
+      "problemTitle": "Sales Person",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT name\nFROM SalesPerson\nWHERE sales_id NOT IN (\n    SELECT o.sales_id\n    FROM Orders o\n    JOIN Company c\n    ON o.com_id = c.com_id\n    WHERE c.name = 'RED'\n);",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "Subquery Join",
+                      "Action": "Find orders for RED"
+                  },
+                  "explanation": "Joining Orders with Company: order 1 is for com_id 1 ('RED'), sales_id is 1. Orders 2 and 3 are for com_id 2 ('BLUE')."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "Blacklist Collection",
+                      "Action": "Isolate prohibited IDs"
+                  },
+                  "explanation": "Disqualified sales_id list: [1]."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "NOT IN Evaluation",
+                      "Action": "Filter sales reps"
+                  },
+                  "explanation": "John (id 1) in [1] ❌; Amy (id 2) not in [1] ✅; Mark (id 3) not in [1] ✅; Pam (id 4, zero orders) not in [1] ✅."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-101-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is NOT IN or NOT EXISTS preferred over a simple LEFT JOIN on RED?",
+              "whatInterviewerChecks": "Understanding relational set negation vs row-level join preservation.",
+              "bestReplyScript": "A salesperson can place orders with multiple companies. If you simply write `FROM SalesPerson s LEFT JOIN Orders o ... WHERE c.name <> 'RED'`, a salesperson who sold to both RED and BLUE will match the BLUE order and still appear in the output! To correctly determine that a salesperson *never* sold to RED, we must find the entire set of salespersons who sold to RED and negate that set completely using `NOT IN` or `NOT EXISTS`.",
+              "commonMistakesToAvoid": "Using a direct LEFT JOIN with `WHERE c.name != 'RED'` which fails when reps sell to multiple companies.",
+              "keyPoints": [
+                  "Sales reps can have multiple orders across different companies",
+                  "Row-level filters retain reps who have non-RED orders even if they also sold to RED",
+                  "Set negation (NOT IN / NOT EXISTS) guarantees total exclusion"
+              ],
+              "codeSnippet": "WHERE sales_id NOT IN (SELECT o.sales_id FROM Orders o JOIN Company c ON o.com_id = c.com_id WHERE c.name = 'RED')"
+          },
+          {
+              "id": "q-101-2",
+              "category": "💡 Interview Notes",
+              "question": "What is the critical gotcha when using NOT IN with NULLs in SQL?",
+              "whatInterviewerChecks": "Three-valued logic (3VL) with NULLs in set operations.",
+              "bestReplyScript": "If the subquery returns even a single `NULL` value, the expression `sales_id NOT IN (..., NULL)` evaluates to `UNKNOWN` for every row, which causes the outer query to return zero rows. In production, we must either ensure `sales_id IS NOT NULL` in the subquery or use the safer `NOT EXISTS` operator, which only checks for the existence of rows and is immune to NULL evaluation failure.",
+              "commonMistakesToAvoid": "Forgetting that `NOT IN (..., NULL)` always produces an empty result set.",
+              "keyPoints": [
+                  "NOT IN returns UNKNOWN if subquery contains NULL",
+                  "WHERE clause drops UNKNOWN results, returning 0 rows",
+                  "NOT EXISTS handles NULLs cleanly"
+              ],
+              "codeSnippet": "WHERE NOT EXISTS (SELECT 1 FROM Orders o JOIN Company c ON o.com_id = c.com_id WHERE o.sales_id = s.sales_id AND c.name = 'RED')"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-101-1",
+              "title": "1. Using IN instead of NOT IN",
+              "description": "Writing WHERE sales_id IN (subquery).",
+              "badSnippet": "WHERE sales_id IN (SELECT o.sales_id ... WHERE c.name = 'RED')",
+              "failingInput": "SalesPerson table",
+              "consequence": "Returns John (the only person who sold to RED) instead of Amy, Mark, and Pam.",
+              "howToFix": "Use NOT IN instead of IN.",
+              "mistake": "Affirmative membership instead of exclusion",
+              "whyItHappens": "Misreading the requirement to find reps who did NOT have orders with RED."
+          },
+          {
+              "id": "m-101-2",
+              "title": "2. Filtering company name directly on SalesPerson",
+              "description": "Writing WHERE SalesPerson.name = 'RED' or != 'RED'.",
+              "badSnippet": "WHERE name <> 'RED'",
+              "failingInput": "SalesPerson table",
+              "consequence": "Checks the human salesperson's name against the company name 'RED'.",
+              "howToFix": "Join Orders with Company to filter on Company.name.",
+              "mistake": "Column attribution error",
+              "whyItHappens": "Confusing company entity name with employee name."
+          }
+      ]
+  },
+  "Pro-018": {
+    "id": "pro-98",
+      "title": "Sales Person",
+      "levelNumber": 98,
+      "problemId": 98,
+      "problemTitle": "Sales Person",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT name\nFROM SalesPerson\nWHERE sales_id NOT IN (\n    SELECT o.sales_id\n    FROM Orders o\n    JOIN Company c\n    ON o.com_id = c.com_id\n    WHERE c.name = 'RED'\n);",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "Subquery Join",
+                      "Action": "Find orders for RED"
+                  },
+                  "explanation": "Joining Orders with Company: order 1 is for com_id 1 ('RED'), sales_id is 1. Orders 2 and 3 are for com_id 2 ('BLUE')."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "Blacklist Collection",
+                      "Action": "Isolate prohibited IDs"
+                  },
+                  "explanation": "Disqualified sales_id list: [1]."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "NOT IN Evaluation",
+                      "Action": "Filter sales reps"
+                  },
+                  "explanation": "John (id 1) in [1] ❌; Amy (id 2) not in [1] ✅; Mark (id 3) not in [1] ✅; Pam (id 4, zero orders) not in [1] ✅."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-101-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is NOT IN or NOT EXISTS preferred over a simple LEFT JOIN on RED?",
+              "whatInterviewerChecks": "Understanding relational set negation vs row-level join preservation.",
+              "bestReplyScript": "A salesperson can place orders with multiple companies. If you simply write `FROM SalesPerson s LEFT JOIN Orders o ... WHERE c.name <> 'RED'`, a salesperson who sold to both RED and BLUE will match the BLUE order and still appear in the output! To correctly determine that a salesperson *never* sold to RED, we must find the entire set of salespersons who sold to RED and negate that set completely using `NOT IN` or `NOT EXISTS`.",
+              "commonMistakesToAvoid": "Using a direct LEFT JOIN with `WHERE c.name != 'RED'` which fails when reps sell to multiple companies.",
+              "keyPoints": [
+                  "Sales reps can have multiple orders across different companies",
+                  "Row-level filters retain reps who have non-RED orders even if they also sold to RED",
+                  "Set negation (NOT IN / NOT EXISTS) guarantees total exclusion"
+              ],
+              "codeSnippet": "WHERE sales_id NOT IN (SELECT o.sales_id FROM Orders o JOIN Company c ON o.com_id = c.com_id WHERE c.name = 'RED')"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-101-1",
+              "title": "1. Using IN instead of NOT IN",
+              "description": "Writing WHERE sales_id IN (subquery).",
+              "badSnippet": "WHERE sales_id IN (SELECT o.sales_id ... WHERE c.name = 'RED')",
+              "failingInput": "SalesPerson table",
+              "consequence": "Returns John (the only person who sold to RED) instead of Amy, Mark, and Pam.",
+              "howToFix": "Use NOT IN instead of IN.",
+              "mistake": "Affirmative membership instead of exclusion",
+              "whyItHappens": "Misreading the requirement to find reps who did NOT have orders with RED."
+          }
+      ]
+  },
+  "99": {
+    "id": "pro-99",
+      "title": "Customers Who Never Order",
+      "levelNumber": 99,
+      "problemId": 99,
+      "problemTitle": "Customers Who Never Order",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    c.name AS Customers\nFROM Customers c\nLEFT JOIN Orders o\nON c.id = o.customerId\nWHERE o.id IS NULL;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM Customers c",
+                      "Action": "Read left table"
+                  },
+                  "explanation": "Customers: 1: Joe, 2: Henry, 3: Sam, 4: Max."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "LEFT JOIN Orders o",
+                      "Action": "Match on c.id = o.customerId"
+                  },
+                  "explanation": "Joe (id 1) -> Order 2; Henry (id 2) -> NULL; Sam (id 3) -> Order 1; Max (id 4) -> NULL."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE o.id IS NULL",
+                      "Action": "Keep unmatched rows"
+                  },
+                  "explanation": "Filtering yields Henry (id 2) and Max (id 4)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-102-1",
+              "category": "💡 Interview Notes",
+              "question": "What is the difference between LEFT JOIN ... WHERE IS NULL and NOT IN?",
+              "whatInterviewerChecks": "Anti-join mechanics and NULL safety in SQL.",
+              "bestReplyScript": "`LEFT JOIN ... WHERE right.id IS NULL` is an anti-join pattern that reliably finds unmatched rows regardless of whether the right table contains NULL values. In contrast, `WHERE id NOT IN (SELECT customerId FROM Orders)` will completely break and return 0 rows if even a single `customerId` in `Orders` is `NULL`, due to three-valued logic. Therefore, `LEFT JOIN ... IS NULL` or `NOT EXISTS` is strongly preferred in production code.",
+              "commonMistakesToAvoid": "Using NOT IN without verifying whether the subquery column can contain NULLs.",
+              "keyPoints": [
+                  "LEFT JOIN ... IS NULL is immune to right table NULL values",
+                  "NOT IN returns UNKNOWN (0 rows) if subquery produces any NULL",
+                  "NOT EXISTS and LEFT JOIN ... IS NULL both optimize into anti-joins"
+              ],
+              "codeSnippet": "FROM Customers c LEFT JOIN Orders o ON c.id = o.customerId WHERE o.id IS NULL"
+          },
+          {
+              "id": "q-102-2",
+              "category": "💡 Interview Notes",
+              "question": "Why must we write WHERE o.id IS NULL instead of WHERE o.id = NULL?",
+              "whatInterviewerChecks": "Three-valued logic (TRUE, FALSE, UNKNOWN) in SQL.",
+              "bestReplyScript": "In SQL, `NULL` represents an unknown or missing value, not a concrete data value. Because of this, any equality comparison against NULL such as `o.id = NULL` always evaluates to `UNKNOWN`, never TRUE. Since the WHERE clause only retains rows where the predicate evaluates to `TRUE`, `o.id = NULL` filters out every row in the dataset. `IS NULL` is the specialized SQL operator designed specifically to check for the presence of NULL.",
+              "commonMistakesToAvoid": "Writing `= NULL` or `!= NULL` in WHERE clauses.",
+              "keyPoints": [
+                  "= NULL evaluates to UNKNOWN",
+                  "WHERE clause requires TRUE to keep rows",
+                  "IS NULL is the mandatory syntax to test for nullity"
+              ],
+              "codeSnippet": "WHERE o.id IS NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-102-1",
+              "title": "1. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Writing FROM Customers c INNER JOIN Orders o.",
+              "badSnippet": "FROM Customers c INNER JOIN Orders o ON c.id = o.customerId",
+              "failingInput": "Customers table",
+              "consequence": "Drops customers without orders completely, returning Joe and Sam instead of Henry and Max.",
+              "howToFix": "Use LEFT JOIN to preserve unmatched customers.",
+              "mistake": "Excluding unmatched records",
+              "whyItHappens": "Forgetting that INNER JOIN requires matches in both tables."
+          },
+          {
+              "id": "m-102-2",
+              "title": "2. Checking o.id = NULL",
+              "description": "Writing WHERE o.id = NULL.",
+              "badSnippet": "WHERE o.id = NULL",
+              "failingInput": "Any table with null values",
+              "consequence": "Returns 0 rows because comparisons with NULL evaluate to UNKNOWN.",
+              "howToFix": "Use WHERE o.id IS NULL.",
+              "mistake": "Invalid null comparison syntax",
+              "whyItHappens": "Treating NULL as a regular value instead of an absence of value."
+          }
+      ]
+  },
+  "Pro-019": {
+    "id": "pro-99",
+      "title": "Customers Who Never Order",
+      "levelNumber": 99,
+      "problemId": 99,
+      "problemTitle": "Customers Who Never Order",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    c.name AS Customers\nFROM Customers c\nLEFT JOIN Orders o\nON c.id = o.customerId\nWHERE o.id IS NULL;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM Customers c",
+                      "Action": "Read left table"
+                  },
+                  "explanation": "Customers: 1: Joe, 2: Henry, 3: Sam, 4: Max."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "LEFT JOIN Orders o",
+                      "Action": "Match on c.id = o.customerId"
+                  },
+                  "explanation": "Joe (id 1) -> Order 2; Henry (id 2) -> NULL; Sam (id 3) -> Order 1; Max (id 4) -> NULL."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE o.id IS NULL",
+                      "Action": "Keep unmatched rows"
+                  },
+                  "explanation": "Filtering yields Henry (id 2) and Max (id 4)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-102-1",
+              "category": "💡 Interview Notes",
+              "question": "What is the difference between LEFT JOIN ... WHERE IS NULL and NOT IN?",
+              "whatInterviewerChecks": "Anti-join mechanics and NULL safety in SQL.",
+              "bestReplyScript": "`LEFT JOIN ... WHERE right.id IS NULL` is an anti-join pattern that reliably finds unmatched rows regardless of whether the right table contains NULL values. In contrast, `WHERE id NOT IN (SELECT customerId FROM Orders)` will completely break and return 0 rows if even a single `customerId` in `Orders` is `NULL`, due to three-valued logic. Therefore, `LEFT JOIN ... IS NULL` or `NOT EXISTS` is strongly preferred in production code.",
+              "commonMistakesToAvoid": "Using NOT IN without verifying whether the subquery column can contain NULLs.",
+              "keyPoints": [
+                  "LEFT JOIN ... IS NULL is immune to right table NULL values",
+                  "NOT IN returns UNKNOWN (0 rows) if subquery produces any NULL",
+                  "NOT EXISTS and LEFT JOIN ... IS NULL both optimize into anti-joins"
+              ],
+              "codeSnippet": "FROM Customers c LEFT JOIN Orders o ON c.id = o.customerId WHERE o.id IS NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-102-1",
+              "title": "1. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Writing FROM Customers c INNER JOIN Orders o.",
+              "badSnippet": "FROM Customers c INNER JOIN Orders o ON c.id = o.customerId",
+              "failingInput": "Customers table",
+              "consequence": "Drops customers without orders completely, returning Joe and Sam instead of Henry and Max.",
+              "howToFix": "Use LEFT JOIN to preserve unmatched customers.",
+              "mistake": "Excluding unmatched records",
+              "whyItHappens": "Forgetting that INNER JOIN requires matches in both tables."
+          }
+      ]
+  },
+  "100": {
+      "id": "pro-100",
+      "title": "Triangle Judgement",
+      "levelNumber": 100,
+      "problemId": 100,
+      "problemTitle": "Triangle Judgement",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    x,\n    y,\n    z,\n    CASE\n        WHEN x + y > z\n         AND x + z > y\n         AND y + z > x\n        THEN 'Yes'\n        ELSE 'No'\n    END AS triangle\nFROM Triangle;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "Scan Triangle Table",
+                      "Action": "Read side dimensions"
+                  },
+                  "explanation": "Row 1: (13, 15, 30). Row 2: (10, 20, 15)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "Evaluate Inequalities",
+                      "Action": "Apply Triangle Theorem"
+                  },
+                  "explanation": "Row 1: 13 + 15 = 28 > 30 (FALSE ❌) -> 'No'. Row 2: 10+20>15 (T), 10+15>20 (T), 20+15>10 (T) (All TRUE ✅) -> 'Yes'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "Project Results",
+                      "Action": "Emit x, y, z, triangle"
+                  },
+                  "explanation": "Output: [13, 15, 30, 'No'], [10, 20, 15, 'Yes']."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-100-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must all three pairwise conditions be checked with AND?",
+              "whatInterviewerChecks": "Mathematical rigor and boolean logic.",
+              "bestReplyScript": "Because the columns x, y, and z are not guaranteed to be in ascending order, any of the three could be the longest segment. The Triangle Inequality Theorem dictates that the two shorter sides combined must be strictly greater than the longest side. Checking all three pairwise sums (x+y>z, x+z>y, y+z>x) guarantees this property regardless of which side is largest.",
+              "commonMistakesToAvoid": "Checking only x + y > z assuming z is always the largest side.",
+              "keyPoints": [
+                  "Columns may contain lengths in arbitrary order",
+                  "Three pairwise checks cover all possible permutations",
+                  "All three must be strictly true (AND logic)"
+              ],
+              "codeSnippet": "WHEN x + y > z AND x + z > y AND y + z > x THEN 'Yes'"
+          },
+          {
+              "id": "q-100-2",
+              "category": "💡 Interview Notes",
+              "question": "Why is the strict inequality (>) required instead of greater-than-or-equal (>=)?",
+              "whatInterviewerChecks": "Edge-case handling in geometric and numeric models.",
+              "bestReplyScript": "If the sum of two sides equals the third side (e.g., 2 + 3 = 5), the segments collapse into a flat straight line with zero surface area—known as a degenerate triangle. In Euclidean geometry, a valid polygon must enclose a non-zero area, which strictly requires the sum of any two sides to exceed (>) the third.",
+              "commonMistakesToAvoid": "Using >= and inadvertently accepting flat collinear segments as triangles.",
+              "keyPoints": [
+                  "Sum equal to third side forms a flat straight segment",
+                  "A real geometric triangle must enclose positive area",
+                  "Strict inequality (>) is mathematically mandatory"
+              ],
+              "codeSnippet": "x + y > z"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-100-1",
+              "title": "1. Using OR instead of AND",
+              "description": "Writing WHEN x + y > z OR x + z > y OR y + z > x.",
+              "badSnippet": "WHEN x + y > z OR x + z > y OR y + z > x THEN 'Yes'",
+              "failingInput": "(13, 15, 30)",
+              "consequence": "Returns 'Yes' because 13 + 30 > 15 is TRUE, even though 13 + 15 < 30.",
+              "howToFix": "Use AND so all three conditions must hold.",
+              "mistake": "Permissive boolean disjunction",
+              "whyItHappens": "Confusing 'any two sides' with 'either condition'."
+          },
+          {
+              "id": "m-100-2",
+              "title": "2. Using >= operator",
+              "description": "Writing x + y >= z.",
+              "badSnippet": "WHEN x + y >= z AND x + z >= y AND y + z >= x",
+              "failingInput": "(2, 3, 5)",
+              "consequence": "Classifies a straight line segment as a triangle.",
+              "howToFix": "Use strict > operator.",
+              "mistake": "Accepting degenerate flat lines",
+              "whyItHappens": "Overlooking the definition of non-degenerate polygons."
+          }
+      ]
+  },
+  "Pro-020": {
+      "id": "pro-100",
+      "title": "Triangle Judgement",
+      "levelNumber": 100,
+      "problemId": 100,
+      "problemTitle": "Triangle Judgement",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    x,\n    y,\n    z,\n    CASE\n        WHEN x + y > z\n         AND x + z > y\n         AND y + z > x\n        THEN 'Yes'\n        ELSE 'No'\n    END AS triangle\nFROM Triangle;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "Scan Triangle Table",
+                      "Action": "Read side dimensions"
+                  },
+                  "explanation": "Row 1: (13, 15, 30). Row 2: (10, 20, 15)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "Evaluate Inequalities",
+                      "Action": "Apply Triangle Theorem"
+                  },
+                  "explanation": "Row 1: 13 + 15 = 28 > 30 (FALSE ❌) -> 'No'. Row 2: 10+20>15 (T), 10+15>20 (T), 20+15>10 (T) (All TRUE ✅) -> 'Yes'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "Project Results",
+                      "Action": "Emit x, y, z, triangle"
+                  },
+                  "explanation": "Output: [13, 15, 30, 'No'], [10, 20, 15, 'Yes']."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-100-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must all three pairwise conditions be checked with AND?",
+              "whatInterviewerChecks": "Mathematical rigor and boolean logic.",
+              "bestReplyScript": "Because the columns x, y, and z are not guaranteed to be in ascending order, any of the three could be the longest segment. The Triangle Inequality Theorem dictates that the two shorter sides combined must be strictly greater than the longest side. Checking all three pairwise sums (x+y>z, x+z>y, y+z>x) guarantees this property regardless of which side is largest.",
+              "commonMistakesToAvoid": "Checking only x + y > z assuming z is always the largest side.",
+              "keyPoints": [
+                  "Columns may contain lengths in arbitrary order",
+                  "Three pairwise checks cover all possible permutations",
+                  "All three must be strictly true (AND logic)"
+              ],
+              "codeSnippet": "WHEN x + y > z AND x + z > y AND y + z > x THEN 'Yes'"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-100-1",
+              "title": "1. Using OR instead of AND",
+              "description": "Writing WHEN x + y > z OR x + z > y OR y + z > x.",
+              "badSnippet": "WHEN x + y > z OR x + z > y OR y + z > x THEN 'Yes'",
+              "failingInput": "(13, 15, 30)",
+              "consequence": "Returns 'Yes' because 13 + 30 > 15 is TRUE, even though 13 + 15 < 30.",
+              "howToFix": "Use AND so all three conditions must hold.",
+              "mistake": "Permissive boolean disjunction",
+              "whyItHappens": "Confusing 'any two sides' with 'either condition'."
           }
       ]
   }};

@@ -4952,158 +4952,6 @@ const BASE_RANKED_MAP: Record<string, any> = {
   "Pro-001": {
     "code_id": "Pro-001",
     "numeric_id": 81,
-    "title": "Combine Two Tables",
-    "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
-    "timeComplexity": "O(N + M)",
-    "spaceComplexity": "O(Result Set)",
-    "simplestExplanation": "We perform a LEFT JOIN from Person to Address matching on personId so every person is returned, with city and state filled with NULL for anyone lacking an address.",
-    "mentalModel": "Think of a company directory. Everyone gets an ID card printed with their first and last name. If they registered an office address, their city and state are stamped on; otherwise, those fields remain blank (NULL), but their card is never thrown away!",
-    "lineByLine": [
-      {
-        "line": "SELECT",
-        "explanation": "Initiates projection of specified personal and geographical attributes."
-      },
-      {
-        "line": "    p.firstName,",
-        "explanation": "Retrieves the person's first name."
-      },
-      {
-        "line": "    p.lastName,",
-        "explanation": "Retrieves the person's last name."
-      },
-      {
-        "line": "    a.city,",
-        "explanation": "Retrieves the city from Address (evaluates to NULL if no matching address exists)."
-      },
-      {
-        "line": "    a.state",
-        "explanation": "Retrieves the state from Address (evaluates to NULL if no matching address exists)."
-      },
-      {
-        "line": "FROM Person AS p",
-        "explanation": "Designates Person as the primary left table whose rows must all be preserved."
-      },
-      {
-        "line": "LEFT JOIN Address AS a",
-        "explanation": "Performs an outer join against Address, retaining all left-side rows regardless of a match."
-      },
-      {
-        "line": "ON p.personId = a.personId;",
-        "explanation": "Joins records by equating primary key Person.personId with foreign key Address.personId."
-      }
-    ],
-    "beginnerTraps": [
-      "❌ 1. Using INNER JOIN instead of LEFT JOIN: Drops individuals (like Allen Wang) who do not have an address registered.",
-      "❌ 2. Equating the wrong key columns: Writing ON p.personId = a.addressId joins person IDs with address IDs.",
-      "❌ 3. Swapping table positions: Writing FROM Address a LEFT JOIN Person p drops persons who do not have addresses."
-    ],
-    "keyTakeaway": "A LEFT JOIN preserves every row from the primary left table, returning NULL for unmatched right-table columns.",
-    "interviewPros": [
-      "Q1. Why is LEFT JOIN chosen over INNER JOIN? Because the problem statement explicitly requires returning all persons, even when their address is missing (with NULL for city/state).",
-      "Q2. Which table belongs on the left side of the JOIN? The Person table, because its rows must unconditionally appear in the final output.",
-      "Q3. How does the database optimize this query? If indexes exist on Person.personId and Address.personId, the optimizer uses an Index Nested Loops Join or Hash Outer Join in O(N + M) time.",
-      "Q4. What if a person has multiple addresses? A LEFT JOIN would duplicate the person row for each matching address; if only one address is desired, deduplication or aggregation (e.g. ROW_NUMBER()) would be needed.",
-      "Q5. Can this query be written with a correlated subquery? Yes, but joining is significantly more idiomatic and scalable than correlated scalar subqueries in SELECT."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• What is the difference between filtering on Address in the ON clause vs the WHERE clause? (Filtering in ON preserves unmatched Person rows with NULLs; filtering in WHERE turns the LEFT JOIN into an INNER JOIN by discarding NULLs)\n• How does the query engine handle NULL in the join condition? (NULL = NULL evaluates to UNKNOWN, so rows with NULL personId will never match an address)\n• How would you find ONLY persons who lack an address? (Add `WHERE a.personId IS NULL` after the LEFT JOIN)"
-    ]
-  },
-  "Pro-002": {
-    "code_id": "Pro-002",
-    "numeric_id": 82,
-    "title": "Employees Earning More Than Their Managers",
-    "code": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(Result Set)",
-    "simplestExplanation": "We perform a SELF JOIN on the Employee table, matching the employee's managerId to the manager's id, and filter for rows where the employee's salary is strictly higher than their manager's.",
-    "mentalModel": "Imagine every employee holding a folder with their own salary and their boss's ID. In line, they walk up to their boss, compare the paystubs side-by-side, and only those out-earning their manager step into the winner's circle!",
-    "lineByLine": [
-      {
-        "line": "SELECT e.name AS Employee",
-        "explanation": "Selects the employee's name and aliases the column as Employee."
-      },
-      {
-        "line": "FROM Employee AS e",
-        "explanation": "Designates the Employee table under alias e representing individual employees."
-      },
-      {
-        "line": "JOIN Employee AS m",
-        "explanation": "Joins the same Employee table under alias m representing their respective managers."
-      },
-      {
-        "line": "ON e.managerId = m.id",
-        "explanation": "Matches each employee's managerId foreign key to the manager's primary key id."
-      },
-      {
-        "line": "WHERE e.salary > m.salary;",
-        "explanation": "Filters only for instances where the employee earns strictly more than their manager."
-      }
-    ],
-    "beginnerTraps": [
-      "❌ 1. Joining on identical primary keys: Writing ON e.id = m.id compares each employee to themselves rather than their supervisor.",
-      "❌ 2. Reversing inequality: Writing e.salary < m.salary isolates underpaid employees instead of overpaid employees.",
-      "❌ 3. Forgetting table aliases: Using Employee.salary without aliases creates ambiguous column references since both tables have identical schemas."
-    ],
-    "keyTakeaway": "A self-join resolves parent-child and hierarchical relationships stored within a single database table by treating aliases as separate logical tables.",
-    "interviewPros": [
-      "Q1. What is a self-join and when is it necessary? A self-join is when a table is joined with itself; it is necessary when recursive or hierarchical relationships (e.g. employee-manager, bill-of-materials, parent-child categories) exist in one table.",
-      "Q2. Why is INNER JOIN appropriate here instead of LEFT JOIN? Employees without managers (managerId IS NULL, e.g. CEO) can never have a manager salary to compare against, so inner joining safely excludes them.",
-      "Q3. How can this query be optimized? Adding an index on `managerId` and `(managerId, salary)` turns the join into a fast index lookup.",
-      "Q4. Can this be solved with a correlated subquery? Yes: `WHERE salary > (SELECT salary FROM Employee m WHERE m.id = e.managerId)`, but a self-join is typically favored for performance and readability.",
-      "Q5. What happens if e.salary = m.salary? The condition `>` is strict, so equal salaries are correctly excluded."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• What happens if managerId is NULL? (In an INNER JOIN, NULL = id evaluates to UNKNOWN and the row is dropped, which is correct since no manager exists)\n• How would you find all levels in an organization hierarchy (e.g. employee -> manager -> VP -> CEO)? (Requires a Recursive CTE using `WITH RECURSIVE`)\n• How do implicit joins `FROM Employee e, Employee m WHERE e.managerId = m.id` compare to explicit `JOIN`? (Both produce identical query execution plans, but explicit ANSI JOIN is industry best practice)"
-    ]
-  },
-  "Pro-003": {
-    "code_id": "Pro-003",
-    "numeric_id": 83,
-    "title": "Duplicate Emails",
-    "code": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(Result Set)",
-    "simplestExplanation": "We group all records in Person by email and use HAVING COUNT(*) > 1 to filter and return only the emails that appear more than once.",
-    "mentalModel": "Imagine sorting incoming mail into pigeonholes labeled with each email address. Once all letters are sorted, you walk along the boxes and pick up only the ones that hold 2 or more envelopes!",
-    "lineByLine": [
-      {
-        "line": "SELECT email AS Email",
-        "explanation": "Selects the email address attribute, aliasing the column as Email."
-      },
-      {
-        "line": "FROM Person",
-        "explanation": "Scans the Person table containing contact identity records."
-      },
-      {
-        "line": "GROUP BY email",
-        "explanation": "Aggregates identical email addresses into distinct group buckets."
-      },
-      {
-        "line": "HAVING COUNT(*) > 1;",
-        "explanation": "Filters groups post-aggregation, keeping only emails that have a row count strictly greater than 1."
-      }
-    ],
-    "beginnerTraps": [
-      "❌ 1. Using WHERE COUNT(*) > 1: Aggregation functions cannot appear in the WHERE clause because WHERE executes before grouping occurs.",
-      "❌ 2. Omitting GROUP BY: Running HAVING COUNT(*) > 1 without GROUP BY evaluates the entire table as a single grand-total group.",
-      "❌ 3. Forgetting the output alias: Problem specifically asks for column header 'Email' rather than 'email'."
-    ],
-    "keyTakeaway": "HAVING evaluates aggregated group properties (like COUNT(*) > 1), whereas WHERE filters individual rows before grouping.",
-    "interviewPros": [
-      "Q1. Why must HAVING be used instead of WHERE? WHERE evaluates row-by-row before any aggregation or grouping occurs; HAVING evaluates after groups are formed, allowing criteria on aggregate functions like COUNT(*).",
-      "Q2. What is the execution order of this query? FROM Person -> GROUP BY email -> HAVING COUNT(*) > 1 -> SELECT email AS Email.",
-      "Q3. How does database indexing help this query? A B-tree index on `email` allows the engine to perform a stream aggregate or index skip scan rather than a full table hash-aggregation.",
-      "Q4. Can this be written without GROUP BY? Yes, using a self-join `SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id != p2.id` or `EXISTS`, but GROUP BY + HAVING is cleaner and more optimal.",
-      "Q5. Is COUNT(*) preferred over COUNT(id)? Yes, COUNT(*) clearly conveys counting the number of records in each bucket without null-checking overhead."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• How would you delete duplicates, keeping only the record with the smallest id? (DELETE p1 FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id > p2.id)\n• What happens if email contains NULL values? (SQL groups NULLs into a single group; if multiple rows have NULL, HAVING COUNT(*) > 1 would return NULL unless filtered by `WHERE email IS NOT NULL`)\n• How does the database implement GROUP BY under the hood? (Hash Aggregation or Sort/Stream Aggregation depending on index availability and memory budget)"
-    ]
-  },
-  "Pro-004": {
-    "code_id": "Pro-004",
-    "numeric_id": 84,
     "title": "Delete Duplicate Emails",
     "code": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;",
     "timeComplexity": "O(N log N)",
@@ -5149,9 +4997,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• Why does MySQL permit DELETE with JOIN while standard ANSI SQL requires subqueries? (MySQL supports multi-table DELETE extensions for performance; in standard SQL `WHERE id NOT IN (SELECT MIN(id)...)` or CTE is required)\n• What locking occurs during this DELETE? (Row-level exclusive locks on deleted records; on large production tables, batching in chunks like LIMIT 5000 prevents table lock escalation)\n• Why can't we write `DELETE FROM Person WHERE id NOT IN (SELECT MIN(id) FROM Person GROUP BY email)` directly in older MySQL? (MySQL throws error 1093 'You can't specify target table for update in FROM clause'; requires wrapping in an extra subquery)"
     ]
   },
-  "Pro-005": {
-    "code_id": "Pro-005",
-    "numeric_id": 85,
+  "Pro-002": {
+    "code_id": "Pro-002",
+    "numeric_id": 82,
     "title": "Rising Temperature",
     "code": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
     "timeComplexity": "O(N log N)",
@@ -5197,9 +5045,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• Why might LAG() perform better than a self-join on huge datasets? (LAG() processes data in a single sorted pass O(N log N) using a window spool, avoiding an O(N²) cartesian comparison before date filtering)\n• What happens on the very first day in the table? (It has no matching yesterday row in an INNER JOIN, so it evaluates to NULL and is safely omitted)\n• How does the query handle date format strings like YYYY-MM-DD? (ISO-8601 strings parse cleanly into standard database DATE types)"
     ]
   },
-  "Pro-006": {
-    "code_id": "Pro-006",
-    "numeric_id": 86,
+  "Pro-003": {
+    "code_id": "Pro-003",
+    "numeric_id": 83,
     "title": "Game Play Analysis I",
     "code": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;",
     "timeComplexity": "O(N log N)",
@@ -5245,9 +5093,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• What is Game Play Analysis II asking for? (It asks for the device_id corresponding to this first login, which requires either a JOIN back on (player_id, first_login) or ROW_NUMBER())\n• How does the optimizer handle GROUP BY on a composite primary key? (Since player_id is the leading column of the composite primary key, the engine reads directly in index order without sorting)\n• What if the table contains millions of rows? (Index-only scan on (player_id, event_date) avoids reading the full table heap entirely)"
     ]
   },
-  "Pro-007": {
-    "code_id": "Pro-007",
-    "numeric_id": 87,
+  "Pro-004": {
+    "code_id": "Pro-004",
+    "numeric_id": 84,
     "title": "Game Play Analysis II",
     "code": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;",
     "timeComplexity": "O(N log N)",
@@ -5293,9 +5141,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• What if a player logged in from two different devices on their very first day? (The problem states (player_id, event_date) is primary key, meaning a player has at most 1 login record per day, eliminating tie-breaks)\n• How does the query plan change when using `IN ((player_id, MIN(event_date)))` vs `INNER JOIN`? (Most modern query optimizers rewrite tuple IN subqueries into equivalent semi-joins or hash joins)\n• What index strategy works best? (Covering index on `(player_id, event_date, device_id)` provides an index-only scan)"
     ]
   },
-  "Pro-008": {
-    "code_id": "Pro-008",
-    "numeric_id": 88,
+  "Pro-005": {
+    "code_id": "Pro-005",
+    "numeric_id": 85,
     "title": "Employee Bonus",
     "code": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;",
     "timeComplexity": "O(N + M)",
@@ -5354,9 +5202,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• What is three-valued logic (3VL)? (SQL boolean logic where expressions evaluate to TRUE, FALSE, or UNKNOWN; WHERE only retains rows that evaluate strictly to TRUE)\n• How does moving the condition to the ON clause change the result? (Putting `ON e.empId = b.empId AND b.bonus < 1000` in a LEFT JOIN preserves all employees, but displays Thomas with bonus NULL instead of excluding him!)\n• Can COALESCE prevent index usage? (Applying functions on indexed columns can prevent sargability, though on the non-preserved side of a LEFT JOIN WHERE filter it has minimal index impact)"
     ]
   },
-  "Pro-009": {
-    "code_id": "Pro-009",
-    "numeric_id": 89,
+  "Pro-006": {
+    "code_id": "Pro-006",
+    "numeric_id": 86,
     "title": "Find Customer Referee",
     "code": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;",
     "timeComplexity": "O(N)",
@@ -5398,9 +5246,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• What is the NULL-safe equality operator in MySQL? (`<=>` operator; `NOT (referee_id <=> 2)` handles NULL cleanly without OR!)\n• How does SQL standard `IS DISTINCT FROM` work? (`WHERE referee_id IS DISTINCT FROM 2` in PostgreSQL and modern SQL standards treats NULL as a distinct comparable value, cleanly solving this without OR)\n• Why is COALESCE potentially less performant with indexes? (Wrapping a column in a function like `COALESCE(col, 0)` can prevent index seek usage, causing a full table scan)"
     ]
   },
-  "Pro-010": {
-    "code_id": "Pro-010",
-    "numeric_id": 90,
+  "Pro-007": {
+    "code_id": "Pro-007",
+    "numeric_id": 87,
     "title": "Customer Placing the Largest Number of Orders",
     "code": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;",
     "timeComplexity": "O(N log N)",
@@ -5446,9 +5294,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• What happens if the table is empty? (Returns 0 rows, which is valid empty output)\n• How does the optimizer process ORDER BY aggregate functions? (The engine computes aggregates during the GROUP BY stage, stores them in an intermediate worktable, and sorts the grouped rows before applying the LIMIT/TOP operator)\n• What index strategy works best? (An index on `Orders(customer_number)` enables stream aggregation without hash/sort grouping)"
     ]
   },
-  "Pro-011": {
-    "code_id": "Pro-011",
-    "numeric_id": 91,
+  "Pro-008": {
+    "code_id": "Pro-008",
+    "numeric_id": 88,
     "title": "Big Countries",
     "code": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;",
     "timeComplexity": "O(N)",
@@ -5502,9 +5350,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• Why did LeetCode discuss UNION vs OR performance for this problem? (In older MySQL versions without index merge, OR forced a full table scan, while UNION allowed two separate index seeks)\n• Why is UNION ALL dangerous here if used carelessly? (Countries satisfying both area >= 3M and population >= 25M would be duplicated!)\n• What type should GDP be stored as? (BIGINT to avoid 32-bit integer overflow for trillion-dollar economies)"
     ]
   },
-  "Pro-012": {
-    "code_id": "Pro-012",
-    "numeric_id": 92,
+  "Pro-009": {
+    "code_id": "Pro-009",
+    "numeric_id": 89,
     "title": "Classes With at Least 5 Students",
     "code": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;",
     "timeComplexity": "O(N log N)",
@@ -5546,9 +5394,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• What was the historical trick with COUNT(DISTINCT student) on LeetCode? (Earlier problem definitions didn't have (student, class) as primary key, making COUNT(DISTINCT student) necessary)\n• How does the execution pipeline flow? (FROM -> GROUP BY -> AGGREGATION -> HAVING -> SELECT)\n• What index optimizes this query? (An index on `Courses(class, student)` enables loose/stream aggregation directly from index leaves)"
     ]
   },
-  "Pro-013": {
-    "code_id": "Pro-013",
-    "numeric_id": 93,
+  "Pro-010": {
+    "code_id": "Pro-010",
+    "numeric_id": 90,
     "title": "Friend Requests I: Overall Acceptance Rate",
     "code": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;",
     "timeComplexity": "O(N + M)",
@@ -5611,9 +5459,9 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "⭐ Questions Interviewers Will Ask:\n• What happens if FriendRequest has 0 rows? (NULLIF turns 0 into NULL, division yields NULL, IFNULL returns 0.0, ROUND produces 0.00)\n• Can MySQL syntax `COUNT(DISTINCT sender_id, send_to_id)` be used? (MySQL supports multi-column COUNT(DISTINCT a, b), but ANSI standard subqueries `SELECT DISTINCT ...` are portable across Postgres, SQLite, and Oracle)\n• What indexes optimize this calculation? (Composite indexes `FriendRequest(sender_id, send_to_id)` and `RequestAccepted(requester_id, accepter_id)` enable index-only scans)"
     ]
   },
-  "Pro-014": {
-    "code_id": "Pro-014",
-    "numeric_id": 94,
+  "Pro-011": {
+    "code_id": "Pro-011",
+    "numeric_id": 91,
     "title": "Consecutive Available Seats",
     "code": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;",
     "timeComplexity": "O(N²)",
@@ -5669,6 +5517,493 @@ const BASE_RANKED_MAP: Record<string, any> = {
     ],
     "interviewCons": [
       "⭐ Questions Interviewers Will Ask:\n• Compare the self-join approach vs LAG/LEAD window functions. (Self-join is O(N²) unindexed or O(N log N) with index seek; LAG/LEAD is strictly O(N) streaming scan after sort)\n• What if seat numbers have gaps (e.g. aisle breaks)? (If physical aisle seats have missing numbers, ABS(id - id) = 1 naturally respects the gap without false adjacent pairing)\n• How does the execution engine handle ABS in the join condition? (Functions on join columns can inhibit index seeks; writing `ON c1.seat_id = c2.seat_id + 1 OR c1.seat_id = c2.seat_id - 1` is more sargable in older query planners)"
+    ]
+  },
+  "Pro-012": {
+    "code_id": "Pro-012",
+    "numeric_id": 92,
+    "title": "Shortest Distance in a Line",
+    "code": "SELECT\n    MIN(p2.x - p1.x) AS shortest\nFROM Point p1\nJOIN Point p2\nON p1.x < p2.x;",
+    "timeComplexity": "O(N²)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "We join the Point table with itself strictly pairing points where p1.x < p2.x. Because p2.x is greater than p1.x, the distance (p2.x - p1.x) is always positive, and MIN() finds the smallest gap.",
+    "mentalModel": "Imagine pins on a measuring tape. To find the two pins closest together, you compare each pin only with pins to its right (p1.x < p2.x). Measure each gap and pick up the smallest measurement with MIN()!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of the shortest distance."
+      },
+      {
+        "line": "    MIN(p2.x - p1.x) AS shortest",
+        "explanation": "Computes positive pairwise distances (p2.x - p1.x) and returns the minimum distance found."
+      },
+      {
+        "line": "FROM Point p1",
+        "explanation": "Scans points as the left coordinate (smaller value)."
+      },
+      {
+        "line": "JOIN Point p2",
+        "explanation": "Self-joins points as the right coordinate (larger value)."
+      },
+      {
+        "line": "ON p1.x < p2.x;",
+        "explanation": "Restricts pairings to strictly ascending pairs, eliminating self-pairs (p1.x = p2.x) and symmetric duplicate pairs."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Comparing a point with itself: Joining on `p1.x = p2.x` makes the distance 0.",
+      "❌ 2. Using `p1.x <> p2.x` without ABS: Produces negative distances that corrupt the MIN() calculation unless wrapped in `ABS()`.",
+      "❌ 3. Using MAX() instead of MIN(): Returns the distance between the two outermost points instead of closest neighbors."
+    ],
+    "keyTakeaway": "Joining on strict inequality `p1.col < p2.col` halves the join search space, automatically prevents self-pairing, and guarantees non-negative differences without needing `ABS()`.",
+    "interviewPros": [
+      "Q1. Why is `p1.x < p2.x` preferred over `p1.x <> p2.x`? When you use `p1.x < p2.x`, you only evaluate each pair in one direction (e.g. `(-1, 0)` but not `(0, -1)`). This cuts the number of comparisons in half and guarantees that `p2.x - p1.x` is strictly positive, eliminating the need for `ABS()`.",
+      "Q2. Can this be solved using window functions in O(N log N)? Yes! Sort points with `LEAD(x) OVER (ORDER BY x)`: `SELECT MIN(next_x - x) AS shortest FROM (SELECT x, LEAD(x) OVER (ORDER BY x) next_x FROM Point) t WHERE next_x IS NOT NULL;`. On a number line, the shortest distance is always between two immediately adjacent points when sorted!",
+      "Q3. What is the time complexity difference? The self-join is O(N²), whereas the window function / sorting approach is O(N log N).",
+      "Q4. What index optimizes this query? A B-tree index on `Point(x)` allows ordered traversal for the window function and faster index lookups in the self-join.",
+      "Q5. What if the table contains fewer than 2 points? If Point has 0 or 1 rows, the self-join produces 0 joined rows, and `MIN()` safely returns `NULL`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Why is the window function approach mathematically superior? (Any two points with the minimum distance must be adjacent in the sorted sequence; inspecting non-adjacent points in an O(N²) join is redundant work)\n• How does the query planner evaluate `p1.x < p2.x`? (It performs a Nested Loop Join comparing each row against all subsequent rows)\n• What if coordinates are floating-point numbers? (The exact same query logic applies, but floating-point rounding or precision thresholds must be considered in production)"
+    ]
+  },
+  "Pro-013": {
+    "code_id": "Pro-013",
+    "numeric_id": 93,
+    "title": "Biggest Single Number",
+    "code": "SELECT\n    MAX(num) AS num\nFROM (\n    SELECT num\n    FROM MyNumbers\n    GROUP BY num\n    HAVING COUNT(*) = 1\n) AS SingleNumbers;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We group numbers to find those with COUNT(*) = 1 (unique single numbers), and wrap that in an outer query with MAX(num) which returns the largest unique value or NULL if none exist.",
+    "mentalModel": "Imagine a bingo game. Any number called more than once gets thrown into a discard bin. You take the remaining numbers that were called strictly once, and pick out the highest card. If no number was called only once, your hand is empty (NULL)!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates outer query projection."
+      },
+      {
+        "line": "    MAX(num) AS num",
+        "explanation": "Extracts the highest single number; evaluates to NULL if the inner derived table is empty."
+      },
+      {
+        "line": "FROM (",
+        "explanation": "Opens subquery to isolate solitary numbers."
+      },
+      {
+        "line": "    SELECT num",
+        "explanation": "Projects the candidate number."
+      },
+      {
+        "line": "    FROM MyNumbers",
+        "explanation": "Scans rows from MyNumbers."
+      },
+      {
+        "line": "    GROUP BY num",
+        "explanation": "Groups identical numbers together."
+      },
+      {
+        "line": "    HAVING COUNT(*) = 1",
+        "explanation": "Filters groups to keep strictly solitary numbers that appear exactly once."
+      },
+      {
+        "line": ") AS SingleNumbers;",
+        "explanation": "Aliases the derived table."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Writing `ORDER BY num DESC LIMIT 1` directly on the GROUP BY: If no number appears once, it returns an empty table (0 rows) instead of a row containing NULL!",
+      "❌ 2. Using `WHERE COUNT(*) = 1`: Aggregates cannot be filtered in WHERE; HAVING must be used.",
+      "❌ 3. Using `HAVING COUNT(*) > 1`: Identifies duplicate numbers instead of solitary single numbers."
+    ],
+    "keyTakeaway": "Wrapping a derived query inside `SELECT MAX(col)` is a robust SQL pattern for returning `NULL` when an empty result set would otherwise return 0 rows.",
+    "interviewPros": [
+      "Q1. Why is an outer `SELECT MAX(num)` used instead of `ORDER BY num DESC LIMIT 1`? If no number has a frequency of 1, `SELECT num ... HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1` returns an empty set (0 rows). The problem specification requires returning a 1-row table with `NULL`. In SQL, aggregate functions like `MAX()` over an empty set automatically return `NULL`.",
+      "Q2. Can this be solved using a scalar subquery in SELECT? Yes: `SELECT (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*) = 1 ORDER BY num DESC LIMIT 1) AS num;`. In SQL, a scalar subquery in the SELECT clause that produces no rows automatically evaluates to `NULL`.",
+      "Q3. What is the difference between COUNT(*) = 1 and COUNT(num) = 1 here? Both produce identical results as long as `num` contains non-null integers; COUNT(*) is standard and slightly faster.",
+      "Q4. What is the time complexity? O(N log N) or O(N) depending on whether grouping uses sort-based or hash-based aggregation.",
+      "Q5. What index optimizes this query? A B-tree index on `MyNumbers(num)` enables loose index scanning to count group frequencies without full table scanning."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the crucial edge case in this problem? (When all numbers appear multiple times, the query must return a 1x1 cell containing NULL, not 0 rows)\n• Why does `SELECT MAX(...)` produce 1 row with NULL instead of 0 rows? (An aggregate function without a GROUP BY clause in the outer query always produces exactly one summary row)\n• How does the scalar subquery pattern compare to derived table MAX()? (Both have identical query plans in modern optimizers, but `MAX(num) FROM (...)` is standard ANSI SQL)"
+    ]
+  },
+  "Pro-014": {
+    "code_id": "Pro-014",
+    "numeric_id": 94,
+    "title": "Not Boring Movies",
+    "code": "SELECT\n    id,\n    movie,\n    description,\n    rating\nFROM Cinema\nWHERE id % 2 = 1\n  AND description <> 'boring'\nORDER BY rating DESC;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "We filter rows in Cinema to keep only movies with odd IDs (id % 2 = 1) and descriptions other than 'boring' (<> 'boring'), then order by rating in descending order.",
+    "mentalModel": "Imagine a film critic curating a weekend movie list. She only looks at odd-numbered DVD racks, throws away any case stamped 'boring', and sorts the remaining good movies from highest IMDb rating to lowest!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of movie attributes."
+      },
+      {
+        "line": "    id, movie, description, rating",
+        "explanation": "Selects the 4 required movie columns."
+      },
+      {
+        "line": "FROM Cinema",
+        "explanation": "Scans the cinema catalog table."
+      },
+      {
+        "line": "WHERE id % 2 = 1",
+        "explanation": "Applies modulo 2 arithmetic to isolate odd-numbered movie IDs."
+      },
+      {
+        "line": "  AND description <> 'boring'",
+        "explanation": "Excludes movies labeled with the exact description 'boring'."
+      },
+      {
+        "line": "ORDER BY rating DESC;",
+        "explanation": "Sorts the final filtered movies by rating from highest to lowest."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using `id % 2 = 0`: Filters for even IDs instead of odd IDs.",
+      "❌ 2. Using OR instead of AND: Writing `WHERE id % 2 = 1 OR description <> 'boring'` includes odd boring movies and even non-boring movies.",
+      "❌ 3. Forgetting DESC in ORDER BY: Default sorting is ascending, placing worst-rated movies at the top."
+    ],
+    "keyTakeaway": "Use the modulo operator `% 2 = 1` (or `MOD(val, 2) = 1`) to check parity in SQL, combine multiple filtering predicates with `AND`, and remember that `ORDER BY ... DESC` orders from greatest to least.",
+    "interviewPros": [
+      "Q1. What is the difference between `%` and `MOD()`? `%` is the standard infix modulo operator supported in MySQL, PostgreSQL, and SQLite. `MOD(n, d)` is the ANSI SQL functional equivalent supported universally across Oracle and SQL Server.",
+      "Q2. What does `<>` mean in SQL? `<>` is the ISO standard SQL inequality operator, equivalent to `!=` in most dialects.",
+      "Q3. How does NULL in the description column behave? In SQL three-valued logic, if `description` is NULL, `description <> 'boring'` evaluates to `UNKNOWN`, which the WHERE clause filters out. If you wanted to retain NULL descriptions, you would add `OR description IS NULL`.",
+      "Q4. What is the time complexity? O(N log N) dominated by sorting the qualifying rows by rating in descending order.",
+      "Q5. What index would optimize this query? A composite index on `Cinema(description, rating, id)` or a covering index allowing index scan and pre-sorted rating retrieval."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Why might `id % 2 = 1` prevent the optimizer from using an index on `id`? (Expressions on indexed columns are non-sargable in standard B-tree indexes unless a functional/expression index is created)\n• How does SQL handle string comparison case sensitivity? (Depends on collation: binary/case-sensitive vs case-insensitive like utf8mb4_unicode_ci)\n• What happens if ratings are tied? (SQL does not guarantee deterministic secondary ordering unless a tiebreaker like `id DESC` is appended to ORDER BY)"
+    ]
+  },
+  "Pro-015": {
+    "code_id": "Pro-015",
+    "numeric_id": 95,
+    "title": "Combine Two Tables",
+    "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person p\nLEFT JOIN Address a\nON p.personId = a.personId;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We perform a LEFT JOIN from Person to Address matching on personId. Every person is retained in the output, and individuals with no matching address receive NULL for city and state.",
+    "mentalModel": "Imagine a roll-call sheet of every person in a class. You look up their address in a separate school directory. If you find their address, you write down their city and state; if they haven't submitted one yet, you write 'NULL' next to their name. Nobody is left off the roll call!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of the final report columns."
+      },
+      {
+        "line": "    p.firstName, p.lastName,",
+        "explanation": "Pulls first and last names from the primary Person table."
+      },
+      {
+        "line": "    a.city, a.state",
+        "explanation": "Pulls residential city and state from Address (evaluates to NULL if no match exists)."
+      },
+      {
+        "line": "FROM Person p",
+        "explanation": "Designates Person as the left table whose rows must all be preserved."
+      },
+      {
+        "line": "LEFT JOIN Address a",
+        "explanation": "Joins Address, retaining all Person rows even if they have no address entry."
+      },
+      {
+        "line": "ON p.personId = a.personId;",
+        "explanation": "Connects records where foreign key Address.personId equals primary key Person.personId."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using INNER JOIN instead of LEFT JOIN: Drops individuals who do not have an address in the Address table.",
+      "❌ 2. Joining on mismatched columns: Joining `ON personId = addressId` compares person primary keys against address primary keys instead of foreign keys.",
+      "❌ 3. Using RIGHT JOIN: Preserves all addresses instead of all persons."
+    ],
+    "keyTakeaway": "Use a `LEFT JOIN` whenever the business requirement asks for 'all entities from table A, regardless of whether a matching record exists in table B'.",
+    "interviewPros": [
+      "Q1. Why is LEFT JOIN chosen over INNER JOIN? The problem explicitly requires reporting information for each person regardless of whether an address exists. INNER JOIN would discard individuals without an address, failing the specification.",
+      "Q2. What value does SQL substitute when an address does not exist? SQL automatically populates columns from unmatched rows with NULL.",
+      "Q3. What happens if a person has multiple addresses in Address? The LEFT JOIN produces multiple output rows for that person, one for each matching address row.",
+      "Q4. What is the time complexity? O(N + M) when an index exists on `Address(personId)`. The database performs an index lookup in Address for each of the N rows in Person.",
+      "Q5. Can this be rewritten with RIGHT JOIN? Yes, by reversing the table positions: `FROM Address a RIGHT JOIN Person p ON p.personId = a.personId`, but LEFT JOIN is universally preferred for natural left-to-right reading order."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What index is essential for this query at scale? (A foreign key index on `Address(personId)` prevents a full table scan of Address on every Person row)\n• What happens if `Person` has duplicate `personId` values? (`personId` is defined as PRIMARY KEY, guaranteeing uniqueness)\n• How would you filter for people who DO NOT have an address? (Add `WHERE a.personId IS NULL` to the LEFT JOIN query)"
+    ]
+  },
+  "Pro-016": {
+    "code_id": "Pro-016",
+    "numeric_id": 96,
+    "title": "Employees Earning More Than Their Managers",
+    "code": "SELECT\n    e.name AS Employee\nFROM Employee e\nJOIN Employee m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We join the Employee table to itself, pairing each employee with their direct manager using e.managerId = m.id, then filter for pairs where the employee's salary is greater than the manager's salary.",
+    "mentalModel": "Imagine every employee holding their paycheck standing next to their boss who is holding their own paycheck. You walk down the line, compare the two paychecks, and call out the names of employees holding a bigger paycheck than their boss!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection."
+      },
+      {
+        "line": "    e.name AS Employee",
+        "explanation": "Selects the employee's name from the employee alias and renames the output column to Employee."
+      },
+      {
+        "line": "FROM Employee e",
+        "explanation": "Treats Employee as the primary table representing individual contributors."
+      },
+      {
+        "line": "JOIN Employee m",
+        "explanation": "Self-joins the same Employee table under alias m representing managers."
+      },
+      {
+        "line": "ON e.managerId = m.id",
+        "explanation": "Connects the employee's managerId foreign key to the manager's primary key id."
+      },
+      {
+        "line": "WHERE e.salary > m.salary;",
+        "explanation": "Filters for records where the employee's salary strictly exceeds the manager's salary."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining on `e.id = m.id`: Compares an employee to themselves rather than their supervisor.",
+      "❌ 2. Writing `e.salary < m.salary`: Returns underpaid subordinates instead of employees out-earning their managers.",
+      "❌ 3. Comparing IDs instead of salaries: Writing `WHERE e.id > m.id` compares employee numbers instead of compensation."
+    ],
+    "keyTakeaway": "Self-joins allow hierarchical graph structures (parent/child, employee/manager) stored in a single table to be traversed and compared using distinct table aliases.",
+    "interviewPros": [
+      "Q1. Why is a self join necessary? Both the employee records and their corresponding manager records are stored as rows in the same `Employee` table. A self join allows us to create side-by-side tuples comparing an employee with their manager.",
+      "Q2. Why is INNER JOIN used rather than LEFT JOIN? Employees without a manager (`managerId = NULL`, like CEOs) cannot have a salary comparison against a non-existent manager. INNER JOIN naturally discards NULL manager rows.",
+      "Q3. What is the time complexity? O(N) when a B-tree index exists on `Employee(id)` and `Employee(managerId)`. The database performs an indexed lookup in `m` for each employee in `e`.",
+      "Q4. Can this be solved with a correlated subquery? Yes: `SELECT e.name AS Employee FROM Employee e WHERE e.salary > (SELECT m.salary FROM Employee m WHERE m.id = e.managerId);`. However, the JOIN syntax is generally preferred for optimizer clarity.",
+      "Q5. What indexes optimize this query? A primary key index on `Employee(id)` and a secondary index on `Employee(managerId)` or composite `Employee(managerId, salary)` for index-only scans."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What happens if an employee has a NULL managerId? (INNER JOIN on `e.managerId = m.id` filters them out automatically because NULL comparisons fail)\n• How would you handle multiple management tiers (e.g. skip-level managers)? (Requires recursive CTEs like `WITH RECURSIVE org_hierarchy AS ...`)\n• Does `JOIN` perform better than a correlated subquery in older databases? (Historically yes, query optimizers easily transform self-joins into hash joins or index nested loop joins)"
+    ]
+  },
+  "Pro-017": {
+    "code_id": "Pro-017",
+    "numeric_id": 97,
+    "title": "Duplicate Emails",
+    "code": "SELECT\n    email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We group the rows by email to gather identical addresses together, then use HAVING COUNT(*) > 1 to filter out emails that appear only once, returning only duplicates.",
+    "mentalModel": "Imagine postal letters arriving at a mail room sorting pigeonhole. Every email address gets its own slot. When all letters are distributed, the clerk picks only the slots that have 2 or more letters inside!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection."
+      },
+      {
+        "line": "    email",
+        "explanation": "Projects the email identifier column."
+      },
+      {
+        "line": "FROM Person",
+        "explanation": "Scans rows from the Person table."
+      },
+      {
+        "line": "GROUP BY email",
+        "explanation": "Partitions and aggregates records having identical email addresses into groups."
+      },
+      {
+        "line": "HAVING COUNT(*) > 1;",
+        "explanation": "Filters groups to keep strictly those with group size greater than 1."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using `WHERE COUNT(*) > 1`: SQL prohibits aggregate functions in the WHERE clause; group filtering requires HAVING.",
+      "❌ 2. Grouping by `id`: Grouping by a primary key produces groups of size 1, so `HAVING COUNT(*) > 1` would return 0 rows.",
+      "❌ 3. Using `SELECT DISTINCT email`: Deduplicates the result table, but does not identify WHICH emails had duplicates.",
+      "❌ 4. Using `HAVING COUNT(*) = 1`: Returns unique, solitary emails rather than duplicates."
+    ],
+    "keyTakeaway": "To detect duplicates in SQL, always use `GROUP BY [target_column] HAVING COUNT(*) > 1`.",
+    "interviewPros": [
+      "Q1. Why is HAVING used instead of WHERE? `WHERE` filters individual rows BEFORE grouping and aggregation occur. `HAVING` filters aggregated groups AFTER `GROUP BY` has collapsed rows and calculated aggregate metrics like `COUNT(*)`.",
+      "Q2. Can this be solved using a self join? Yes: `SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id <> p2.id;`. However, the `GROUP BY ... HAVING` approach is more idiomatic and typically performs in O(N) or O(N log N) rather than quadratic O(N²) join overhead.",
+      "Q3. What is the difference between COUNT(*) and COUNT(email)? If the `email` column cannot be NULL (or has no NULLs), both return identical counts. If NULLs exist, `COUNT(email)` ignores NULLs whereas `COUNT(*)` counts total rows.",
+      "Q4. What is the time complexity? O(N log N) using sort-based aggregation or O(N) using hash-based aggregation in modern database engines.",
+      "Q5. What index would optimize this query? A B-tree index on `Person(email)` allows the engine to perform an index-only scan (Stream Aggregate) without reading the underlying table heap."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How does the execution plan change when `Person(email)` is indexed? (It switches from a Hash Aggregate requiring table scan to a Stream Aggregate reading pre-ordered index leaf pages directly)\n• How would you delete the duplicate rows while keeping only one copy? (Use `DELETE FROM Person WHERE id NOT IN (SELECT MIN(id) FROM Person GROUP BY email)` or a window function with `ROW_NUMBER()`)\n• Is email case sensitivity an issue? (Depends on collation; standard practice is `GROUP BY LOWER(email)` if case-insensitive duplicates are disallowed)"
+    ]
+  },
+  "Pro-018": {
+    "code_id": "Pro-018",
+    "numeric_id": 98,
+    "title": "Sales Person",
+    "code": "SELECT name\nFROM SalesPerson\nWHERE sales_id NOT IN (\n    SELECT o.sales_id\n    FROM Orders o\n    JOIN Company c\n    ON o.com_id = c.com_id\n    WHERE c.name = 'RED'\n);",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We find all sales_ids that have orders associated with the company named 'RED' using a JOIN in a subquery, then select the names from SalesPerson whose sales_id is NOT IN that disqualified list.",
+    "mentalModel": "Imagine a blacklist board outside the company audit room. Auditors check every order receipt from the 'RED' corporation and write down the rep's ID on the blacklist. At the end of the audit, any salesperson whose name is NOT on the board gets the green light!",
+    "lineByLine": [
+      {
+        "line": "SELECT name",
+        "explanation": "Projects the salesperson name."
+      },
+      {
+        "line": "FROM SalesPerson",
+        "explanation": "Scans all records in the SalesPerson directory."
+      },
+      {
+        "line": "WHERE sales_id NOT IN (",
+        "explanation": "Filters to exclude reps matching any sales_id in the disqualified subquery."
+      },
+      {
+        "line": "    SELECT o.sales_id",
+        "explanation": "Selects sales_id of orders tied to RED."
+      },
+      {
+        "line": "    FROM Orders o",
+        "explanation": "Scans the order transactions."
+      },
+      {
+        "line": "    JOIN Company c ON o.com_id = c.com_id",
+        "explanation": "Matches each order to its respective company metadata."
+      },
+      {
+        "line": "    WHERE c.name = 'RED'",
+        "explanation": "Filters for orders specifically placed with company 'RED'."
+      },
+      {
+        "line": ");",
+        "explanation": "Terminates subquery and outer query."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using `IN` instead of `NOT IN`: Returns salespersons who DID sell to RED rather than those who did not.",
+      "❌ 2. Filtering `WHERE name = 'RED'` on SalesPerson: Checks the rep's personal name instead of the client company name.",
+      "❌ 3. Doing a direct LEFT JOIN without filtering on RED: If a rep has orders for BLUE, a direct join without subquery negation or condition grouping can accidentally misclassify reps who have orders with BOTH companies."
+    ],
+    "keyTakeaway": "When excluding entities associated with a specific criterion across related tables, use an inner subquery to isolate the prohibited IDs and exclude them via `NOT IN` or `NOT EXISTS`.",
+    "interviewPros": [
+      "Q1. Why is NOT IN or NOT EXISTS used here instead of a simple LEFT JOIN? A salesperson might sell to both 'RED' and 'BLUE'. A simple join would retain the 'BLUE' row and falsely report the rep even if they sold to 'RED'. Negating the entire set of 'RED' reps guarantees accurate exclusion.",
+      "Q2. What is the danger of NULL values with `NOT IN`? If the subquery returns any `NULL` value in its result set, `val NOT IN (..., NULL)` evaluates to `UNKNOWN` for non-matching values, causing the outer query to return zero rows. In production, using `WHERE o.sales_id IS NOT NULL` or `NOT EXISTS` is best practice.",
+      "Q3. How is this written with NOT EXISTS? `SELECT s.name FROM SalesPerson s WHERE NOT EXISTS (SELECT 1 FROM Orders o JOIN Company c ON o.com_id = c.com_id WHERE o.sales_id = s.sales_id AND c.name = 'RED');`.",
+      "Q4. What is the time complexity? O(N + M) where M is the number of orders/companies scanned and N is the number of salespersons checked via hash set or index lookup.",
+      "Q5. What indexes optimize this query? A composite index on `Company(name, com_id)` and an index on `Orders(com_id, sales_id)`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Why is `NOT EXISTS` typically preferred over `NOT IN` in production SQL? (`NOT EXISTS` safely handles NULLs without breaking boolean evaluation, and can short-circuit upon finding the first matching record)\n• What happens to a salesperson with zero orders (e.g. Pam)? (They are not present in Orders, therefore not in the subquery, so they are correctly included in the output)\n• How would this scale with millions of orders? (Index on `Orders(sales_id, com_id)` enables index seek instead of full table scans)"
+    ]
+  },
+  "Pro-019": {
+    "code_id": "Pro-019",
+    "numeric_id": 99,
+    "title": "Customers Who Never Order",
+    "code": "SELECT\n    c.name AS Customers\nFROM Customers c\nLEFT JOIN Orders o\nON c.id = o.customerId\nWHERE o.id IS NULL;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We perform a LEFT JOIN from Customers to Orders on c.id = o.customerId. All customers are retained, and those who never placed an order will have NULL in the Orders columns. We filter for those with WHERE o.id IS NULL.",
+    "mentalModel": "Imagine a membership directory checklist. For every member, you check the order log for their receipts. If they have order receipts, they get stamped 'Active'. If their receipt column is blank (NULL), they are flagged as 'Never Ordered'!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection."
+      },
+      {
+        "line": "    c.name AS Customers",
+        "explanation": "Selects customer name and renames column header to Customers."
+      },
+      {
+        "line": "FROM Customers c",
+        "explanation": "Designates Customers as the primary left table whose rows are fully retained."
+      },
+      {
+        "line": "LEFT JOIN Orders o",
+        "explanation": "Performs outer join to Orders, populating missing orders with NULL."
+      },
+      {
+        "line": "ON c.id = o.customerId",
+        "explanation": "Matches primary key Customers.id with foreign key Orders.customerId."
+      },
+      {
+        "line": "WHERE o.id IS NULL;",
+        "explanation": "Filters specifically for rows where no matching order exists."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using INNER JOIN: Discards customers without orders completely, returning the exact opposite cohort.",
+      "❌ 2. Writing `WHERE o.id = NULL`: NULL cannot be compared with `=` in SQL; it must be checked with `IS NULL`.",
+      "❌ 3. Joining on `c.id = o.id`: Compares customer primary keys with order primary keys instead of order foreign keys (`customerId`).",
+      "❌ 4. Using RIGHT JOIN: Preserves all orders instead of all customers."
+    ],
+    "keyTakeaway": "The `LEFT JOIN ... WHERE right_table.id IS NULL` pattern is the standard SQL anti-join used to find orphan records that lack relationships in a secondary table.",
+    "interviewPros": [
+      "Q1. Why is LEFT JOIN + IS NULL called an anti-join? An anti-join returns rows from the first table that have NO match in the second table. In SQL, combining a LEFT JOIN with a filter checking for NULL in the right table's non-nullable primary key is the canonical way to express an anti-join.",
+      "Q2. Can this be written with NOT EXISTS? Yes: `SELECT c.name AS Customers FROM Customers c WHERE NOT EXISTS (SELECT 1 FROM Orders o WHERE o.customerId = c.id);`. Both queries are recognized by modern query optimizers and often produce the exact same execution plan.",
+      "Q3. Why is `WHERE o.id = NULL` incorrect? In standard SQL three-valued logic, any comparison with NULL using `=` evaluates to `UNKNOWN` rather than TRUE or FALSE. The WHERE clause only preserves rows where the condition evaluates to `TRUE`, so `o.id = NULL` always evaluates to UNKNOWN and filters out all rows.",
+      "Q4. What is the time complexity? O(N + M) when an index exists on `Orders(customerId)`. The database performs an indexed lookup in Orders for each row in Customers.",
+      "Q5. What indexes optimize this query? A primary key index on `Customers(id)` and a secondary index on `Orders(customerId)`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the performance difference between `LEFT JOIN ... IS NULL` and `NOT EXISTS`? (In modern optimizers like PostgreSQL and MySQL 8.0, both compile to the same Hash Anti-Join or Nested Loop Anti-Join plan)\n• Why check `o.id IS NULL` rather than `o.customerId IS NULL`? (Checking the primary key of the right table is guaranteed safe because primary keys can never contain natural NULLs)\n• What happens if Customers has duplicate IDs? (`id` is defined as PRIMARY KEY, guaranteeing uniqueness)"
+    ]
+  },
+  "Pro-020": {
+    "code_id": "Pro-020",
+    "numeric_id": 100,
+    "title": "Triangle Judgement",
+    "code": "SELECT\n    x,\n    y,\n    z,\n    CASE\n        WHEN x + y > z\n         AND x + z > y\n         AND y + z > x\n        THEN 'Yes'\n        ELSE 'No'\n    END AS triangle\nFROM Triangle;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "We evaluate the Triangle Inequality Theorem for each row using a CASE expression: if the sum of any two sides is strictly greater than the third side (x+y>z AND x+z>y AND y+z>x), then 'Yes', otherwise 'No'.",
+    "mentalModel": "Imagine three sticks on a workbench. If two short sticks placed end-to-end cannot reach past the longest stick, they can never bend upward to meet and form a peak! Only when every pair of sticks is strictly longer than the third can they form a closed triangle.",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection."
+      },
+      {
+        "line": "    x, y, z,",
+        "explanation": "Selects the original segment lengths."
+      },
+      {
+        "line": "    CASE",
+        "explanation": "Opens the conditional branch."
+      },
+      {
+        "line": "        WHEN x + y > z AND x + z > y AND y + z > x",
+        "explanation": "Tests that all three pairwise sums strictly exceed the third segment."
+      },
+      {
+        "line": "        THEN 'Yes'",
+        "explanation": "Returns 'Yes' when the triangle inequality theorem is satisfied."
+      },
+      {
+        "line": "        ELSE 'No'",
+        "explanation": "Returns 'No' if any pairwise sum is less than or equal to the third segment."
+      },
+      {
+        "line": "    END AS triangle",
+        "explanation": "Closes the CASE expression and aliases the resulting column as triangle."
+      },
+      {
+        "line": "FROM Triangle;",
+        "explanation": "Scans all rows from the Triangle table."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Checking only one condition: Writing `WHEN x + y > z` fails when z is short but x or y is excessively long (e.g. 100, 10, 10).",
+      "❌ 2. Using `OR` instead of `AND`: Writing `WHEN x+y>z OR x+z>y OR y+z>x` returns 'Yes' even for non-triangles.",
+      "❌ 3. Using `>=` instead of `>`: If `x + y = z`, the segments collapse into a flat straight line (degenerate triangle), which cannot form a real triangle.",
+      "❌ 4. Forgetting `END`: Every SQL `CASE` statement must conclude with `END`."
+    ],
+    "keyTakeaway": "Conditional boolean classification without table mutations is best handled with a clean `CASE WHEN condition THEN ... ELSE ... END` scalar projection.",
+    "interviewPros": [
+      "Q1. Why are three conditions required instead of just one? Unless the sides are pre-sorted so that `z` is guaranteed to be the maximum side, any of the three sides could be the longest. Therefore, all three permutations (`x+y>z`, `x+z>y`, `y+z>x`) must be verified.",
+      "Q2. Can this be simplified if we know the maximum side? Yes: if `m = GREATEST(x, y, z)`, the condition simplifies to `x + y + z - m > m` (the sum of the two smaller sides exceeds the longest side). However, the 3-condition `AND` clause is ANSI SQL standard and universally portable.",
+      "Q3. What is the time and space complexity? O(N) time to scan rows and evaluate basic integer arithmetic per row; O(1) auxiliary space beyond the streamed result set.",
+      "Q4. Can this be inverted with OR? Yes: `CASE WHEN x+y<=z OR x+z<=y OR y+z<=x THEN 'No' ELSE 'Yes' END AS triangle`.",
+      "Q5. Are indexes needed for this query? No indexes are necessary because this query performs a single sequential scan of the table without joins, filters, or group-by aggregations."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What happens if one or more sides are negative or zero? (Since lengths must be positive, `x+y>z` could theoretically be tripped by negatives; in production, `x > 0 AND y > 0 AND z > 0` should precede the check)\n• What is the difference between simple CASE and searched CASE? (This uses searched CASE `CASE WHEN <boolean_expression> THEN ...`, which supports arbitrary logical comparisons)\n• How does the database execute this? (A single sequential scan with constant-time CPU scalar evaluation per row)"
     ]
   }};
 

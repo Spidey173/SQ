@@ -203,7 +203,160 @@ def get_relevant_tables_for_challenge(title: str, objective: str = "", starter_c
 
 def generate_setup_sql_for_challenge(title: str, objective: str = "", starter_code: str = "", story: str = "") -> str:
     combined_lower = f"{title} {objective} {starter_code} {story}".lower()
-    if any(term in combined_lower for term in ["combine two tables", "personid", "addressid", "from person"]):
+    if any(term in combined_lower for term in ["triangle judgement", "triangle judgment", "table: triangle", "from triangle"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Triangle
+DROP TABLE IF EXISTS Triangle;
+
+CREATE TABLE Triangle (
+    x INTEGER,
+    y INTEGER,
+    z INTEGER
+);
+
+-- Sample Data: Triangle
+INSERT INTO Triangle VALUES (13, 15, 30);
+INSERT INTO Triangle VALUES (10, 20, 15);
+"""
+
+    if any(term in combined_lower for term in ["customers who never order", "who never order", "customerid references customers.id", "o.id is null", "as customers"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Customers
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Customers;
+
+CREATE TABLE Customers (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(50)
+);
+
+-- Table: Orders
+CREATE TABLE Orders (
+    id INTEGER PRIMARY KEY,
+    customerId INTEGER
+);
+
+-- Sample Data: Customers
+INSERT INTO Customers VALUES (1, 'Joe');
+INSERT INTO Customers VALUES (2, 'Henry');
+INSERT INTO Customers VALUES (3, 'Sam');
+INSERT INTO Customers VALUES (4, 'Max');
+
+-- Sample Data: Orders
+INSERT INTO Orders VALUES (1, 3);
+INSERT INTO Orders VALUES (2, 1);
+"""
+
+    if any(term in combined_lower for term in ["sales person", "salesperson", "company named \"red\"", "company named 'red'", "company c"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: SalesPerson
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Company;
+DROP TABLE IF EXISTS SalesPerson;
+
+CREATE TABLE SalesPerson (
+    sales_id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    salary INTEGER,
+    commission_rate INTEGER,
+    hire_date DATE
+);
+
+-- Table: Company
+CREATE TABLE Company (
+    com_id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(50)
+);
+
+-- Table: Orders
+CREATE TABLE Orders (
+    order_id INTEGER PRIMARY KEY,
+    order_date DATE,
+    com_id INTEGER,
+    sales_id INTEGER,
+    amount INTEGER
+);
+
+-- Sample Data: SalesPerson
+INSERT INTO SalesPerson VALUES (1, 'John', 100000, 6, '2006-04-01');
+INSERT INTO SalesPerson VALUES (2, 'Amy', 12000, 5, '2010-05-01');
+INSERT INTO SalesPerson VALUES (3, 'Mark', 65000, 12, '2008-12-25');
+INSERT INTO SalesPerson VALUES (4, 'Pam', 25000, 25, '2005-01-01');
+
+-- Sample Data: Company
+INSERT INTO Company VALUES (1, 'RED', 'Boston');
+INSERT INTO Company VALUES (2, 'BLUE', 'New York');
+
+-- Sample Data: Orders
+INSERT INTO Orders VALUES (1, '2014-01-01', 1, 1, 10000);
+INSERT INTO Orders VALUES (2, '2014-02-01', 2, 2, 5000);
+INSERT INTO Orders VALUES (3, '2014-03-01', 2, 3, 50000);
+"""
+
+    if any(term in combined_lower for term in ["earning more than their managers", "earning more than their manager", "managerid"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Employee
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    salary INTEGER,
+    managerId INTEGER
+);
+
+-- Sample Data: Employee
+INSERT INTO Employee VALUES (1, 'Joe', 70000, 3);
+INSERT INTO Employee VALUES (2, 'Henry', 80000, 4);
+INSERT INTO Employee VALUES (3, 'Sam', 60000, NULL);
+INSERT INTO Employee VALUES (4, 'Max', 90000, NULL);
+"""
+
+    if any(term in combined_lower for term in ["delete duplicate emails", "delete all duplicate email"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Person
+DROP TABLE IF EXISTS Person;
+CREATE TABLE Person (
+    id INTEGER PRIMARY KEY,
+    email VARCHAR(50)
+);
+
+-- Sample Data: Person
+INSERT INTO Person VALUES (1, 'john@mail.com');
+INSERT INTO Person VALUES (2, 'bob@mail.com');
+INSERT INTO Person VALUES (3, 'john@mail.com');
+INSERT INTO Person VALUES (4, 'alice@mail.com');
+INSERT INTO Person VALUES (5, 'bob@mail.com');
+"""
+
+    if any(term in combined_lower for term in ["duplicate emails", "duplicate email", "report all duplicate email"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Person
+DROP TABLE IF EXISTS Person;
+CREATE TABLE Person (
+    id INTEGER PRIMARY KEY,
+    email VARCHAR(50)
+);
+
+-- Sample Data: Person
+INSERT INTO Person VALUES (1, 'a@leetcode.com');
+INSERT INTO Person VALUES (2, 'b@leetcode.com');
+INSERT INTO Person VALUES (3, 'a@leetcode.com');
+"""
+
+    if any(term in combined_lower for term in ["combine two tables", "personid", "addressid"]):
         return """-- Step 1: Database Schema & Data Setup
 -- Run this script to create and populate the practice database tables.
 
@@ -232,55 +385,66 @@ INSERT INTO Person VALUES (2, 'Alice', 'Bob');
 INSERT INTO Address VALUES (1, 2, 'New York City', 'New York');
 """
 
-    if any(term in combined_lower for term in ["sales person", "salesperson", "company named \"red\"", "company named 'red'", "company c"]):
+    if any(term in combined_lower for term in ["biggest single number", "mynumbers", "single number", "single numbers"]):
         return """-- Step 1: Database Schema & Data Setup
 -- Run this script to create and populate the practice database tables.
 
--- Table: SalesPerson
-DROP TABLE IF EXISTS SalesPerson;
-CREATE TABLE SalesPerson (
-    sales_id INTEGER PRIMARY KEY,
-    name VARCHAR(50),
-    salary INTEGER,
-    commission_rate INTEGER,
-    hire_date DATE
+-- Table: MyNumbers
+DROP TABLE IF EXISTS MyNumbers;
+CREATE TABLE MyNumbers (
+    num INTEGER
 );
 
--- Table: Company
-DROP TABLE IF EXISTS Company;
-CREATE TABLE Company (
-    com_id INTEGER PRIMARY KEY,
-    name VARCHAR(50),
-    city VARCHAR(50)
-);
-
--- Table: Orders
-DROP TABLE IF EXISTS Orders;
-CREATE TABLE Orders (
-    order_id INTEGER PRIMARY KEY,
-    order_date DATE,
-    com_id INTEGER,
-    sales_id INTEGER,
-    amount INTEGER
-);
-
--- Sample Data: SalesPerson
-INSERT INTO SalesPerson VALUES (1, 'John', 100000, 6, '2006-04-01');
-INSERT INTO SalesPerson VALUES (2, 'Amy', 12000, 5, '2010-05-01');
-INSERT INTO SalesPerson VALUES (3, 'Mark', 65000, 12, '2008-12-25');
-INSERT INTO SalesPerson VALUES (4, 'Pam', 25000, 25, '2005-01-01');
-
--- Sample Data: Company
-INSERT INTO Company VALUES (1, 'RED', 'Boston');
-INSERT INTO Company VALUES (2, 'BLUE', 'New York');
-
--- Sample Data: Orders
-INSERT INTO Orders VALUES (1, '2014-01-01', 1, 1, 10000);
-INSERT INTO Orders VALUES (2, '2014-02-01', 2, 2, 5000);
-INSERT INTO Orders VALUES (3, '2014-03-01', 2, 3, 50000);
+-- Sample Data: MyNumbers
+INSERT INTO MyNumbers VALUES (8);
+INSERT INTO MyNumbers VALUES (8);
+INSERT INTO MyNumbers VALUES (3);
+INSERT INTO MyNumbers VALUES (3);
+INSERT INTO MyNumbers VALUES (1);
+INSERT INTO MyNumbers VALUES (4);
+INSERT INTO MyNumbers VALUES (5);
+INSERT INTO MyNumbers VALUES (6);
+INSERT INTO MyNumbers VALUES (6);
 """
 
-    if any(term in combined_lower for term in ["consecutive available seats", "cinema", "seat_id", "free"]):
+    if any(term in combined_lower for term in ["shortest distance in a line", "from point", "point p1", "shortest"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Point
+DROP TABLE IF EXISTS Point;
+CREATE TABLE Point (
+    x INTEGER PRIMARY KEY
+);
+
+-- Sample Data: Point
+INSERT INTO Point VALUES (-1);
+INSERT INTO Point VALUES (0);
+INSERT INTO Point VALUES (2);
+"""
+
+    if any(term in combined_lower for term in ["not boring movies", "boring", "movie", "rating"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Cinema
+DROP TABLE IF EXISTS Cinema;
+CREATE TABLE Cinema (
+    id INTEGER PRIMARY KEY,
+    movie VARCHAR(50),
+    description VARCHAR(50),
+    rating REAL
+);
+
+-- Sample Data: Cinema
+INSERT INTO Cinema VALUES (1, 'War', 'great 3D', 8.9);
+INSERT INTO Cinema VALUES (2, 'Science', 'fiction', 8.5);
+INSERT INTO Cinema VALUES (3, 'Irish', 'boring', 6.2);
+INSERT INTO Cinema VALUES (4, 'Ice Song', 'Fantacy', 8.6);
+INSERT INTO Cinema VALUES (5, 'House Card', 'Interesting', 9.1);
+"""
+
+    if any(term in combined_lower for term in ["consecutive available seats", "seat_id", "free"]):
         return """-- Step 1: Database Schema & Data Setup
 -- Run this script to create and populate the practice database tables.
 
@@ -329,7 +493,7 @@ INSERT INTO RequestAccepted VALUES (1, 2, '2016-06-03');
 INSERT INTO RequestAccepted VALUES (2, 3, '2016-06-08');
 """
 
-    if any(term in combined_lower for term in ["at least 5 students", "courses", "student", "class"]):
+    if any(term in combined_lower for term in ["at least 5 students", "classes with at least 5 students", "courses group by class"]):
         return """-- Step 1: Database Schema & Data Setup
 -- Run this script to create and populate the practice database tables.
 
@@ -950,30 +1114,31 @@ INSERT INTO students VALUES (6, 'Sneha', '10C', 90);
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
+    first_name TEXT,
     employee_name TEXT,
     department_id INTEGER
 );
 
 -- Sample Data: employees""")
                     if "cross join" in (title + " " + objective).lower():
-                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
-INSERT INTO employees VALUES (2, 'Alice', 102);
-INSERT INTO employees VALUES (3, 'Bob', 103);""")
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 'Bob', 103);""")
                     elif "right join" in (title + " " + objective).lower():
-                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
-INSERT INTO employees VALUES (2, 'Alice', 102);
-INSERT INTO employees VALUES (3, 'Bob', 103);""")
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 'Bob', 103);""")
                     elif "inner join" in (title + " " + objective).lower():
-                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
-INSERT INTO employees VALUES (2, 'Alice', 102);
-INSERT INTO employees VALUES (3, 'Bob', 103);
-INSERT INTO employees VALUES (4, 'David', NULL);""")
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 'Bob', 103);
+INSERT INTO employees VALUES (4, 'David', 'David', NULL);""")
                     else:
-                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
-INSERT INTO employees VALUES (2, 'Alice', 102);
-INSERT INTO employees VALUES (3, 'Bob', 103);
-INSERT INTO employees VALUES (4, 'David', NULL);
-INSERT INTO employees VALUES (5, 'Emma', 105);""")
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 'Bob', 103);
+INSERT INTO employees VALUES (4, 'David', 'David', NULL);
+INSERT INTO employees VALUES (5, 'Emma', 'Emma', 105);""")
                 elif tbl == "departments":
                     parts.append("""-- Table: departments
 DROP TABLE IF EXISTS departments;
@@ -998,16 +1163,17 @@ INSERT INTO departments VALUES (104, 'Marketing');""")
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
+    first_name TEXT,
     employee_name TEXT,
     manager_id INTEGER
 );
 
 -- Sample Data: employees
-INSERT INTO employees VALUES (1, 'John', NULL);
-INSERT INTO employees VALUES (2, 'Alice', 1);
-INSERT INTO employees VALUES (3, 'Bob', 1);
-INSERT INTO employees VALUES (4, 'David', 2);
-INSERT INTO employees VALUES (5, 'Emma', NULL);
+INSERT INTO employees VALUES (1, 'John', 'John', NULL);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 1);
+INSERT INTO employees VALUES (3, 'Bob', 'Bob', 1);
+INSERT INTO employees VALUES (4, 'David', 'David', 2);
+INSERT INTO employees VALUES (5, 'Emma', 'Emma', NULL);
 """)
                 continue
 
@@ -1016,16 +1182,17 @@ INSERT INTO employees VALUES (5, 'Emma', NULL);
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
+    first_name TEXT,
     employee_name TEXT,
     manager_id INTEGER
 );
 
 -- Sample Data: employees
-INSERT INTO employees VALUES (1, 'John', NULL);
-INSERT INTO employees VALUES (2, 'Alice', 1);
-INSERT INTO employees VALUES (3, 'Bob', 1);
-INSERT INTO employees VALUES (4, 'David', 2);
-INSERT INTO employees VALUES (5, 'Emma', 2);
+INSERT INTO employees VALUES (1, 'John', 'John', NULL);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 1);
+INSERT INTO employees VALUES (3, 'Bob', 'Bob', 1);
+INSERT INTO employees VALUES (4, 'David', 'David', 2);
+INSERT INTO employees VALUES (5, 'Emma', 'Emma', 2);
 """)
                 continue
 
@@ -1034,16 +1201,17 @@ INSERT INTO employees VALUES (5, 'Emma', 2);
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
+    first_name TEXT,
     employee_name TEXT,
     manager_id INTEGER
 );
 
 -- Sample Data: employees
-INSERT INTO employees VALUES (1, 'John', 3);
-INSERT INTO employees VALUES (2, 'Alice', 3);
-INSERT INTO employees VALUES (3, 'Robert', 5);
-INSERT INTO employees VALUES (4, 'David', 3);
-INSERT INTO employees VALUES (5, 'Sophia', NULL);
+INSERT INTO employees VALUES (1, 'John', 'John', 3);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 3);
+INSERT INTO employees VALUES (3, 'Robert', 'Robert', 5);
+INSERT INTO employees VALUES (4, 'David', 'David', 3);
+INSERT INTO employees VALUES (5, 'Sophia', 'Sophia', NULL);
 """)
                 continue
 
