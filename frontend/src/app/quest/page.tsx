@@ -124,7 +124,7 @@ function CurriculumExplorerContent() {
 
   const trackChapters = useMemo(() => {
     if (activeTrack === 'master') {
-      return chapters.filter((c) => c.chapter_id >= 13 && c.chapter_id <= 22);
+      return chapters.filter((c) => (c.chapter_id >= 13 && c.chapter_id <= 22) || c.levels?.some((l) => l.track === 'master' || l.code_id?.startsWith('Pro-')));
     }
     if (activeTrack === 'fundamentals') {
       // Module 1 & 2: Beginner Fundamentals (Basics-001 to Basics-035, 35 problems)
@@ -136,7 +136,7 @@ function CurriculumExplorerContent() {
     }
     if (activeTrack === 'advanced') {
       // Module 8 through 12: Advanced SQL & Production Analytics (SQL-121 to SQL-215, 95 problems)
-      return chapters.filter((c) => c.chapter_id >= 8 && c.chapter_id <= 12);
+      return chapters.filter((c) => (c.chapter_id >= 8 && c.chapter_id <= 12) && !c.levels?.every((l) => l.track === 'master' || l.code_id?.startsWith('Pro-')));
     }
     return chapters;
   }, [chapters, activeTrack]);
@@ -486,13 +486,16 @@ function CurriculumExplorerContent() {
                         filteredProblems.map((problem) => {
                           const isSolved = isProblemSolved(problem, solvedIds, trackProblems);
                           const problemCode = problem.code_id || (problem.chapter_id <= 2 ? `Basics-${String(problem.level_number).padStart(3, '0')}` : `SQL-${String(problem.level_number).padStart(3, '0')}`);
+                          const isMaster = problem.track === 'master' || problem.chapter_id >= 13 || problemCode.startsWith('Pro-');
                           const isBasics = problemCode.startsWith('Basics');
-                          const isAdvanced = problem.chapter_id >= 8 || problem.track === 'advanced';
-                          const idColorClass = isBasics
-                            ? 'text-[#48BB78]'
-                            : isAdvanced
-                              ? 'text-[#A855F7]'
-                              : 'text-[#FF6B00]';
+                          const isAdvanced = (problem.chapter_id >= 8 && problem.chapter_id <= 12) || problem.track === 'advanced';
+                          const idColorClass = isMaster
+                            ? 'text-[#38BDF8]'
+                            : isBasics
+                              ? 'text-[#48BB78]'
+                              : isAdvanced
+                                ? 'text-[#A855F7]'
+                                : 'text-[#FF6B00]';
                           const concept = getSqlConceptTag(problem);
 
                           return (

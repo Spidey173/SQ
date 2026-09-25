@@ -248,12 +248,27 @@ def execute_sql_in_sandbox(
                 pass
         return None
 
+    def _sql_datediff(d1, d2):
+        if not d1 or not d2:
+            return None
+        try:
+            from datetime import date
+            p1 = [int(x) for x in str(d1).strip().split(" ")[0].split("-")]
+            p2 = [int(x) for x in str(d2).strip().split(" ")[0].split("-")]
+            dt1 = date(p1[0], p1[1], p1[2])
+            dt2 = date(p2[0], p2[1], p2[2])
+            return (dt1 - dt2).days
+        except Exception:
+            return None
+
     conn.create_function("MONTH", 1, _sql_month)
     conn.create_function("month", 1, _sql_month)
     conn.create_function("YEAR", 1, _sql_year)
     conn.create_function("year", 1, _sql_year)
     conn.create_function("DAY", 1, _sql_day)
     conn.create_function("day", 1, _sql_day)
+    conn.create_function("DATEDIFF", 2, _sql_datediff)
+    conn.create_function("datediff", 2, _sql_datediff)
 
     # Attach execution timeout handler to prevent infinite loops (e.g. recursive CTEs)
     deadline = time.perf_counter() + timeout_seconds
@@ -300,7 +315,17 @@ def execute_sql_in_sandbox(
 
         # Split by semicolons not enclosed within single quotes
         raw_statements = re.split(r";(?=(?:[^']*'[^']*')*[^']*$)", cleaned_no_comments)
-        statements = [stmt.strip() for stmt in raw_statements if stmt.strip()]
+        statements = []
+        for s in raw_statements:
+            s_clean = s.strip()
+            if not s_clean:
+                continue
+            # Transpile MySQL multi-table DELETE syntax: DELETE p1 FROM Person p1 JOIN Person p2 ON ...
+            del_match = re.match(r"DELETE\s+([a-zA-Z0-9_]+)\s+FROM\s+([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)\s+JOIN\s+([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)\s+ON\s+(.*)", s_clean, re.IGNORECASE | re.DOTALL)
+            if del_match:
+                del_alias, t1, a1, t2, a2, on_cond = del_match.groups()
+                s_clean = f"DELETE FROM {t1} WHERE id IN (SELECT {a1}.id FROM {t1} {a1} JOIN {t2} {a2} ON {on_cond})"
+            statements.append(s_clean)
 
         columns = []
         rows = []
@@ -334,9 +359,34 @@ def execute_sql_in_sandbox(
             row_lines = [" | ".join(str(val) if val is not None else "NULL" for val in row) for row in rows]
             stdout_text = f"{col_header}\n{divider}\n" + "\n".join(row_lines) if rows else f"{col_header}\n{divider}\n(0 rows returned)"
         else:
-            columns = []
-            rows = []
-            stdout_text = "Query executed successfully. (No result set)"
+            # For data-modifying queries (DELETE / UPDATE), display the updated table state if Person exists
+            target_table = None
+            if "person" in cleaned_no_comments.lower():
+                target_table = "Person"
+            
+            if target_table:
+                try:
+                    cursor.execute(f"SELECT id, email FROM {target_table} ORDER BY id")
+                    if cursor.description:
+                        columns = [desc[0] for desc in cursor.description]
+                        raw_rows = cursor.fetchall()
+                        rows = [list(row) for row in raw_rows]
+                        col_header = " | ".join(columns)
+                        divider = "-" * max(len(col_header), 20)
+                        row_lines = [" | ".join(str(val) if val is not None else "NULL" for val in row) for row in rows]
+                        stdout_text = f"{col_header}\n{divider}\n" + "\n".join(row_lines) if rows else f"{col_header}\n{divider}\n(0 rows returned)"
+                    else:
+                        columns = []
+                        rows = []
+                        stdout_text = "Query executed successfully. (No result set)"
+                except Exception:
+                    columns = []
+                    rows = []
+                    stdout_text = "Query executed successfully. (No result set)"
+            else:
+                columns = []
+                rows = []
+                stdout_text = "Query executed successfully. (No result set)"
 
         elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
         return {

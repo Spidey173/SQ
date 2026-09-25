@@ -611,7 +611,347 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "explanation": "Executes SELECT e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_name. It treats the single 'employees' table as two distinct entities using aliases (e and m), looking up the manager's ID from the 'e' side against the employee ID on the 'm' side. The LEFT JOIN ensures top-level executives (who have no manager) are still included.",
     "keyTakeaway": "SELF JOIN is not a special keyword, but a technique of aliasing the same table twice to resolve hierarchical or sequential relationships contained within a single dataset."
   }
-};
+,
+  "SQL-026": {
+    "code_id": "SQL-026",
+    "levelNumber": 61,
+    "title": "CROSS JOIN",
+    "optimalCode": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nCROSS JOIN departments AS d\nORDER BY e.employee_name,\n         d.department_name;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_name, d.department_name FROM employees AS e CROSS JOIN departments AS d ORDER BY e.employee_name, d.department_name, producing a Cartesian Product that pairs every employee with every department without any matching condition, and sorting by employee name and department name.",
+    "keyTakeaway": "CROSS JOIN generates a Cartesian Product combining every row from the first table with every row from the second table without needing an ON clause."
+  },
+  "SQL-027": {
+    "code_id": "SQL-027",
+    "levelNumber": 62,
+    "title": "Employees with Department Names",
+    "optimalCode": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id, performing an inner join to display each employee alongside their department name and sorting by employee_id.",
+    "keyTakeaway": "INNER JOIN combines related records from two tables by matching key columns in the ON clause, eliminating unmatched rows from both tables."
+  },
+  "SQL-028": {
+    "code_id": "SQL-028",
+    "levelNumber": 63,
+    "title": "Customers with Orders",
+    "optimalCode": "SELECT o.order_id,\n       c.customer_name,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nORDER BY o.order_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT o.order_id, c.customer_name, o.order_date, o.total_amount FROM orders AS o INNER JOIN customers AS c ON o.customer_id = c.customer_id ORDER BY o.order_id, joining orders with customers on customer_id to display each placed order with the customer's name, sorted by order_id.",
+    "keyTakeaway": "INNER JOIN connects transaction tables (like orders) to master dimension tables (like customers) across a one-to-many relationship, filtering out customers who have placed zero orders."
+  },
+  "SQL-029": {
+    "code_id": "SQL-029",
+    "levelNumber": 64,
+    "title": "Customers without Orders",
+    "optimalCode": "SELECT c.customer_id,\n       c.customer_name\nFROM customers AS c\nLEFT JOIN orders AS o\nON c.customer_id = o.customer_id\nWHERE o.customer_id IS NULL\nORDER BY c.customer_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT c.customer_id, c.customer_name FROM customers AS c LEFT JOIN orders AS o ON c.customer_id = o.customer_id WHERE o.customer_id IS NULL ORDER BY c.customer_id. It starts with every customer, performs a LEFT JOIN against orders, and filters using WHERE o.customer_id IS NULL to return only customers who have never placed an order, sorted by customer_id.",
+    "keyTakeaway": "LEFT JOIN paired with a WHERE joined_table.id IS NULL check is the canonical SQL anti-join pattern to identify unmatched dimension records."
+  },
+  "SQL-030": {
+    "code_id": "SQL-030",
+    "levelNumber": 65,
+    "title": "Orders without Customers",
+    "optimalCode": "SELECT o.order_id,\n       o.customer_id,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nLEFT JOIN customers AS c\nON o.customer_id = c.customer_id\nWHERE c.customer_id IS NULL\nORDER BY o.order_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT o.order_id, o.customer_id, o.order_date, o.total_amount FROM orders AS o LEFT JOIN customers AS c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL ORDER BY o.order_id. It starts with all orders, joins with customers on customer_id, and filters for orders that reference non-existent customers using WHERE c.customer_id IS NULL, identifying orphan records sorted by order_id.",
+    "keyTakeaway": "Detecting orphan records via LEFT JOIN with WHERE parent.id IS NULL audits data integrity and reveals broken foreign keys."
+  },
+  "SQL-031": {
+    "code_id": "SQL-031",
+    "levelNumber": 66,
+    "title": "Students with Course Names",
+    "optimalCode": "SELECT s.student_id,\n       s.student_name,\n       c.course_name\nFROM students AS s\nINNER JOIN courses AS c\nON s.course_id = c.course_id\nORDER BY s.student_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT s.student_id, s.student_name, c.course_name FROM students AS s INNER JOIN courses AS c ON s.course_id = c.course_id ORDER BY s.student_id, combining students with courses on course_id to display each enrolled student's name alongside their course name, sorted by student_id.",
+    "keyTakeaway": "INNER JOIN combines related records across normalized tables by matching foreign keys to primary keys, avoiding data redundancy."
+  },
+  "SQL-032": {
+    "code_id": "SQL-032",
+    "levelNumber": 67,
+    "title": "Employees without Managers",
+    "optimalCode": "SELECT employee_id,\n       employee_name\nFROM employees\nWHERE manager_id IS NULL\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT employee_id, employee_name FROM employees WHERE manager_id IS NULL ORDER BY employee_id, scanning employees and filtering with WHERE manager_id IS NULL to return all top-level executives who report to no manager, sorted by employee_id.",
+    "keyTakeaway": "In SQL, comparing NULL with = evaluates to UNKNOWN; finding records without parents requires the IS NULL operator."
+  },
+  "SQL-033": {
+    "code_id": "SQL-033",
+    "levelNumber": 68,
+    "title": "Manager and Employee Names",
+    "optimalCode": "SELECT e.employee_id,\n       e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_id, e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_id, performing a SELF JOIN by aliasing employees as e (subordinate) and m (manager) on e.manager_id = m.employee_id. The LEFT JOIN ensures top-level leaders with NULL managers remain in the output.",
+    "keyTakeaway": "SELF JOIN aliasing the same table as parent and child allows querying hierarchical reporting chains stored in a single table."
+  },
+  "SQL-034": {
+    "code_id": "SQL-034",
+    "levelNumber": 69,
+    "title": "Multiple Table Joins",
+    "optimalCode": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name,\n       l.city\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nINNER JOIN locations AS l\nON d.location_id = l.location_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M × K)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_id, e.employee_name, d.department_name, l.city FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id INNER JOIN locations AS l ON d.location_id = l.location_id ORDER BY e.employee_id, chaining two INNER JOINs through intermediate foreign keys to assemble employee, department, and city data into a unified result set, sorted by employee_id.",
+    "keyTakeaway": "Chaining multiple INNER JOINs allows traversing relational entity pathways (Employees -> Departments -> Locations) using foreign key bridges."
+  },
+  "SQL-035": {
+    "code_id": "SQL-035",
+    "levelNumber": 70,
+    "title": "Join Three Tables",
+    "optimalCode": "SELECT o.order_id,\n       c.customer_name,\n       p.product_name,\n       p.price\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nINNER JOIN products AS p\nON o.product_id = p.product_id\nORDER BY o.order_id;",
+    "timeComplexity": "O(N × M × K)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT o.order_id, c.customer_name, p.product_name, p.price FROM orders AS o INNER JOIN customers AS c ON o.customer_id = c.customer_id INNER JOIN products AS p ON o.product_id = p.product_id ORDER BY o.order_id. It starts with orders, joins customers on customer_id, and joins products on product_id to assemble complete transaction details, sorted by order_id.",
+    "keyTakeaway": "Starting from the central transaction table and joining dimension tables on their respective foreign keys is the quintessential multi-join reporting pattern."
+  },
+  "ASQL-001": {
+    "code_id": "ASQL-001",
+    "levelNumber": 71,
+    "title": "Grade Students",
+    "optimalCode": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 90 THEN 'A'\n           WHEN marks >= 80 THEN 'B'\n           WHEN marks >= 70 THEN 'C'\n           WHEN marks >= 60 THEN 'D'\n           ELSE 'F'\n       END AS grade\nFROM students\nORDER BY student_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT student_id, student_name, marks, CASE WHEN marks >= 90 THEN 'A' WHEN marks >= 80 THEN 'B' WHEN marks >= 70 THEN 'C' WHEN marks >= 60 THEN 'D' ELSE 'F' END AS grade FROM students ORDER BY student_id, applying conditional branching in descending order to assign letter grades A through F, sorted by student_id.",
+    "keyTakeaway": "CASE WHEN evaluates sequentially and short-circuits upon the first true condition, requiring descending numerical order when checking greater-than-or-equal thresholds."
+  },
+  "ASQL-002": {
+    "code_id": "ASQL-002",
+    "levelNumber": 72,
+    "title": "Salary Bands",
+    "optimalCode": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 70000 THEN 'Medium'\n           WHEN salary >= 40000 THEN 'Low'\n           ELSE 'Very Low'\n       END AS salary_band\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT employee_id, employee_name, salary, CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 70000 THEN 'Medium' WHEN salary >= 40000 THEN 'Low' ELSE 'Very Low' END AS salary_band FROM employees ORDER BY employee_id, classifying staff compensation into High, Medium, Low, and Very Low brackets via ordered conditional evaluation, sorted by employee_id.",
+    "keyTakeaway": "Conditional binning with CASE WHEN assigns discrete category labels to continuous numerical data in linear O(N) time."
+  },
+  "ASQL-003": {
+    "code_id": "ASQL-003",
+    "levelNumber": 73,
+    "title": "Age Groups",
+    "optimalCode": "SELECT person_id,\n       person_name,\n       age,\n       CASE\n           WHEN age >= 60 THEN 'Senior Citizen'\n           WHEN age >= 20 THEN 'Adult'\n           WHEN age >= 13 THEN 'Teen'\n           ELSE 'Child'\n       END AS age_group\nFROM persons\nORDER BY person_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT person_id, person_name, age, CASE WHEN age >= 60 THEN 'Senior Citizen' WHEN age >= 20 THEN 'Adult' WHEN age >= 13 THEN 'Teen' ELSE 'Child' END AS age_group FROM persons ORDER BY person_id, categorizing each person into demographic age cohorts via top-down conditional evaluation, sorted by person_id.",
+    "keyTakeaway": "Descending threshold evaluation in CASE WHEN cleanly assigns demographic categories without requiring overlapping range checks."
+  },
+  "ASQL-004": {
+    "code_id": "ASQL-004",
+    "levelNumber": 74,
+    "title": "Sales Categories",
+    "optimalCode": "SELECT sale_id,\n       customer_name,\n       sale_amount,\n       CASE\n           WHEN sale_amount >= 100000 THEN 'Premium'\n           WHEN sale_amount >= 50000 THEN 'High'\n           WHEN sale_amount >= 20000 THEN 'Medium'\n           ELSE 'Low'\n       END AS sales_category\nFROM sales\nORDER BY sale_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT sale_id, customer_name, sale_amount, CASE WHEN sale_amount >= 100000 THEN 'Premium' WHEN sale_amount >= 50000 THEN 'High' WHEN sale_amount >= 20000 THEN 'Medium' ELSE 'Low' END AS sales_category FROM sales ORDER BY sale_id, stratifying sales into Premium, High, Medium, and Low tiers in linear O(N) time.",
+    "keyTakeaway": "Cascading CASE WHEN statements offer high-performance transactional bucketing without the overhead of lookup tables or complex joins."
+  },
+  "ASQL-005": {
+    "code_id": "ASQL-005",
+    "levelNumber": 75,
+    "title": "Bonus Calculation",
+    "optimalCode": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN salary * 0.20\n           WHEN salary >= 70000 THEN salary * 0.15\n           WHEN salary >= 40000 THEN salary * 0.10\n           ELSE salary * 0.05\n       END AS bonus\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT employee_id, employee_name, salary, CASE WHEN salary >= 100000 THEN salary * 0.20 WHEN salary >= 70000 THEN salary * 0.15 WHEN salary >= 40000 THEN salary * 0.10 ELSE salary * 0.05 END AS bonus FROM employees ORDER BY employee_id, calculating tiered percentage bonuses through mathematical expressions directly inside CASE branches, sorted by employee_id.",
+    "keyTakeaway": "CASE WHEN branches can dynamically compute arithmetic expressions (e.g. salary * 0.20) rather than merely returning static literal strings."
+  },
+  "ASQL-006": {
+    "code_id": "ASQL-006",
+    "levelNumber": 76,
+    "title": "Customer Classification",
+    "optimalCode": "SELECT customer_id,\n       customer_name,\n       total_purchase,\n       CASE\n           WHEN total_purchase >= 100000 THEN 'Platinum'\n           WHEN total_purchase >= 50000 THEN 'Gold'\n           WHEN total_purchase >= 20000 THEN 'Silver'\n           ELSE 'Bronze'\n       END AS customer_type\nFROM customers\nORDER BY customer_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT customer_id, customer_name, total_purchase, CASE WHEN total_purchase >= 100000 THEN 'Platinum' WHEN total_purchase >= 50000 THEN 'Gold' WHEN total_purchase >= 20000 THEN 'Silver' ELSE 'Bronze' END AS customer_type FROM customers ORDER BY customer_id, classifying users into membership loyalty tiers in linear O(N) time.",
+    "keyTakeaway": "Loyalty tier segmentation using cascading CASE WHEN expressions allows instant real-time cohort labeling without batch ETL updates."
+  },
+  "ASQL-007": {
+    "code_id": "ASQL-007",
+    "levelNumber": 77,
+    "title": "Pass/Fail Status",
+    "optimalCode": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 40 THEN 'Pass'\n           ELSE 'Fail'\n       END AS result\nFROM students\nORDER BY student_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT student_id, student_name, marks, CASE WHEN marks >= 40 THEN 'Pass' ELSE 'Fail' END AS result FROM students ORDER BY student_id, implementing binary threshold evaluation using a single-branch CASE WHEN expression, sorted by student_id.",
+    "keyTakeaway": "A single-condition CASE WHEN statement with an ELSE clause is the canonical SQL pattern for binary flags and pass/fail thresholds."
+  },
+  "ASQL-008": {
+    "code_id": "ASQL-008",
+    "levelNumber": 78,
+    "title": "Gender Formatting",
+    "optimalCode": "SELECT employee_id,\n       employee_name,\n       gender,\n       CASE\n           WHEN gender = 'M' THEN 'Male'\n           WHEN gender = 'F' THEN 'Female'\n           WHEN gender = 'O' THEN 'Other'\n           ELSE 'Unknown'\n       END AS gender_name\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT employee_id, employee_name, gender, CASE WHEN gender = 'M' THEN 'Male' WHEN gender = 'F' THEN 'Female' WHEN gender = 'O' THEN 'Other' ELSE 'Unknown' END AS gender_name FROM employees ORDER BY employee_id, converting single-character database codes into human-readable strings while safely mapping unexpected codes to 'Unknown', sorted by employee_id.",
+    "keyTakeaway": "CASE WHEN enables presentation-layer decoding of internal database codes without modifying physical storage or schema constraints."
+  },
+  "ASQL-009": {
+    "code_id": "ASQL-009",
+    "levelNumber": 79,
+    "title": "Conditional Aggregation",
+    "optimalCode": "SELECT\n    COUNT(*) AS total_students,\n    SUM(\n        CASE\n            WHEN marks >= 40 THEN 1\n            ELSE 0\n        END\n    ) AS passed_students,\n    SUM(\n        CASE\n            WHEN marks < 40 THEN 1\n            ELSE 0\n        END\n    ) AS failed_students\nFROM students;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "explanation": "Executes SELECT COUNT(*) AS total_students, SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END) AS passed_students, SUM(CASE WHEN marks < 40 THEN 1 ELSE 0 END) AS failed_students FROM students, pivoting multiple filtered aggregate counts into a single-row executive summary in a single O(N) table pass.",
+    "keyTakeaway": "The SUM(CASE WHEN ... THEN 1 ELSE 0 END) pattern is the foundational building block for conditional counting and data pivoting across all SQL dialects."
+  },
+  "ASQL-010": {
+    "code_id": "ASQL-010",
+    "levelNumber": 80,
+    "title": "Multiple CASE Conditions",
+    "optimalCode": "SELECT employee_id,\n       employee_name,\n       age,\n       salary,\n       CASE\n           WHEN age < 30 THEN 'Young'\n           WHEN age < 50 THEN 'Mid Age'\n           ELSE 'Senior'\n       END AS age_category,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 50000 THEN 'Medium'\n           ELSE 'Low'\n       END AS salary_category\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT employee_id, employee_name, age, salary, CASE WHEN age < 30 THEN 'Young' WHEN age < 50 THEN 'Mid Age' ELSE 'Senior' END AS age_category, CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 50000 THEN 'Medium' ELSE 'Low' END AS salary_category FROM employees ORDER BY employee_id, generating multiple distinct categorical dimensions independently in a single query scan.",
+    "keyTakeaway": "Multiple distinct CASE WHEN expressions can exist within the same SELECT projection, each operating as an independent computed column."
+  },
+  "Pro-001": {
+    "code_id": "Pro-001",
+    "levelNumber": 81,
+    "title": "Combine Two Tables",
+    "optimalCode": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT p.firstName, p.lastName, a.city, a.state FROM Person AS p LEFT JOIN Address AS a ON p.personId = a.personId, preserving all individuals in Person while joining their corresponding location details when available.",
+    "keyTakeaway": "A LEFT JOIN preserves every row from the primary left relation, populating unmatched right relation columns with NULL values."
+  },
+  "Pro-002": {
+    "code_id": "Pro-002",
+    "levelNumber": 82,
+    "title": "Employees Earning More Than Their Managers",
+    "optimalCode": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.name AS Employee FROM Employee AS e JOIN Employee AS m ON e.managerId = m.id WHERE e.salary > m.salary, using a self-join to align each employee with their respective supervisor and isolating those whose salary strictly exceeds their manager's.",
+    "keyTakeaway": "A self-join links hierarchical rows residing within the same physical relation by pairing a parent foreign key (managerId) with a primary key (id)."
+  },
+  "Pro-003": {
+    "code_id": "Pro-003",
+    "levelNumber": 83,
+    "title": "Duplicate Emails",
+    "optimalCode": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT email AS Email FROM Person GROUP BY email HAVING COUNT(*) > 1, aggregating identical email entries into groups and filtering for those appearing more than once in linear O(N) time.",
+    "keyTakeaway": "HAVING filters groups post-aggregation, making it the canonical clause for evaluating group cardinality thresholds like COUNT(*) > 1."
+  },
+  "Pro-004": {
+    "code_id": "Pro-004",
+    "levelNumber": 84,
+    "title": "Delete Duplicate Emails",
+    "optimalCode": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(1)",
+    "explanation": "Executes DELETE p1 FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id > p2.id, self-joining the table on matching email addresses and deleting the record with the strictly larger primary key id.",
+    "keyTakeaway": "Multi-table DELETE syntax with a self-join purges duplicate records in-place while cleanly retaining the record with the minimum identifier."
+  },
+  "Pro-005": {
+    "code_id": "Pro-005",
+    "levelNumber": 85,
+    "title": "Rising Temperature",
+    "optimalCode": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT w1.id FROM Weather w1 JOIN Weather w2 ON DATEDIFF(w1.recordDate, w2.recordDate) = 1 WHERE w1.temperature > w2.temperature, self-joining weather records on exactly consecutive calendar dates and returning dates where temperatures rose strictly above the preceding day.",
+    "keyTakeaway": "Joining on `DATEDIFF(today, yesterday) = 1` enforces strict calendar adjacency regardless of gaps or non-consecutive primary key IDs."
+  },
+  "Pro-006": {
+    "code_id": "Pro-006",
+    "levelNumber": 86,
+    "title": "Game Play Analysis I",
+    "optimalCode": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id, aggregating each player's session records to isolate their chronologically earliest login timestamp.",
+    "keyTakeaway": "Applying MIN() on date columns grouped by an entity identifier is the standard relational design pattern for cohort onboarding and first-touch attribution."
+  },
+  "Pro-007": {
+    "code_id": "Pro-007",
+    "levelNumber": 87,
+    "title": "Game Play Analysis II",
+    "optimalCode": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT a.player_id, a.device_id FROM Activity a JOIN (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id) f ON a.player_id = f.player_id AND a.event_date = f.first_login, calculating each player's earliest login date and joining back to the source table to recover the associated hardware device ID.",
+    "keyTakeaway": "When an aggregate like MIN() is needed alongside other unaggregated row attributes, computing the aggregate in a subquery and joining back on the composite key is the canonical pattern."
+  },
+  "Pro-008": {
+    "code_id": "Pro-008",
+    "levelNumber": 88,
+    "title": "Employee Bonus",
+    "optimalCode": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.name, b.bonus FROM Employee e LEFT JOIN Bonus b ON e.empId = b.empId WHERE b.bonus < 1000 OR b.bonus IS NULL, performing a left join to ensure employees without bonus records are preserved as NULL and retained alongside bonuses strictly below 1000.",
+    "keyTakeaway": "In three-valued logic, `NULL < 1000` evaluates to UNKNOWN (excluded by WHERE); you must explicitly handle missing rows with `OR col IS NULL` or `COALESCE()`."
+  },
+  "Pro-009": {
+    "code_id": "Pro-009",
+    "levelNumber": 89,
+    "title": "Find Customer Referee",
+    "optimalCode": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "explanation": "Executes SELECT name FROM Customer WHERE referee_id <> 2 OR referee_id IS NULL, filtering for customers not referred by id 2 while explicitly preserving NULL values which would otherwise evaluate to UNKNOWN and be dropped.",
+    "keyTakeaway": "Because comparisons with NULL evaluate to UNKNOWN, any inequality check (col <> value) drops NULL rows unless explicitly accompanied by `OR col IS NULL`."
+  },
+  "Pro-010": {
+    "code_id": "Pro-010",
+    "levelNumber": 90,
+    "title": "Customer Placing the Largest Number of Orders",
+    "optimalCode": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT customer_number FROM Orders GROUP BY customer_number ORDER BY COUNT(*) DESC LIMIT 1, aggregating order records per customer, sorting in descending order of order frequency, and retaining the top single customer.",
+    "keyTakeaway": "The aggregation pattern `GROUP BY ... ORDER BY COUNT(*) DESC LIMIT 1` is the standard relational technique for isolating the mode or highest-frequency entity."
+  },
+  "Pro-011": {
+    "code_id": "Pro-011",
+    "levelNumber": 91,
+    "title": "Big Countries",
+    "optimalCode": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "explanation": "Executes SELECT name, population, area FROM World WHERE area >= 3000000 OR population >= 25000000, filtering for countries that qualify as large on either geographic expanse (>= 3M) or demographic scale (>= 25M).",
+    "keyTakeaway": "The logical OR operator returns rows satisfying either boundary condition, whereas >= includes the exact boundary threshold itself."
+  },
+  "Pro-012": {
+    "code_id": "Pro-012",
+    "levelNumber": 92,
+    "title": "Classes With at Least 5 Students",
+    "optimalCode": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT class FROM Courses GROUP BY class HAVING COUNT(student) >= 5, partitioning course enrollments by class and filtering the post-aggregation groups with HAVING to retain only classes with 5 or more students.",
+    "keyTakeaway": "While WHERE filters individual rows before grouping, HAVING filters aggregated groups after GROUP BY and supports aggregate functions like COUNT()."
+  },
+  "Pro-013": {
+    "code_id": "Pro-013",
+    "levelNumber": 93,
+    "title": "Friend Requests I: Overall Acceptance Rate",
+    "optimalCode": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes scalar subqueries counting distinct accepted friendship pairs and distinct sent request pairs, dividing them with floating-point precision, handling zero requests with IFNULL/NULLIF, and rounding the final rate to 2 decimal places.",
+    "keyTakeaway": "Ratios comparing counts from independent tables should use scalar subqueries, floating-point coercion (* 1.0), and NULLIF/IFNULL to prevent division-by-zero crashes."
+  },
+  "Pro-014": {
+    "code_id": "Pro-014",
+    "levelNumber": 94,
+    "title": "Consecutive Available Seats",
+    "optimalCode": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;",
+    "timeComplexity": "O(N²)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes a self join on Cinema matching adjacent seats where ABS(c1.seat_id - c2.seat_id) = 1 and both are free, deduplicating with DISTINCT and sorting by seat_id.",
+    "keyTakeaway": "Adjacency conditions on row IDs within the same table can be cleanly expressed via self joins with ABS(id1 - id2) = 1, coupled with DISTINCT to deduplicate overlapping neighbor pairs."
+  }};
 
 export const ALL_50_SOLUTIONS: Record<string, any> = {
   ...BASE_SOLUTIONS_MAP,

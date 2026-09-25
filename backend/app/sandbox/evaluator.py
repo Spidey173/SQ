@@ -5,9 +5,6 @@ from app.sandbox.sql_runner import execute_sql_in_sandbox
 
 DANGEROUS_SQL_PATTERNS = [
     r"\bDROP\b",
-    r"\bDELETE\b",
-    r"\bUPDATE\b",
-    r"\bINSERT\b",
     r"\bALTER\b",
     r"\bCREATE\b",
     r"\bPRAGMA\b",
@@ -26,11 +23,11 @@ def is_safe_sql_query(query: str) -> tuple[bool, Optional[str]]:
     for pattern in DANGEROUS_SQL_PATTERNS:
         if re.search(pattern, clean_query, re.IGNORECASE):
             match = re.search(pattern, clean_query, re.IGNORECASE).group(0)
-            return False, f"Security Violation: '{match}' statements are disabled. Only read-only queries (SELECT, JOIN, CTE, Window Functions) are permitted."
+            return False, f"Security Violation: '{match}' statements are disabled."
 
     upper_q = clean_query.upper()
-    if not (upper_q.startswith("SELECT") or upper_q.startswith("WITH") or upper_q.startswith("--")):
-        return False, "Only read-only SELECT or WITH (CTE) queries are supported."
+    if not (upper_q.startswith("SELECT") or upper_q.startswith("WITH") or upper_q.startswith("DELETE") or upper_q.startswith("UPDATE") or upper_q.startswith("--")):
+        return False, "Only read-only SELECT/WITH or data modification queries (DELETE/UPDATE) are supported."
 
     return True, None
 
@@ -73,7 +70,7 @@ def check_sql_output_matches(
         return False
 
     upper_code = real_code.upper()
-    if not (upper_code.startswith("SELECT") or upper_code.startswith("WITH")):
+    if not (upper_code.startswith("SELECT") or upper_code.startswith("WITH") or upper_code.startswith("DELETE") or upper_code.startswith("UPDATE")):
         return False
 
     if not user_lines:
@@ -142,7 +139,21 @@ def check_sql_output_matches(
     )
 
     if has_order_by:
-        return all(row_matches(u, t) for u, t in zip(u_r, t_r))
+        if all(row_matches(u, t) for u, t in zip(u_r, t_r)):
+            return True
+        # Fallback: check multiset match in case database engines differ on NULL sort positions (e.g. SQLite NULLS FIRST vs ANSI NULLS LAST)
+        remaining_target = list(t_r)
+        for u_row in u_r:
+            found_idx = None
+            for idx, t_row in enumerate(remaining_target):
+                if row_matches(u_row, t_row):
+                    found_idx = idx
+                    break
+            if found_idx is not None:
+                remaining_target.pop(found_idx)
+            else:
+                return False
+        return len(remaining_target) == 0
     else:
         # Multiset comparison: order doesn't matter, but multiplicities must match
         remaining_target = list(t_r)

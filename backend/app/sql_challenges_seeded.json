@@ -1454,25 +1454,25 @@
     "chapter_id": 3,
     "chapter_title": "Module 3: Core SQL Analytics",
     "title": "HAVING with COUNT()",
-    "story": "An online shopping website's inventory team wants to perform a category-wise audit. Products belong to different categories, and they need to focus on large categories that contain a significant number of products.",
-    "objective": "Write an SQL query to find product categories that contain at least 10 products. Return category_name, product_count. Sort the result by product_count in descending order.",
+    "story": "An online shopping platform organizes products into various departments and categories. The merchandising team wants to identify major product categories that contain at least 10 products so they can feature them on the homepage.",
+    "objective": "Write an SQL query to find product categories that contain at least 10 products. Return category_name and product_count. Sort the result by product_count in descending order.",
     "starter_code": "-- Problem #SQL-019: HAVING with COUNT()\n-- Write your SQL query below\n\n",
-    "expected_output": "category_name | product_count\n-----------------------------\nElectronics | 11",
+    "expected_output": "category_name | product_count\n-----------------------------\nSports | 20\nElectronics | 15\nFashion | 12",
     "hints": [
-      "Use GROUP BY category_name.",
-      "Use COUNT(*) AS product_count.",
-      "Use HAVING COUNT(*) >= 10 to filter the grouped categories.",
-      "Sort with ORDER BY product_count DESC."
+      "Group products by category using GROUP BY category_name.",
+      "Count items in each category using COUNT(*) AS product_count.",
+      "Filter aggregated groups using HAVING COUNT(*) >= 10.",
+      "Sort the results from highest count to lowest using ORDER BY product_count DESC."
     ],
     "test_cases": [
       {
         "input": "",
         "expected": "SELECT category_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10 ORDER BY product_count DESC;",
         "hidden": false,
-        "description": "Find categories with >= 10 products"
+        "description": "Find categories containing at least 10 products"
       }
     ],
-    "explanation": "SELECT category_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10 ORDER BY product_count DESC;",
+    "explanation": "SELECT category_name,\n       COUNT(*) AS product_count\nFROM products\nGROUP BY category_name\nHAVING COUNT(*) >= 10\nORDER BY product_count DESC;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT category_name,\n- Displays the category name.\nLine 2: COUNT(*) AS product_count\n- Counts the number of products inside each category group.\nLine 3: FROM products\n- Reads all product records.\nLine 4: GROUP BY category_name\n- Groups products by their category.\nLine 5: HAVING COUNT(*) >= 10\n- Keeps only categories containing 10 or more products.\nLine 6: ORDER BY product_count DESC;\n- Sorts from highest product count to lowest.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM products\nStep 2: GROUP BY category_name\nStep 3: COUNT(*)\nStep 4: HAVING COUNT(*) >= 10\nStep 5: SELECT category_name, product_count\nStep 6: ORDER BY product_count DESC",
     "difficulty": "Easy",
     "track": "core",
     "code_id": "SQL-019"
@@ -1482,25 +1482,25 @@
     "chapter_id": 3,
     "chapter_title": "Module 3: Core SQL Analytics",
     "title": "HAVING with SUM()",
-    "story": "An online shopping platform's marketing team is launching a VIP loyalty program. They want to identify high-value customers who have spent a significant amount of money across all their orders combined.",
-    "objective": "Write an SQL query to find customers whose total purchase amount exceeds 50,000. Return customer_id, customer_name, and total_purchase. Sort the result by total_purchase in descending order.",
+    "story": "An online shopping platform tracks customer purchase transactions. The marketing team wants to identify high-value customers whose total cumulative purchase amount exceeds \u20b950,000 for an exclusive loyalty rewards tier.",
+    "objective": "Write an SQL query to find customers whose total purchase amount exceeds \u20b950,000. Return customer_id, customer_name, and total_purchase. Sort the result by total_purchase in descending order.",
     "starter_code": "-- Problem #SQL-020: HAVING with SUM()\n-- Write your SQL query below\n\n",
     "expected_output": "customer_id | customer_name | total_purchase\n--------------------------------------------\n101 | Rahul | 60000\n103 | Amit | 55000",
     "hints": [
-      "Use GROUP BY customer_id, customer_name.",
-      "Use SUM(purchase_amount) AS total_purchase.",
-      "Use HAVING SUM(purchase_amount) > 50000.",
-      "Use ORDER BY total_purchase DESC."
+      "Group purchase transactions by customer: GROUP BY customer_id, customer_name.",
+      "Calculate cumulative spend using SUM(purchase_amount) AS total_purchase.",
+      "Filter aggregated customer totals using HAVING SUM(purchase_amount) > 50000.",
+      "Sort output descending by total_purchase: ORDER BY total_purchase DESC."
     ],
     "test_cases": [
       {
         "input": "",
         "expected": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING SUM(purchase_amount) > 50000 ORDER BY total_purchase DESC;",
         "hidden": false,
-        "description": "Find VIP customers with total spend > 50000"
+        "description": "Find customers whose total purchase exceeds 50000"
       }
     ],
-    "explanation": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING SUM(purchase_amount) > 50000 ORDER BY total_purchase DESC;",
+    "explanation": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING SUM(purchase_amount) > 50000\nORDER BY total_purchase DESC;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT customer_id, customer_name,\n- Displays customer ID and customer name.\nLine 2: SUM(purchase_amount) AS total_purchase\n- Computes total purchase sum per customer.\nLine 3: FROM purchases\n- Reads customer purchase records.\nLine 4: GROUP BY customer_id, customer_name\n- Clusters purchase orders by customer.\nLine 5: HAVING SUM(purchase_amount) > 50000\n- Filters out customers whose cumulative spend does not exceed 50000.\nLine 6: ORDER BY total_purchase DESC;\n- Sorts high spenders first.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM purchases\nStep 2: GROUP BY customer_id, customer_name\nStep 3: SUM(purchase_amount)\nStep 4: HAVING SUM(purchase_amount) > 50000\nStep 5: SELECT customer_id, customer_name, total_purchase\nStep 6: ORDER BY total_purchase DESC",
     "difficulty": "Easy",
     "track": "core",
     "code_id": "SQL-020"
@@ -1510,26 +1510,26 @@
     "chapter_id": 3,
     "chapter_title": "Module 3: Core SQL Analytics",
     "title": "INNER JOIN",
-    "story": "The HR department needs a consolidated report that displays each employee alongside the actual name of their department, instead of just the department ID.",
+    "story": "Corporate HR manages employee profiles and department structures across two separate tables. Management needs an official roster displaying active employees alongside their assigned department names, excluding any unassigned staff.",
     "objective": "Write an SQL query to display employees along with their department names. Return employee_id, employee_name, and department_name. Only display employees who belong to a department. Sort the result by employee_id.",
     "starter_code": "-- Problem #SQL-021: INNER JOIN\n-- Write your SQL query below\n\n",
     "expected_output": "employee_id | employee_name | department_name\n---------------------------------------------\n1 | John | HR\n2 | Alice | IT\n3 | Bob | Finance",
     "hints": [
-      "Use INNER JOIN to combine the employees and departments tables.",
-      "The join condition should be ON e.department_id = d.department_id.",
+      "Join employees and departments tables using INNER JOIN.",
+      "Specify the join condition on department_id: ON e.department_id = d.department_id.",
       "Select e.employee_id, e.employee_name, and d.department_name.",
-      "Order by e.employee_id."
+      "Sort the result by employee_id: ORDER BY e.employee_id."
     ],
     "test_cases": [
       {
         "input": "",
         "expected": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
         "hidden": false,
-        "description": "Inner join employees and departments"
+        "description": "Display employees with matching departments"
       }
     ],
-    "explanation": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
-    "difficulty": "Easy",
+    "explanation": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_id, e.employee_name, d.department_name\n- Projects employee ID, employee name, and department name.\nLine 2: FROM employees AS e\n- Scans the employees table using alias e.\nLine 3: INNER JOIN departments AS d\n- Joins the departments table using alias d.\nLine 4: ON e.department_id = d.department_id\n- Keeps only records where department_id matches in both tables.\nLine 5: ORDER BY e.employee_id;\n- Sorts the output by employee_id in ascending order.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: INNER JOIN departments AS d ON e.department_id = d.department_id\nStep 3: SELECT e.employee_id, e.employee_name, d.department_name\nStep 4: ORDER BY e.employee_id",
+    "difficulty": "Medium",
     "track": "core",
     "code_id": "SQL-021"
   },
@@ -1538,26 +1538,26 @@
     "chapter_id": 3,
     "chapter_title": "Module 3: Core SQL Analytics",
     "title": "LEFT JOIN",
-    "story": "The HR department needs a full roster of all employees, including their department names. Crucially, even new hires who haven't been assigned a department yet must appear on this list.",
+    "story": "HR operations is conducting a complete employee audit. Leadership wants a comprehensive list of all employees along with their assigned departments, ensuring newly hired or unassigned employees are still included with NULL department values.",
     "objective": "Write an SQL query to display all employees along with their department names. Return employee_id, employee_name, and department_name. Include employees even if they are not assigned to any department. Sort the result by employee_id.",
     "starter_code": "-- Problem #SQL-022: LEFT JOIN\n-- Write your SQL query below\n\n",
     "expected_output": "employee_id | employee_name | department_name\n---------------------------------------------\n1 | John | HR\n2 | Alice | IT\n3 | Bob | Finance\n4 | David | NULL\n5 | Emma | NULL",
     "hints": [
-      "Use LEFT JOIN to combine the employees and departments tables.",
-      "Make sure employees is the left table (after FROM).",
-      "The join condition is ON e.department_id = d.department_id.",
-      "Select e.employee_id, e.employee_name, d.department_name and ORDER BY e.employee_id."
+      "Use LEFT JOIN to include every row from the employees table: FROM employees AS e LEFT JOIN departments AS d.",
+      "Join tables on department_id: ON e.department_id = d.department_id.",
+      "Select e.employee_id, e.employee_name, and d.department_name.",
+      "Sort by employee_id: ORDER BY e.employee_id."
     ],
     "test_cases": [
       {
         "input": "",
         "expected": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e LEFT JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
         "hidden": false,
-        "description": "Left join employees and departments"
+        "description": "Display all employees including unassigned ones"
       }
     ],
-    "explanation": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e LEFT JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
-    "difficulty": "Easy",
+    "explanation": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_id, e.employee_name, d.department_name\n- Selects employee ID, employee name, and department name.\nLine 2: FROM employees AS e\n- Designates employees as the primary (left) table.\nLine 3: LEFT JOIN departments AS d\n- Appends matching department rows from the departments (right) table.\nLine 4: ON e.department_id = d.department_id\n- Specifies the linking relationship. Missing departments evaluate to NULL.\nLine 5: ORDER BY e.employee_id;\n- Sorts ascending by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: LEFT JOIN departments AS d ON e.department_id = d.department_id\nStep 3: SELECT e.employee_id, e.employee_name, d.department_name\nStep 4: ORDER BY e.employee_id",
+    "difficulty": "Medium",
     "track": "core",
     "code_id": "SQL-022"
   },
@@ -1566,26 +1566,26 @@
     "chapter_id": 3,
     "chapter_title": "Module 3: Core SQL Analytics",
     "title": "RIGHT JOIN",
-    "story": "The finance team is auditing departmental budgets and needs a complete list of all departments and their assigned employees. They specifically requested that empty departments (like the new Marketing branch) still appear on the report to track zero-headcount budgets.",
+    "story": "The facilities and budgeting division needs an inventory of all company departments along with their assigned staff. All official departments must be listed, including newly created departments that currently have no employees assigned.",
     "objective": "Write an SQL query to display all departments along with their employees. Return department_name and employee_name. Include departments even if no employees are assigned to them. Sort the result by department_name.",
     "starter_code": "-- Problem #SQL-023: RIGHT JOIN\n-- Write your SQL query below\n\n",
     "expected_output": "department_name | employee_name\n-------------------------------\nFinance | Bob\nHR | John\nIT | Alice\nMarketing | NULL",
     "hints": [
-      "Use RIGHT JOIN to combine the employees and departments tables.",
-      "Make sure departments is the right table (after RIGHT JOIN).",
-      "The join condition is ON e.department_id = d.department_id.",
-      "Select d.department_name, e.employee_name and ORDER BY d.department_name."
+      "Join employees and departments using RIGHT JOIN departments AS d.",
+      "Match tables ON e.department_id = d.department_id.",
+      "Select d.department_name and e.employee_name.",
+      "Sort the result by department_name: ORDER BY d.department_name."
     ],
     "test_cases": [
       {
         "input": "",
         "expected": "SELECT d.department_name, e.employee_name FROM employees AS e RIGHT JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
         "hidden": false,
-        "description": "Right join employees and departments"
+        "description": "Display all departments including empty ones"
       }
     ],
-    "explanation": "SELECT d.department_name, e.employee_name FROM employees AS e RIGHT JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
-    "difficulty": "Easy",
+    "explanation": "SELECT d.department_name,\n       e.employee_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT d.department_name, e.employee_name\n- Projects department name and assigned employee name.\nLine 2: FROM employees AS e\n- References the employees table on the left.\nLine 3: RIGHT JOIN departments AS d\n- Designates departments as the preserved right table, guaranteeing all department rows appear.\nLine 4: ON e.department_id = d.department_id\n- Joins records on department_id. Departments without staff display NULL for employee_name.\nLine 5: ORDER BY d.department_name;\n- Sorts output alphabetically by department_name.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: RIGHT JOIN departments AS d ON e.department_id = d.department_id\nStep 3: SELECT d.department_name, e.employee_name\nStep 4: ORDER BY d.department_name",
+    "difficulty": "Medium",
     "track": "core",
     "code_id": "SQL-023"
   },
@@ -1594,26 +1594,26 @@
     "chapter_id": 3,
     "chapter_title": "Module 3: Core SQL Analytics",
     "title": "FULL JOIN",
-    "story": "During a corporate merger audit, analysts must reconcile the employee roster against the department directory. They need a comprehensive mapping showing every single employee and every single department, catching both unassigned employees and empty departments in one view.",
+    "story": "Organizational restructuring requires a full data reconciliation between staff rosters and departmental records. The audit team needs a master list showing all employees and all departments, including unassigned staff and vacant departments.",
     "objective": "Write an SQL query to display all employees and all departments, whether or not they have matching records. Return employee_name and department_name. Include employees without departments and departments without employees. Sort the result by department_name.",
     "starter_code": "-- Problem #SQL-024: FULL JOIN\n-- Write your SQL query below\n\n",
     "expected_output": "employee_name | department_name\n-------------------------------\nBob | Finance\nJohn | HR\nAlice | IT\nNULL | Marketing\nDavid | NULL\nEmma | NULL",
     "hints": [
-      "Use FULL JOIN (or FULL OUTER JOIN) to combine the employees and departments tables.",
-      "The join condition should be ON e.department_id = d.department_id.",
+      "Use FULL JOIN to combine all rows from both tables: FROM employees AS e FULL JOIN departments AS d.",
+      "Join condition: ON e.department_id = d.department_id.",
       "Select e.employee_name and d.department_name.",
-      "Make sure to ORDER BY d.department_name."
+      "Sort the result by department_name: ORDER BY d.department_name."
     ],
     "test_cases": [
       {
         "input": "",
         "expected": "SELECT e.employee_name, d.department_name FROM employees AS e FULL JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
         "hidden": false,
-        "description": "Full join employees and departments"
+        "description": "Full outer join of employees and departments"
       }
     ],
-    "explanation": "SELECT e.employee_name, d.department_name FROM employees AS e FULL JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
-    "difficulty": "Easy",
+    "explanation": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nFULL JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_name, d.department_name\n- Displays employee name and department name.\nLine 2: FROM employees AS e\n- References the employees table.\nLine 3: FULL JOIN departments AS d\n- Performs a full outer join with departments, returning all rows from both tables.\nLine 4: ON e.department_id = d.department_id\n- Pairs matched rows and inserts NULLs for unmatched rows on either side.\nLine 5: ORDER BY d.department_name;\n- Sorts result rows by department_name.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: FULL JOIN departments AS d ON e.department_id = d.department_id\nStep 3: SELECT e.employee_name, d.department_name\nStep 4: ORDER BY d.department_name",
+    "difficulty": "Medium",
     "track": "core",
     "code_id": "SQL-024"
   },
@@ -1622,27 +1622,1000 @@
     "chapter_id": 3,
     "chapter_title": "Module 3: Core SQL Analytics",
     "title": "SELF JOIN",
-    "story": "HR is auditing the reporting structure of the company. The organizational chart is stored inside a single table, where each employee's record contains a reference to their manager's employee ID. They need a flattened report showing every employee mapped directly to their manager's name.",
+    "story": "Corporate leadership is mapping the company reporting structure. Since managers are also employees within the same table, leadership needs a hierarchical report listing each employee along with the name of their direct manager.",
     "objective": "Write an SQL query to display each employee along with their manager's name. Return employee_name and manager_name. Sort the result by employee_name.",
     "starter_code": "-- Problem #SQL-025: SELF JOIN\n-- Write your SQL query below\n\n",
     "expected_output": "employee_name | manager_name\n----------------------------\nAlice | Robert\nDavid | Robert\nJohn | Robert\nRobert | Sophia\nSophia | NULL",
     "hints": [
-      "You need to join the employees table to itself.",
-      "Use aliases to distinguish the two copies, e.g., employees AS e and employees AS m.",
-      "The join condition is e.manager_id = m.employee_id.",
-      "Use LEFT JOIN if you want to include employees who don't have a manager."
+      "Join the employees table with itself using table aliases: FROM employees AS e LEFT JOIN employees AS m.",
+      "Match the employee's manager_id to the manager's employee_id: ON e.manager_id = m.employee_id.",
+      "Select e.employee_name and m.employee_name AS manager_name.",
+      "Sort the result by employee_name: ORDER BY e.employee_name."
     ],
     "test_cases": [
       {
         "input": "",
         "expected": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_name;",
         "hidden": false,
-        "description": "Self join employees to get managers"
+        "description": "Display employees with manager names via self join"
       }
     ],
-    "explanation": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_name;",
-    "difficulty": "Easy",
+    "explanation": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_name, m.employee_name AS manager_name\n- Displays employee name from alias e and manager name from alias m.\nLine 2: FROM employees AS e\n- First copy of employees representing individual staff members.\nLine 3: LEFT JOIN employees AS m\n- Second copy of employees representing organizational managers.\nLine 4: ON e.manager_id = m.employee_id\n- Connects each employee's manager_id to the manager's employee_id.\nLine 5: ORDER BY e.employee_name;\n- Sorts employees alphabetically by name.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: LEFT JOIN employees AS m ON e.manager_id = m.employee_id\nStep 3: SELECT e.employee_name, m.employee_name AS manager_name\nStep 4: ORDER BY e.employee_name",
+    "difficulty": "Medium",
     "track": "core",
     "code_id": "SQL-025"
+  },
+  {
+    "level_number": 61,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "CROSS JOIN",
+    "story": "Operations planning requires generating every hypothetical assignment combination between team members and operational departments to evaluate resource distribution matrices and test scheduling permutations.",
+    "objective": "Write an SQL query to display every possible combination of employees and departments. Return employee_name and department_name. Sort the result by employee_name and department_name.",
+    "starter_code": "-- Problem #SQL-026: CROSS JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_name | department_name\n-------------------------------\nAlice | HR\nAlice | IT\nBob | HR\nBob | IT\nJohn | HR\nJohn | IT",
+    "hints": [
+      "Use CROSS JOIN to pair every row of employees with every row of departments: FROM employees AS e CROSS JOIN departments AS d.",
+      "Select e.employee_name and d.department_name.",
+      "CROSS JOIN does not use an ON condition.",
+      "Sort the result by employee_name and department_name: ORDER BY e.employee_name, d.department_name."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_name, d.department_name FROM employees AS e CROSS JOIN departments AS d ORDER BY e.employee_name, d.department_name;",
+        "hidden": false,
+        "description": "Generate cartesian product of employees and departments"
+      }
+    ],
+    "explanation": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nCROSS JOIN departments AS d\nORDER BY e.employee_name,\n         d.department_name;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_name, d.department_name\n- Projects employee name and department name.\nLine 2: FROM employees AS e\n- Scans all employee records.\nLine 3: CROSS JOIN departments AS d\n- Pairs every employee with every department, producing a Cartesian Product without any ON matching condition.\nLine 4: ORDER BY e.employee_name, d.department_name;\n- Sorts results alphabetically by employee_name, then by department_name.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: CROSS JOIN departments AS d\nStep 3: SELECT e.employee_name, d.department_name\nStep 4: ORDER BY e.employee_name, d.department_name",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-026"
+  },
+  {
+    "level_number": 62,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Employees with Department Names",
+    "story": "Corporate HR manages employee profiles and department structures across two separate tables. Management needs an official roster displaying active employees alongside their assigned department names, excluding any unassigned staff.",
+    "objective": "Write an SQL query to display each employee along with their department name. Return employee_id, employee_name, and department_name. Sort the result by employee_id.",
+    "starter_code": "-- Problem #SQL-027: Employees with Department Names\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | department_name\n---------------------------------------------\n1 | John | HR\n2 | Alice | IT\n3 | Bob | Finance",
+    "hints": [
+      "Join employees and departments tables using INNER JOIN.",
+      "Specify the join condition matching department_id: ON e.department_id = d.department_id.",
+      "Select e.employee_id, e.employee_name, and d.department_name.",
+      "Sort the result by employee_id: ORDER BY e.employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
+        "hidden": false,
+        "description": "Display each employee along with their department name"
+      }
+    ],
+    "explanation": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_id, e.employee_name, d.department_name\n- Projects employee ID, employee name, and department name.\nLine 2: FROM employees AS e\n- Scans the employees table using alias e.\nLine 3: INNER JOIN departments AS d\n- Joins the departments table using alias d.\nLine 4: ON e.department_id = d.department_id\n- Matches rows where department_id is identical in both tables.\nLine 5: ORDER BY e.employee_id;\n- Sorts the final output by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: INNER JOIN departments AS d\nStep 3: ON e.department_id = d.department_id\nStep 4: SELECT e.employee_id, e.employee_name, d.department_name\nStep 5: ORDER BY e.employee_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-027"
+  },
+  {
+    "level_number": 63,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Customers with Orders",
+    "story": "An e-commerce order management system maintains customer accounts and purchase transactions across relational tables. The fulfillment team requires an order registry displaying placed orders alongside the purchaser's full customer name.",
+    "objective": "Write an SQL query to display customers who have placed orders. Return order_id, customer_name, order_date, and total_amount. Sort the result by order_id.",
+    "starter_code": "-- Problem #SQL-028: Customers with Orders\n-- Write your SQL query below\n\n",
+    "expected_output": "order_id | customer_name | order_date | total_amount\n----------------------------------------------------\n101 | John | 2026-01-10 | 500\n102 | Alice | 2026-01-15 | 800\n103 | John | 2026-01-18 | 1200",
+    "hints": [
+      "Join orders and customers tables using INNER JOIN: FROM orders AS o INNER JOIN customers AS c.",
+      "Specify the linking condition on customer_id: ON o.customer_id = c.customer_id.",
+      "Select o.order_id, c.customer_name, o.order_date, and o.total_amount.",
+      "Sort the result by order_id: ORDER BY o.order_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT o.order_id, c.customer_name, o.order_date, o.total_amount FROM orders AS o INNER JOIN customers AS c ON o.customer_id = c.customer_id ORDER BY o.order_id;",
+        "hidden": false,
+        "description": "Display orders with customer names via inner join"
+      }
+    ],
+    "explanation": "SELECT o.order_id,\n       c.customer_name,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nORDER BY o.order_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT o.order_id, c.customer_name, o.order_date, o.total_amount\n- Projects order ID, purchaser name, order date, and total transaction amount.\nLine 2: FROM orders AS o\n- Reads the orders table using alias o.\nLine 3: INNER JOIN customers AS c\n- Joins the customers table using alias c.\nLine 4: ON o.customer_id = c.customer_id\n- Pairs order records with customer profiles matching on customer_id.\nLine 5: ORDER BY o.order_id;\n- Sorts output rows in ascending order by order_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM orders AS o\nStep 2: INNER JOIN customers AS c\nStep 3: ON o.customer_id = c.customer_id\nStep 4: SELECT o.order_id, c.customer_name, o.order_date, o.total_amount\nStep 5: ORDER BY o.order_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-028"
+  },
+  {
+    "level_number": 64,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Customers without Orders",
+    "story": "Marketing analytics and customer re-engagement teams are designing a win-back email campaign. The campaign targets registered platform users who have never placed an order to offer them an introductory onboarding discount.",
+    "objective": "Write an SQL query to display customers who have never placed an order. Return customer_id and customer_name. Sort the result by customer_id.",
+    "starter_code": "-- Problem #SQL-029: Customers without Orders\n-- Write your SQL query below\n\n",
+    "expected_output": "customer_id | customer_name\n---------------------------\n3 | Bob\n4 | David",
+    "hints": [
+      "Perform a LEFT JOIN between customers and orders: FROM customers AS c LEFT JOIN orders AS o.",
+      "Join on customer_id: ON c.customer_id = o.customer_id.",
+      "Filter for unmatched records using the WHERE clause: WHERE o.customer_id IS NULL.",
+      "Select c.customer_id and c.customer_name.",
+      "Sort the result by customer_id: ORDER BY c.customer_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT c.customer_id, c.customer_name FROM customers AS c LEFT JOIN orders AS o ON c.customer_id = o.customer_id WHERE o.customer_id IS NULL ORDER BY c.customer_id;",
+        "hidden": false,
+        "description": "Find customers who have never placed an order"
+      }
+    ],
+    "explanation": "SELECT c.customer_id,\n       c.customer_name\nFROM customers AS c\nLEFT JOIN orders AS o\nON c.customer_id = o.customer_id\nWHERE o.customer_id IS NULL\nORDER BY c.customer_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT c.customer_id, c.customer_name\n- Projects customer ID and customer name from the customers table.\nLine 2: FROM customers AS c\n- Starts with all customer records (the left table).\nLine 3: LEFT JOIN orders AS o\n- Matches customer records to their orders; missing orders evaluate to NULL.\nLine 4: ON c.customer_id = o.customer_id\n- Pairs records on customer_id.\nLine 5: WHERE o.customer_id IS NULL\n- Retains only customers without any matching order records.\nLine 6: ORDER BY c.customer_id;\n- Sorts results ascending by customer_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM customers AS c\nStep 2: LEFT JOIN orders AS o\nStep 3: ON c.customer_id = o.customer_id\nStep 4: WHERE o.customer_id IS NULL\nStep 5: SELECT c.customer_id, c.customer_name\nStep 6: ORDER BY c.customer_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-029"
+  },
+  {
+    "level_number": 65,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Orders without Customers",
+    "story": "During a database migration audit, data engineers noticed potential integrity issues. In transactional systems, orders referencing non-existent customer accounts are considered orphan records and indicate broken foreign key constraints or failed sync pipelines.",
+    "objective": "Write an SQL query to display orders that do not have a matching customer. Return order_id, customer_id, order_date, and total_amount. Sort the result by order_id.",
+    "starter_code": "-- Problem #SQL-030: Orders without Customers\n-- Write your SQL query below\n\n",
+    "expected_output": "order_id | customer_id | order_date | total_amount\n-------------------------------------------------\n103 | 5 | 2026-01-15 | 1200\n104 | 6 | 2026-01-18 | 750",
+    "hints": [
+      "Start with orders as the primary table: FROM orders AS o.",
+      "LEFT JOIN customers using customer_id: LEFT JOIN customers AS c ON o.customer_id = c.customer_id.",
+      "Filter for missing customer rows using the WHERE clause: WHERE c.customer_id IS NULL.",
+      "Select o.order_id, o.customer_id, o.order_date, and o.total_amount.",
+      "Sort the result by order_id: ORDER BY o.order_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT o.order_id, o.customer_id, o.order_date, o.total_amount FROM orders AS o LEFT JOIN customers AS c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL ORDER BY o.order_id;",
+        "hidden": false,
+        "description": "Find orphan orders without matching customers"
+      }
+    ],
+    "explanation": "SELECT o.order_id,\n       o.customer_id,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nLEFT JOIN customers AS c\nON o.customer_id = c.customer_id\nWHERE c.customer_id IS NULL\nORDER BY o.order_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT o.order_id, o.customer_id, o.order_date, o.total_amount\n- Projects the orphan order attributes.\nLine 2: FROM orders AS o\n- Scans all orders from the primary table.\nLine 3: LEFT JOIN customers AS c\n- Joins customers, populating unmatched customer records with NULLs.\nLine 4: ON o.customer_id = c.customer_id\n- Matches on the customer_id reference key.\nLine 5: WHERE c.customer_id IS NULL\n- Retains only orders where no matching customer was found in customers.\nLine 6: ORDER BY o.order_id;\n- Sorts output rows in ascending order by order_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM orders AS o\nStep 2: LEFT JOIN customers AS c\nStep 3: ON o.customer_id = c.customer_id\nStep 4: WHERE c.customer_id IS NULL\nStep 5: SELECT o.order_id, o.customer_id, o.order_date, o.total_amount\nStep 6: ORDER BY o.order_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-030"
+  },
+  {
+    "level_number": 66,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Students with Course Names",
+    "story": "A university registrar department is generating term-end grade and course enrollment rosters. The student records store only foreign keys (course_id), requiring an inner join against the course catalog to produce a human-readable list of students and their enrolled course titles.",
+    "objective": "Write an SQL query to display every student along with the name of the course they are enrolled in. Return student_id, student_name, and course_name. Sort the result by student_id.",
+    "starter_code": "-- Problem #SQL-031: Students with Course Names\n-- Write your SQL query below\n\n",
+    "expected_output": "student_id | student_name | course_name\n---------------------------------------\n1 | Rahul | Python\n2 | Priya | SQL\n3 | Ankit | Java",
+    "hints": [
+      "Select student_id and student_name from students, and course_name from courses.",
+      "Use INNER JOIN to combine students with courses.",
+      "Join on the common key: ON s.course_id = c.course_id.",
+      "Sort the final output by student_id in ascending order: ORDER BY s.student_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT s.student_id, s.student_name, c.course_name FROM students AS s INNER JOIN courses AS c ON s.course_id = c.course_id ORDER BY s.student_id;",
+        "hidden": false,
+        "description": "Display students with course names"
+      }
+    ],
+    "explanation": "SELECT s.student_id,\n       s.student_name,\n       c.course_name\nFROM students AS s\nINNER JOIN courses AS c\nON s.course_id = c.course_id\nORDER BY s.student_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT s.student_id, s.student_name, c.course_name\n- Retrieves student ID, student name, and the associated course name.\nLine 2: FROM students AS s\n- Reads student records with alias s.\nLine 3: INNER JOIN courses AS c\n- Joins the courses table with alias c.\nLine 4: ON s.course_id = c.course_id\n- Matches each student's enrolled course_id with the primary key in courses.\nLine 5: ORDER BY s.student_id;\n- Sorts the final result set in ascending order by student_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM students AS s\nStep 2: INNER JOIN courses AS c\nStep 3: ON s.course_id = c.course_id\nStep 4: SELECT s.student_id, s.student_name, c.course_name\nStep 5: ORDER BY s.student_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-031"
+  },
+  {
+    "level_number": 67,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Employees without Managers",
+    "story": "During corporate governance reviews and organizational chart hierarchy parsing, HR needs to pinpoint the topmost executives (such as CEOs, founders, and managing directors) who report to no one in the company hierarchy.",
+    "objective": "Write an SQL query to display employees who do not have a manager. Return employee_id and employee_name. Sort the result by employee_id.",
+    "starter_code": "-- Problem #SQL-032: Employees without Managers\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name\n---------------------------\n1 | John\n5 | Emma",
+    "hints": [
+      "Select employee_id and employee_name from employees.",
+      "Filter for rows where manager_id is NULL: WHERE manager_id IS NULL.",
+      "In SQL, comparing NULL requires the IS NULL operator, not = NULL.",
+      "Sort the result by employee_id: ORDER BY employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employee_id, employee_name FROM employees WHERE manager_id IS NULL ORDER BY employee_id;",
+        "hidden": false,
+        "description": "Find top-level employees with no manager"
+      }
+    ],
+    "explanation": "SELECT employee_id,\n       employee_name\nFROM employees\nWHERE manager_id IS NULL\nORDER BY employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT employee_id, employee_name\n- Retrieves the unique ID and name of the employee.\nLine 2: FROM employees\n- Scans the employees table.\nLine 3: WHERE manager_id IS NULL\n- Retains only employees where manager_id is NULL (indicating no supervisor).\nLine 4: ORDER BY employee_id;\n- Sorts output rows in ascending order by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees\nStep 2: WHERE manager_id IS NULL\nStep 3: SELECT employee_id, employee_name\nStep 4: ORDER BY employee_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-032"
+  },
+  {
+    "level_number": 68,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Manager and Employee Names",
+    "story": "The human resources information system is creating an internal corporate directory that maps every employee to their direct manager. Because managers are themselves employees in the same company table, a self join is used to pair each staff member with their manager's full name while ensuring the CEO is retained.",
+    "objective": "Write an SQL query to display each employee along with their manager's name. Return employee_id, employee_name, and manager_name. If an employee has no manager, display NULL as the manager name. Sort the result by employee_id.",
+    "starter_code": "-- Problem #SQL-033: Manager and Employee Names\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | manager_name\n-------------------------------------------\n1 | John | NULL\n2 | Alice | John\n3 | Bob | John\n4 | David | Alice\n5 | Emma | Alice",
+    "hints": [
+      "Use a SELF JOIN on the employees table with distinct aliases: FROM employees AS e LEFT JOIN employees AS m.",
+      "Match the employee's manager_id to the manager's employee_id: ON e.manager_id = m.employee_id.",
+      "Use a LEFT JOIN so employees without managers (like the CEO) are not excluded and show NULL.",
+      "Select e.employee_id, e.employee_name, and m.employee_name AS manager_name.",
+      "Sort the result by employee_id: ORDER BY e.employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_id, e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_id;",
+        "hidden": false,
+        "description": "Display each employee with their manager name using SELF JOIN"
+      }
+    ],
+    "explanation": "SELECT e.employee_id,\n       e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_id, e.employee_name, m.employee_name AS manager_name\n- Retrieves the employee's ID and name from the 'e' alias and their manager's name from the 'm' alias.\nLine 2: FROM employees AS e\n- Scans the employees table representing the subordinate/employee entity.\nLine 3: LEFT JOIN employees AS m\n- Joins the same employees table representing the supervisor/manager entity.\nLine 4: ON e.manager_id = m.employee_id\n- Links the employee's manager_id foreign key with the manager's primary employee_id.\nLine 5: ORDER BY e.employee_id;\n- Sorts output rows in ascending order by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: LEFT JOIN employees AS m\nStep 3: ON e.manager_id = m.employee_id\nStep 4: SELECT e.employee_id, e.employee_name, m.employee_name AS manager_name\nStep 5: ORDER BY e.employee_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-033"
+  },
+  {
+    "level_number": 69,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Multiple Table Joins",
+    "story": "Corporate facilities and HR management require a consolidated geographical breakdown of employees, their assigned departments, and the corresponding operational cities where those department headquarters are located across regional branches.",
+    "objective": "Write an SQL query to display each employee along with their department and city. Return employee_id, employee_name, department_name, and city. Sort the result by employee_id.",
+    "starter_code": "-- Problem #SQL-034: Multiple Table Joins\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | department_name | city\n----------------------------------------------------\n1 | John | IT | Bangalore\n2 | Alice | HR | Mumbai\n3 | Bob | IT | Bangalore",
+    "hints": [
+      "Start from employees: FROM employees AS e.",
+      "First INNER JOIN departments on department_id: INNER JOIN departments AS d ON e.department_id = d.department_id.",
+      "Second INNER JOIN locations on location_id: INNER JOIN locations AS l ON d.location_id = l.location_id.",
+      "Select e.employee_id, e.employee_name, d.department_name, and l.city.",
+      "Sort the result by employee_id in ascending order: ORDER BY e.employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_id, e.employee_name, d.department_name, l.city FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id INNER JOIN locations AS l ON d.location_id = l.location_id ORDER BY e.employee_id;",
+        "hidden": false,
+        "description": "Display each employee along with department and city using multiple joins"
+      }
+    ],
+    "explanation": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name,\n       l.city\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nINNER JOIN locations AS l\nON d.location_id = l.location_id\nORDER BY e.employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.employee_id, e.employee_name, d.department_name, l.city\n- Retrieves the employee's ID, employee's name, department name, and city.\nLine 2: FROM employees AS e\n- Starts with the employees table using alias e.\nLine 3: INNER JOIN departments AS d ON e.department_id = d.department_id\n- Connects employees to departments via the shared foreign key department_id.\nLine 4: INNER JOIN locations AS l ON d.location_id = l.location_id\n- Connects departments to locations via the shared foreign key location_id.\nLine 5: ORDER BY e.employee_id;\n- Sorts output rows in ascending order by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees AS e\nStep 2: INNER JOIN departments AS d ON e.department_id = d.department_id\nStep 3: INNER JOIN locations AS l ON d.location_id = l.location_id\nStep 4: SELECT e.employee_id, e.employee_name, d.department_name, l.city\nStep 5: ORDER BY e.employee_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-034"
+  },
+  {
+    "level_number": 70,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "Join Three Tables",
+    "story": "An e-commerce order fulfillment platform needs comprehensive order manifest reporting. Each customer order connects to customer account details and itemized product catalog entries, requiring a three-table join to output buyer names and purchased item specifications.",
+    "objective": "Write an SQL query to display each order along with the customer's name and the product details. Return order_id, customer_name, product_name, and price. Sort the result by order_id.",
+    "starter_code": "-- Problem #SQL-035: Join Three Tables\n-- Write your SQL query below\n\n",
+    "expected_output": "order_id | customer_name | product_name | price\n-----------------------------------------------\n101 | John | Laptop | 75000\n102 | Alice | Keyboard | 1500\n103 | John | Mouse | 800",
+    "hints": [
+      "Start with orders as the driving table: FROM orders AS o.",
+      "First INNER JOIN customers on customer_id: INNER JOIN customers AS c ON o.customer_id = c.customer_id.",
+      "Second INNER JOIN products on product_id: INNER JOIN products AS p ON o.product_id = p.product_id.",
+      "Select o.order_id, c.customer_name, p.product_name, and p.price.",
+      "Sort the result by order_id in ascending order: ORDER BY o.order_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT o.order_id, c.customer_name, p.product_name, p.price FROM orders AS o INNER JOIN customers AS c ON o.customer_id = c.customer_id INNER JOIN products AS p ON o.product_id = p.product_id ORDER BY o.order_id;",
+        "hidden": false,
+        "description": "Display order details with customer and product information"
+      }
+    ],
+    "explanation": "SELECT o.order_id,\n       c.customer_name,\n       p.product_name,\n       p.price\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nINNER JOIN products AS p\nON o.product_id = p.product_id\nORDER BY o.order_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT o.order_id, c.customer_name, p.product_name, p.price\n- Retrieves order ID, customer name, product name, and price.\nLine 2: FROM orders AS o\n- Scans the orders table representing customer transactions.\nLine 3: INNER JOIN customers AS c ON o.customer_id = c.customer_id\n- Matches the order's customer_id with the customer record in customers.\nLine 4: INNER JOIN products AS p ON o.product_id = p.product_id\n- Matches the order's product_id with the product details in products.\nLine 5: ORDER BY o.order_id;\n- Sorts output rows in ascending order by order_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM orders AS o\nStep 2: INNER JOIN customers AS c ON o.customer_id = c.customer_id\nStep 3: INNER JOIN products AS p ON o.product_id = p.product_id\nStep 4: SELECT o.order_id, c.customer_name, p.product_name, p.price\nStep 5: ORDER BY o.order_id",
+    "difficulty": "Medium",
+    "track": "core",
+    "code_id": "SQL-035"
+  },
+  {
+    "level_number": 71,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Grade Students",
+    "story": "Academic affairs and grading boards are compiling the semester transcript evaluation report. Using a conditional classification scale, raw scores must be translated into standardized letter grades from A down to F.",
+    "objective": "Write an SQL query to assign grades based on marks: 90\u2013100 -> A, 80\u201389 -> B, 70\u201379 -> C, 60\u201369 -> D, below 60 -> F. Return student_id, student_name, marks, and grade. Sort the result by student_id.",
+    "starter_code": "-- Problem #ASQL-001: Grade Students\n-- Write your SQL query below\n\n",
+    "expected_output": "student_id | student_name | marks | grade\n----------------------------------------\n1 | John | 95 | A\n2 | Alice | 82 | B\n3 | Bob | 74 | C\n4 | David | 63 | D\n5 | Emma | 48 | F",
+    "hints": [
+      "Use a CASE WHEN expression to test marks in descending order: CASE WHEN marks >= 90 THEN 'A' ...",
+      "Ensure the higher thresholds are evaluated before lower thresholds.",
+      "Provide an ELSE 'F' fallback before closing the expression with END AS grade.",
+      "Select student_id, student_name, marks, and the CASE expression.",
+      "Sort the result by student_id in ascending order: ORDER BY student_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT student_id, student_name, marks, CASE WHEN marks >= 90 THEN 'A' WHEN marks >= 80 THEN 'B' WHEN marks >= 70 THEN 'C' WHEN marks >= 60 THEN 'D' ELSE 'F' END AS grade FROM students ORDER BY student_id;",
+        "hidden": false,
+        "description": "Assign letter grades using CASE WHEN"
+      }
+    ],
+    "explanation": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 90 THEN 'A'\n           WHEN marks >= 80 THEN 'B'\n           WHEN marks >= 70 THEN 'C'\n           WHEN marks >= 60 THEN 'D'\n           ELSE 'F'\n       END AS grade\nFROM students\nORDER BY student_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT student_id, student_name, marks\n- Projects the fundamental student identifiers and their achieved numerical score.\nLine 2: CASE WHEN marks >= 90 THEN 'A' ...\n- Evaluates the conditional scoring brackets in descending priority order.\nLine 3: ELSE 'F' END AS grade\n- Assigns grade F to any student scoring below 60 and aliases the column as grade.\nLine 4: FROM students\n- Reads from the students table.\nLine 5: ORDER BY student_id;\n- Sorts final results in ascending order by student_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM students\nStep 2: SELECT student_id, student_name, marks\nStep 3: CASE evaluation\nStep 4: ORDER BY student_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-001"
+  },
+  {
+    "level_number": 72,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Salary Bands",
+    "story": "Human Resources and Compensation Planning are conducting a corporate payroll stratification audit. Employees must be categorized into standard compensation brackets (High, Medium, Low, Very Low) using conditional evaluation rules.",
+    "objective": "Write an SQL query to classify employees into salary bands using the following rules: salary >= 100000 -> High, 70000-99999 -> Medium, 40000-69999 -> Low, < 40000 -> Very Low. Return employee_id, employee_name, salary, and salary_band. Sort the result by employee_id.",
+    "starter_code": "-- Problem #ASQL-002: Salary Bands\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | salary | salary_band\n-------------------------------------------------\n1 | John | 120000 | High\n2 | Alice | 85000 | Medium\n3 | Bob | 55000 | Low\n4 | David | 32000 | Very Low",
+    "hints": [
+      "Use a CASE WHEN expression to evaluate salary in descending order: CASE WHEN salary >= 100000 THEN 'High' ...",
+      "Evaluate the 70000 and 40000 thresholds next.",
+      "Use ELSE 'Very Low' as the final fallback before END AS salary_band.",
+      "Select employee_id, employee_name, salary, and the CASE expression.",
+      "Sort the result by employee_id: ORDER BY employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employee_id, employee_name, salary, CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 70000 THEN 'Medium' WHEN salary >= 40000 THEN 'Low' ELSE 'Very Low' END AS salary_band FROM employees ORDER BY employee_id;",
+        "hidden": false,
+        "description": "Classify employees into salary bands using CASE WHEN"
+      }
+    ],
+    "explanation": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 70000 THEN 'Medium'\n           WHEN salary >= 40000 THEN 'Low'\n           ELSE 'Very Low'\n       END AS salary_band\nFROM employees\nORDER BY employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT employee_id, employee_name, salary\n- Retrieves the employee identifier, name, and current salary.\nLine 2: CASE WHEN salary >= 100000 THEN 'High' ...\n- Categorizes salary into tiered brackets in descending order.\nLine 3: ELSE 'Very Low' END AS salary_band\n- Assigns 'Very Low' to salaries under 40,000 and aliases the result column.\nLine 4: FROM employees\n- Reads records from the employees table.\nLine 5: ORDER BY employee_id;\n- Sorts output rows in ascending order by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees\nStep 2: SELECT employee_id, employee_name, salary\nStep 3: CASE evaluation\nStep 4: ORDER BY employee_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-002"
+  },
+  {
+    "level_number": 73,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Age Groups",
+    "story": "Demographic research, municipal census records, and community health databases need age-cohort classification. Using conditional evaluation rules, citizens are categorized into Child, Teen, Adult, and Senior Citizen age brackets.",
+    "objective": "Write an SQL query to classify each person into an age group using the following rules: 60 and above -> Senior Citizen, 20 - 59 -> Adult, 13 - 19 -> Teen, 0 - 12 -> Child. Return person_id, person_name, age, and age_group. Sort the result by person_id.",
+    "starter_code": "-- Problem #ASQL-003: Age Groups\n-- Write your SQL query below\n\n",
+    "expected_output": "person_id | person_name | age | age_group\n------------------------------------------\n1 | John | 8 | Child\n2 | Alice | 16 | Teen\n3 | Bob | 30 | Adult\n4 | David | 67 | Senior Citizen",
+    "hints": [
+      "Use a CASE WHEN expression evaluating age in descending numerical order: CASE WHEN age >= 60 THEN 'Senior Citizen' ...",
+      "Evaluate the 20 and 13 thresholds next.",
+      "Provide ELSE 'Child' as the fallback for ages 0-12 before END AS age_group.",
+      "Select person_id, person_name, age, and the CASE expression.",
+      "Sort the result by person_id: ORDER BY person_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT person_id, person_name, age, CASE WHEN age >= 60 THEN 'Senior Citizen' WHEN age >= 20 THEN 'Adult' WHEN age >= 13 THEN 'Teen' ELSE 'Child' END AS age_group FROM persons ORDER BY person_id;",
+        "hidden": false,
+        "description": "Classify persons into age groups using CASE WHEN"
+      }
+    ],
+    "explanation": "SELECT person_id,\n       person_name,\n       age,\n       CASE\n           WHEN age >= 60 THEN 'Senior Citizen'\n           WHEN age >= 20 THEN 'Adult'\n           WHEN age >= 13 THEN 'Teen'\n           ELSE 'Child'\n       END AS age_group\nFROM persons\nORDER BY person_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT person_id, person_name, age\n- Projects the person ID, name, and numerical age.\nLine 2: CASE WHEN age >= 60 THEN 'Senior Citizen' ...\n- Evaluates age boundaries in descending order.\nLine 3: ELSE 'Child' END AS age_group\n- Assigns 'Child' to ages under 13 and aliases the computed column.\nLine 4: FROM persons\n- Reads from the persons table.\nLine 5: ORDER BY person_id;\n- Sorts output rows in ascending order by person_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM persons\nStep 2: SELECT person_id, person_name, age\nStep 3: CASE evaluation\nStep 4: ORDER BY person_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-003"
+  },
+  {
+    "level_number": 74,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Sales Categories",
+    "story": "Commercial revenue intelligence and merchant analytics require transactions to be segmented into value tiers. Using sales thresholds, each sale is categorized as Premium, High, Medium, or Low for reporting dashboards.",
+    "objective": "Write an SQL query to classify each sale into a category using the following rules: sale_amount >= 100000 -> Premium, 50000 - 99999 -> High, 20000 - 49999 -> Medium, < 20000 -> Low. Return sale_id, customer_name, sale_amount, and sales_category. Sort the result by sale_id.",
+    "starter_code": "-- Problem #ASQL-004: Sales Categories\n-- Write your SQL query below\n\n",
+    "expected_output": "sale_id | customer_name | sale_amount | sales_category\n-------------------------------------------------------\n101 | John | 120000 | Premium\n102 | Alice | 75000 | High\n103 | Bob | 35000 | Medium\n104 | David | 15000 | Low",
+    "hints": [
+      "Use a CASE WHEN expression evaluating sale_amount in descending order: CASE WHEN sale_amount >= 100000 THEN 'Premium' ...",
+      "Test >= 50000 for 'High' and >= 20000 for 'Medium' next.",
+      "Provide ELSE 'Low' as the final fallback before END AS sales_category.",
+      "Select sale_id, customer_name, sale_amount, and the CASE expression.",
+      "Sort the result by sale_id: ORDER BY sale_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT sale_id, customer_name, sale_amount, CASE WHEN sale_amount >= 100000 THEN 'Premium' WHEN sale_amount >= 50000 THEN 'High' WHEN sale_amount >= 20000 THEN 'Medium' ELSE 'Low' END AS sales_category FROM sales ORDER BY sale_id;",
+        "hidden": false,
+        "description": "Classify sales transactions into tiers using CASE WHEN"
+      }
+    ],
+    "explanation": "SELECT sale_id,\n       customer_name,\n       sale_amount,\n       CASE\n           WHEN sale_amount >= 100000 THEN 'Premium'\n           WHEN sale_amount >= 50000 THEN 'High'\n           WHEN sale_amount >= 20000 THEN 'Medium'\n           ELSE 'Low'\n       END AS sales_category\nFROM sales\nORDER BY sale_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT sale_id, customer_name, sale_amount\n- Projects the unique transaction ID, customer name, and monetary sale amount.\nLine 2: CASE WHEN sale_amount >= 100000 THEN 'Premium' ...\n- Evaluates transaction brackets from highest threshold down to lowest.\nLine 3: ELSE 'Low' END AS sales_category\n- Categorizes any sale below 20,000 as 'Low' and aliases the column.\nLine 4: FROM sales\n- Reads records from the sales table.\nLine 5: ORDER BY sale_id;\n- Sorts output rows in ascending order by sale_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM sales\nStep 2: SELECT sale_id, customer_name, sale_amount\nStep 3: CASE evaluation\nStep 4: ORDER BY sale_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-004"
+  },
+  {
+    "level_number": 75,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Bonus Calculation",
+    "story": "Corporate payroll services and annual performance appraisal systems calculate year-end staff bonuses. The incentive bonus is computed dynamically as a percentage of the base salary using progressive compensation tiers.",
+    "objective": "Write an SQL query to calculate the employee's bonus based on the following rules: salary >= 100000 -> 20% of salary, 70000 - 99999 -> 15% of salary, 40000 - 69999 -> 10% of salary, < 40000 -> 5% of salary. Return employee_id, employee_name, salary, and bonus. Sort the result by employee_id.",
+    "starter_code": "-- Problem #ASQL-005: Bonus Calculation\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | salary | bonus\n---------------------------------------------\n1 | John | 120000 | 24000\n2 | Alice | 85000 | 12750\n3 | Bob | 50000 | 5000\n4 | David | 30000 | 1500",
+    "hints": [
+      "Use a CASE WHEN expression to calculate percentages dynamically: CASE WHEN salary >= 100000 THEN salary * 0.20 ...",
+      "Multiply by decimal equivalents (0.20, 0.15, 0.10, 0.05) rather than whole integers.",
+      "Maintain descending numerical order for the salary checks.",
+      "Provide ELSE salary * 0.05 before closing with END AS bonus.",
+      "Sort the result by employee_id in ascending order: ORDER BY employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employee_id, employee_name, salary, CASE WHEN salary >= 100000 THEN salary * 0.20 WHEN salary >= 70000 THEN salary * 0.15 WHEN salary >= 40000 THEN salary * 0.10 ELSE salary * 0.05 END AS bonus FROM employees ORDER BY employee_id;",
+        "hidden": false,
+        "description": "Calculate progressive salary bonus using CASE WHEN arithmetic"
+      }
+    ],
+    "explanation": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN salary * 0.20\n           WHEN salary >= 70000 THEN salary * 0.15\n           WHEN salary >= 40000 THEN salary * 0.10\n           ELSE salary * 0.05\n       END AS bonus\nFROM employees\nORDER BY employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT employee_id, employee_name, salary\n- Projects the employee identifier, name, and base salary.\nLine 2: CASE WHEN salary >= 100000 THEN salary * 0.20 ...\n- Evaluates salary tiers in descending order, computing mathematical percentages directly in the THEN branch.\nLine 3: ELSE salary * 0.05 END AS bonus\n- Computes 5% of base compensation for salaries below 40,000 and aliases the calculated column as bonus.\nLine 4: FROM employees\n- Reads records from the employees table.\nLine 5: ORDER BY employee_id;\n- Sorts output rows in ascending order by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees\nStep 2: SELECT employee_id, employee_name, salary\nStep 3: CASE evaluation & calculation\nStep 4: ORDER BY employee_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-005"
+  },
+  {
+    "level_number": 76,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Customer Classification",
+    "story": "E-commerce CRM platforms and merchant loyalty engines classify customers based on their historical spend. Using lifetime purchase volume, buyers are tiered into Platinum, Gold, Silver, and Bronze membership levels.",
+    "objective": "Write an SQL query to classify customers based on their total purchase amount using the following rules: total_purchase >= 100000 -> Platinum, 50000 - 99999 -> Gold, 20000 - 49999 -> Silver, < 20000 -> Bronze. Return customer_id, customer_name, total_purchase, and customer_type. Sort the result by customer_id.",
+    "starter_code": "-- Problem #ASQL-006: Customer Classification\n-- Write your SQL query below\n\n",
+    "expected_output": "customer_id | customer_name | total_purchase | customer_type\n-------------------------------------------------------------\n1 | John | 150000 | Platinum\n2 | Alice | 80000 | Gold\n3 | Bob | 35000 | Silver\n4 | David | 12000 | Bronze",
+    "hints": [
+      "Use a CASE WHEN expression evaluating total_purchase in descending order: CASE WHEN total_purchase >= 100000 THEN 'Platinum' ...",
+      "Test >= 50000 for 'Gold' and >= 20000 for 'Silver' next.",
+      "Provide ELSE 'Bronze' as the final fallback before END AS customer_type.",
+      "Select customer_id, customer_name, total_purchase, and the CASE expression.",
+      "Sort the result by customer_id: ORDER BY customer_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT customer_id, customer_name, total_purchase, CASE WHEN total_purchase >= 100000 THEN 'Platinum' WHEN total_purchase >= 50000 THEN 'Gold' WHEN total_purchase >= 20000 THEN 'Silver' ELSE 'Bronze' END AS customer_type FROM customers ORDER BY customer_id;",
+        "hidden": false,
+        "description": "Classify customers into membership tiers using CASE WHEN"
+      }
+    ],
+    "explanation": "SELECT customer_id,\n       customer_name,\n       total_purchase,\n       CASE\n           WHEN total_purchase >= 100000 THEN 'Platinum'\n           WHEN total_purchase >= 50000 THEN 'Gold'\n           WHEN total_purchase >= 20000 THEN 'Silver'\n           ELSE 'Bronze'\n       END AS customer_type\nFROM customers\nORDER BY customer_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT customer_id, customer_name, total_purchase\n- Projects customer ID, name, and total cumulative purchase expenditure.\nLine 2: CASE WHEN total_purchase >= 100000 THEN 'Platinum' ...\n- Evaluates VIP tiers from highest threshold to lowest threshold.\nLine 3: ELSE 'Bronze' END AS customer_type\n- Categorizes any customer with spend under 20,000 as 'Bronze' and aliases the column.\nLine 4: FROM customers\n- Reads customer records from the customers table.\nLine 5: ORDER BY customer_id;\n- Sorts output rows in ascending order by customer_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM customers\nStep 2: SELECT customer_id, customer_name, total_purchase\nStep 3: CASE evaluation\nStep 4: ORDER BY customer_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-006"
+  },
+  {
+    "level_number": 77,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Pass/Fail Status",
+    "story": "Academic examination registries and university grading portals must compute binary pass/fail standing. Under institutional guidelines, students achieving 40 or more marks pass the term, while those falling below fail.",
+    "objective": "Write an SQL query to determine whether each student has Passed or Failed using the following rule: Marks >= 40 -> Pass, Marks < 40 -> Fail. Return student_id, student_name, marks, and result. Sort the result by student_id.",
+    "starter_code": "-- Problem #ASQL-007: Pass/Fail Status\n-- Write your SQL query below\n\n",
+    "expected_output": "student_id | student_name | marks | result\n----------------------------------------\n1 | John | 82 | Pass\n2 | Alice | 39 | Fail\n3 | Bob | 40 | Pass\n4 | David | 25 | Fail",
+    "hints": [
+      "Use a single WHEN condition inside a CASE expression: CASE WHEN marks >= 40 THEN 'Pass' ELSE 'Fail' END AS result.",
+      "Remember to use >= (greater than or equal to) rather than > so that exactly 40 is counted as Pass.",
+      "Always include the ELSE 'Fail' fallback.",
+      "Select student_id, student_name, marks, and the CASE expression.",
+      "Sort the result by student_id in ascending order: ORDER BY student_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT student_id, student_name, marks, CASE WHEN marks >= 40 THEN 'Pass' ELSE 'Fail' END AS result FROM students ORDER BY student_id;",
+        "hidden": false,
+        "description": "Determine pass/fail academic standing using CASE WHEN"
+      }
+    ],
+    "explanation": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 40 THEN 'Pass'\n           ELSE 'Fail'\n       END AS result\nFROM students\nORDER BY student_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT student_id, student_name, marks\n- Projects the student identifier, full name, and raw marks achieved.\nLine 2: CASE WHEN marks >= 40 THEN 'Pass' ...\n- Applies binary conditional evaluation: scores of 40 or greater are marked Pass.\nLine 3: ELSE 'Fail' END AS result\n- Fallback assigns Fail to any score under 40 and aliases the column as result.\nLine 4: FROM students\n- Reads student exam rows from the students table.\nLine 5: ORDER BY student_id;\n- Sorts output records in ascending order by student_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM students\nStep 2: SELECT student_id, student_name, marks\nStep 3: CASE evaluation\nStep 4: ORDER BY student_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-007"
+  },
+  {
+    "level_number": 78,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Gender Formatting",
+    "story": "Human resource information systems and demographic censuses frequently store single-character demographic abbreviations (M, F, O) to optimize disk space. Analytical dashboards and public reports require decoding these codes into readable full text.",
+    "objective": "Write an SQL query to display the full gender name using the following rules: M -> Male, F -> Female, O -> Other, Any other value -> Unknown. Return employee_id, employee_name, gender, and gender_name. Sort the result by employee_id.",
+    "starter_code": "-- Problem #ASQL-008: Gender Formatting\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | gender | gender_name\n----------------------------------------------------\n1 | John | M | Male\n2 | Alice | F | Female\n3 | Chris | O | Other\n4 | David | X | Unknown",
+    "hints": [
+      "Use a CASE WHEN expression to match literal string codes: WHEN gender = 'M' THEN 'Male' ...",
+      "Wrap string literals in single quotes ('M', 'Male').",
+      "Provide ELSE 'Unknown' to safely catch any unrecognized codes or NULL values before END AS gender_name.",
+      "Select employee_id, employee_name, gender, and the CASE expression.",
+      "Sort the result by employee_id: ORDER BY employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employee_id, employee_name, gender, CASE WHEN gender = 'M' THEN 'Male' WHEN gender = 'F' THEN 'Female' WHEN gender = 'O' THEN 'Other' ELSE 'Unknown' END AS gender_name FROM employees ORDER BY employee_id;",
+        "hidden": false,
+        "description": "Map single-character gender codes to full descriptive strings"
+      }
+    ],
+    "explanation": "SELECT employee_id,\n       employee_name,\n       gender,\n       CASE\n           WHEN gender = 'M' THEN 'Male'\n           WHEN gender = 'F' THEN 'Female'\n           WHEN gender = 'O' THEN 'Other'\n           ELSE 'Unknown'\n       END AS gender_name\nFROM employees\nORDER BY employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT employee_id, employee_name, gender\n- Projects the employee identifier, name, and raw gender code.\nLine 2: CASE WHEN gender = 'M' THEN 'Male' ...\n- Evaluates discrete string code values and maps them to descriptive text.\nLine 3: ELSE 'Unknown' END AS gender_name\n- Safely handles unexpected codes (like 'X') or missing values, aliasing the column as gender_name.\nLine 4: FROM employees\n- Reads employee records from the employees table.\nLine 5: ORDER BY employee_id;\n- Sorts output rows in ascending order by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees\nStep 2: SELECT employee_id, employee_name, gender\nStep 3: CASE evaluation\nStep 4: ORDER BY employee_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-008"
+  },
+  {
+    "level_number": 79,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Conditional Aggregation",
+    "story": "Academic dean offices and institutional research committees require executive performance summaries. Instead of returning raw student rosters, summary metrics aggregate overall attendance, count successful passing candidates, and tally failing grades in a single efficient table scan.",
+    "objective": "Write an SQL query to calculate the following: Total number of students, Number of students who passed (marks >= 40), Number of students who failed (marks < 40). Return the result as a single row with columns: total_students, passed_students, failed_students.",
+    "starter_code": "-- Problem #ASQL-009: Conditional Aggregation\n-- Write your SQL query below\n\n",
+    "expected_output": "total_students | passed_students | failed_students\n----------------------------------------------------\n5 | 3 | 2",
+    "hints": [
+      "Use COUNT(*) to calculate the total number of students: COUNT(*) AS total_students.",
+      "Use SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END) AS passed_students to conditionally count passing students.",
+      "Use SUM(CASE WHEN marks < 40 THEN 1 ELSE 0 END) AS failed_students to count failing students.",
+      "Return the aggregated fields from the students table.",
+      "Because all columns are aggregate functions, no GROUP BY is required and exactly one summary row will be returned."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT COUNT(*) AS total_students, SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END) AS passed_students, SUM(CASE WHEN marks < 40 THEN 1 ELSE 0 END) AS failed_students FROM students;",
+        "hidden": false,
+        "description": "Calculate conditional aggregations for passing and failing students"
+      }
+    ],
+    "explanation": "SELECT\n    COUNT(*) AS total_students,\n    SUM(\n        CASE\n            WHEN marks >= 40 THEN 1\n            ELSE 0\n        END\n    ) AS passed_students,\n    SUM(\n        CASE\n            WHEN marks < 40 THEN 1\n            ELSE 0\n        END\n    ) AS failed_students\nFROM students;\n\n\ud83d\udd0d Query Breakdown\nLine 1: COUNT(*) AS total_students\n- Computes the aggregate count of all rows in the students table.\nLine 2: SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END) AS passed_students\n- Evaluates each student: generates 1 if marks >= 40 and 0 otherwise, then sums those values to get passing students.\nLine 3: SUM(CASE WHEN marks < 40 THEN 1 ELSE 0 END) AS failed_students\n- Generates 1 for marks < 40 and sums them to count failing students.\nLine 4: FROM students\n- Scans the students table in a single pass.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM students\nStep 2: CASE evaluations (marks >= 40 & marks < 40)\nStep 3: SUM() and COUNT(*) aggregations\nStep 4: SELECT final single-row summary",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-009"
+  },
+  {
+    "level_number": 80,
+    "chapter_id": 8,
+    "chapter_title": "Module 8: Advanced SQL Analytics",
+    "title": "Multiple CASE Conditions",
+    "story": "Enterprise human capital management and organizational design platforms analyze workforces along multiple orthogonal demographic axes. Employees are independently segmented into generational age brackets and compensation bands within the same analytical report.",
+    "objective": "Write an SQL query to generate two new columns: age_category (< 30 -> Young, 30 - 49 -> Mid Age, >= 50 -> Senior) and salary_category (>= 100000 -> High, 50000 - 99999 -> Medium, < 50000 -> Low). Return employee_id, employee_name, age, salary, age_category, and salary_category. Sort the result by employee_id.",
+    "starter_code": "-- Problem #ASQL-010: Multiple CASE Conditions\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | age | salary | age_category | salary_category\n-----------------------------------------------------------------------------\n1 | John | 25 | 120000 | Young | High\n2 | Alice | 35 | 80000 | Mid Age | Medium\n3 | Bob | 55 | 45000 | Senior | Low",
+    "hints": [
+      "Write two independent CASE expressions in the SELECT clause, separated by a comma.",
+      "For age_category: CASE WHEN age < 30 THEN 'Young' WHEN age < 50 THEN 'Mid Age' ELSE 'Senior' END AS age_category.",
+      "For salary_category: CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 50000 THEN 'Medium' ELSE 'Low' END AS salary_category.",
+      "Select employee_id, employee_name, age, salary along with both CASE expressions.",
+      "Sort the result by employee_id: ORDER BY employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT employee_id, employee_name, age, salary, CASE WHEN age < 30 THEN 'Young' WHEN age < 50 THEN 'Mid Age' ELSE 'Senior' END AS age_category, CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 50000 THEN 'Medium' ELSE 'Low' END AS salary_category FROM employees ORDER BY employee_id;",
+        "hidden": false,
+        "description": "Generate multiple independent CASE WHEN columns in a single query"
+      }
+    ],
+    "explanation": "SELECT employee_id,\n       employee_name,\n       age,\n       salary,\n       CASE\n           WHEN age < 30 THEN 'Young'\n           WHEN age < 50 THEN 'Mid Age'\n           ELSE 'Senior'\n       END AS age_category,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 50000 THEN 'Medium'\n           ELSE 'Low'\n       END AS salary_category\nFROM employees\nORDER BY employee_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT employee_id, employee_name, age, salary\n- Projects original employee attributes.\nLine 2: First CASE expression (age_category)\n- Segments employees by age into Young, Mid Age, and Senior.\nLine 3: Second CASE expression (salary_category)\n- Independently stratifies compensation into High, Medium, and Low.\nLine 4: FROM employees\n- Reads employee records in a single table scan.\nLine 5: ORDER BY employee_id;\n- Sorts output rows in ascending order by employee_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM employees\nStep 2: SELECT employee_id, employee_name, age, salary\nStep 3: Age CASE evaluation\nStep 4: Salary CASE evaluation\nStep 5: ORDER BY employee_id",
+    "difficulty": "Hard",
+    "track": "advanced",
+    "code_id": "ASQL-010"
+  },
+  {
+    "level_number": 81,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Combine Two Tables",
+    "story": "In identity and contact management systems, individual demographic records are decoupled from physical location addresses. Every registered individual must be preserved in corporate directory rosters, with location data seamlessly attached when present and represented as NULL when unavailable.",
+    "objective": "Write a SQL query to report firstName, lastName, city, and state for each person in the Person table. If a person's address is not available in the Address table, report NULL for city and state.",
+    "starter_code": "-- Problem #Pro-001: Combine Two Tables\n-- Write your SQL query below\n\n",
+    "expected_output": "firstName | lastName | city | state\n---------------------------------------\nAllen | Wang | NULL | NULL\nBob | Alice | New York City | New York",
+    "hints": [
+      "Use a LEFT JOIN from Person to Address matching on personId: FROM Person AS p LEFT JOIN Address AS a ON p.personId = a.personId.",
+      "A LEFT JOIN ensures all persons remain in the output even if they do not have an address record.",
+      "Project p.firstName, p.lastName, a.city, and a.state.",
+      "Unmatched address fields will automatically evaluate to NULL."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT p.firstName, p.lastName, a.city, a.state FROM Person AS p LEFT JOIN Address AS a ON p.personId = a.personId;",
+        "hidden": false,
+        "description": "Combine Person and Address tables using a LEFT JOIN"
+      }
+    ],
+    "explanation": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT p.firstName, p.lastName, a.city, a.state\n- Projects first and last name from Person alongside city and state from Address.\nLine 2: FROM Person AS p\n- Establishes Person as the primary left table whose rows must all be preserved.\nLine 3: LEFT JOIN Address AS a\n- Joins the Address table, keeping unmatched rows from Person.\nLine 4: ON p.personId = a.personId;\n- Matches each individual to their corresponding address record by the common personId foreign key.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person AS p\nStep 2: LEFT JOIN Address AS a ON p.personId = a.personId\nStep 3: SELECT p.firstName, p.lastName, a.city, a.state",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-001"
+  },
+  {
+    "level_number": 82,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Employees Earning More Than Their Managers",
+    "story": "In corporate compensation analytics, detecting compensation inversions where direct reports out-earn their supervisors is a key auditing task. By self-joining employee records against supervisor records, the query isolates staff members commanding salaries strictly exceeding their designated manager.",
+    "objective": "Write an SQL query to find employees whose salary is strictly greater than their manager's salary. Return the employee's name with column alias Employee.",
+    "starter_code": "-- Problem #Pro-002: Employees Earning More Than Their Managers\n-- Write your SQL query below\n\n",
+    "expected_output": "Employee\n--------\nJoe",
+    "hints": [
+      "Perform a SELF JOIN on the Employee table: FROM Employee AS e JOIN Employee AS m ON e.managerId = m.id.",
+      "Alias the first instance as e (representing the employee) and the second instance as m (representing the manager).",
+      "Filter for strictly greater salary: WHERE e.salary > m.salary.",
+      "Select e.name with alias Employee: SELECT e.name AS Employee."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.name AS Employee FROM Employee AS e JOIN Employee AS m ON e.managerId = m.id WHERE e.salary > m.salary;",
+        "hidden": false,
+        "description": "Find employees earning more than their manager using a self join"
+      }
+    ],
+    "explanation": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT e.name AS Employee\n- Projects the name of the qualifying employee, aliased as Employee.\nLine 2: FROM Employee AS e\n- References the Employee table under alias e representing direct reports.\nLine 3: JOIN Employee AS m ON e.managerId = m.id\n- Self-joins the same table under alias m representing managers, matching the employee's managerId to the manager's id.\nLine 4: WHERE e.salary > m.salary;\n- Filters for cases where the employee's compensation strictly exceeds their manager's compensation.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Employee AS e\nStep 2: JOIN Employee AS m ON e.managerId = m.id\nStep 3: WHERE e.salary > m.salary\nStep 4: SELECT e.name AS Employee",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-002"
+  },
+  {
+    "level_number": 83,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Duplicate Emails",
+    "story": "User identity registry services and marketing subscription platforms frequently experience duplicate user signups. Identifying redundant email addresses is crucial for identity deduplication and maintaining data cleanliness across production environments.",
+    "objective": "Write a SQL query to report all duplicate email addresses from the Person table. Return the result table in any order with column alias Email.",
+    "starter_code": "-- Problem #Pro-003: Duplicate Emails\n-- Write your SQL query below\n\n",
+    "expected_output": "Email\n----------------\na@leetcode.com",
+    "hints": [
+      "Group rows by email address using GROUP BY email.",
+      "Use the HAVING clause to filter groups after aggregation: HAVING COUNT(*) > 1.",
+      "Do not use WHERE to filter aggregated counts, as WHERE executes before GROUP BY.",
+      "Select email with column alias Email: SELECT email AS Email."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT email AS Email FROM Person GROUP BY email HAVING COUNT(*) > 1;",
+        "hidden": false,
+        "description": "Find duplicate email addresses using GROUP BY and HAVING"
+      }
+    ],
+    "explanation": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT email AS Email\n- Projects the duplicate email address, aliased as Email.\nLine 2: FROM Person\n- Reads candidate user rows from the Person table.\nLine 3: GROUP BY email\n- Groups identical email strings into single aggregation buckets.\nLine 4: HAVING COUNT(*) > 1;\n- Evaluates post-aggregation count per bucket, retaining only those appearing more than once.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person\nStep 2: GROUP BY email\nStep 3: HAVING COUNT(*) > 1\nStep 4: SELECT email AS Email",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-003"
+  },
+  {
+    "level_number": 84,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Delete Duplicate Emails",
+    "story": "In enterprise customer relationship management and identity resolution pipelines, duplicate email registrations lead to fragmented customer histories and skewed marketing metrics. Data hygiene scripts must purge redundant records from the table in-place while strictly retaining the earliest created entry (lowest primary key id) for each unique address.",
+    "objective": "Write a SQL query to delete all duplicate email records from the Person table, keeping only the record with the smallest id for each unique email.",
+    "starter_code": "-- Problem #Pro-004: Delete Duplicate Emails\n-- Write your SQL query below\n\n",
+    "expected_output": "id | email\n--------------------\n1 | john@mail.com\n2 | bob@mail.com\n4 | alice@mail.com",
+    "hints": [
+      "Self-join the Person table to compare records sharing the exact same email: FROM Person p1 JOIN Person p2 ON p1.email = p2.email.",
+      "Filter for records where p1 has a strictly greater primary key id: AND p1.id > p2.id.",
+      "Target only the p1 alias for deletion: DELETE p1 FROM Person p1 JOIN Person p2 ...",
+      "This guarantees that for every duplicate pair, the record with the higher id is removed, leaving only the smallest id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "DELETE p1 FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id > p2.id;",
+        "hidden": false,
+        "description": "Delete duplicate email records while preserving lowest id"
+      }
+    ],
+    "explanation": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: DELETE p1\n- Instructs the database engine to remove rows only from the table instance designated by alias p1.\nLine 2: FROM Person p1\n- Designates the first instance of Person as the candidate pool for deletion.\nLine 3: JOIN Person p2\n- Self-joins against a second copy of Person representing comparison reference rows.\nLine 4: ON p1.email = p2.email\n- Matches records having identical email addresses.\nLine 5: AND p1.id > p2.id;\n- Matches only when p1's id is strictly greater than p2's id, protecting the minimum id from deletion.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Person p1\nStep 2: JOIN Person p2 ON p1.email = p2.email\nStep 3: AND p1.id > p2.id\nStep 4: DELETE matching rows from p1",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-004"
+  },
+  {
+    "level_number": 85,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Rising Temperature",
+    "story": "Meteorological observational networks and climate time-series telemetry analyze daily thermal fluctuations. Identifying anomalies where a station reports warmer temperatures relative to the strictly preceding day requires comparing consecutive daily date records within the same telemetry log.",
+    "objective": "Write a SQL query to find all dates where the temperature was higher than the previous day's (yesterday's) temperature. Return the id column in any order.",
+    "starter_code": "-- Problem #Pro-005: Rising Temperature\n-- Write your SQL query below\n\n",
+    "expected_output": "id\n--\n2\n4",
+    "hints": [
+      "Perform a SELF JOIN on the Weather table: FROM Weather w1 JOIN Weather w2.",
+      "w1 represents today and w2 represents yesterday.",
+      "Ensure the dates are exactly one day apart using DATEDIFF: ON DATEDIFF(w1.recordDate, w2.recordDate) = 1.",
+      "Filter for strictly warmer temperatures: WHERE w1.temperature > w2.temperature.",
+      "Select today's identifier: SELECT w1.id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT w1.id FROM Weather w1 JOIN Weather w2 ON DATEDIFF(w1.recordDate, w2.recordDate) = 1 WHERE w1.temperature > w2.temperature;",
+        "hidden": false,
+        "description": "Find dates with warmer temperature than previous day"
+      }
+    ],
+    "explanation": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT w1.id\n- Projects the identifier of the observation day satisfying the thermal increase condition.\nLine 2: FROM Weather w1\n- Treats w1 as today's weather record.\nLine 3: JOIN Weather w2\n- Self-joins a second instance w2 representing yesterday's weather record.\nLine 4: ON DATEDIFF(w1.recordDate, w2.recordDate) = 1\n- Aligns records that are separated by exactly one calendar day (today - yesterday = 1).\nLine 5: WHERE w1.temperature > w2.temperature;\n- Filters for days where today's recorded temperature is strictly higher than yesterday's.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Weather w1\nStep 2: JOIN Weather w2 ON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nStep 3: WHERE w1.temperature > w2.temperature\nStep 4: SELECT w1.id",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-005"
+  },
+  {
+    "level_number": 86,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Game Play Analysis I",
+    "story": "In mobile gaming and digital entertainment analytics, player lifecycle telemetry is recorded each time an account connects to game servers. Determining the exact cohort onboarding timestamp for retention and churn modeling requires isolating each individual player's initial registration or first recorded login event.",
+    "objective": "Write a SQL query to find the first login date for every player from the Activity table. Return player_id and first_login in any order.",
+    "starter_code": "-- Problem #Pro-006: Game Play Analysis I\n-- Write your SQL query below\n\n",
+    "expected_output": "player_id | first_login\n-----------------------\n1 | 2016-03-01\n2 | 2017-06-25\n3 | 2016-03-02",
+    "hints": [
+      "Group records by each distinct player using GROUP BY player_id.",
+      "Use the MIN() aggregate function on event_date to determine the earliest recorded session.",
+      "Alias the minimum date column as first_login: MIN(event_date) AS first_login.",
+      "Select player_id alongside MIN(event_date)."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id;",
+        "hidden": false,
+        "description": "Find first login date for every player using GROUP BY and MIN"
+      }
+    ],
+    "explanation": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT player_id, MIN(event_date) AS first_login\n- Projects each player ID alongside their chronologically earliest login date.\nLine 2: FROM Activity\n- Scans gaming telemetry session logs from the Activity table.\nLine 3: GROUP BY player_id;\n- Clusters rows belonging to the same player into distinct aggregation groups.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Activity\nStep 2: GROUP BY player_id\nStep 3: MIN(event_date)\nStep 4: SELECT player_id, MIN(event_date) AS first_login",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-006"
+  },
+  {
+    "level_number": 87,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Game Play Analysis II",
+    "story": "Understanding player hardware preferences and platform onboarding channels is essential for client-side game optimization. Product teams need to analyze which specific device type or gaming platform each player utilized during their absolute first recorded connection session.",
+    "objective": "Write a SQL query to report the device that each player used on their first login from the Activity table. Return player_id and device_id in any order.",
+    "starter_code": "-- Problem #Pro-007: Game Play Analysis II\n-- Write your SQL query below\n\n",
+    "expected_output": "player_id | device_id\n---------------------\n1 | 2\n2 | 1\n3 | 4",
+    "hints": [
+      "First find each player's earliest login date using a subquery: (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id).",
+      "Join this subquery back to the original Activity table on both player_id and event_date = first_login.",
+      "This join isolates the exact full row corresponding to the first login, exposing device_id.",
+      "Select a.player_id and a.device_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT a.player_id, a.device_id FROM Activity a JOIN (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id) f ON a.player_id = f.player_id AND a.event_date = f.first_login;",
+        "hidden": false,
+        "description": "Find the device used on each player's first login date"
+      }
+    ],
+    "explanation": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT a.player_id, a.device_id\n- Projects player ID and their initial registration hardware device.\nLine 2: FROM Activity a\n- Scans base Activity rows.\nLine 3-10: JOIN (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id) f\n- Subquery calculates the earliest login date for each distinct player.\nLine 11-12: ON a.player_id = f.player_id AND a.event_date = f.first_login;\n- Joins the aggregate result back to the original table, matching on both player ID and exact first event date to extract the corresponding device_id.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: Execute subquery f (GROUP BY player_id, compute MIN(event_date))\nStep 2: FROM Activity a JOIN f\nStep 3: Apply ON conditions (a.player_id = f.player_id AND a.event_date = f.first_login)\nStep 4: SELECT a.player_id, a.device_id",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-007"
+  },
+  {
+    "level_number": 88,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Employee Bonus",
+    "story": "Corporate payroll auditing and human capital compensation platforms need to verify quarterly incentive disbursements. Identifying employees who received either modest bonuses under ,000 or were completely omitted from bonus distributions is essential for parity compliance.",
+    "objective": "Write a SQL query to report the name and bonus of every employee whose bonus is strictly less than 1000 or who has no bonus record at all. Return the result table in any order.",
+    "starter_code": "-- Problem #Pro-008: Employee Bonus\n-- Write your SQL query below\n\n",
+    "expected_output": "name | bonus\n-----------\nBrad | NULL\nJohn | NULL\nDan | 500",
+    "hints": [
+      "Use a LEFT JOIN between Employee and Bonus so employees without bonus records are preserved: FROM Employee e LEFT JOIN Bonus b ON e.empId = b.empId.",
+      "Filter for bonuses less than 1000: b.bonus < 1000.",
+      "Include missing bonus records using IS NULL: OR b.bonus IS NULL.",
+      "Do NOT use b.bonus = NULL, because NULL cannot be compared with equality in SQL.",
+      "Select e.name and b.bonus."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.name, b.bonus FROM Employee e LEFT JOIN Bonus b ON e.empId = b.empId WHERE b.bonus < 1000 OR b.bonus IS NULL;",
+        "hidden": false,
+        "description": "Find employees with bonus under 1000 or no bonus using LEFT JOIN"
+      }
+    ],
+    "explanation": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;\n\n\ud83d\udd0d Query Breakdown\nLine 1-2: SELECT e.name, b.bonus\n- Projects the employee name alongside their bonus amount (or NULL).\nLine 3: FROM Employee e\n- Scans all employee master records.\nLine 4-5: LEFT JOIN Bonus b ON e.empId = b.empId\n- Retains all employees, populating unmatched bonus fields with NULL.\nLine 6-7: WHERE b.bonus < 1000 OR b.bonus IS NULL;\n- Retains employees who either received less than 1000 or received no bonus at all.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Employee e\nStep 2: LEFT JOIN Bonus b ON e.empId = b.empId\nStep 3: WHERE b.bonus < 1000 OR b.bonus IS NULL\nStep 4: SELECT e.name, b.bonus",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-008"
+  },
+  {
+    "level_number": 89,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Find Customer Referee",
+    "story": "Marketing referral programs reward brand advocates for acquiring new users. When auditing referral attribution data or running non-referred organic customer analyses, segmentation queries must isolate customers who were either referred by anyone other than a specific disqualified promoter (id = 2) or signed up organically without any referrer at all.",
+    "objective": "Write a SQL query to return the names of customers who were not referred by the customer with id = 2 or were not referred by anyone (referee_id is NULL). Return the result table in any order.",
+    "starter_code": "-- Problem #Pro-009: Find Customer Referee\n-- Write your SQL query below\n\n",
+    "expected_output": "name\n----\nWill\nJane\nBill\nZack",
+    "hints": [
+      "In SQL three-valued logic, NULL <> 2 evaluates to UNKNOWN, which the WHERE clause automatically discards.",
+      "To include customers who have no referee, you must explicitly add OR referee_id IS NULL.",
+      "Alternatively, use COALESCE(referee_id, 0) <> 2.",
+      "Do NOT write referee_id = NULL or referee_id != 2 alone.",
+      "Select only the name column from Customer."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT name FROM Customer WHERE referee_id <> 2 OR referee_id IS NULL;",
+        "hidden": false,
+        "description": "Find customers whose referee is not 2 or is NULL"
+      }
+    ],
+    "explanation": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT name\n- Projects the name of qualifying customers.\nLine 2: FROM Customer\n- Scans records from the Customer table.\nLine 3: WHERE referee_id <> 2\n- Matches customers who were referred by someone whose identifier is not 2.\nLine 4: OR referee_id IS NULL;\n- Preserves customers who signed up organically without any referrer (referee_id IS NULL).\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Customer\nStep 2: WHERE referee_id <> 2 OR referee_id IS NULL\nStep 3: SELECT name",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-009"
+  },
+  {
+    "level_number": 90,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Customer Placing the Largest Number of Orders",
+    "story": "E-commerce order processing pipelines track retail fulfillment metrics and customer lifetime activity. Identifying the single highest-volume customer by total completed orders enables VIP rewards enrollment and dedicated loyalty support dispatch.",
+    "objective": "Write a SQL query to find the customer who has placed the largest number of orders from the Orders table. Return customer_number. Exactly one customer is guaranteed to have the maximum count.",
+    "starter_code": "-- Problem #Pro-010: Customer Placing the Largest Number of Orders\n-- Write your SQL query below\n\n",
+    "expected_output": "customer_number\n---------------\n3",
+    "hints": [
+      "Group transactions by each distinct customer using GROUP BY customer_number.",
+      "Count orders per customer using COUNT(*).",
+      "Sort from largest order volume to smallest using ORDER BY COUNT(*) DESC.",
+      "Isolate the single top customer using LIMIT 1.",
+      "Select only customer_number."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT customer_number FROM Orders GROUP BY customer_number ORDER BY COUNT(*) DESC LIMIT 1;",
+        "hidden": false,
+        "description": "Find the customer with the highest order count using GROUP BY, ORDER BY COUNT(*) DESC, LIMIT 1"
+      }
+    ],
+    "explanation": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT customer_number\n- Projects the customer identifier of the highest-volume buyer.\nLine 2: FROM Orders\n- Scans order transaction records from the Orders table.\nLine 3: GROUP BY customer_number\n- Aggregates orders into distinct buckets per customer.\nLine 4: ORDER BY COUNT(*) DESC\n- Sorts customer groups in descending order based on total orders placed.\nLine 5: LIMIT 1;\n- Truncates output to retrieve only the top customer ranking first.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Orders\nStep 2: GROUP BY customer_number\nStep 3: COUNT(*)\nStep 4: ORDER BY COUNT(*) DESC\nStep 5: LIMIT 1\nStep 6: SELECT customer_number",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-010"
+  },
+  {
+    "level_number": 91,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Big Countries",
+    "story": "Global macroeconomic organizations and demographic census bureaus categorize sovereign states according to territorial expanse and population density. Flagging large nation states that possess either vast geographical territory or massive resident populations is essential for international aid allocations and trade treaty scoping.",
+    "objective": "Write a SQL query to report the name, population, and area of big countries from the World table. A country is big if its area is at least 3,000,000 or its population is at least 25,000,000. Return the result in any order.",
+    "starter_code": "-- Problem #Pro-011: Big Countries\n-- Write your SQL query below\n\n",
+    "expected_output": "name | population | area\n------------------------\nAfghanistan | 25500100 | 652230\nAlgeria | 37100000 | 2381741",
+    "hints": [
+      "Use the OR logical operator because satisfying either boundary threshold qualifies the country as big.",
+      "Remember that \"at least\" means greater than or equal to: area >= 3000000 OR population >= 25000000.",
+      "Do NOT use AND, as that would restrict output to countries meeting both criteria simultaneously.",
+      "Select exactly the three requested columns: name, population, area."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT name, population, area FROM World WHERE area >= 3000000 OR population >= 25000000;",
+        "hidden": false,
+        "description": "Filter big countries where area >= 3000000 OR population >= 25000000"
+      }
+    ],
+    "explanation": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;\n\n\ud83d\udd0d Query Breakdown\nLine 1-4: SELECT name, population, area\n- Projects the country name, total population count, and geographical area.\nLine 5: FROM World\n- Scans demographic records from the World catalog.\nLine 6: WHERE area >= 3000000\n- Filters for countries spanning at least 3 million square units of land.\nLine 7: OR population >= 25000000;\n- Includes countries with at least 25 million citizens, even if their area is below 3M.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM World\nStep 2: WHERE area >= 3000000 OR population >= 25000000\nStep 3: SELECT name, population, area",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-011"
+  },
+  {
+    "level_number": 92,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Classes With at Least 5 Students",
+    "story": "Academic scheduling registrars and university curriculum departments audit course registration headcounts prior to the start of each semester. Any elective or lecture section failing to meet the minimum threshold of 5 enrolled students must be evaluated for cancellation or consolidation.",
+    "objective": "Write a SQL query to find all classes that have at least 5 students from the Courses table. Return the class column in any order.",
+    "starter_code": "-- Problem #Pro-012: Classes With at Least 5 Students\n-- Write your SQL query below\n\n",
+    "expected_output": "class\n-----\nMath",
+    "hints": [
+      "Group enrollment records by academic subject using GROUP BY class.",
+      "Filter aggregate groups using the HAVING clause, since WHERE cannot evaluate aggregate functions like COUNT().",
+      "Ensure the threshold uses inclusive greater-than-or-equal-to: HAVING COUNT(student) >= 5.",
+      "Select only the class name column."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT class FROM Courses GROUP BY class HAVING COUNT(student) >= 5;",
+        "hidden": false,
+        "description": "Filter classes with at least 5 students using GROUP BY class HAVING COUNT(student) >= 5"
+      }
+    ],
+    "explanation": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;\n\n\ud83d\udd0d Query Breakdown\nLine 1: SELECT class\n- Projects the name of qualifying academic courses.\nLine 2: FROM Courses\n- Scans student course enrollment records.\nLine 3: GROUP BY class\n- Partitions student enrollments into distinct course buckets.\nLine 4: HAVING COUNT(student) >= 5;\n- Filters grouped partitions to retain only classes with an enrollment headcount of 5 or more.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Courses\nStep 2: GROUP BY class\nStep 3: COUNT(student)\nStep 4: HAVING COUNT(student) >= 5\nStep 5: SELECT class",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-012"
+  },
+  {
+    "level_number": 93,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Friend Requests I: Overall Acceptance Rate",
+    "story": "Social network growth engineering teams closely monitor engagement funnel metrics to gauge community receptivity. The overall friend request acceptance rate evaluates how effectively outgoing invitations convert into mutual connections, requiring distinct request-pair counting and division-by-zero protection.",
+    "objective": "Write a SQL query to find the overall acceptance rate of friend requests, defined as the number of distinct accepted requests divided by the number of distinct requests sent. Round the result to 2 decimal places. If there are no friend requests, return 0.00.",
+    "starter_code": "-- Problem #Pro-013: Friend Requests I: Overall Acceptance Rate\n-- Write your SQL query below\n\n",
+    "expected_output": "accept_rate\n-----------\n0.67",
+    "hints": [
+      "Count distinct accepted pairs: (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a).",
+      "Count distinct sent pairs: (SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r).",
+      "Divide accepted by sent using * 1.0 or CAST to FLOAT to prevent integer floor division.",
+      "Wrap with IFNULL() or COALESCE() with 0.0 to handle 0 sent requests without crashing.",
+      "Round the quotient to 2 decimal places using ROUND(..., 2)."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT ROUND(IFNULL((SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 / NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0), 0.0), 2) AS accept_rate;",
+        "hidden": false,
+        "description": "Calculate overall acceptance rate rounded to 2 decimal places with IFNULL fallback"
+      }
+    ],
+    "explanation": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;\n\n\ud83d\udd0d Query Breakdown\nStep 1: (SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r)\n- Computes the total count of distinct (sender, recipient) invitations.\nStep 2: (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a)\n- Computes the total count of distinct accepted friendship pairings.\nStep 3: Multiplies by 1.0 and divides by NULLIF(sent, 0) to avoid division-by-zero errors.\nStep 4: IFNULL(..., 0.0) replaces NULL with 0.0 if no requests exist.\nStep 5: ROUND(..., 2) rounds the quotient to 2 decimal places.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: Compute distinct FriendRequest pairs\nStep 2: Compute distinct RequestAccepted pairs\nStep 3: Divide accepted / sent\nStep 4: IFNULL fallback to 0.0\nStep 5: ROUND to 2 decimals\nStep 6: SELECT AS accept_rate",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-013"
+  },
+  {
+    "level_number": 94,
+    "chapter_id": 13,
+    "chapter_title": "Module 13: Master SQL Solutions",
+    "title": "Consecutive Available Seats",
+    "story": "Theater ticketing platforms and airline reservation services empower couples and families to purchase adjacent seats without gaps. Detecting consecutive available seats requires inspecting neighboring seat rows using self-joins or lag/lead adjacency calculations.",
+    "objective": "Write a SQL query to find all seats that are part of at least one pair of consecutive available seats from the Cinema table. Return seat_id sorted by seat_id in ascending order.",
+    "starter_code": "-- Problem #Pro-014: Consecutive Available Seats\n-- Write your SQL query below\n\n",
+    "expected_output": "seat_id\n-------\n3\n4\n5",
+    "hints": [
+      "Perform a self join on Cinema: Cinema c1 JOIN Cinema c2.",
+      "Check for adjacency using ABS(c1.seat_id - c2.seat_id) = 1 or (c1.seat_id = c2.seat_id + 1 OR c1.seat_id = c2.seat_id - 1).",
+      "Filter where both seats are free: c1.free = 1 AND c2.free = 1.",
+      "Use DISTINCT to avoid duplicate seat rows when a seat is adjacent to two free seats (like seat 4).",
+      "Sort ascending by seat_id using ORDER BY c1.seat_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT DISTINCT c1.seat_id FROM Cinema c1 JOIN Cinema c2 ON ABS(c1.seat_id - c2.seat_id) = 1 WHERE c1.free = 1 AND c2.free = 1 ORDER BY c1.seat_id;",
+        "hidden": false,
+        "description": "Find consecutive available seats using self join with ABS adjacency check"
+      }
+    ],
+    "explanation": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;\n\n\ud83d\udd0d Query Breakdown\nLine 1-2: SELECT DISTINCT c1.seat_id\n- Selects distinct seat identifiers to prevent duplicates when a seat neighbors two free seats.\nLine 3-4: FROM Cinema c1 JOIN Cinema c2\n- Self-joins the Cinema table to pair each seat against potential neighbor seats.\nLine 5: ON ABS(c1.seat_id - c2.seat_id) = 1\n- Joins seats whose absolute difference in seat_id is exactly 1 (immediate neighbors).\nLine 6-7: WHERE c1.free = 1 AND c2.free = 1\n- Filters matches to only keep pairs where both seats are currently unoccupied (free = 1).\nLine 8: ORDER BY c1.seat_id;\n- Sorts resulting seat numbers in ascending order.\n\n\u2699\ufe0f SQL Execution Order:\nStep 1: FROM Cinema c1 JOIN Cinema c2\nStep 2: ON ABS(c1.seat_id - c2.seat_id) = 1\nStep 3: WHERE c1.free = 1 AND c2.free = 1\nStep 4: SELECT DISTINCT c1.seat_id\nStep 5: ORDER BY c1.seat_id",
+    "difficulty": "Easy",
+    "track": "master",
+    "code_id": "Pro-014"
   }
 ]

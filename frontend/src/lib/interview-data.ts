@@ -10546,7 +10546,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 46,
     "problemId": 46,
     "problemTitle": "Monthly Sales Summary",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Stripe",
@@ -10787,7 +10787,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 47,
     "problemId": 47,
     "problemTitle": "Yearly Sales Summary",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Apple",
@@ -11028,7 +11028,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 48,
     "problemId": 48,
     "problemTitle": "Products Sold More Than 100 Times",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Amazon",
       "Walmart",
@@ -11269,7 +11269,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 49,
     "problemId": 49,
     "problemTitle": "Average Age by City",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Swiggy",
       "Zomato",
@@ -11510,7 +11510,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 50,
     "problemId": 50,
     "problemTitle": "Highest Salary Department",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Google",
       "Meta",
@@ -11760,7 +11760,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 51,
     "problemId": 51,
     "problemTitle": "Lowest Salary Department",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Google",
       "Meta",
@@ -12010,7 +12010,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 52,
     "problemId": 52,
     "problemTitle": "Average Marks Above 80",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Google",
       "Meta",
@@ -12260,7 +12260,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
     "levelNumber": 53,
     "problemId": 53,
     "problemTitle": "Groups Using Multiple Columns",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "companyTags": [
       "Google",
       "Meta",
@@ -12485,319 +12485,7996 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
       }
     ]
   },
+  "54": {
+      "id": "sql-54",
+      "title": "HAVING with COUNT()",
+      "levelNumber": 54,
+      "problemId": 54,
+      "problemTitle": "HAVING with COUNT()",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Flipkart"
+      ],
+      "tracing": {
+          "code": "SELECT category_name,\n       COUNT(*) AS product_count\nFROM products\nGROUP BY category_name\nHAVING COUNT(*) >= 10\nORDER BY product_count DESC;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM products",
+                      "Action": "Read product records"
+                  },
+                  "explanation": "Scans all product records from the products table."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "GROUP BY category_name",
+                      "Action": "Bucket by category"
+                  },
+                  "explanation": "Clusters products into category buckets: Sports, Electronics, Fashion, Grocery."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "COUNT(*)",
+                      "Action": "Compute counts per bucket"
+                  },
+                  "explanation": "Computes row counts: Sports (20), Electronics (15), Fashion (12), Grocery (8)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) >= 10",
+                      "Action": "Filter aggregate groups"
+                  },
+                  "explanation": "Discards Grocery (8) because 8 < 10. Keeps Sports (20), Electronics (15), Fashion (12)."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects category_name and product_count for remaining groups."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY product_count DESC",
+                      "Action": "Rank groups"
+                  },
+                  "explanation": "Sorts groups descending: Sports (20), Electronics (15), Fashion (12)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-54-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why use HAVING instead of WHERE?",
+              "whatInterviewerChecks": "Understanding of logical query execution order.",
+              "bestReplyScript": "WHERE filters base table rows before aggregation occurs, while HAVING filters aggregated group metrics (like COUNT, SUM) after GROUP BY has executed.",
+              "commonMistakesToAvoid": "Writing WHERE COUNT(*) >= 10.",
+              "keyPoints": [
+                  "WHERE filters rows pre-aggregation",
+                  "HAVING filters groups post-aggregation",
+                  "WHERE cannot evaluate aggregate functions"
+              ],
+              "codeSnippet": "HAVING COUNT(*) >= 10"
+          },
+          {
+              "id": "q-54-2",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is the difference between COUNT(*) and COUNT(column_name)?",
+              "whatInterviewerChecks": "NULL handling in aggregate functions.",
+              "bestReplyScript": "COUNT(*) counts all rows regardless of column values including NULLs. COUNT(column_name) counts only rows where the specified column is NOT NULL.",
+              "commonMistakesToAvoid": "Assuming COUNT(col) and COUNT(*) are always identical.",
+              "keyPoints": [
+                  "COUNT(*) counts every row",
+                  "COUNT(col) ignores NULL values",
+                  "Use COUNT(*) for total group row count"
+              ],
+              "codeSnippet": "COUNT(*) vs COUNT(category_name)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-54-1",
+              "title": "1. Using WHERE with COUNT()",
+              "description": "Attempting to filter groups with WHERE COUNT(*) >= 10.",
+              "badSnippet": "SELECT category_name, COUNT(*) FROM products WHERE COUNT(*) >= 10 GROUP BY category_name;",
+              "failingInput": "Query execution",
+              "consequence": "Throws SQL error: misuse of aggregate function in WHERE.",
+              "howToFix": "Move condition to HAVING COUNT(*) >= 10.",
+              "mistake": "Aggregate in WHERE clause",
+              "whyItHappens": "Forgetting that WHERE executes before GROUP BY."
+          },
+          {
+              "id": "m-54-2",
+              "title": "2. Forgetting GROUP BY",
+              "description": "Selecting category_name and COUNT(*) without grouping.",
+              "badSnippet": "SELECT category_name, COUNT(*) FROM products HAVING COUNT(*) >= 10;",
+              "failingInput": "Query execution",
+              "consequence": "Throws error or returns single row with arbitrary category.",
+              "howToFix": "Add GROUP BY category_name.",
+              "mistake": "Missing GROUP BY clause",
+              "whyItHappens": "Not realizing aggregate functions require GROUP BY when selecting unaggregated attributes."
+          }
+      ]
+  },
   "SQL-019": {
-    "code_id": "SQL-019",
-    "levelNumber": 54,
-    "title": "HAVING with COUNT()",
-    "mistakes": [
-      {
-        "id": "m-54-1",
-        "title": "1. Filtering with WHERE Instead of HAVING",
-        "description": "Attempting to filter aggregate counts using WHERE COUNT(*) >= 10.",
-        "badSnippet": "SELECT category_name, COUNT(*) AS product_count FROM products WHERE COUNT(*) >= 10 GROUP BY category_name;",
-        "failingInput": "WHERE COUNT(*) filter requirement",
-        "consequence": "Throws a syntax error 'aggregate functions are not allowed in WHERE'.",
-        "howToFix": "Move aggregate filter COUNT(*) >= 10 to HAVING clause after GROUP BY.",
-        "mistake": "Using aggregate in WHERE",
-        "whyItHappens": "Misunderstanding logical execution sequence (WHERE acts before grouping)."
+      "id": "sql-54",
+      "title": "HAVING with COUNT()",
+      "levelNumber": 54,
+      "problemId": 54,
+      "problemTitle": "HAVING with COUNT()",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Flipkart"
+      ],
+      "tracing": {
+          "code": "SELECT category_name,\n       COUNT(*) AS product_count\nFROM products\nGROUP BY category_name\nHAVING COUNT(*) >= 10\nORDER BY product_count DESC;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM products",
+                      "Action": "Read product records"
+                  },
+                  "explanation": "Scans all product records from the products table."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "GROUP BY category_name",
+                      "Action": "Bucket by category"
+                  },
+                  "explanation": "Clusters products into category buckets: Sports, Electronics, Fashion, Grocery."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "COUNT(*)",
+                      "Action": "Compute counts per bucket"
+                  },
+                  "explanation": "Computes row counts: Sports (20), Electronics (15), Fashion (12), Grocery (8)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) >= 10",
+                      "Action": "Filter aggregate groups"
+                  },
+                  "explanation": "Discards Grocery (8) because 8 < 10. Keeps Sports (20), Electronics (15), Fashion (12)."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects category_name and product_count for remaining groups."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY product_count DESC",
+                      "Action": "Rank groups"
+                  },
+                  "explanation": "Sorts groups descending: Sports (20), Electronics (15), Fashion (12)."
+              }
+          ]
       },
-      {
-        "id": "m-54-2",
-        "title": "2. Selecting Columns Not in GROUP BY",
-        "description": "Adding product_name to SELECT without adding it to GROUP BY.",
-        "badSnippet": "SELECT category_name, product_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10;",
-        "failingInput": "Invalid SELECT clause columns",
-        "consequence": "Throws 'Expression not in GROUP BY key' error in strict ANSI SQL.",
-        "howToFix": "Remove product_name from SELECT, since we are returning one row per category, not per product.",
-        "mistake": "Non-aggregated/non-grouped column selection",
-        "whyItHappens": "Attempting to view item details while concurrently aggregating group metrics."
+      "questions": [
+          {
+              "id": "q-54-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why use HAVING instead of WHERE?",
+              "whatInterviewerChecks": "Understanding of logical query execution order.",
+              "bestReplyScript": "WHERE filters base table rows before aggregation occurs, while HAVING filters aggregated group metrics (like COUNT, SUM) after GROUP BY has executed.",
+              "commonMistakesToAvoid": "Writing WHERE COUNT(*) >= 10.",
+              "keyPoints": [
+                  "WHERE filters rows pre-aggregation",
+                  "HAVING filters groups post-aggregation",
+                  "WHERE cannot evaluate aggregate functions"
+              ],
+              "codeSnippet": "HAVING COUNT(*) >= 10"
+          },
+          {
+              "id": "q-54-2",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is the difference between COUNT(*) and COUNT(column_name)?",
+              "whatInterviewerChecks": "NULL handling in aggregate functions.",
+              "bestReplyScript": "COUNT(*) counts all rows regardless of column values including NULLs. COUNT(column_name) counts only rows where the specified column is NOT NULL.",
+              "commonMistakesToAvoid": "Assuming COUNT(col) and COUNT(*) are always identical.",
+              "keyPoints": [
+                  "COUNT(*) counts every row",
+                  "COUNT(col) ignores NULL values",
+                  "Use COUNT(*) for total group row count"
+              ],
+              "codeSnippet": "COUNT(*) vs COUNT(category_name)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-54-1",
+              "title": "1. Using WHERE with COUNT()",
+              "description": "Attempting to filter groups with WHERE COUNT(*) >= 10.",
+              "badSnippet": "SELECT category_name, COUNT(*) FROM products WHERE COUNT(*) >= 10 GROUP BY category_name;",
+              "failingInput": "Query execution",
+              "consequence": "Throws SQL error: misuse of aggregate function in WHERE.",
+              "howToFix": "Move condition to HAVING COUNT(*) >= 10.",
+              "mistake": "Aggregate in WHERE clause",
+              "whyItHappens": "Forgetting that WHERE executes before GROUP BY."
+          },
+          {
+              "id": "m-54-2",
+              "title": "2. Forgetting GROUP BY",
+              "description": "Selecting category_name and COUNT(*) without grouping.",
+              "badSnippet": "SELECT category_name, COUNT(*) FROM products HAVING COUNT(*) >= 10;",
+              "failingInput": "Query execution",
+              "consequence": "Throws error or returns single row with arbitrary category.",
+              "howToFix": "Add GROUP BY category_name.",
+              "mistake": "Missing GROUP BY clause",
+              "whyItHappens": "Not realizing aggregate functions require GROUP BY when selecting unaggregated attributes."
+          }
+      ]
+  },
+  "55": {
+      "id": "sql-55",
+      "title": "HAVING with SUM()",
+      "levelNumber": 55,
+      "problemId": 55,
+      "problemTitle": "HAVING with SUM()",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Paytm",
+          "Walmart"
+      ],
+      "tracing": {
+          "code": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING SUM(purchase_amount) > 50000\nORDER BY total_purchase DESC;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM purchases",
+                      "Action": "Scan purchases"
+                  },
+                  "explanation": "Reads transaction records from purchases table."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "GROUP BY customer_id, customer_name",
+                      "Action": "Form customer groups"
+                  },
+                  "explanation": "Partitions purchase transactions by customer: Rahul (101), Priya (102), Amit (103)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "SUM(purchase_amount)",
+                      "Action": "Sum transactions"
+                  },
+                  "explanation": "Rahul: 15k+20k+25k = 60,000; Priya: 10k+12k = 22,000; Amit: 30k+25k = 55,000."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "HAVING SUM(...) > 50000",
+                      "Action": "Filter sums"
+                  },
+                  "explanation": "Filters groups: Keeps Rahul (60,000) and Amit (55,000). Drops Priya (22,000 <= 50,000)."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects customer_id, customer_name, and total_purchase."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "ORDER BY total_purchase DESC",
+                      "Action": "Rank customers"
+                  },
+                  "explanation": "Sorts output: Rahul (60,000) first, Amit (55,000) second."
+              }
+          ]
       },
-      {
-        "id": "m-54-3",
-        "title": "3. Omitting GROUP BY",
-        "description": "Filtering with HAVING without establishing aggregate buckets.",
-        "badSnippet": "SELECT category_name, COUNT(*) AS product_count FROM products HAVING COUNT(*) >= 10;",
-        "failingInput": "Missing GROUP BY requirement",
-        "consequence": "Aggregates the entire products table into one global row (if valid in some dialects) or errors out on category_name selection.",
-        "howToFix": "Include GROUP BY category_name.",
-        "mistake": "Missing GROUP BY clause",
-        "whyItHappens": "Assuming HAVING implicitly creates groups based on SELECT."
-      },
-      {
-        "id": "m-54-4",
-        "title": "4. Forgetting ORDER BY",
-        "description": "Omitting the ORDER BY product_count DESC clause.",
-        "badSnippet": "SELECT category_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10;",
-        "failingInput": "Sorted category headcount requirement",
-        "consequence": "Outputs passing categories in random order.",
-        "howToFix": "Append ORDER BY product_count DESC.",
-        "mistake": "Missing ORDER BY clause",
-        "whyItHappens": "Focusing solely on filtering group logic and overlooking presentation constraints."
-      }
-    ]
+      "questions": [
+          {
+              "id": "q-55-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why include both customer_id and customer_name in GROUP BY?",
+              "whatInterviewerChecks": "ANSI SQL compliance for non-aggregated columns.",
+              "bestReplyScript": "In standard ANSI SQL, any column present in the SELECT list that is not wrapped in an aggregate function must appear in the GROUP BY clause to guarantee unambiguous results.",
+              "commonMistakesToAvoid": "Grouping only by customer_id while selecting customer_name in strict SQL mode.",
+              "keyPoints": [
+                  "All non-aggregate SELECT columns must be in GROUP BY",
+                  "customer_name is functionally dependent on customer_id",
+                  "Ensures cross-database SQL portability"
+              ],
+              "codeSnippet": "GROUP BY customer_id, customer_name"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-55-1",
+              "title": "1. Using WHERE with SUM()",
+              "description": "Attempting to filter total spend using WHERE SUM(purchase_amount) > 50000.",
+              "badSnippet": "SELECT customer_id, SUM(purchase_amount) FROM purchases WHERE SUM(purchase_amount) > 50000 GROUP BY customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Throws error: misuse of aggregate: SUM() in WHERE clause.",
+              "howToFix": "Use HAVING SUM(purchase_amount) > 50000 after GROUP BY.",
+              "mistake": "Aggregate in WHERE",
+              "whyItHappens": "Confusing pre-aggregation filtering with post-aggregation filtering."
+          }
+      ]
   },
   "SQL-020": {
-    "code_id": "SQL-020",
-    "levelNumber": 55,
-    "title": "HAVING with SUM()",
-    "mistakes": [
-      {
-        "id": "m-55-1",
-        "title": "1. Filtering Aggregates in WHERE",
-        "description": "Attempting to filter total purchase amounts using WHERE SUM(purchase_amount) > 50000.",
-        "badSnippet": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases WHERE SUM(purchase_amount) > 50000 GROUP BY customer_id, customer_name;",
-        "failingInput": "VIP total purchase > 50000 filter requirement",
-        "consequence": "Throws a syntax error because aggregate functions cannot be used in the WHERE clause.",
-        "howToFix": "Move SUM(purchase_amount) > 50000 to a HAVING clause after GROUP BY.",
-        "mistake": "Using aggregate in WHERE",
-        "whyItHappens": "Misunderstanding that WHERE filters raw rows before aggregation, while HAVING filters the derived groups."
+      "id": "sql-55",
+      "title": "HAVING with SUM()",
+      "levelNumber": 55,
+      "problemId": 55,
+      "problemTitle": "HAVING with SUM()",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Paytm",
+          "Walmart"
+      ],
+      "tracing": {
+          "code": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING SUM(purchase_amount) > 50000\nORDER BY total_purchase DESC;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM purchases",
+                      "Action": "Scan purchases"
+                  },
+                  "explanation": "Reads transaction records from purchases table."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "GROUP BY customer_id, customer_name",
+                      "Action": "Form customer groups"
+                  },
+                  "explanation": "Partitions purchase transactions by customer: Rahul (101), Priya (102), Amit (103)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "SUM(purchase_amount)",
+                      "Action": "Sum transactions"
+                  },
+                  "explanation": "Rahul: 15k+20k+25k = 60,000; Priya: 10k+12k = 22,000; Amit: 30k+25k = 55,000."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "HAVING SUM(...) > 50000",
+                      "Action": "Filter sums"
+                  },
+                  "explanation": "Filters groups: Keeps Rahul (60,000) and Amit (55,000). Drops Priya (22,000 <= 50,000)."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects customer_id, customer_name, and total_purchase."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "ORDER BY total_purchase DESC",
+                      "Action": "Rank customers"
+                  },
+                  "explanation": "Sorts output: Rahul (60,000) first, Amit (55,000) second."
+              }
+          ]
       },
-      {
-        "id": "m-55-2",
-        "title": "2. Using COUNT() instead of SUM()",
-        "description": "Counting the number of orders instead of summing their monetary value.",
-        "badSnippet": "SELECT customer_id, customer_name, COUNT(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING COUNT(purchase_amount) > 50000;",
-        "failingInput": "Total monetary purchase amount calculation",
-        "consequence": "Computes transaction frequency rather than total spent, returning incorrect (empty) results.",
-        "howToFix": "Replace COUNT(purchase_amount) with SUM(purchase_amount).",
-        "mistake": "Wrong aggregate function",
-        "whyItHappens": "Confusing the aggregation of quantity (COUNT) with total additive value (SUM)."
+      "questions": [
+          {
+              "id": "q-55-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why include both customer_id and customer_name in GROUP BY?",
+              "whatInterviewerChecks": "ANSI SQL compliance for non-aggregated columns.",
+              "bestReplyScript": "In standard ANSI SQL, any column present in the SELECT list that is not wrapped in an aggregate function must appear in the GROUP BY clause to guarantee unambiguous results.",
+              "commonMistakesToAvoid": "Grouping only by customer_id while selecting customer_name in strict SQL mode.",
+              "keyPoints": [
+                  "All non-aggregate SELECT columns must be in GROUP BY",
+                  "customer_name is functionally dependent on customer_id",
+                  "Ensures cross-database SQL portability"
+              ],
+              "codeSnippet": "GROUP BY customer_id, customer_name"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-55-1",
+              "title": "1. Using WHERE with SUM()",
+              "description": "Attempting to filter total spend using WHERE SUM(purchase_amount) > 50000.",
+              "badSnippet": "SELECT customer_id, SUM(purchase_amount) FROM purchases WHERE SUM(purchase_amount) > 50000 GROUP BY customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Throws error: misuse of aggregate: SUM() in WHERE clause.",
+              "howToFix": "Use HAVING SUM(purchase_amount) > 50000 after GROUP BY.",
+              "mistake": "Aggregate in WHERE",
+              "whyItHappens": "Confusing pre-aggregation filtering with post-aggregation filtering."
+          }
+      ]
+  },
+  "56": {
+      "id": "sql-56",
+      "title": "INNER JOIN",
+      "levelNumber": 56,
+      "problemId": 56,
+      "problemTitle": "INNER JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Apple",
+          "TCS"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employees: 1 John (101), 2 Alice (102), 3 Bob (103), 4 David (NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "INNER JOIN departments d",
+                      "Action": "Scan departments"
+                  },
+                  "explanation": "Reads departments: 101 HR, 102 IT, 103 Finance, 104 Marketing."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Match keys"
+                  },
+                  "explanation": "Matches: 1 John (101->HR), 2 Alice (102->IT), 3 Bob (103->Finance). David (NULL) and Marketing (104) have no match and are discarded."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project matched rows"
+                  },
+                  "explanation": "Projects employee_id, employee_name, department_name."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort ascending"
+                  },
+                  "explanation": "Sorts by employee_id: 1 John, 2 Alice, 3 Bob."
+              }
+          ]
       },
-      {
-        "id": "m-55-3",
-        "title": "3. Omitting GROUP BY Columns",
-        "description": "Selecting customer_name without including it in the GROUP BY clause.",
-        "badSnippet": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id HAVING SUM(purchase_amount) > 50000;",
-        "failingInput": "ANSI SQL strict grouping compliance",
-        "consequence": "Throws an 'Expression not in GROUP BY key' error on strict SQL engines (e.g. Postgres).",
-        "howToFix": "Add customer_name to the GROUP BY clause: GROUP BY customer_id, customer_name.",
-        "mistake": "Non-aggregated column selection",
-        "whyItHappens": "Assuming GROUP BY on primary key (customer_id) is sufficient for all other attributes in SELECT."
-      },
-      {
-        "id": "m-55-4",
-        "title": "4. Omitting the ORDER BY Clause",
-        "description": "Forgetting to sort the high-roller customers.",
-        "badSnippet": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING SUM(purchase_amount) > 50000;",
-        "failingInput": "Sorted VIP customer list requirement",
-        "consequence": "Returns the correct VIPs but in random/unspecified database retrieval order.",
-        "howToFix": "Append ORDER BY total_purchase DESC.",
-        "mistake": "Missing ORDER BY clause",
-        "whyItHappens": "Overlooking presentation requirements after successfully implementing complex aggregation logic."
-      }
-    ]
+      "questions": [
+          {
+              "id": "q-56-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What happens if there is no matching record in an INNER JOIN?",
+              "whatInterviewerChecks": "Set intersection mechanics of relational joins.",
+              "bestReplyScript": "Unmatched records from either table are completely dropped from the final result set. Only rows where the join predicate evaluates to TRUE are returned.",
+              "commonMistakesToAvoid": "Thinking unmatched records are filled with NULLs (that's an OUTER JOIN).",
+              "keyPoints": [
+                  "INNER JOIN behaves like set intersection",
+                  "Unmatched rows are excluded",
+                  "Requires match on join predicate"
+              ],
+              "codeSnippet": "INNER JOIN departments d ON e.department_id = d.department_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-56-1",
+              "title": "1. Forgetting the ON clause",
+              "description": "Writing INNER JOIN without specifying the ON matching predicate.",
+              "badSnippet": "SELECT * FROM employees INNER JOIN departments;",
+              "failingInput": "Query execution",
+              "consequence": "Throws syntax error or generates an expensive Cartesian product (CROSS JOIN).",
+              "howToFix": "Add ON e.department_id = d.department_id.",
+              "mistake": "Missing join condition",
+              "whyItHappens": "Forgetting that relational joins require an explicit linking key."
+          }
+      ]
   },
   "SQL-021": {
-    "code_id": "SQL-021",
-    "levelNumber": 56,
-    "title": "INNER JOIN",
-    "mistakes": [
-      {
-        "id": "m-56-1",
-        "title": "1. Forgetting the ON Clause",
-        "description": "Joining tables without specifying how they relate.",
-        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e INNER JOIN departments d;",
-        "failingInput": "Relational constraints and mapping requirement",
-        "consequence": "Causes a syntax error or performs a Cartesian Product (Cross Join) matching every employee with every department.",
-        "howToFix": "Add ON e.department_id = d.department_id.",
-        "mistake": "Missing JOIN condition",
-        "whyItHappens": "Forgetting that databases need explicit instructions on which keys map to each other."
+      "id": "sql-56",
+      "title": "INNER JOIN",
+      "levelNumber": 56,
+      "problemId": 56,
+      "problemTitle": "INNER JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Apple",
+          "TCS"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employees: 1 John (101), 2 Alice (102), 3 Bob (103), 4 David (NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "INNER JOIN departments d",
+                      "Action": "Scan departments"
+                  },
+                  "explanation": "Reads departments: 101 HR, 102 IT, 103 Finance, 104 Marketing."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Match keys"
+                  },
+                  "explanation": "Matches: 1 John (101->HR), 2 Alice (102->IT), 3 Bob (103->Finance). David (NULL) and Marketing (104) have no match and are discarded."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project matched rows"
+                  },
+                  "explanation": "Projects employee_id, employee_name, department_name."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort ascending"
+                  },
+                  "explanation": "Sorts by employee_id: 1 John, 2 Alice, 3 Bob."
+              }
+          ]
       },
-      {
-        "id": "m-56-2",
-        "title": "2. Ambiguous Column References",
-        "description": "Selecting a column that exists in both tables without an alias.",
-        "badSnippet": "SELECT employee_id, employee_name, department_id FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;",
-        "failingInput": "Ambiguous identifier resolution",
-        "consequence": "Throws 'column reference department_id is ambiguous' error.",
-        "howToFix": "Specify the table alias: e.department_id or d.department_id.",
-        "mistake": "Ambiguous column name",
-        "whyItHappens": "Assuming the database can infer which table to pull the column from."
+      "questions": [
+          {
+              "id": "q-56-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What happens if there is no matching record in an INNER JOIN?",
+              "whatInterviewerChecks": "Set intersection mechanics of relational joins.",
+              "bestReplyScript": "Unmatched records from either table are completely dropped from the final result set. Only rows where the join predicate evaluates to TRUE are returned.",
+              "commonMistakesToAvoid": "Thinking unmatched records are filled with NULLs (that's an OUTER JOIN).",
+              "keyPoints": [
+                  "INNER JOIN behaves like set intersection",
+                  "Unmatched rows are excluded",
+                  "Requires match on join predicate"
+              ],
+              "codeSnippet": "INNER JOIN departments d ON e.department_id = d.department_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-56-1",
+              "title": "1. Forgetting the ON clause",
+              "description": "Writing INNER JOIN without specifying the ON matching predicate.",
+              "badSnippet": "SELECT * FROM employees INNER JOIN departments;",
+              "failingInput": "Query execution",
+              "consequence": "Throws syntax error or generates an expensive Cartesian product (CROSS JOIN).",
+              "howToFix": "Add ON e.department_id = d.department_id.",
+              "mistake": "Missing join condition",
+              "whyItHappens": "Forgetting that relational joins require an explicit linking key."
+          }
+      ]
+  },
+  "57": {
+      "id": "sql-57",
+      "title": "LEFT JOIN",
+      "levelNumber": 57,
+      "problemId": 57,
+      "problemTitle": "LEFT JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Oracle"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan all left rows"
+                  },
+                  "explanation": "Reads all 5 employees: 1 John (101), 2 Alice (102), 3 Bob (103), 4 David (NULL), 5 Emma (105)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "LEFT JOIN departments d",
+                      "Action": "Lookup departments"
+                  },
+                  "explanation": "Matches department_id: 101->HR, 102->IT, 103->Finance. 105 and NULL have no match in departments."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Preserve all left rows"
+                  },
+                  "explanation": "David (NULL) and Emma (105) are preserved, and their department_name is populated with NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort ascending"
+                  },
+                  "explanation": "Sorts: 1 John (HR), 2 Alice (IT), 3 Bob (Finance), 4 David (NULL), 5 Emma (NULL)."
+              }
+          ]
       },
-      {
-        "id": "m-56-3",
-        "title": "3. Using LEFT JOIN Instead of INNER JOIN",
-        "description": "Using a LEFT JOIN when the prompt asks to exclusively display employees with a department.",
-        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id;",
-        "failingInput": "Exclusive match constraint ('Only display employees who belong to a department')",
-        "consequence": "Includes employees with NULL departments, failing the strict requirement.",
-        "howToFix": "Change LEFT JOIN to INNER JOIN.",
-        "mistake": "Wrong join type",
-        "whyItHappens": "Defaulting to LEFT JOIN out of habit without analyzing the inclusion/exclusion requirements of the prompt."
-      },
-      {
-        "id": "m-56-4",
-        "title": "4. Joining on the Wrong Columns",
-        "description": "Matching mismatched keys.",
-        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e INNER JOIN departments d ON e.employee_id = d.department_id;",
-        "failingInput": "Foreign key to primary key mapping",
-        "consequence": "Produces an empty or nonsensical result set because employee IDs don't correspond to department IDs.",
-        "howToFix": "Match the correct foreign key: ON e.department_id = d.department_id.",
-        "mistake": "Invalid JOIN condition",
-        "whyItHappens": "Typographical error or misunderstanding the ERD (Entity Relationship Diagram)."
-      }
-    ]
+      "questions": [
+          {
+              "id": "q-57-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is the difference between INNER JOIN and LEFT JOIN?",
+              "whatInterviewerChecks": "Understanding of data preservation in outer joins.",
+              "bestReplyScript": "INNER JOIN only returns rows that have matches in both tables. LEFT JOIN returns all rows from the left table regardless of whether a match exists on the right; unmatched right-side attributes evaluate to NULL.",
+              "commonMistakesToAvoid": "Accidentally converting a LEFT JOIN into an INNER JOIN by adding a WHERE condition on the right table.",
+              "keyPoints": [
+                  "Preserves 100% of left table records",
+                  "Missing right-side values become NULL",
+                  "Essential for finding missing relationships"
+              ],
+              "codeSnippet": "FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-57-1",
+              "title": "1. Filtering right table in WHERE clause",
+              "description": "Adding WHERE d.department_name IS NOT NULL or WHERE d.department_name = 'HR'.",
+              "badSnippet": "SELECT * FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id WHERE d.department_name = 'HR';",
+              "failingInput": "Employees with NULL department",
+              "consequence": "Accidentally eliminates unassigned employees, turning the query into an INNER JOIN.",
+              "howToFix": "Move filter conditions into the ON clause if left rows must be preserved.",
+              "mistake": "Unintentional INNER JOIN conversion",
+              "whyItHappens": "Not realizing WHERE executes after the join, filtering out NULL rows."
+          }
+      ]
   },
   "SQL-022": {
-    "code_id": "SQL-022",
-    "levelNumber": 57,
-    "title": "LEFT JOIN",
-    "mistakes": [
-      {
-        "id": "m-57-1",
-        "title": "1. Using INNER JOIN instead of LEFT JOIN",
-        "description": "Failing to recognize the requirement to include unmatched left-table rows.",
-        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;",
-        "failingInput": "Employees without a department",
-        "consequence": "Drops employees like David and Emma from the result entirely.",
-        "howToFix": "Replace INNER JOIN with LEFT JOIN.",
-        "mistake": "Wrong join type",
-        "whyItHappens": "Muscle memory favors INNER JOIN, causing developers to miss the phrase 'even if they are not assigned'."
+      "id": "sql-57",
+      "title": "LEFT JOIN",
+      "levelNumber": 57,
+      "problemId": 57,
+      "problemTitle": "LEFT JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Oracle"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan all left rows"
+                  },
+                  "explanation": "Reads all 5 employees: 1 John (101), 2 Alice (102), 3 Bob (103), 4 David (NULL), 5 Emma (105)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "LEFT JOIN departments d",
+                      "Action": "Lookup departments"
+                  },
+                  "explanation": "Matches department_id: 101->HR, 102->IT, 103->Finance. 105 and NULL have no match in departments."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Preserve all left rows"
+                  },
+                  "explanation": "David (NULL) and Emma (105) are preserved, and their department_name is populated with NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort ascending"
+                  },
+                  "explanation": "Sorts: 1 John (HR), 2 Alice (IT), 3 Bob (Finance), 4 David (NULL), 5 Emma (NULL)."
+              }
+          ]
       },
-      {
-        "id": "m-57-2",
-        "title": "2. Putting the wrong table on the left",
-        "description": "Swapping the order of tables in the FROM and JOIN clauses.",
-        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id;",
-        "failingInput": "Unassigned employees and empty departments",
-        "consequence": "Preserves all departments (even empty ones) but drops employees without a department.",
-        "howToFix": "Ensure the table you want to unconditionally preserve is on the left: FROM employees e LEFT JOIN departments d.",
-        "mistake": "Reversed table order",
-        "whyItHappens": "Misunderstanding that LEFT JOIN is not commutative (A LEFT JOIN B ≠ B LEFT JOIN A)."
+      "questions": [
+          {
+              "id": "q-57-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is the difference between INNER JOIN and LEFT JOIN?",
+              "whatInterviewerChecks": "Understanding of data preservation in outer joins.",
+              "bestReplyScript": "INNER JOIN only returns rows that have matches in both tables. LEFT JOIN returns all rows from the left table regardless of whether a match exists on the right; unmatched right-side attributes evaluate to NULL.",
+              "commonMistakesToAvoid": "Accidentally converting a LEFT JOIN into an INNER JOIN by adding a WHERE condition on the right table.",
+              "keyPoints": [
+                  "Preserves 100% of left table records",
+                  "Missing right-side values become NULL",
+                  "Essential for finding missing relationships"
+              ],
+              "codeSnippet": "FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-57-1",
+              "title": "1. Filtering right table in WHERE clause",
+              "description": "Adding WHERE d.department_name IS NOT NULL or WHERE d.department_name = 'HR'.",
+              "badSnippet": "SELECT * FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id WHERE d.department_name = 'HR';",
+              "failingInput": "Employees with NULL department",
+              "consequence": "Accidentally eliminates unassigned employees, turning the query into an INNER JOIN.",
+              "howToFix": "Move filter conditions into the ON clause if left rows must be preserved.",
+              "mistake": "Unintentional INNER JOIN conversion",
+              "whyItHappens": "Not realizing WHERE executes after the join, filtering out NULL rows."
+          }
+      ]
+  },
+  "58": {
+      "id": "sql-58",
+      "title": "RIGHT JOIN",
+      "levelNumber": 58,
+      "problemId": 58,
+      "problemTitle": "RIGHT JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Oracle",
+          "Microsoft",
+          "Salesforce"
+      ],
+      "tracing": {
+          "code": "SELECT d.department_name,\n       e.employee_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employees: 1 John (101), 2 Alice (102), 3 Bob (103)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "RIGHT JOIN departments d",
+                      "Action": "Scan all right rows"
+                  },
+                  "explanation": "Reads all 4 departments: 101 HR, 102 IT, 103 Finance, 104 Marketing."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Preserve right table"
+                  },
+                  "explanation": "Matches: HR->John, IT->Alice, Finance->Bob. Marketing has no employees and employee_name becomes NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY d.department_name",
+                      "Action": "Sort alphabetically"
+                  },
+                  "explanation": "Sorts alphabetically: Finance (Bob), HR (John), IT (Alice), Marketing (NULL)."
+              }
+          ]
       },
-      {
-        "id": "m-57-3",
-        "title": "3. Accidentally converting LEFT JOIN to INNER JOIN",
-        "description": "Adding a WHERE clause on the right table that filters out the NULLs generated by the LEFT JOIN.",
-        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id WHERE d.department_name IS NOT NULL;",
-        "failingInput": "Unmatched left rows",
-        "consequence": "Rows where d.department_name is NULL evaluate to UNKNOWN and are dropped, turning the query back into an INNER JOIN.",
-        "howToFix": "Remove the WHERE clause. If you must filter the right table while keeping all left rows, put the condition in the ON clause.",
-        "mistake": "WHERE clause overriding LEFT JOIN",
-        "whyItHappens": "Attempting to clean up 'bad' data without realizing the NULLs are structurally required."
-      }
-    ]
+      "questions": [
+          {
+              "id": "q-58-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why is LEFT JOIN used more frequently than RIGHT JOIN?",
+              "whatInterviewerChecks": "Code maintainability and readability best practices.",
+              "bestReplyScript": "Because humans naturally read left-to-right, queries written with LEFT JOIN are much easier to reason about. Any RIGHT JOIN can be converted into a LEFT JOIN simply by swapping table order in FROM/JOIN.",
+              "commonMistakesToAvoid": "Thinking RIGHT JOIN provides unique functionality that LEFT JOIN cannot achieve.",
+              "keyPoints": [
+                  "LEFT JOIN is more readable",
+                  "Table order swap achieves the same result",
+                  "Most industry style guides standardize on LEFT JOIN"
+              ],
+              "codeSnippet": "FROM departments d LEFT JOIN employees e"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-58-1",
+              "title": "1. Confusing preserved table in RIGHT JOIN",
+              "description": "Expecting unmatched left-side rows to be kept in a RIGHT JOIN.",
+              "badSnippet": "SELECT * FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
+              "failingInput": "Employees without departments",
+              "consequence": "Unmatched employees are excluded; only all departments are preserved.",
+              "howToFix": "Use LEFT JOIN if employees must be preserved, or FULL JOIN if both must be preserved.",
+              "mistake": "Confusing join direction",
+              "whyItHappens": "Misinterpreting which table is 'left' and which is 'right'."
+          }
+      ]
   },
   "SQL-023": {
-    "code_id": "SQL-023",
-    "levelNumber": 58,
-    "title": "RIGHT JOIN",
-    "mistakes": [
-      {
-        "id": "m-58-1",
-        "title": "1. Using SQLite where RIGHT JOIN is unsupported",
-        "description": "Attempting to execute a RIGHT JOIN query on an SQLite database.",
-        "badSnippet": "SELECT d.department_name, e.employee_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
-        "failingInput": "SQLite execution environment",
-        "consequence": "Throws a 'RIGHT and FULL OUTER JOINs are not currently supported' error.",
-        "howToFix": "Swap the tables and use a LEFT JOIN: FROM departments d LEFT JOIN employees e.",
-        "mistake": "Dialect incompatibility",
-        "whyItHappens": "Not knowing the exact syntax limitations of the target SQL dialect."
+      "id": "sql-58",
+      "title": "RIGHT JOIN",
+      "levelNumber": 58,
+      "problemId": 58,
+      "problemTitle": "RIGHT JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Oracle",
+          "Microsoft",
+          "Salesforce"
+      ],
+      "tracing": {
+          "code": "SELECT d.department_name,\n       e.employee_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employees: 1 John (101), 2 Alice (102), 3 Bob (103)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "RIGHT JOIN departments d",
+                      "Action": "Scan all right rows"
+                  },
+                  "explanation": "Reads all 4 departments: 101 HR, 102 IT, 103 Finance, 104 Marketing."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Preserve right table"
+                  },
+                  "explanation": "Matches: HR->John, IT->Alice, Finance->Bob. Marketing has no employees and employee_name becomes NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY d.department_name",
+                      "Action": "Sort alphabetically"
+                  },
+                  "explanation": "Sorts alphabetically: Finance (Bob), HR (John), IT (Alice), Marketing (NULL)."
+              }
+          ]
       },
-      {
-        "id": "m-58-2",
-        "title": "2. Confusing LEFT and RIGHT directionality",
-        "description": "Using RIGHT JOIN but intending to keep the left table's records.",
-        "badSnippet": "SELECT d.department_name, e.employee_name FROM departments d RIGHT JOIN employees e ON d.department_id = e.department_id;",
-        "failingInput": "Requirement to show all departments",
-        "consequence": "Keeps all employees instead of all departments, completely reversing the logic requested by the prompt.",
-        "howToFix": "Either swap the tables or change the join to a LEFT JOIN.",
-        "mistake": "Reversed join logic",
-        "whyItHappens": "Guessing the join direction instead of mapping the 'mandatory inclusion' requirement to the correct side of the JOIN keyword."
+      "questions": [
+          {
+              "id": "q-58-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why is LEFT JOIN used more frequently than RIGHT JOIN?",
+              "whatInterviewerChecks": "Code maintainability and readability best practices.",
+              "bestReplyScript": "Because humans naturally read left-to-right, queries written with LEFT JOIN are much easier to reason about. Any RIGHT JOIN can be converted into a LEFT JOIN simply by swapping table order in FROM/JOIN.",
+              "commonMistakesToAvoid": "Thinking RIGHT JOIN provides unique functionality that LEFT JOIN cannot achieve.",
+              "keyPoints": [
+                  "LEFT JOIN is more readable",
+                  "Table order swap achieves the same result",
+                  "Most industry style guides standardize on LEFT JOIN"
+              ],
+              "codeSnippet": "FROM departments d LEFT JOIN employees e"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-58-1",
+              "title": "1. Confusing preserved table in RIGHT JOIN",
+              "description": "Expecting unmatched left-side rows to be kept in a RIGHT JOIN.",
+              "badSnippet": "SELECT * FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
+              "failingInput": "Employees without departments",
+              "consequence": "Unmatched employees are excluded; only all departments are preserved.",
+              "howToFix": "Use LEFT JOIN if employees must be preserved, or FULL JOIN if both must be preserved.",
+              "mistake": "Confusing join direction",
+              "whyItHappens": "Misinterpreting which table is 'left' and which is 'right'."
+          }
+      ]
+  },
+  "59": {
+      "id": "sql-59",
+      "title": "FULL JOIN",
+      "levelNumber": 59,
+      "problemId": 59,
+      "problemTitle": "FULL JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "PostgreSQL",
+          "Snowflake",
+          "BigQuery",
+          "Oracle",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nFULL JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employees: 1 John (101), 2 Alice (102), 3 Bob (103), 4 David (NULL), 5 Emma (105)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FULL JOIN departments d",
+                      "Action": "Scan departments"
+                  },
+                  "explanation": "Reads departments: 101 HR, 102 IT, 103 Finance, 104 Marketing."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Combine matches & unmatched"
+                  },
+                  "explanation": "Matches: John (HR), Alice (IT), Bob (Finance). Unmatched departments: Marketing (NULL employee). Unmatched employees: David (NULL), Emma (NULL)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY d.department_name",
+                      "Action": "Sort by department_name"
+                  },
+                  "explanation": "Sorts results by department_name."
+              }
+          ]
       },
-      {
-        "id": "m-58-3",
-        "title": "3. Selecting columns from the wrong table",
-        "description": "Selecting department_name from the employees table when it doesn't exist or is NULL.",
-        "badSnippet": "SELECT e.department_name, e.employee_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
-        "failingInput": "Schema validation",
-        "consequence": "Throws a 'column does not exist' error, because the employees table only holds department_id, not department_name.",
-        "howToFix": "Prefix the column with the correct table alias: d.department_name.",
-        "mistake": "Invalid column reference",
-        "whyItHappens": "Failing to thoroughly analyze the provided schema definitions before writing the SELECT clause."
-      }
-    ]
+      "questions": [
+          {
+              "id": "q-59-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "How do you simulate a FULL JOIN in MySQL?",
+              "whatInterviewerChecks": "Dialect knowledge and set operations in SQL.",
+              "bestReplyScript": "Since MySQL lacks native FULL JOIN support, it is simulated by taking a LEFT JOIN, a RIGHT JOIN, and combining them using the UNION operator, which automatically deduplicates matching records.",
+              "commonMistakesToAvoid": "Using UNION ALL instead of UNION (which causes duplicate matched rows).",
+              "keyPoints": [
+                  "MySQL does not natively support FULL JOIN",
+                  "Simulated with LEFT JOIN UNION RIGHT JOIN",
+                  "UNION removes overlapping matched rows"
+              ],
+              "codeSnippet": "SELECT * FROM A LEFT JOIN B ON ... UNION SELECT * FROM A RIGHT JOIN B ON ..."
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-59-1",
+              "title": "1. Assuming FULL JOIN works in MySQL",
+              "description": "Writing FULL OUTER JOIN in MySQL syntax.",
+              "badSnippet": "SELECT * FROM employees e FULL JOIN departments d ON e.department_id = d.department_id;",
+              "failingInput": "MySQL dialect",
+              "consequence": "Throws syntax error: FULL JOIN is not recognized.",
+              "howToFix": "Use LEFT JOIN UNION RIGHT JOIN.",
+              "mistake": "Dialect incompatibility",
+              "whyItHappens": "Assuming all ANSI join types are implemented in all RDBMS engines."
+          }
+      ]
   },
   "SQL-024": {
-    "code_id": "SQL-024",
-    "levelNumber": 59,
-    "title": "FULL JOIN",
-    "mistakes": [
-      {
-        "id": "m-59-1",
-        "title": "1. Using FULL JOIN in MySQL",
-        "description": "Writing FULL JOIN syntax when working in a MySQL environment.",
-        "badSnippet": "SELECT e.employee_name, d.department_name FROM employees e FULL JOIN departments d ON e.department_id = d.department_id;",
-        "failingInput": "MySQL parsing engine",
-        "consequence": "Throws a syntax error since MySQL lacks a native FULL JOIN operator.",
-        "howToFix": "Use the LEFT JOIN UNION RIGHT JOIN workaround.",
-        "mistake": "Dialect incompatibility",
-        "whyItHappens": "Assuming all ANSI standard SQL commands are universally supported across all RDBMS platforms."
+      "id": "sql-59",
+      "title": "FULL JOIN",
+      "levelNumber": 59,
+      "problemId": 59,
+      "problemTitle": "FULL JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "PostgreSQL",
+          "Snowflake",
+          "BigQuery",
+          "Oracle",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nFULL JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employees: 1 John (101), 2 Alice (102), 3 Bob (103), 4 David (NULL), 5 Emma (105)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FULL JOIN departments d",
+                      "Action": "Scan departments"
+                  },
+                  "explanation": "Reads departments: 101 HR, 102 IT, 103 Finance, 104 Marketing."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Combine matches & unmatched"
+                  },
+                  "explanation": "Matches: John (HR), Alice (IT), Bob (Finance). Unmatched departments: Marketing (NULL employee). Unmatched employees: David (NULL), Emma (NULL)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY d.department_name",
+                      "Action": "Sort by department_name"
+                  },
+                  "explanation": "Sorts results by department_name."
+              }
+          ]
       },
-      {
-        "id": "m-59-2",
-        "title": "2. Confusing FULL JOIN with CROSS JOIN",
-        "description": "Failing to provide an ON clause, resulting in a Cartesian product.",
-        "badSnippet": "SELECT e.employee_name, d.department_name FROM employees e FULL JOIN departments d;",
-        "failingInput": "Join condition constraint",
-        "consequence": "Generates a massive combination of every employee paired with every department, failing to preserve the true relational structure.",
-        "howToFix": "Add the ON e.department_id = d.department_id condition.",
-        "mistake": "Missing join condition",
-        "whyItHappens": "Believing 'full' means 'all possible combinations' rather than 'preserve all unmatched rows'."
+      "questions": [
+          {
+              "id": "q-59-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "How do you simulate a FULL JOIN in MySQL?",
+              "whatInterviewerChecks": "Dialect knowledge and set operations in SQL.",
+              "bestReplyScript": "Since MySQL lacks native FULL JOIN support, it is simulated by taking a LEFT JOIN, a RIGHT JOIN, and combining them using the UNION operator, which automatically deduplicates matching records.",
+              "commonMistakesToAvoid": "Using UNION ALL instead of UNION (which causes duplicate matched rows).",
+              "keyPoints": [
+                  "MySQL does not natively support FULL JOIN",
+                  "Simulated with LEFT JOIN UNION RIGHT JOIN",
+                  "UNION removes overlapping matched rows"
+              ],
+              "codeSnippet": "SELECT * FROM A LEFT JOIN B ON ... UNION SELECT * FROM A RIGHT JOIN B ON ..."
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-59-1",
+              "title": "1. Assuming FULL JOIN works in MySQL",
+              "description": "Writing FULL OUTER JOIN in MySQL syntax.",
+              "badSnippet": "SELECT * FROM employees e FULL JOIN departments d ON e.department_id = d.department_id;",
+              "failingInput": "MySQL dialect",
+              "consequence": "Throws syntax error: FULL JOIN is not recognized.",
+              "howToFix": "Use LEFT JOIN UNION RIGHT JOIN.",
+              "mistake": "Dialect incompatibility",
+              "whyItHappens": "Assuming all ANSI join types are implemented in all RDBMS engines."
+          }
+      ]
+  },
+  "60": {
+      "id": "sql-60",
+      "title": "SELF JOIN",
+      "levelNumber": 60,
+      "problemId": 60,
+      "problemTitle": "SELF JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Google",
+          "Meta",
+          "Amazon",
+          "Microsoft",
+          "Apple",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Read employees as staff"
+                  },
+                  "explanation": "Reads staff: 1 John (mgr 3), 2 Alice (mgr 3), 3 Robert (mgr 5), 4 David (mgr 3), 5 Sophia (mgr NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "LEFT JOIN employees m",
+                      "Action": "Read employees as managers"
+                  },
+                  "explanation": "Reads second instance of employees table to look up managers."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON e.manager_id = m.employee_id",
+                      "Action": "Match manager IDs"
+                  },
+                  "explanation": "Matches: John->Robert, Alice->Robert, Robert->Sophia, David->Robert. Sophia has manager_id NULL and evaluates to NULL manager_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_name",
+                      "Action": "Sort by employee name"
+                  },
+                  "explanation": "Sorts alphabetically by employee_name: Alice, David, John, Robert, Sophia."
+              }
+          ]
       },
-      {
-        "id": "m-59-3",
-        "title": "3. Using UNION ALL in the MySQL Workaround",
-        "description": "Simulating a FULL JOIN with UNION ALL instead of UNION.",
-        "badSnippet": "SELECT e.employee_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id UNION ALL SELECT e.employee_name, d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
-        "failingInput": "Data deduplication requirement",
-        "consequence": "Causes employees who DO have a matching department to appear twice in the result set.",
-        "howToFix": "Replace UNION ALL with UNION, which natively deduplicates the overlapping records.",
-        "mistake": "Improper set operator",
-        "whyItHappens": "Using UNION ALL to avoid the sorting overhead of UNION, without realizing the duplicates actually break the logic."
-      }
-    ]
+      "questions": [
+          {
+              "id": "q-60-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is a SELF JOIN and why are aliases mandatory?",
+              "whatInterviewerChecks": "Understanding of relational self-referencing and SQL name resolution.",
+              "bestReplyScript": "A SELF JOIN joins a table with itself to model hierarchical or recursive relationships. Aliases are strictly mandatory because without them, the database engine cannot distinguish which copy of the table a column reference belongs to.",
+              "commonMistakesToAvoid": "Forgetting table aliases or joining employee_id to employee_id.",
+              "keyPoints": [
+                  "Joins table to itself",
+                  "Requires unique aliases for each copy",
+                  "Used for hierarchical and sequence data"
+              ],
+              "codeSnippet": "FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-60-1",
+              "title": "1. Forgetting aliases in SELF JOIN",
+              "description": "Joining employees without aliases.",
+              "badSnippet": "SELECT employee_name FROM employees JOIN employees;",
+              "failingInput": "Query execution",
+              "consequence": "Throws syntax error: not unique table/alias.",
+              "howToFix": "Use aliases e and m: FROM employees AS e LEFT JOIN employees AS m.",
+              "mistake": "Missing table aliases",
+              "whyItHappens": "Not realizing SQL treats duplicate table names as ambiguous without aliases."
+          },
+          {
+              "id": "m-60-2",
+              "title": "2. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Using INNER JOIN when top-level managers have NULL manager_id.",
+              "badSnippet": "SELECT e.employee_name, m.employee_name FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;",
+              "failingInput": "CEO or department heads with manager_id NULL",
+              "consequence": "Top-level executives are excluded from the result set.",
+              "howToFix": "Use LEFT JOIN so executives with NULL manager_id are preserved.",
+              "mistake": "Excluding root nodes",
+              "whyItHappens": "Overlooking the edge case of NULL manager_id values."
+          }
+      ]
   },
   "SQL-025": {
-    "code_id": "SQL-025",
-    "levelNumber": 60,
-    "title": "SELF JOIN",
-    "mistakes": [
-      {
-        "id": "m-60-1",
-        "title": "1. Forgetting to alias the tables",
-        "description": "Attempting to join the table to itself without assigning distinct aliases.",
-        "badSnippet": "SELECT employee_name FROM employees JOIN employees ON manager_id = employee_id;",
-        "failingInput": "Query parser",
-        "consequence": "Throws an 'ambiguous column name' or 'not unique table/alias' syntax error.",
-        "howToFix": "Use AS to alias the tables (e.g., employees e, employees m) and prefix all column references.",
-        "mistake": "Ambiguous table reference",
-        "whyItHappens": "Not realizing that SQL treats identical table names in the FROM/JOIN clause as indistinguishable without aliases."
+      "id": "sql-60",
+      "title": "SELF JOIN",
+      "levelNumber": 60,
+      "problemId": 60,
+      "problemTitle": "SELF JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Google",
+          "Meta",
+          "Amazon",
+          "Microsoft",
+          "Apple",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Read employees as staff"
+                  },
+                  "explanation": "Reads staff: 1 John (mgr 3), 2 Alice (mgr 3), 3 Robert (mgr 5), 4 David (mgr 3), 5 Sophia (mgr NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "LEFT JOIN employees m",
+                      "Action": "Read employees as managers"
+                  },
+                  "explanation": "Reads second instance of employees table to look up managers."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON e.manager_id = m.employee_id",
+                      "Action": "Match manager IDs"
+                  },
+                  "explanation": "Matches: John->Robert, Alice->Robert, Robert->Sophia, David->Robert. Sophia has manager_id NULL and evaluates to NULL manager_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_name",
+                      "Action": "Sort by employee name"
+                  },
+                  "explanation": "Sorts alphabetically by employee_name: Alice, David, John, Robert, Sophia."
+              }
+          ]
       },
-      {
-        "id": "m-60-2",
-        "title": "2. Reversing the ON condition logic",
-        "description": "Matching the employee's ID to the manager's manager ID instead of matching the employee's manager ID to the manager's employee ID.",
-        "badSnippet": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees e LEFT JOIN employees m ON e.employee_id = m.manager_id;",
-        "failingInput": "Parent-child mapping",
-        "consequence": "Outputs the employee's direct reports instead of their manager.",
-        "howToFix": "Reverse the logic: ON e.manager_id = m.employee_id.",
-        "mistake": "Reversed hierarchical logic",
-        "whyItHappens": "Confusion over which alias represents the 'parent' and which represents the 'child' in the hierarchy."
-      },
-      {
-        "id": "m-60-3",
-        "title": "3. Using INNER JOIN instead of LEFT JOIN",
-        "description": "Using an INNER JOIN to map the hierarchy.",
-        "badSnippet": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;",
-        "failingInput": "Employees at the top of the hierarchy (e.g., CEO)",
-        "consequence": "The CEO (or anyone without a manager) is completely excluded from the result set.",
-        "howToFix": "Change INNER JOIN to LEFT JOIN to preserve the root nodes.",
-        "mistake": "Wrong join type",
-        "whyItHappens": "Defaulting to INNER JOIN out of habit without considering the edge case of top-level employees with a NULL manager."
-      }
-    ]
+      "questions": [
+          {
+              "id": "q-60-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is a SELF JOIN and why are aliases mandatory?",
+              "whatInterviewerChecks": "Understanding of relational self-referencing and SQL name resolution.",
+              "bestReplyScript": "A SELF JOIN joins a table with itself to model hierarchical or recursive relationships. Aliases are strictly mandatory because without them, the database engine cannot distinguish which copy of the table a column reference belongs to.",
+              "commonMistakesToAvoid": "Forgetting table aliases or joining employee_id to employee_id.",
+              "keyPoints": [
+                  "Joins table to itself",
+                  "Requires unique aliases for each copy",
+                  "Used for hierarchical and sequence data"
+              ],
+              "codeSnippet": "FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-60-1",
+              "title": "1. Forgetting aliases in SELF JOIN",
+              "description": "Joining employees without aliases.",
+              "badSnippet": "SELECT employee_name FROM employees JOIN employees;",
+              "failingInput": "Query execution",
+              "consequence": "Throws syntax error: not unique table/alias.",
+              "howToFix": "Use aliases e and m: FROM employees AS e LEFT JOIN employees AS m.",
+              "mistake": "Missing table aliases",
+              "whyItHappens": "Not realizing SQL treats duplicate table names as ambiguous without aliases."
+          },
+          {
+              "id": "m-60-2",
+              "title": "2. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Using INNER JOIN when top-level managers have NULL manager_id.",
+              "badSnippet": "SELECT e.employee_name, m.employee_name FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;",
+              "failingInput": "CEO or department heads with manager_id NULL",
+              "consequence": "Top-level executives are excluded from the result set.",
+              "howToFix": "Use LEFT JOIN so executives with NULL manager_id are preserved.",
+              "mistake": "Excluding root nodes",
+              "whyItHappens": "Overlooking the edge case of NULL manager_id values."
+          }
+      ]
   }
-};
+,
+  "61": {
+      "id": "sql-61",
+      "title": "CROSS JOIN",
+      "levelNumber": 61,
+      "problemId": 61,
+      "problemTitle": "CROSS JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Apple"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nCROSS JOIN departments AS d\nORDER BY e.employee_name,\n         d.department_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads 3 employees: John, Alice, Bob."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CROSS JOIN departments d",
+                      "Action": "Multiply with departments"
+                  },
+                  "explanation": "Pairs every employee with both departments (HR, IT), generating 3 \u00d7 2 = 6 total rows."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_name and department_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ORDER BY",
+                      "Action": "Sort combinations"
+                  },
+                  "explanation": "Sorts results: Alice (HR), Alice (IT), Bob (HR), Bob (IT), John (HR), John (IT)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-61-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is a CROSS JOIN and how does it calculate the result size?",
+              "whatInterviewerChecks": "Understanding of Cartesian products and computational complexity.",
+              "bestReplyScript": "A CROSS JOIN combines every row from the first table with every row from the second table without requiring an ON condition. The total row count is the mathematical product: Rows in Table A multiplied by Rows in Table B.",
+              "commonMistakesToAvoid": "Writing an ON clause with a CROSS JOIN.",
+              "keyPoints": [
+                  "Cartesian Product operation",
+                  "Result count = Rows A \u00d7 Rows B",
+                  "No join predicate or ON clause"
+              ],
+              "codeSnippet": "FROM employees e CROSS JOIN departments d"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-61-1",
+              "title": "1. Using an ON condition",
+              "description": "Attempting to specify ON e.department_id = d.department_id with a CROSS JOIN.",
+              "badSnippet": "SELECT * FROM employees e CROSS JOIN departments d ON e.department_id = d.department_id;",
+              "failingInput": "Query execution",
+              "consequence": "Throws syntax error: unexpected ON clause with CROSS JOIN.",
+              "howToFix": "Remove the ON clause or change CROSS JOIN to INNER JOIN.",
+              "mistake": "Adding ON clause to CROSS JOIN",
+              "whyItHappens": "Habitually adding ON to all JOIN clauses."
+          }
+      ]
+  },
+  "SQL-026": {
+      "id": "sql-61",
+      "title": "CROSS JOIN",
+      "levelNumber": 61,
+      "problemId": 61,
+      "problemTitle": "CROSS JOIN",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "Apple"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nCROSS JOIN departments AS d\nORDER BY e.employee_name,\n         d.department_name;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads 3 employees: John, Alice, Bob."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CROSS JOIN departments d",
+                      "Action": "Multiply with departments"
+                  },
+                  "explanation": "Pairs every employee with both departments (HR, IT), generating 3 \u00d7 2 = 6 total rows."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_name and department_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ORDER BY",
+                      "Action": "Sort combinations"
+                  },
+                  "explanation": "Sorts results: Alice (HR), Alice (IT), Bob (HR), Bob (IT), John (HR), John (IT)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-61-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "What is a CROSS JOIN and how does it calculate the result size?",
+              "whatInterviewerChecks": "Understanding of Cartesian products and computational complexity.",
+              "bestReplyScript": "A CROSS JOIN combines every row from the first table with every row from the second table without requiring an ON condition. The total row count is the mathematical product: Rows in Table A multiplied by Rows in Table B.",
+              "commonMistakesToAvoid": "Writing an ON clause with a CROSS JOIN.",
+              "keyPoints": [
+                  "Cartesian Product operation",
+                  "Result count = Rows A \u00d7 Rows B",
+                  "No join predicate or ON clause"
+              ],
+              "codeSnippet": "FROM employees e CROSS JOIN departments d"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-61-1",
+              "title": "1. Using an ON condition",
+              "description": "Attempting to specify ON e.department_id = d.department_id with a CROSS JOIN.",
+              "badSnippet": "SELECT * FROM employees e CROSS JOIN departments d ON e.department_id = d.department_id;",
+              "failingInput": "Query execution",
+              "consequence": "Throws syntax error: unexpected ON clause with CROSS JOIN.",
+              "howToFix": "Remove the ON clause or change CROSS JOIN to INNER JOIN.",
+              "mistake": "Adding ON clause to CROSS JOIN",
+              "whyItHappens": "Habitually adding ON to all JOIN clauses."
+          }
+      ]
+  },
+  "62": {
+      "id": "sql-62",
+      "title": "Employees with Department Names",
+      "levelNumber": 62,
+      "problemId": 62,
+      "problemTitle": "Employees with Department Names",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "TCS",
+          "Infosys"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employee records: 1 John (101), 2 Alice (102), 3 Bob (103)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "INNER JOIN departments d",
+                      "Action": "Scan departments"
+                  },
+                  "explanation": "Reads department records: 101 HR, 102 IT, 103 Finance."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Match department IDs"
+                  },
+                  "explanation": "Matches: 101=101 (John->HR), 102=102 (Alice->IT), 103=103 (Bob->Finance)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Returns employee_id, employee_name, department_name."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 John, 2 Alice, 3 Bob."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-62-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why use an INNER JOIN to display employees with department names?",
+              "whatInterviewerChecks": "Understanding of relational normalization and join filtering.",
+              "bestReplyScript": "INNER JOIN connects normalized tables without duplicating department strings across millions of employee rows. It guarantees that only employees assigned to an existing, valid department are displayed.",
+              "commonMistakesToAvoid": "Using a LEFT JOIN when the problem explicitly specifies only showing valid department assignments.",
+              "keyPoints": [
+                  "Resolves foreign key to descriptive name",
+                  "Normalized 3NF database architecture",
+                  "Excludes unassigned staff"
+              ],
+              "codeSnippet": "FROM employees e INNER JOIN departments d ON e.department_id = d.department_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-62-1",
+              "title": "1. Joining on the wrong columns",
+              "description": "Matching employee_id to department_id instead of department_id to department_id.",
+              "badSnippet": "SELECT e.employee_id, d.department_name FROM employees e INNER JOIN departments d ON e.employee_id = d.department_id;",
+              "failingInput": "Query execution",
+              "consequence": "Matches primary keys incorrectly, resulting in invalid or zero rows.",
+              "howToFix": "Match ON e.department_id = d.department_id.",
+              "mistake": "Wrong join key condition",
+              "whyItHappens": "Confusing primary keys with foreign keys."
+          }
+      ]
+  },
+  "SQL-027": {
+      "id": "sql-62",
+      "title": "Employees with Department Names",
+      "levelNumber": 62,
+      "problemId": 62,
+      "problemTitle": "Employees with Department Names",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Microsoft",
+          "Meta",
+          "TCS",
+          "Infosys"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Scan employees"
+                  },
+                  "explanation": "Reads employee records: 1 John (101), 2 Alice (102), 3 Bob (103)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "INNER JOIN departments d",
+                      "Action": "Scan departments"
+                  },
+                  "explanation": "Reads department records: 101 HR, 102 IT, 103 Finance."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.department_id = d.department_id",
+                      "Action": "Match department IDs"
+                  },
+                  "explanation": "Matches: 101=101 (John->HR), 102=102 (Alice->IT), 103=103 (Bob->Finance)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Returns employee_id, employee_name, department_name."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 John, 2 Alice, 3 Bob."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-62-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why use an INNER JOIN to display employees with department names?",
+              "whatInterviewerChecks": "Understanding of relational normalization and join filtering.",
+              "bestReplyScript": "INNER JOIN connects normalized tables without duplicating department strings across millions of employee rows. It guarantees that only employees assigned to an existing, valid department are displayed.",
+              "commonMistakesToAvoid": "Using a LEFT JOIN when the problem explicitly specifies only showing valid department assignments.",
+              "keyPoints": [
+                  "Resolves foreign key to descriptive name",
+                  "Normalized 3NF database architecture",
+                  "Excludes unassigned staff"
+              ],
+              "codeSnippet": "FROM employees e INNER JOIN departments d ON e.department_id = d.department_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-62-1",
+              "title": "1. Joining on the wrong columns",
+              "description": "Matching employee_id to department_id instead of department_id to department_id.",
+              "badSnippet": "SELECT e.employee_id, d.department_name FROM employees e INNER JOIN departments d ON e.employee_id = d.department_id;",
+              "failingInput": "Query execution",
+              "consequence": "Matches primary keys incorrectly, resulting in invalid or zero rows.",
+              "howToFix": "Match ON e.department_id = d.department_id.",
+              "mistake": "Wrong join key condition",
+              "whyItHappens": "Confusing primary keys with foreign keys."
+          }
+      ]
+  },
+  "63": {
+      "id": "sql-63",
+      "title": "Customers with Orders",
+      "levelNumber": 63,
+      "problemId": 63,
+      "problemTitle": "Customers with Orders",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Flipkart",
+          "Google",
+          "Shopify",
+          "Walmart"
+      ],
+      "tracing": {
+          "code": "SELECT o.order_id,\n       c.customer_name,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nORDER BY o.order_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM orders o",
+                      "Action": "Scan orders"
+                  },
+                  "explanation": "Reads 3 orders: 101 (cust 1), 102 (cust 2), 103 (cust 1)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "INNER JOIN customers c",
+                      "Action": "Scan customers"
+                  },
+                  "explanation": "Reads 3 customers: 1 John, 2 Alice, 3 Bob."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ON o.customer_id = c.customer_id",
+                      "Action": "Match keys"
+                  },
+                  "explanation": "Matches: Order 101->John, Order 102->Alice, Order 103->John. Bob has no orders and is excluded."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects order_id, customer_name, order_date, total_amount."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "ORDER BY o.order_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by order_id: 101, 102, 103."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-63-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why is an INNER JOIN appropriate for showing customers who placed orders?",
+              "whatInterviewerChecks": "Understanding of relational join filtering in transactional schemas.",
+              "bestReplyScript": "INNER JOIN naturally filters for rows that exist in both tables. Because customers who never placed an order have no corresponding rows in the orders table, they are automatically excluded from the result set.",
+              "commonMistakesToAvoid": "Using a LEFT JOIN without filtering out NULLs.",
+              "keyPoints": [
+                  "Excludes customers with zero purchases",
+                  "Preserves one-to-many order cardinality",
+                  "Normalized relational access pattern"
+              ],
+              "codeSnippet": "FROM orders o INNER JOIN customers c ON o.customer_id = c.customer_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-63-1",
+              "title": "1. Joining on the wrong columns",
+              "description": "Matching o.order_id to c.customer_id instead of customer_id to customer_id.",
+              "badSnippet": "SELECT * FROM orders o INNER JOIN customers c ON o.order_id = c.customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Attempts to match order IDs to customer IDs, yielding zero or completely nonsensical matches.",
+              "howToFix": "Match ON o.customer_id = c.customer_id.",
+              "mistake": "Mismatched join attributes",
+              "whyItHappens": "Carelessly referencing order_id instead of customer_id."
+          }
+      ]
+  },
+  "SQL-028": {
+      "id": "sql-63",
+      "title": "Customers with Orders",
+      "levelNumber": 63,
+      "problemId": 63,
+      "problemTitle": "Customers with Orders",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Flipkart",
+          "Google",
+          "Shopify",
+          "Walmart"
+      ],
+      "tracing": {
+          "code": "SELECT o.order_id,\n       c.customer_name,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nORDER BY o.order_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM orders o",
+                      "Action": "Scan orders"
+                  },
+                  "explanation": "Reads 3 orders: 101 (cust 1), 102 (cust 2), 103 (cust 1)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "INNER JOIN customers c",
+                      "Action": "Scan customers"
+                  },
+                  "explanation": "Reads 3 customers: 1 John, 2 Alice, 3 Bob."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ON o.customer_id = c.customer_id",
+                      "Action": "Match keys"
+                  },
+                  "explanation": "Matches: Order 101->John, Order 102->Alice, Order 103->John. Bob has no orders and is excluded."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects order_id, customer_name, order_date, total_amount."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "ORDER BY o.order_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by order_id: 101, 102, 103."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-63-1",
+              "category": "\ud83d\udca1 Interview Notes",
+              "question": "Why is an INNER JOIN appropriate for showing customers who placed orders?",
+              "whatInterviewerChecks": "Understanding of relational join filtering in transactional schemas.",
+              "bestReplyScript": "INNER JOIN naturally filters for rows that exist in both tables. Because customers who never placed an order have no corresponding rows in the orders table, they are automatically excluded from the result set.",
+              "commonMistakesToAvoid": "Using a LEFT JOIN without filtering out NULLs.",
+              "keyPoints": [
+                  "Excludes customers with zero purchases",
+                  "Preserves one-to-many order cardinality",
+                  "Normalized relational access pattern"
+              ],
+              "codeSnippet": "FROM orders o INNER JOIN customers c ON o.customer_id = c.customer_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-63-1",
+              "title": "1. Joining on the wrong columns",
+              "description": "Matching o.order_id to c.customer_id instead of customer_id to customer_id.",
+              "badSnippet": "SELECT * FROM orders o INNER JOIN customers c ON o.order_id = c.customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Attempts to match order IDs to customer IDs, yielding zero or completely nonsensical matches.",
+              "howToFix": "Match ON o.customer_id = c.customer_id.",
+              "mistake": "Mismatched join attributes",
+              "whyItHappens": "Carelessly referencing order_id instead of customer_id."
+          }
+      ]
+  },
+  "64": {
+      "id": "sql-64",
+      "title": "Customers without Orders",
+      "levelNumber": 64,
+      "problemId": 64,
+      "problemTitle": "Customers without Orders",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Meta",
+          "Shopify",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT c.customer_id,\n       c.customer_name\nFROM customers AS c\nLEFT JOIN orders AS o\nON c.customer_id = o.customer_id\nWHERE o.customer_id IS NULL\nORDER BY c.customer_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM customers c",
+                      "Action": "Read all customers"
+                  },
+                  "explanation": "Reads 4 customers: 1 (John), 2 (Alice), 3 (Bob), 4 (David)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "LEFT JOIN orders o",
+                      "Action": "Match orders"
+                  },
+                  "explanation": "Matches orders against customers. John matches 101, 103; Alice matches 102; Bob and David have no matching orders (NULLs generated)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON c.customer_id = o.customer_id",
+                      "Action": "Compare customer IDs"
+                  },
+                  "explanation": "Evaluates match condition. For Bob and David, order fields are NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE o.customer_id IS NULL",
+                      "Action": "Anti-join filter"
+                  },
+                  "explanation": "Filters for unmatched records. Only Bob (3) and David (4) remain."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT c.customer_id, c.customer_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts customer_id and customer_name for remaining customers."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY c.customer_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by customer_id: 3 (Bob), 4 (David)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-64-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use LEFT JOIN with IS NULL instead of an INNER JOIN?",
+              "whatInterviewerChecks": "Understanding of relational anti-join techniques vs inner joins.",
+              "bestReplyScript": "INNER JOIN filters out rows that lack a match in the secondary table, making it impossible to detect non-participating entities. A LEFT JOIN preserves every row from the primary table, filling unmatched right-side attributes with NULL. Filtering by WHERE right_table.key IS NULL isolates only those records with zero activity.",
+              "commonMistakesToAvoid": "Using = NULL instead of IS NULL, or using INNER JOIN.",
+              "keyPoints": [
+                  "LEFT JOIN preserves all left-side rows",
+                  "Unmatched joined rows receive NULLs",
+                  "WHERE ... IS NULL isolates missing records"
+              ],
+              "codeSnippet": "FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.customer_id IS NULL"
+          },
+          {
+              "id": "q-64-2",
+              "category": "🚀 Alternative Solutions",
+              "question": "How else can you write an anti-join besides LEFT JOIN ... IS NULL?",
+              "whatInterviewerChecks": "Knowledge of NOT EXISTS and NOT IN subqueries.",
+              "bestReplyScript": "We can use WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id). NOT EXISTS can be more efficient in certain database engines because it can short-circuit upon finding the first match.",
+              "commonMistakesToAvoid": "Using NOT IN when the subquery might return NULLs, which causes NOT IN to evaluate to unknown/empty.",
+              "keyPoints": [
+                  "NOT EXISTS provides clear intent and avoids NULL traps",
+                  "Short-circuits on first match"
+              ],
+              "codeSnippet": "WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-64-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Attempting to find customers without orders using an INNER JOIN.",
+              "badSnippet": "SELECT c.customer_name FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Returns customers who DO have orders instead of customers who do not.",
+              "howToFix": "Use LEFT JOIN and filter with WHERE o.customer_id IS NULL.",
+              "mistake": "Incorrect join type",
+              "whyItHappens": "Misunderstanding that INNER JOIN removes unmatched rows."
+          },
+          {
+              "id": "m-64-2",
+              "title": "2. Using = NULL instead of IS NULL",
+              "description": "Comparing NULL using the equality operator =.",
+              "badSnippet": "WHERE o.customer_id = NULL;",
+              "failingInput": "Query execution",
+              "consequence": "In SQL, comparison with NULL yields UNKNOWN/false, returning 0 rows.",
+              "howToFix": "Use WHERE o.customer_id IS NULL.",
+              "mistake": "Direct NULL comparison",
+              "whyItHappens": "Forgetting three-valued SQL boolean logic."
+          },
+          {
+              "id": "m-64-3",
+              "title": "3. Joining on the wrong columns",
+              "description": "Joining customer_name to customer_id.",
+              "badSnippet": "ON c.customer_name = o.customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Type error or nonsensical comparisons between text and integer IDs.",
+              "howToFix": "Join on c.customer_id = o.customer_id.",
+              "mistake": "Joining incompatible attributes",
+              "whyItHappens": "Careless column name selection."
+          },
+          {
+              "id": "m-64-4",
+              "title": "4. Filtering the wrong column",
+              "description": "Writing WHERE c.customer_id IS NULL instead of o.customer_id IS NULL.",
+              "badSnippet": "WHERE c.customer_id IS NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Searches for customers who don't have customer_ids (which never happens), returning 0 rows.",
+              "howToFix": "Filter on the joined table's column: WHERE o.customer_id IS NULL.",
+              "mistake": "Filtering left table instead of right table",
+              "whyItHappens": "Confusing which table contains the NULL values after the join."
+          }
+      ]
+  },
+  "SQL-029": {
+      "id": "sql-64",
+      "title": "Customers without Orders",
+      "levelNumber": 64,
+      "problemId": 64,
+      "problemTitle": "Customers without Orders",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Meta",
+          "Shopify",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT c.customer_id,\n       c.customer_name\nFROM customers AS c\nLEFT JOIN orders AS o\nON c.customer_id = o.customer_id\nWHERE o.customer_id IS NULL\nORDER BY c.customer_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM customers c",
+                      "Action": "Read all customers"
+                  },
+                  "explanation": "Reads 4 customers: 1 (John), 2 (Alice), 3 (Bob), 4 (David)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "LEFT JOIN orders o",
+                      "Action": "Match orders"
+                  },
+                  "explanation": "Matches orders against customers. John matches 101, 103; Alice matches 102; Bob and David have no matching orders (NULLs generated)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ON c.customer_id = o.customer_id",
+                      "Action": "Compare customer IDs"
+                  },
+                  "explanation": "Evaluates match condition. For Bob and David, order fields are NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE o.customer_id IS NULL",
+                      "Action": "Anti-join filter"
+                  },
+                  "explanation": "Filters for unmatched records. Only Bob (3) and David (4) remain."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT c.customer_id, c.customer_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts customer_id and customer_name for remaining customers."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY c.customer_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by customer_id: 3 (Bob), 4 (David)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-64-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use LEFT JOIN with IS NULL instead of an INNER JOIN?",
+              "whatInterviewerChecks": "Understanding of relational anti-join techniques vs inner joins.",
+              "bestReplyScript": "INNER JOIN filters out rows that lack a match in the secondary table, making it impossible to detect non-participating entities. A LEFT JOIN preserves every row from the primary table, filling unmatched right-side attributes with NULL. Filtering by WHERE right_table.key IS NULL isolates only those records with zero activity.",
+              "commonMistakesToAvoid": "Using = NULL instead of IS NULL, or using INNER JOIN.",
+              "keyPoints": [
+                  "LEFT JOIN preserves all left-side rows",
+                  "Unmatched joined rows receive NULLs",
+                  "WHERE ... IS NULL isolates missing records"
+              ],
+              "codeSnippet": "FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.customer_id IS NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-64-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Attempting to find customers without orders using an INNER JOIN.",
+              "badSnippet": "SELECT c.customer_name FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Returns customers who DO have orders instead of customers who do not.",
+              "howToFix": "Use LEFT JOIN and filter with WHERE o.customer_id IS NULL.",
+              "mistake": "Incorrect join type",
+              "whyItHappens": "Misunderstanding that INNER JOIN removes unmatched rows."
+          },
+          {
+              "id": "m-64-2",
+              "title": "2. Using = NULL instead of IS NULL",
+              "description": "Comparing NULL using the equality operator =.",
+              "badSnippet": "WHERE o.customer_id = NULL;",
+              "failingInput": "Query execution",
+              "consequence": "In SQL, comparison with NULL yields UNKNOWN/false, returning 0 rows.",
+              "howToFix": "Use WHERE o.customer_id IS NULL.",
+              "mistake": "Direct NULL comparison",
+              "whyItHappens": "Forgetting three-valued SQL boolean logic."
+          }
+      ]
+  },
+  "65": {
+      "id": "sql-65",
+      "title": "Orders without Customers",
+      "levelNumber": 65,
+      "problemId": 65,
+      "problemTitle": "Orders without Customers",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Flipkart",
+          "Goldman Sachs",
+          "Shopify",
+          "Stripe"
+      ],
+      "tracing": {
+          "code": "SELECT o.order_id,\n       o.customer_id,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nLEFT JOIN customers AS c\nON o.customer_id = c.customer_id\nWHERE c.customer_id IS NULL\nORDER BY o.order_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM orders o",
+                      "Action": "Read all orders"
+                  },
+                  "explanation": "Reads 4 orders: 101 (cust 1), 102 (cust 2), 103 (cust 5), 104 (cust 6)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "LEFT JOIN customers c",
+                      "Action": "Match customers"
+                  },
+                  "explanation": "Matches customers table. Orders 101 and 102 match John and Alice. Orders 103 (cust 5) and 104 (cust 6) have no matching customer in customers table (customer columns become NULL)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ON o.customer_id = c.customer_id",
+                      "Action": "Evaluate join condition"
+                  },
+                  "explanation": "Evaluates match condition. For orders 103 and 104, c.customer_id is NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "WHERE c.customer_id IS NULL",
+                      "Action": "Filter orphan records"
+                  },
+                  "explanation": "Filters for unmatched customers. Keeps only orphan orders 103 and 104."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT o.order_id, o.customer_id, o.order_date, o.total_amount",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts order details for the orphan records."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 9,
+                  "vars": {
+                      "Phase": "ORDER BY o.order_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by order_id: 103, 104."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-65-1",
+              "category": "💡 Interview Notes",
+              "question": "What is an orphan record and how does this query identify it?",
+              "whatInterviewerChecks": "Understanding of data integrity, referential constraints, and relational anti-joins.",
+              "bestReplyScript": "An orphan record is a child record (like an order) that references a parent record ID that does not exist in the primary entity table (customers). We identify orphans by starting with orders in a LEFT JOIN to customers and filtering WHERE customers.customer_id IS NULL. Rows where the parent key is NULL are orphan transactions.",
+              "commonMistakesToAvoid": "Using an INNER JOIN (which silently suppresses orphans) or using = NULL.",
+              "keyPoints": [
+                  "Child records referencing non-existent parent IDs are orphans",
+                  "LEFT JOIN preserves all transactions to inspect parent presence",
+                  "WHERE parent.key IS NULL captures orphan rows"
+              ],
+              "codeSnippet": "FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL"
+          },
+          {
+              "id": "q-65-2",
+              "category": "💡 Interview Notes",
+              "question": "How can orphan records be completely prevented in relational databases?",
+              "whatInterviewerChecks": "Knowledge of DDL constraints and database schema design.",
+              "bestReplyScript": "Orphan records can be prevented by establishing Foreign Key constraints on the child table: FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE RESTRICT (or CASCADE). This guarantees that the database engine rejects any INSERT or UPDATE referencing a non-existent parent key.",
+              "commonMistakesToAvoid": "Assuming application-level checks alone are sufficient without database-level constraints.",
+              "keyPoints": [
+                  "Enforce FOREIGN KEY constraints at the schema layer",
+                  "Choose appropriate ON DELETE actions (RESTRICT, CASCADE, SET NULL)"
+              ],
+              "codeSnippet": "ALTER TABLE orders ADD CONSTRAINT fk_orders_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id);"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-65-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Attempting to detect orphan orders using INNER JOIN.",
+              "badSnippet": "SELECT * FROM orders o INNER JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Returns 0 rows because INNER JOIN removes all unmatched records before WHERE executes.",
+              "howToFix": "Use LEFT JOIN orders to customers.",
+              "mistake": "Incorrect join type",
+              "whyItHappens": "Not recognizing that INNER JOIN eliminates missing keys."
+          },
+          {
+              "id": "m-65-2",
+              "title": "2. Using = NULL instead of IS NULL",
+              "description": "Writing WHERE c.customer_id = NULL.",
+              "badSnippet": "WHERE c.customer_id = NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Produces 0 rows due to SQL three-valued logic.",
+              "howToFix": "Use WHERE c.customer_id IS NULL.",
+              "mistake": "Direct NULL comparison",
+              "whyItHappens": "Forgetting that NULL represents an unknown value in SQL."
+          },
+          {
+              "id": "m-65-3",
+              "title": "3. Joining on wrong columns",
+              "description": "Writing ON o.order_id = c.customer_id.",
+              "badSnippet": "ON o.order_id = c.customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Compares primary order numbers with customer IDs, yielding invalid matches.",
+              "howToFix": "Join on foreign key: ON o.customer_id = c.customer_id.",
+              "mistake": "Incorrect join predicate",
+              "whyItHappens": "Carelessly matching column names."
+          },
+          {
+              "id": "m-65-4",
+              "title": "4. Filtering the wrong column",
+              "description": "Writing WHERE o.customer_id IS NULL instead of c.customer_id IS NULL.",
+              "badSnippet": "WHERE o.customer_id IS NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Checks for orders that have no customer_id value rather than orders where the customer does not exist.",
+              "howToFix": "Filter on the right-side customer table: WHERE c.customer_id IS NULL.",
+              "mistake": "Wrong table filtered",
+              "whyItHappens": "Confusing left table values with right table joined NULLs."
+          }
+      ]
+  },
+  "SQL-030": {
+      "id": "sql-65",
+      "title": "Orders without Customers",
+      "levelNumber": 65,
+      "problemId": 65,
+      "problemTitle": "Orders without Customers",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Flipkart",
+          "Goldman Sachs",
+          "Shopify",
+          "Stripe"
+      ],
+      "tracing": {
+          "code": "SELECT o.order_id,\n       o.customer_id,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nLEFT JOIN customers AS c\nON o.customer_id = c.customer_id\nWHERE c.customer_id IS NULL\nORDER BY o.order_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM orders o",
+                      "Action": "Read all orders"
+                  },
+                  "explanation": "Reads 4 orders: 101 (cust 1), 102 (cust 2), 103 (cust 5), 104 (cust 6)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "LEFT JOIN customers c",
+                      "Action": "Match customers"
+                  },
+                  "explanation": "Matches customers table. Orders 101 and 102 match John and Alice. Orders 103 (cust 5) and 104 (cust 6) have no matching customer in customers table (customer columns become NULL)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ON o.customer_id = c.customer_id",
+                      "Action": "Evaluate join condition"
+                  },
+                  "explanation": "Evaluates match condition. For orders 103 and 104, c.customer_id is NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "WHERE c.customer_id IS NULL",
+                      "Action": "Filter orphan records"
+                  },
+                  "explanation": "Filters for unmatched customers. Keeps only orphan orders 103 and 104."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT o.order_id, o.customer_id, o.order_date, o.total_amount",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts order details for the orphan records."
+              },
+              {
+                  "step": 6,
+                  "lineNumber": 9,
+                  "vars": {
+                      "Phase": "ORDER BY o.order_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by order_id: 103, 104."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-65-1",
+              "category": "💡 Interview Notes",
+              "question": "What is an orphan record and how does this query identify it?",
+              "whatInterviewerChecks": "Understanding of data integrity, referential constraints, and relational anti-joins.",
+              "bestReplyScript": "An orphan record is a child record (like an order) that references a parent record ID that does not exist in the primary entity table (customers). We identify orphans by starting with orders in a LEFT JOIN to customers and filtering WHERE customers.customer_id IS NULL. Rows where the parent key is NULL are orphan transactions.",
+              "commonMistakesToAvoid": "Using an INNER JOIN (which silently suppresses orphans) or using = NULL.",
+              "keyPoints": [
+                  "Child records referencing non-existent parent IDs are orphans",
+                  "LEFT JOIN preserves all transactions to inspect parent presence",
+                  "WHERE parent.key IS NULL captures orphan rows"
+              ],
+              "codeSnippet": "FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-65-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Attempting to detect orphan orders using INNER JOIN.",
+              "badSnippet": "SELECT * FROM orders o INNER JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Returns 0 rows because INNER JOIN removes all unmatched records before WHERE executes.",
+              "howToFix": "Use LEFT JOIN orders to customers.",
+              "mistake": "Incorrect join type",
+              "whyItHappens": "Not recognizing that INNER JOIN eliminates missing keys."
+          },
+          {
+              "id": "m-65-2",
+              "title": "2. Using = NULL instead of IS NULL",
+              "description": "Writing WHERE c.customer_id = NULL.",
+              "badSnippet": "WHERE c.customer_id = NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Produces 0 rows due to SQL three-valued logic.",
+              "howToFix": "Use WHERE c.customer_id IS NULL.",
+              "mistake": "Direct NULL comparison",
+              "whyItHappens": "Forgetting that NULL represents an unknown value in SQL."
+          }
+      ]
+  },
+  "66": {
+      "id": "sql-66",
+      "title": "Students with Course Names",
+      "levelNumber": 66,
+      "problemId": 66,
+      "problemTitle": "Students with Course Names",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Coursera",
+          "Duolingo",
+          "Google",
+          "Udemy",
+          "Unacademy"
+      ],
+      "tracing": {
+          "code": "SELECT s.student_id,\n       s.student_name,\n       c.course_name\nFROM students AS s\nINNER JOIN courses AS c\nON s.course_id = c.course_id\nORDER BY s.student_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM students s",
+                      "Action": "Read student records"
+                  },
+                  "explanation": "Reads 3 students: 1 (Rahul, course 101), 2 (Priya, course 102), 3 (Ankit, course 103)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "INNER JOIN courses c",
+                      "Action": "Read course records"
+                  },
+                  "explanation": "Reads 3 courses: 101 (Python), 102 (SQL), 103 (Java)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON s.course_id = c.course_id",
+                      "Action": "Match course IDs"
+                  },
+                  "explanation": "Matches: Rahul->101=Python, Priya->102=SQL, Ankit->103=Java. All students match."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT s.student_id, s.student_name, c.course_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects student ID, student name, and resolved course title."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY s.student_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by student_id: 1, 2, 3."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-66-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use INNER JOIN to link students with their courses?",
+              "whatInterviewerChecks": "Understanding of relational normalization and inner join mechanics.",
+              "bestReplyScript": "INNER JOIN matches foreign key `course_id` in the students table with the primary key `course_id` in courses. Because we specifically want students currently enrolled in valid courses, an INNER JOIN naturally excludes any student records without an assigned course or courses with no enrolled students.",
+              "commonMistakesToAvoid": "Forgetting the ON clause or matching on the wrong columns.",
+              "keyPoints": [
+                  "Foreign key to primary key relationship",
+                  "Excludes non-enrolled students and unselected courses",
+                  "Avoids repeating course names inside the students table"
+              ],
+              "codeSnippet": "FROM students s INNER JOIN courses c ON s.course_id = c.course_id"
+          },
+          {
+              "id": "q-66-2",
+              "category": "💡 Interview Notes",
+              "question": "Why not store course_name directly inside the students table?",
+              "whatInterviewerChecks": "Understanding of Database Normalization (3NF) and update anomalies.",
+              "bestReplyScript": "Storing course_name in the students table violates 2nd and 3rd Normal Forms by creating data redundancy. If a course title changes (e.g., from 'SQL' to 'Advanced SQL'), updating it would require updating thousands of student records, risking inconsistency. Keeping it in a separate courses table allows a single row update.",
+              "commonMistakesToAvoid": "Claiming that denormalization is always superior for queries without weighing data consistency tradeoffs.",
+              "keyPoints": [
+                  "Eliminates data redundancy",
+                  "Prevents update and deletion anomalies",
+                  "Improves storage efficiency"
+              ],
+              "codeSnippet": "CREATE TABLE courses (course_id INT PRIMARY KEY, course_name TEXT);"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-66-1",
+              "title": "1. Joining on wrong columns",
+              "description": "Matching s.student_id = c.course_id instead of s.course_id = c.course_id.",
+              "badSnippet": "ON s.student_id = c.course_id;",
+              "failingInput": "Query execution",
+              "consequence": "Compares student numbers to course numbers, producing completely invalid pairings or no rows.",
+              "howToFix": "Match ON s.course_id = c.course_id.",
+              "mistake": "Mismatched join attributes",
+              "whyItHappens": "Carelessly selecting the primary key of both tables rather than foreign-to-primary key."
+          },
+          {
+              "id": "m-66-2",
+              "title": "2. Selecting ambiguous columns",
+              "description": "Writing SELECT course_id without specifying table alias.",
+              "badSnippet": "SELECT student_name, course_id, course_name FROM students s INNER JOIN courses c ON s.course_id = c.course_id;",
+              "failingInput": "Query execution",
+              "consequence": "Database engine raises 'column reference course_id is ambiguous' error.",
+              "howToFix": "Specify s.course_id or c.course_id.",
+              "mistake": "Ambiguous column reference",
+              "whyItHappens": "Forgetting that both joined tables share the same column name."
+          },
+          {
+              "id": "m-66-3",
+              "title": "3. Forgetting the ON clause",
+              "description": "Writing FROM students INNER JOIN courses without ON.",
+              "badSnippet": "SELECT * FROM students INNER JOIN courses;",
+              "failingInput": "Query execution",
+              "consequence": "Causes syntax error in PostgreSQL/MySQL or generates an unintentional Cartesian product.",
+              "howToFix": "Include ON s.course_id = c.course_id.",
+              "mistake": "Missing join condition",
+              "whyItHappens": "Omitting the predicate that connects the tables."
+          }
+      ]
+  },
+  "SQL-031": {
+      "id": "sql-66",
+      "title": "Students with Course Names",
+      "levelNumber": 66,
+      "problemId": 66,
+      "problemTitle": "Students with Course Names",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Coursera",
+          "Duolingo",
+          "Google",
+          "Udemy",
+          "Unacademy"
+      ],
+      "tracing": {
+          "code": "SELECT s.student_id,\n       s.student_name,\n       c.course_name\nFROM students AS s\nINNER JOIN courses AS c\nON s.course_id = c.course_id\nORDER BY s.student_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM students s",
+                      "Action": "Read student records"
+                  },
+                  "explanation": "Reads 3 students: 1 (Rahul, course 101), 2 (Priya, course 102), 3 (Ankit, course 103)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "INNER JOIN courses c",
+                      "Action": "Read course records"
+                  },
+                  "explanation": "Reads 3 courses: 101 (Python), 102 (SQL), 103 (Java)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON s.course_id = c.course_id",
+                      "Action": "Match course IDs"
+                  },
+                  "explanation": "Matches: Rahul->101=Python, Priya->102=SQL, Ankit->103=Java. All students match."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT s.student_id, s.student_name, c.course_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects student ID, student name, and resolved course title."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY s.student_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by student_id: 1, 2, 3."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-66-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use INNER JOIN to link students with their courses?",
+              "whatInterviewerChecks": "Understanding of relational normalization and inner join mechanics.",
+              "bestReplyScript": "INNER JOIN matches foreign key `course_id` in the students table with the primary key `course_id` in courses. Because we specifically want students currently enrolled in valid courses, an INNER JOIN naturally excludes any student records without an assigned course or courses with no enrolled students.",
+              "commonMistakesToAvoid": "Forgetting the ON clause or matching on the wrong columns.",
+              "keyPoints": [
+                  "Foreign key to primary key relationship",
+                  "Excludes non-enrolled students and unselected courses",
+                  "Avoids repeating course names inside the students table"
+              ],
+              "codeSnippet": "FROM students s INNER JOIN courses c ON s.course_id = c.course_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-66-1",
+              "title": "1. Joining on wrong columns",
+              "description": "Matching s.student_id = c.course_id instead of s.course_id = c.course_id.",
+              "badSnippet": "ON s.student_id = c.course_id;",
+              "failingInput": "Query execution",
+              "consequence": "Compares student numbers to course numbers, producing completely invalid pairings or no rows.",
+              "howToFix": "Match ON s.course_id = c.course_id.",
+              "mistake": "Mismatched join attributes",
+              "whyItHappens": "Carelessly selecting the primary key of both tables rather than foreign-to-primary key."
+          }
+      ]
+  },
+  "67": {
+      "id": "sql-67",
+      "title": "Employees without Managers",
+      "levelNumber": 67,
+      "problemId": 67,
+      "problemTitle": "Employees without Managers",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Apple",
+          "Google",
+          "LinkedIn",
+          "Microsoft",
+          "Salesforce"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name\nFROM employees\nWHERE manager_id IS NULL\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Scan employees table"
+                  },
+                  "explanation": "Reads 5 employee records: 1 (John, NULL), 2 (Alice, 1), 3 (Bob, 1), 4 (David, 2), 5 (Emma, NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "WHERE manager_id IS NULL",
+                      "Action": "Filter top executives"
+                  },
+                  "explanation": "Filters for records where manager_id is NULL. John (1) and Emma (5) qualify; subordinates are excluded."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT employee_id, employee_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id and employee_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 (John), 5 (Emma)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-67-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use IS NULL instead of = NULL?",
+              "whatInterviewerChecks": "Understanding of SQL three-valued logic and NULL semantics.",
+              "bestReplyScript": "In SQL, NULL represents an unknown value rather than a literal value. Any equality comparison like `column = NULL` evaluates to UNKNOWN (falsy in a WHERE filter), returning zero rows. The `IS NULL` predicate is explicitly designed by the ANSI SQL standard to check for the absence of data.",
+              "commonMistakesToAvoid": "Writing `manager_id = NULL` or assuming NULL equals empty string or 0.",
+              "keyPoints": [
+                  "SQL operates on three-valued logic (TRUE, FALSE, UNKNOWN)",
+                  "= NULL always yields UNKNOWN",
+                  "IS NULL is mandatory for testing missing/empty references"
+              ],
+              "codeSnippet": "WHERE manager_id IS NULL"
+          },
+          {
+              "id": "q-67-2",
+              "category": "💡 Interview Notes",
+              "question": "Is a SELF JOIN necessary or recommended for this problem?",
+              "whatInterviewerChecks": "Query efficiency and avoiding over-engineering.",
+              "bestReplyScript": "No. While a self-join can model reporting relationships, verifying if an employee reports to nobody is an attribute-level check on the `manager_id` column. A simple `WHERE manager_id IS NULL` runs in O(N) linear time and is significantly more efficient than joining the table against itself.",
+              "commonMistakesToAvoid": "Over-complicating with a LEFT JOIN ... WHERE m.employee_id IS NULL when a direct column filter is simpler and faster.",
+              "keyPoints": [
+                  "Single table filter avoids quadratic join overhead",
+                  "Direct check on manager_id runs in O(N) or O(log N) with an index"
+              ],
+              "codeSnippet": "SELECT employee_id, employee_name FROM employees WHERE manager_id IS NULL;"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-67-1",
+              "title": "1. Using = NULL instead of IS NULL",
+              "description": "Writing WHERE manager_id = NULL.",
+              "badSnippet": "SELECT * FROM employees WHERE manager_id = NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Returns zero rows because equality comparison against NULL evaluates to UNKNOWN.",
+              "howToFix": "Use WHERE manager_id IS NULL.",
+              "mistake": "Equality comparison with NULL",
+              "whyItHappens": "Applying conventional programming equality semantics (e.g. JavaScript/Python) to SQL."
+          },
+          {
+              "id": "m-67-2",
+              "title": "2. Using an unnecessary SELF JOIN",
+              "description": "Joining employees to employees to check for NULL managers.",
+              "badSnippet": "SELECT e.employee_id, e.employee_name FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id WHERE e.manager_id IS NULL;",
+              "failingInput": "High volume organizational database",
+              "consequence": "Causes unnecessary table scans and join buffering, degrading query performance.",
+              "howToFix": "Filter directly: FROM employees WHERE manager_id IS NULL.",
+              "mistake": "Unnecessary table join",
+              "whyItHappens": "Assuming hierarchy queries always require a SELF JOIN."
+          }
+      ]
+  },
+  "SQL-032": {
+      "id": "sql-67",
+      "title": "Employees without Managers",
+      "levelNumber": 67,
+      "problemId": 67,
+      "problemTitle": "Employees without Managers",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Apple",
+          "Google",
+          "LinkedIn",
+          "Microsoft",
+          "Salesforce"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name\nFROM employees\nWHERE manager_id IS NULL\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Scan employees table"
+                  },
+                  "explanation": "Reads 5 employee records: 1 (John, NULL), 2 (Alice, 1), 3 (Bob, 1), 4 (David, 2), 5 (Emma, NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "WHERE manager_id IS NULL",
+                      "Action": "Filter top executives"
+                  },
+                  "explanation": "Filters for records where manager_id is NULL. John (1) and Emma (5) qualify; subordinates are excluded."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT employee_id, employee_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id and employee_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 (John), 5 (Emma)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-67-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use IS NULL instead of = NULL?",
+              "whatInterviewerChecks": "Understanding of SQL three-valued logic and NULL semantics.",
+              "bestReplyScript": "In SQL, NULL represents an unknown value rather than a literal value. Any equality comparison like `column = NULL` evaluates to UNKNOWN (falsy in a WHERE filter), returning zero rows. The `IS NULL` predicate is explicitly designed by the ANSI SQL standard to check for the absence of data.",
+              "commonMistakesToAvoid": "Writing `manager_id = NULL` or assuming NULL equals empty string or 0.",
+              "keyPoints": [
+                  "SQL operates on three-valued logic (TRUE, FALSE, UNKNOWN)",
+                  "= NULL always yields UNKNOWN",
+                  "IS NULL is mandatory for testing missing/empty references"
+              ],
+              "codeSnippet": "WHERE manager_id IS NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-67-1",
+              "title": "1. Using = NULL instead of IS NULL",
+              "description": "Writing WHERE manager_id = NULL.",
+              "badSnippet": "SELECT * FROM employees WHERE manager_id = NULL;",
+              "failingInput": "Query execution",
+              "consequence": "Returns zero rows because equality comparison against NULL evaluates to UNKNOWN.",
+              "howToFix": "Use WHERE manager_id IS NULL.",
+              "mistake": "Equality comparison with NULL",
+              "whyItHappens": "Applying conventional programming equality semantics (e.g. JavaScript/Python) to SQL."
+          }
+      ]
+  },
+  "68": {
+      "id": "sql-68",
+      "title": "Manager and Employee Names",
+      "levelNumber": 68,
+      "problemId": 68,
+      "problemTitle": "Manager and Employee Names",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Meta",
+          "Netflix",
+          "Oracle"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Read employees as subordinates"
+                  },
+                  "explanation": "Reads 5 employees: 1 John (mgr NULL), 2 Alice (mgr 1), 3 Bob (mgr 1), 4 David (mgr 2), 5 Emma (mgr 2)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "LEFT JOIN employees m",
+                      "Action": "Read employees as managers"
+                  },
+                  "explanation": "Opens a secondary scan of employees to look up supervisor names."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.manager_id = m.employee_id",
+                      "Action": "Match subordinate manager_id to manager employee_id"
+                  },
+                  "explanation": "Matches: Alice(2)->1(John), Bob(3)->1(John), David(4)->2(Alice), Emma(5)->2(Alice). John(1) has NULL manager_id, so m columns become NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT e.employee_id, e.employee_name, m.employee_name AS manager_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects employee ID, employee name, and manager name (or NULL)."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 (John), 2 (Alice), 3 (Bob), 4 (David), 5 (Emma)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-68-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a SELF JOIN using a LEFT JOIN necessary for organizational hierarchies?",
+              "whatInterviewerChecks": "Understanding of recursive relationships and NULL preservation in relational databases.",
+              "bestReplyScript": "Because managers are themselves employees stored in the same `employees` table, we must join the table to itself using two distinct aliases (e for subordinate, m for manager). We must use a `LEFT JOIN` because top executives like the CEO report to no one (`manager_id IS NULL`). An INNER JOIN would silently eliminate the CEO from the organizational chart.",
+              "commonMistakesToAvoid": "Using an INNER JOIN or joining on e.employee_id = m.employee_id.",
+              "keyPoints": [
+                  "Hierarchical data stored in one table requires a self-join",
+                  "Aliases differentiate roles (e for subordinate, m for manager)",
+                  "LEFT JOIN preserves top-level executives whose manager is NULL"
+              ],
+              "codeSnippet": "FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id"
+          },
+          {
+              "id": "q-68-2",
+              "category": "💡 Interview Notes",
+              "question": "What happens if you accidentally write ON e.employee_id = m.employee_id?",
+              "whatInterviewerChecks": "Understanding of self-join predicates.",
+              "bestReplyScript": "Joining on `e.employee_id = m.employee_id` pairs each employee with themselves rather than their supervisor, outputting the employee's own name as their manager. The join predicate must compare the foreign key `e.manager_id` with the primary key `m.employee_id`.",
+              "commonMistakesToAvoid": "Confusing primary keys with foreign keys in self-joins.",
+              "keyPoints": [
+                  "Join child foreign key to parent primary key",
+                  "Avoid matching primary key to primary key in self-joins"
+              ],
+              "codeSnippet": "ON e.manager_id = m.employee_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-68-1",
+              "title": "1. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Performing an INNER JOIN on manager_id.",
+              "badSnippet": "FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;",
+              "failingInput": "Corporate employee roster containing root executives",
+              "consequence": "Omits the CEO and top founders because their manager_id is NULL.",
+              "howToFix": "Use LEFT JOIN employees m ON e.manager_id = m.employee_id.",
+              "mistake": "Using INNER JOIN on nullable foreign keys",
+              "whyItHappens": "Forgetting that top-level nodes in trees have NULL parent pointers."
+          },
+          {
+              "id": "m-68-2",
+              "title": "2. Joining on identical primary keys",
+              "description": "Matching e.employee_id = m.employee_id.",
+              "badSnippet": "ON e.employee_id = m.employee_id;",
+              "failingInput": "Query execution",
+              "consequence": "Lists each employee as their own manager.",
+              "howToFix": "Match ON e.manager_id = m.employee_id.",
+              "mistake": "Self-referencing identity join",
+              "whyItHappens": "Confusing the parent-child key mapping."
+          },
+          {
+              "id": "m-68-3",
+              "title": "3. Omitting table aliases",
+              "description": "Attempting to join employees without aliases.",
+              "badSnippet": "FROM employees LEFT JOIN employees ON manager_id = employee_id;",
+              "failingInput": "Query execution",
+              "consequence": "Throws 'table name specified more than once' or ambiguous column errors.",
+              "howToFix": "Use distinct aliases like FROM employees e LEFT JOIN employees m.",
+              "mistake": "Missing table aliases in self-join",
+              "whyItHappens": "Not realizing SQL requires unique instance names for self-joined tables."
+          }
+      ]
+  },
+  "SQL-033": {
+      "id": "sql-68",
+      "title": "Manager and Employee Names",
+      "levelNumber": 68,
+      "problemId": 68,
+      "problemTitle": "Manager and Employee Names",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Google",
+          "Meta",
+          "Netflix",
+          "Oracle"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Read employees as subordinates"
+                  },
+                  "explanation": "Reads 5 employees: 1 John (mgr NULL), 2 Alice (mgr 1), 3 Bob (mgr 1), 4 David (mgr 2), 5 Emma (mgr 2)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "LEFT JOIN employees m",
+                      "Action": "Read employees as managers"
+                  },
+                  "explanation": "Opens a secondary scan of employees to look up supervisor names."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "ON e.manager_id = m.employee_id",
+                      "Action": "Match subordinate manager_id to manager employee_id"
+                  },
+                  "explanation": "Matches: Alice(2)->1(John), Bob(3)->1(John), David(4)->2(Alice), Emma(5)->2(Alice). John(1) has NULL manager_id, so m columns become NULL."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT e.employee_id, e.employee_name, m.employee_name AS manager_name",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Selects employee ID, employee name, and manager name (or NULL)."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 (John), 2 (Alice), 3 (Bob), 4 (David), 5 (Emma)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-68-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a SELF JOIN using a LEFT JOIN necessary for organizational hierarchies?",
+              "whatInterviewerChecks": "Understanding of recursive relationships and NULL preservation in relational databases.",
+              "bestReplyScript": "Because managers are themselves employees stored in the same `employees` table, we must join the table to itself using two distinct aliases (e for subordinate, m for manager). We must use a `LEFT JOIN` because top executives like the CEO report to no one (`manager_id IS NULL`). An INNER JOIN would silently eliminate the CEO from the organizational chart.",
+              "commonMistakesToAvoid": "Using an INNER JOIN or joining on e.employee_id = m.employee_id.",
+              "keyPoints": [
+                  "Hierarchical data stored in one table requires a self-join",
+                  "Aliases differentiate roles (e for subordinate, m for manager)",
+                  "LEFT JOIN preserves top-level executives whose manager is NULL"
+              ],
+              "codeSnippet": "FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-68-1",
+              "title": "1. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Performing an INNER JOIN on manager_id.",
+              "badSnippet": "FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;",
+              "failingInput": "Corporate employee roster containing root executives",
+              "consequence": "Omits the CEO and top founders because their manager_id is NULL.",
+              "howToFix": "Use LEFT JOIN employees m ON e.manager_id = m.employee_id.",
+              "mistake": "Using INNER JOIN on nullable foreign keys",
+              "whyItHappens": "Forgetting that top-level nodes in trees have NULL parent pointers."
+          },
+          {
+              "id": "m-68-2",
+              "title": "2. Joining on identical primary keys",
+              "description": "Matching e.employee_id = m.employee_id.",
+              "badSnippet": "ON e.employee_id = m.employee_id;",
+              "failingInput": "Query execution",
+              "consequence": "Lists each employee as their own manager.",
+              "howToFix": "Match ON e.manager_id = m.employee_id.",
+              "mistake": "Self-referencing identity join",
+              "whyItHappens": "Confusing the parent-child key mapping."
+          }
+      ]
+  },
+  "69": {
+      "id": "sql-69",
+      "title": "Multiple Table Joins",
+      "levelNumber": 69,
+      "problemId": 69,
+      "problemTitle": "Multiple Table Joins",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Cisco",
+          "Google",
+          "IBM",
+          "Oracle"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name,\n       l.city\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nINNER JOIN locations AS l\nON d.location_id = l.location_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 3 employees: 1 John (dept 101), 2 Alice (dept 102), 3 Bob (dept 101)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "INNER JOIN departments d",
+                      "Action": "Match departments"
+                  },
+                  "explanation": "Matches department_id: 101->IT (loc 1), 102->HR (loc 2). All 3 employees match departments."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "INNER JOIN locations l",
+                      "Action": "Match locations"
+                  },
+                  "explanation": "Matches location_id: 1->Bangalore, 2->Mumbai. John & Bob get Bangalore, Alice gets Mumbai."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts employee_id, employee_name, department_name, and city."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 10,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 (John), 2 (Alice), 3 (Bob)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-69-1",
+              "category": "💡 Interview Notes",
+              "question": "How does chaining multiple INNER JOINs work logically in SQL?",
+              "whatInterviewerChecks": "Understanding of relational algebra and multi-way join execution order.",
+              "bestReplyScript": "Multiple INNER JOINs execute sequentially by evaluating relationships bridge-by-bridge. First, `employees` is joined with `departments` on `department_id` to attach department details. Then, that intermediate result set is joined with `locations` on `location_id`. If a record fails to find a match at any step in the chain, it is eliminated from the final result set.",
+              "commonMistakesToAvoid": "Attempting to join employees directly to locations without going through departments.",
+              "keyPoints": [
+                  "Relational bridge: Employees -> Departments -> Locations",
+                  "Intermediate results pass through each join condition",
+                  "Failure to match at any step eliminates the entire row"
+              ],
+              "codeSnippet": "FROM employees e JOIN departments d ON e.department_id = d.department_id JOIN locations l ON d.location_id = l.location_id"
+          },
+          {
+              "id": "q-69-2",
+              "category": "💡 Interview Notes",
+              "question": "What is the performance implication of joining three tables?",
+              "whatInterviewerChecks": "Query optimization, join algorithms (hash vs nested loop), and indexing strategy.",
+              "bestReplyScript": "Without indexes, a three-table join has a worst-case time complexity of O(N × M × K). However, by indexing foreign keys (`employees.department_id`, `departments.location_id`) and primary keys (`departments.department_id`, `locations.location_id`), database query optimizers use Hash Joins or Index Nested Loop joins to evaluate the query in near O(N) linear time.",
+              "commonMistakesToAvoid": "Claiming that joins are always slow without discussing indexing.",
+              "keyPoints": [
+                  "Index both foreign keys and referenced primary keys",
+                  "Query planner picks the most selective driving table first"
+              ],
+              "codeSnippet": "CREATE INDEX idx_emp_dept ON employees(department_id);"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-69-1",
+              "title": "1. Joining on the wrong columns",
+              "description": "Matching e.employee_id = d.department_id.",
+              "badSnippet": "ON e.employee_id = d.department_id;",
+              "failingInput": "Query execution",
+              "consequence": "Compares employee IDs to department IDs, resulting in nonsense pairings.",
+              "howToFix": "Join on ON e.department_id = d.department_id.",
+              "mistake": "Mismatched foreign key attributes",
+              "whyItHappens": "Carelessly matching column names."
+          },
+          {
+              "id": "m-69-2",
+              "title": "2. Ambiguous column reference",
+              "description": "Writing department_id without table alias prefix.",
+              "badSnippet": "SELECT employee_name, department_id, city FROM employees e INNER JOIN departments d ...;",
+              "failingInput": "Query execution",
+              "consequence": "Raises 'column reference department_id is ambiguous' error.",
+              "howToFix": "Prefix with alias: e.department_id or d.department_id.",
+              "mistake": "Ambiguous column name",
+              "whyItHappens": "Forgetting that multiple joined tables contain the same column name."
+          },
+          {
+              "id": "m-69-3",
+              "title": "3. Skipping intermediate tables",
+              "description": "Attempting to join employees directly to locations.",
+              "badSnippet": "FROM employees e INNER JOIN locations l ON e.department_id = l.location_id;",
+              "failingInput": "Query execution",
+              "consequence": "Compares department numbers to location numbers, creating corrupted matches.",
+              "howToFix": "Route through departments: JOIN departments d ON e.department_id = d.department_id JOIN locations l ON d.location_id = l.location_id.",
+              "mistake": "Bypassing normalized foreign key bridges",
+              "whyItHappens": "Trying to skip a normalized table in the schema chain."
+          }
+      ]
+  },
+  "SQL-034": {
+      "id": "sql-69",
+      "title": "Multiple Table Joins",
+      "levelNumber": 69,
+      "problemId": 69,
+      "problemTitle": "Multiple Table Joins",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Cisco",
+          "Google",
+          "IBM",
+          "Oracle"
+      ],
+      "tracing": {
+          "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name,\n       l.city\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nINNER JOIN locations AS l\nON d.location_id = l.location_id\nORDER BY e.employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM employees e",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 3 employees: 1 John (dept 101), 2 Alice (dept 102), 3 Bob (dept 101)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "INNER JOIN departments d",
+                      "Action": "Match departments"
+                  },
+                  "explanation": "Matches department_id: 101->IT (loc 1), 102->HR (loc 2). All 3 employees match departments."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "INNER JOIN locations l",
+                      "Action": "Match locations"
+                  },
+                  "explanation": "Matches location_id: 1->Bangalore, 2->Mumbai. John & Bob get Bangalore, Alice gets Mumbai."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts employee_id, employee_name, department_name, and city."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 10,
+                  "vars": {
+                      "Phase": "ORDER BY e.employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1 (John), 2 (Alice), 3 (Bob)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-69-1",
+              "category": "💡 Interview Notes",
+              "question": "How does chaining multiple INNER JOINs work logically in SQL?",
+              "whatInterviewerChecks": "Understanding of relational algebra and multi-way join execution order.",
+              "bestReplyScript": "Multiple INNER JOINs execute sequentially by evaluating relationships bridge-by-bridge. First, `employees` is joined with `departments` on `department_id` to attach department details. Then, that intermediate result set is joined with `locations` on `location_id`. If a record fails to find a match at any step in the chain, it is eliminated from the final result set.",
+              "commonMistakesToAvoid": "Attempting to join employees directly to locations without going through departments.",
+              "keyPoints": [
+                  "Relational bridge: Employees -> Departments -> Locations",
+                  "Intermediate results pass through each join condition",
+                  "Failure to match at any step eliminates the entire row"
+              ],
+              "codeSnippet": "FROM employees e JOIN departments d ON e.department_id = d.department_id JOIN locations l ON d.location_id = l.location_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-69-1",
+              "title": "1. Joining on the wrong columns",
+              "description": "Matching e.employee_id = d.department_id.",
+              "badSnippet": "ON e.employee_id = d.department_id;",
+              "failingInput": "Query execution",
+              "consequence": "Compares employee IDs to department IDs, resulting in nonsense pairings.",
+              "howToFix": "Join on ON e.department_id = d.department_id.",
+              "mistake": "Mismatched foreign key attributes",
+              "whyItHappens": "Carelessly matching column names."
+          }
+      ]
+  },
+  "70": {
+      "id": "sql-70",
+      "title": "Join Three Tables",
+      "levelNumber": 70,
+      "problemId": 70,
+      "problemTitle": "Join Three Tables",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Flipkart",
+          "Instacart",
+          "Shopify",
+          "Walmart"
+      ],
+      "tracing": {
+          "code": "SELECT o.order_id,\n       c.customer_name,\n       p.product_name,\n       p.price\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nINNER JOIN products AS p\nON o.product_id = p.product_id\nORDER BY o.order_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM orders o",
+                      "Action": "Read transaction orders"
+                  },
+                  "explanation": "Reads 3 orders: 101 (cust 1, prod 501), 102 (cust 2, prod 502), 103 (cust 1, prod 503)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "INNER JOIN customers c",
+                      "Action": "Match customers"
+                  },
+                  "explanation": "Matches: cust 1->John, cust 2->Alice. All orders successfully link to customers."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "INNER JOIN products p",
+                      "Action": "Match products"
+                  },
+                  "explanation": "Matches: prod 501->Laptop ($75000), 502->Keyboard ($1500), 503->Mouse ($800)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts order_id, customer_name, product_name, and price."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 10,
+                  "vars": {
+                      "Phase": "ORDER BY o.order_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by order_id: 101, 102, 103."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-70-1",
+              "category": "💡 Interview Notes",
+              "question": "Why start with the Orders table rather than Customers or Products?",
+              "whatInterviewerChecks": "Understanding of dimensional modeling and fact-driven querying.",
+              "bestReplyScript": "In dimensional reporting, `orders` is the central fact/transaction table where each row represents a distinct order event. Starting with `orders` ensures we preserve the exact granularity of the transaction log and cleanly join dimension tables (customers, products) via foreign keys without needing group-bys or subqueries.",
+              "commonMistakesToAvoid": "Starting with customers or products and struggling with fan-out or missing transactions.",
+              "keyPoints": [
+                  "Orders represents transaction granularity",
+                  "Dimensions (customers, products) enrich the central fact rows",
+                  "Ensures clean 1:1 lookups per order"
+              ],
+              "codeSnippet": "FROM orders o JOIN customers c ON o.customer_id = c.customer_id JOIN products p ON o.product_id = p.product_id"
+          },
+          {
+              "id": "q-70-2",
+              "category": "💡 Interview Notes",
+              "question": "What happens if a product is deleted from the products table?",
+              "whatInterviewerChecks": "Referential integrity and join behavior.",
+              "bestReplyScript": "Because an `INNER JOIN` requires matches on both sides, any order referencing a deleted product ID would be dropped from the output. In production systems with soft deletes or historical order logs, either foreign key constraints prevent product deletion, or a `LEFT JOIN` is used to retain the order while displaying NULL or archived product attributes.",
+              "commonMistakesToAvoid": "Assuming inner joins always preserve transaction counts.",
+              "keyPoints": [
+                  "INNER JOIN drops rows if child key missing",
+                  "Soft deletes or LEFT JOIN preserve historical transaction history"
+              ],
+              "codeSnippet": "LEFT JOIN products p ON o.product_id = p.product_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-70-1",
+              "title": "1. Joining on the wrong keys",
+              "description": "Matching o.order_id = p.product_id instead of o.product_id = p.product_id.",
+              "badSnippet": "ON o.order_id = p.product_id;",
+              "failingInput": "Query execution",
+              "consequence": "Attempts to match order numbers with product SKUs, failing to find matches.",
+              "howToFix": "Match foreign key: ON o.product_id = p.product_id.",
+              "mistake": "Mismatched foreign key column",
+              "whyItHappens": "Carelessly selecting order_id instead of product_id."
+          },
+          {
+              "id": "m-70-2",
+              "title": "2. Omitting a join in the chain",
+              "description": "Forgetting to join products.",
+              "badSnippet": "SELECT o.order_id, c.customer_name FROM orders o JOIN customers c ON o.customer_id = c.customer_id;",
+              "failingInput": "Query execution",
+              "consequence": "Leaves product_name and price unretrieved, failing the problem requirements.",
+              "howToFix": "Add INNER JOIN products p ON o.product_id = p.product_id.",
+              "mistake": "Incomplete join chain",
+              "whyItHappens": "Stopping after the first join."
+          }
+      ]
+  },
+  "SQL-035": {
+      "id": "sql-70",
+      "title": "Join Three Tables",
+      "levelNumber": 70,
+      "problemId": 70,
+      "problemTitle": "Join Three Tables",
+      "difficulty": "Medium",
+      "companyTags": [
+          "Amazon",
+          "Flipkart",
+          "Instacart",
+          "Shopify",
+          "Walmart"
+      ],
+      "tracing": {
+          "code": "SELECT o.order_id,\n       c.customer_name,\n       p.product_name,\n       p.price\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nINNER JOIN products AS p\nON o.product_id = p.product_id\nORDER BY o.order_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM orders o",
+                      "Action": "Read transaction orders"
+                  },
+                  "explanation": "Reads 3 orders: 101 (cust 1, prod 501), 102 (cust 2, prod 502), 103 (cust 1, prod 503)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "INNER JOIN customers c",
+                      "Action": "Match customers"
+                  },
+                  "explanation": "Matches: cust 1->John, cust 2->Alice. All orders successfully link to customers."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 8,
+                  "vars": {
+                      "Phase": "INNER JOIN products p",
+                      "Action": "Match products"
+                  },
+                  "explanation": "Matches: prod 501->Laptop ($75000), 502->Keyboard ($1500), 503->Mouse ($800)."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Extracts order_id, customer_name, product_name, and price."
+              },
+              {
+                  "step": 5,
+                  "lineNumber": 10,
+                  "vars": {
+                      "Phase": "ORDER BY o.order_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by order_id: 101, 102, 103."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-70-1",
+              "category": "💡 Interview Notes",
+              "question": "Why start with the Orders table rather than Customers or Products?",
+              "whatInterviewerChecks": "Understanding of dimensional modeling and fact-driven querying.",
+              "bestReplyScript": "In dimensional reporting, `orders` is the central fact/transaction table where each row represents a distinct order event. Starting with `orders` ensures we preserve the exact granularity of the transaction log and cleanly join dimension tables (customers, products) via foreign keys without needing group-bys or subqueries.",
+              "commonMistakesToAvoid": "Starting with customers or products and struggling with fan-out or missing transactions.",
+              "keyPoints": [
+                  "Orders represents transaction granularity",
+                  "Dimensions (customers, products) enrich the central fact rows",
+                  "Ensures clean 1:1 lookups per order"
+              ],
+              "codeSnippet": "FROM orders o JOIN customers c ON o.customer_id = c.customer_id JOIN products p ON o.product_id = p.product_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-70-1",
+              "title": "1. Joining on the wrong keys",
+              "description": "Matching o.order_id = p.product_id instead of o.product_id = p.product_id.",
+              "badSnippet": "ON o.order_id = p.product_id;",
+              "failingInput": "Query execution",
+              "consequence": "Attempts to match order numbers with product SKUs, failing to find matches.",
+              "howToFix": "Match foreign key: ON o.product_id = p.product_id.",
+              "mistake": "Mismatched foreign key column",
+              "whyItHappens": "Carelessly selecting order_id instead of product_id."
+          }
+      ]
+  },
+  "71": {
+      "id": "sql-71",
+      "title": "Grade Students",
+      "levelNumber": 71,
+      "problemId": 71,
+      "problemTitle": "Grade Students",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Coursera",
+          "Duolingo",
+          "Google",
+          "Udacity",
+          "Unacademy"
+      ],
+      "tracing": {
+          "code": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 90 THEN 'A'\n           WHEN marks >= 80 THEN 'B'\n           WHEN marks >= 70 THEN 'C'\n           WHEN marks >= 60 THEN 'D'\n           ELSE 'F'\n       END AS grade\nFROM students\nORDER BY student_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM students",
+                      "Action": "Read student records"
+                  },
+                  "explanation": "Reads 5 students: 1 John (95), 2 Alice (82), 3 Bob (74), 4 David (63), 5 Emma (48)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate conditions"
+                  },
+                  "explanation": "For each row, tests top-to-bottom: 95 matches >=90 ('A'); 82 matches >=80 ('B'); 74 matches >=70 ('C'); 63 matches >=60 ('D'); 48 falls to ELSE ('F')."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects student_id, student_name, marks, and computed grade."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY student_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by student_id: 1, 2, 3, 4, 5."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-71-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must the CASE WHEN conditions be checked in descending order for numeric thresholds?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "SQL CASE WHEN evaluates sequentially from top to bottom and terminates upon encountering the very first true condition. If we evaluated `>= 60` before `>= 90`, a score of 95 would trigger the `>= 60` condition and immediately be assigned a 'D'. Descending order ensures mutually exclusive, correct categorization without needing complex compound ranges (e.g. BETWEEN 90 AND 100).",
+              "commonMistakesToAvoid": "Checking lowest threshold first or omitting the ELSE catch-all.",
+              "keyPoints": [
+                  "CASE stops evaluating after first match",
+                  "Descending thresholds prevent lower bands from absorbing high values",
+                  "Eliminates redundant BETWEEN bounds"
+              ],
+              "codeSnippet": "CASE WHEN marks >= 90 THEN 'A' WHEN marks >= 80 THEN 'B' ... ELSE 'F' END"
+          },
+          {
+              "id": "q-71-2",
+              "category": "💡 Interview Notes",
+              "question": "Can CASE WHEN expressions be combined with aggregate functions?",
+              "whatInterviewerChecks": "Understanding of conditional aggregation (pivot queries).",
+              "bestReplyScript": "Yes. Wrapping a CASE statement inside aggregate functions like SUM or COUNT is the standard technique for conditional aggregation—for instance, `COUNT(CASE WHEN marks >= 90 THEN 1 END)` to count students who achieved an 'A' grade in a single query pass.",
+              "commonMistakesToAvoid": "Thinking CASE is restricted only to SELECT projections.",
+              "keyPoints": [
+                  "Enables single-pass conditional metrics",
+                  "Forms the basis for pivoting rows into summary columns"
+              ],
+              "codeSnippet": "SELECT COUNT(CASE WHEN marks >= 90 THEN 1 END) AS total_a_grades FROM students;"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-71-1",
+              "title": "1. Inverting condition hierarchy",
+              "description": "Checking WHEN marks >= 60 THEN 'D' before higher marks.",
+              "badSnippet": "CASE WHEN marks >= 60 THEN 'D' WHEN marks >= 90 THEN 'A' END",
+              "failingInput": "Student with marks = 95",
+              "consequence": "Assigns grade 'D' to 95 because 95 >= 60 is true and CASE short-circuits.",
+              "howToFix": "Order thresholds in strictly descending numerical order (90, then 80, 70, 60).",
+              "mistake": "Evaluation order error",
+              "whyItHappens": "Forgetting that CASE expressions short-circuit on first match."
+          },
+          {
+              "id": "m-71-2",
+              "title": "2. Omitting ELSE fallback",
+              "description": "Leaving off ELSE 'F'.",
+              "badSnippet": "CASE WHEN marks >= 90 THEN 'A' ... END",
+              "failingInput": "Student with marks = 48",
+              "consequence": "Returns NULL for any student scoring below 60 rather than 'F'.",
+              "howToFix": "Provide ELSE 'F' before END.",
+              "mistake": "Missing default branch",
+              "whyItHappens": "Overlooking unmatched rows in conditional branches."
+          }
+      ]
+  },
+  "ASQL-001": {
+      "id": "sql-71",
+      "title": "Grade Students",
+      "levelNumber": 71,
+      "problemId": 71,
+      "problemTitle": "Grade Students",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Coursera",
+          "Duolingo",
+          "Google",
+          "Udacity",
+          "Unacademy"
+      ],
+      "tracing": {
+          "code": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 90 THEN 'A'\n           WHEN marks >= 80 THEN 'B'\n           WHEN marks >= 70 THEN 'C'\n           WHEN marks >= 60 THEN 'D'\n           ELSE 'F'\n       END AS grade\nFROM students\nORDER BY student_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM students",
+                      "Action": "Read student records"
+                  },
+                  "explanation": "Reads 5 students: 1 John (95), 2 Alice (82), 3 Bob (74), 4 David (63), 5 Emma (48)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate conditions"
+                  },
+                  "explanation": "For each row, tests top-to-bottom: 95 matches >=90 ('A'); 82 matches >=80 ('B'); 74 matches >=70 ('C'); 63 matches >=60 ('D'); 48 falls to ELSE ('F')."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects student_id, student_name, marks, and computed grade."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY student_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by student_id: 1, 2, 3, 4, 5."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-71-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must the CASE WHEN conditions be checked in descending order for numeric thresholds?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "SQL CASE WHEN evaluates sequentially from top to bottom and terminates upon encountering the very first true condition. If we evaluated `>= 60` before `>= 90`, a score of 95 would trigger the `>= 60` condition and immediately be assigned a 'D'. Descending order ensures mutually exclusive, correct categorization without needing complex compound ranges (e.g. BETWEEN 90 AND 100).",
+              "commonMistakesToAvoid": "Checking lowest threshold first or omitting the ELSE catch-all.",
+              "keyPoints": [
+                  "CASE stops evaluating after first match",
+                  "Descending thresholds prevent lower bands from absorbing high values",
+                  "Eliminates redundant BETWEEN bounds"
+              ],
+              "codeSnippet": "CASE WHEN marks >= 90 THEN 'A' WHEN marks >= 80 THEN 'B' ... ELSE 'F' END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-71-1",
+              "title": "1. Inverting condition hierarchy",
+              "description": "Checking WHEN marks >= 60 THEN 'D' before higher marks.",
+              "badSnippet": "CASE WHEN marks >= 60 THEN 'D' WHEN marks >= 90 THEN 'A' END",
+              "failingInput": "Student with marks = 95",
+              "consequence": "Assigns grade 'D' to 95 because 95 >= 60 is true and CASE short-circuits.",
+              "howToFix": "Order thresholds in strictly descending numerical order (90, then 80, 70, 60).",
+              "mistake": "Evaluation order error",
+              "whyItHappens": "Forgetting that CASE expressions short-circuit on first match."
+          }
+      ]
+  },
+  "72": {
+      "id": "sql-72",
+      "title": "Salary Bands",
+      "levelNumber": 72,
+      "problemId": 72,
+      "problemTitle": "Salary Bands",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Deloitte",
+          "Goldman Sachs",
+          "JPMorgan",
+          "KPMG",
+          "PwC"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 70000 THEN 'Medium'\n           WHEN salary >= 40000 THEN 'Low'\n           ELSE 'Very Low'\n       END AS salary_band\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 4 employees: 1 John (120,000), 2 Alice (85,000), 3 Bob (55,000), 4 David (32,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate salary bands"
+                  },
+                  "explanation": "Evaluates: 120k >= 100k -> 'High'; 85k >= 70k -> 'Medium'; 55k >= 40k -> 'Low'; 32k falls to ELSE -> 'Very Low'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id, employee_name, salary, and computed salary_band."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-72-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is the ordering of WHEN clauses critical when binning numbers into ranges?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "In SQL, CASE statements evaluate sequentially from top to bottom and short-circuit upon finding the first true condition. If we placed `WHEN salary >= 40000 THEN 'Low'` before the check for 100,000, an employee earning 120,000 would satisfy `>= 40000` and immediately be categorized as 'Low'. Evaluating from highest threshold to lowest guarantees mutually exclusive classification without redundant boolean bounds.",
+              "commonMistakesToAvoid": "Using ascending order when testing `>=` or forgetting the default ELSE.",
+              "keyPoints": [
+                  "Short-circuit evaluation stops at first true condition",
+                  "Descending thresholds ensure proper segregation",
+                  "Avoids clumsy compound BETWEEN conditions"
+              ],
+              "codeSnippet": "CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 70000 THEN 'Medium' ... END"
+          },
+          {
+              "id": "q-72-2",
+              "category": "💡 Interview Notes",
+              "question": "How can you use this CASE statement to count how many employees are in each band?",
+              "whatInterviewerChecks": "Grouping by computed expressions or conditional aggregation.",
+              "bestReplyScript": "You can either wrap the CASE expression inside a GROUP BY: `SELECT CASE ... END AS band, COUNT(*) FROM employees GROUP BY 1`, or compute conditional counts in a single pass using conditional aggregation: `COUNT(CASE WHEN salary >= 100000 THEN 1 END) AS high_earners`.",
+              "commonMistakesToAvoid": "Forgetting that computed aliases cannot always be referenced in GROUP BY depending on the SQL dialect.",
+              "keyPoints": [
+                  "Can group directly by CASE expression",
+                  "Conditional aggregation enables pivoting in a single table scan"
+              ],
+              "codeSnippet": "GROUP BY CASE WHEN salary >= 100000 THEN 'High' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-72-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Testing lower thresholds before higher thresholds.",
+              "badSnippet": "CASE WHEN salary >= 40000 THEN 'Low' WHEN salary >= 100000 THEN 'High' END",
+              "failingInput": "Employee with salary = 120000",
+              "consequence": "Assigns 'Low' band to 120k earners because 120000 >= 40000 is true.",
+              "howToFix": "Evaluate in descending order (100000, then 70000, then 40000).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Overlooking that SQL CASE does not seek the most specific match, only the first match."
+          },
+          {
+              "id": "m-72-2",
+              "title": "2. Missing ELSE catch-all",
+              "description": "Omitting ELSE 'Very Low'.",
+              "badSnippet": "CASE WHEN salary >= 100000 THEN 'High' ... END",
+              "failingInput": "Employee with salary = 32000",
+              "consequence": "Yields NULL for employees earning under 40,000.",
+              "howToFix": "Add ELSE 'Very Low' before END.",
+              "mistake": "Missing default case",
+              "whyItHappens": "Assuming unmatched rows retain their previous category or throw an error."
+          }
+      ]
+  },
+  "ASQL-002": {
+      "id": "sql-72",
+      "title": "Salary Bands",
+      "levelNumber": 72,
+      "problemId": 72,
+      "problemTitle": "Salary Bands",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Deloitte",
+          "Goldman Sachs",
+          "JPMorgan",
+          "KPMG",
+          "PwC"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 70000 THEN 'Medium'\n           WHEN salary >= 40000 THEN 'Low'\n           ELSE 'Very Low'\n       END AS salary_band\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 4 employees: 1 John (120,000), 2 Alice (85,000), 3 Bob (55,000), 4 David (32,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate salary bands"
+                  },
+                  "explanation": "Evaluates: 120k >= 100k -> 'High'; 85k >= 70k -> 'Medium'; 55k >= 40k -> 'Low'; 32k falls to ELSE -> 'Very Low'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id, employee_name, salary, and computed salary_band."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-72-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is the ordering of WHEN clauses critical when binning numbers into ranges?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "In SQL, CASE statements evaluate sequentially from top to bottom and short-circuit upon finding the first true condition. If we placed `WHEN salary >= 40000 THEN 'Low'` before the check for 100,000, an employee earning 120,000 would satisfy `>= 40000` and immediately be categorized as 'Low'. Evaluating from highest threshold to lowest guarantees mutually exclusive classification without redundant boolean bounds.",
+              "commonMistakesToAvoid": "Using ascending order when testing `>=` or forgetting the default ELSE.",
+              "keyPoints": [
+                  "Short-circuit evaluation stops at first true condition",
+                  "Descending thresholds ensure proper segregation",
+                  "Avoids clumsy compound BETWEEN conditions"
+              ],
+              "codeSnippet": "CASE WHEN salary >= 100000 THEN 'High' WHEN salary >= 70000 THEN 'Medium' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-72-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Testing lower thresholds before higher thresholds.",
+              "badSnippet": "CASE WHEN salary >= 40000 THEN 'Low' WHEN salary >= 100000 THEN 'High' END",
+              "failingInput": "Employee with salary = 120000",
+              "consequence": "Assigns 'Low' band to 120k earners because 120000 >= 40000 is true.",
+              "howToFix": "Evaluate in descending order (100000, then 70000, then 40000).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Overlooking that SQL CASE does not seek the most specific match, only the first match."
+          }
+      ]
+  },
+  "73": {
+      "id": "sql-73",
+      "title": "Age Groups",
+      "levelNumber": 73,
+      "problemId": 73,
+      "problemTitle": "Age Groups",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Airbnb",
+          "Amazon",
+          "Facebook",
+          "Netflix",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT person_id,\n       person_name,\n       age,\n       CASE\n           WHEN age >= 60 THEN 'Senior Citizen'\n           WHEN age >= 20 THEN 'Adult'\n           WHEN age >= 13 THEN 'Teen'\n           ELSE 'Child'\n       END AS age_group\nFROM persons\nORDER BY person_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM persons",
+                      "Action": "Read person records"
+                  },
+                  "explanation": "Reads 4 persons: 1 John (8), 2 Alice (16), 3 Bob (30), 4 David (67)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate age brackets"
+                  },
+                  "explanation": "Evaluates: 67 >= 60 -> 'Senior Citizen'; 30 >= 20 -> 'Adult'; 16 >= 13 -> 'Teen'; 8 falls to ELSE -> 'Child'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects person_id, person_name, age, and computed age_group."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY person_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by person_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-73-1",
+              "category": "💡 Interview Notes",
+              "question": "Why start with the highest age threshold instead of the lowest?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "CASE expressions evaluate sequentially from top to bottom and stop checking as soon as the first truthy condition is encountered. If we evaluated `age >= 0` first, everyone would be labeled a 'Child' regardless of whether they were 30 or 67. Descending thresholds guarantee mutually exclusive categorization without redundant BETWEEN conditions.",
+              "commonMistakesToAvoid": "Starting with lowest age or omitting the ELSE clause.",
+              "keyPoints": [
+                  "CASE stops evaluating after the first match",
+                  "Descending thresholds ensure proper segregation",
+                  "Avoids redundant BETWEEN ranges"
+              ],
+              "codeSnippet": "CASE WHEN age >= 60 THEN 'Senior Citizen' WHEN age >= 20 THEN 'Adult' ... END"
+          },
+          {
+              "id": "q-73-2",
+              "category": "💡 Interview Notes",
+              "question": "How can you count how many people belong to each demographic cohort?",
+              "whatInterviewerChecks": "Aggregation with CASE expressions.",
+              "bestReplyScript": "You can group directly by the CASE expression: `SELECT CASE ... END AS age_group, COUNT(*) FROM persons GROUP BY 1`, or compute conditional counts in a single pass using conditional aggregation: `COUNT(CASE WHEN age >= 60 THEN 1 END) AS senior_count`.",
+              "commonMistakesToAvoid": "Attempting to reference column alias in WHERE instead of GROUP BY.",
+              "keyPoints": [
+                  "Can group directly by CASE expression",
+                  "Conditional aggregation enables pivoting in a single table scan"
+              ],
+              "codeSnippet": "GROUP BY CASE WHEN age >= 60 THEN 'Senior Citizen' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-73-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Checking WHEN age >= 0 THEN 'Child' before higher ages.",
+              "badSnippet": "CASE WHEN age >= 0 THEN 'Child' WHEN age >= 60 THEN 'Senior Citizen' END",
+              "failingInput": "Person with age = 67",
+              "consequence": "Assigns 'Child' to 67-year-olds because 67 >= 0 is true and CASE short-circuits.",
+              "howToFix": "Evaluate in descending order (60, then 20, then 13).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Forgetting that CASE statements terminate at the first truthy condition."
+          },
+          {
+              "id": "m-73-2",
+              "title": "2. Missing ELSE catch-all",
+              "description": "Omitting ELSE 'Child'.",
+              "badSnippet": "CASE WHEN age >= 60 THEN 'Senior Citizen' ... END",
+              "failingInput": "Person with age = 8",
+              "consequence": "Returns NULL for any child aged under 13.",
+              "howToFix": "Add ELSE 'Child' before END.",
+              "mistake": "Missing default branch",
+              "whyItHappens": "Overlooking unmatched rows in conditional branches."
+          }
+      ]
+  },
+  "ASQL-003": {
+      "id": "sql-73",
+      "title": "Age Groups",
+      "levelNumber": 73,
+      "problemId": 73,
+      "problemTitle": "Age Groups",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Airbnb",
+          "Amazon",
+          "Facebook",
+          "Netflix",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT person_id,\n       person_name,\n       age,\n       CASE\n           WHEN age >= 60 THEN 'Senior Citizen'\n           WHEN age >= 20 THEN 'Adult'\n           WHEN age >= 13 THEN 'Teen'\n           ELSE 'Child'\n       END AS age_group\nFROM persons\nORDER BY person_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM persons",
+                      "Action": "Read person records"
+                  },
+                  "explanation": "Reads 4 persons: 1 John (8), 2 Alice (16), 3 Bob (30), 4 David (67)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate age brackets"
+                  },
+                  "explanation": "Evaluates: 67 >= 60 -> 'Senior Citizen'; 30 >= 20 -> 'Adult'; 16 >= 13 -> 'Teen'; 8 falls to ELSE -> 'Child'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects person_id, person_name, age, and computed age_group."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY person_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by person_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-73-1",
+              "category": "💡 Interview Notes",
+              "question": "Why start with the highest age threshold instead of the lowest?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "CASE expressions evaluate sequentially from top to bottom and stop checking as soon as the first truthy condition is encountered. If we evaluated `age >= 0` first, everyone would be labeled a 'Child' regardless of whether they were 30 or 67. Descending thresholds guarantee mutually exclusive categorization without redundant BETWEEN conditions.",
+              "commonMistakesToAvoid": "Starting with lowest age or omitting the ELSE clause.",
+              "keyPoints": [
+                  "CASE stops evaluating after the first match",
+                  "Descending thresholds ensure proper segregation",
+                  "Avoids redundant BETWEEN ranges"
+              ],
+              "codeSnippet": "CASE WHEN age >= 60 THEN 'Senior Citizen' WHEN age >= 20 THEN 'Adult' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-73-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Checking WHEN age >= 0 THEN 'Child' before higher ages.",
+              "badSnippet": "CASE WHEN age >= 0 THEN 'Child' WHEN age >= 60 THEN 'Senior Citizen' END",
+              "failingInput": "Person with age = 67",
+              "consequence": "Assigns 'Child' to 67-year-olds because 67 >= 0 is true and CASE short-circuits.",
+              "howToFix": "Evaluate in descending order (60, then 20, then 13).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Forgetting that CASE statements terminate at the first truthy condition."
+          }
+      ]
+  },
+  "74": {
+      "id": "sql-74",
+      "title": "Sales Categories",
+      "levelNumber": 74,
+      "problemId": 74,
+      "problemTitle": "Sales Categories",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Amazon",
+          "eBay",
+          "Flipkart",
+          "Shopify",
+          "Stripe"
+      ],
+      "tracing": {
+          "code": "SELECT sale_id,\n       customer_name,\n       sale_amount,\n       CASE\n           WHEN sale_amount >= 100000 THEN 'Premium'\n           WHEN sale_amount >= 50000 THEN 'High'\n           WHEN sale_amount >= 20000 THEN 'Medium'\n           ELSE 'Low'\n       END AS sales_category\nFROM sales\nORDER BY sale_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM sales",
+                      "Action": "Read transaction records"
+                  },
+                  "explanation": "Reads 4 sales: 101 John (120,000), 102 Alice (75,000), 103 Bob (35,000), 104 David (15,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate value tiers"
+                  },
+                  "explanation": "Evaluates: 120k >= 100k -> 'Premium'; 75k >= 50k -> 'High'; 35k >= 20k -> 'Medium'; 15k falls to ELSE -> 'Low'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects sale_id, customer_name, sale_amount, and computed sales_category."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY sale_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by sale_id: 101, 102, 103, 104."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-74-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is descending threshold ordering required for numeric range bucketing?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "In SQL, CASE statements evaluate sequentially from top to bottom and stop checking as soon as the first truthy condition is encountered. If we evaluated `WHEN sale_amount >= 20000` first, a sale of 120,000 would satisfy that first check and immediately be labeled 'Medium'. Evaluating from the highest cutoff (100,000) down to the lowest ensures each row is categorized into its true tier without verbose compound bounds.",
+              "commonMistakesToAvoid": "Ascending condition order or missing default fallback.",
+              "keyPoints": [
+                  "Short-circuit evaluation terminates on first match",
+                  "Descending thresholds ensure strict tiering",
+                  "Avoids redundant BETWEEN ranges"
+              ],
+              "codeSnippet": "CASE WHEN sale_amount >= 100000 THEN 'Premium' WHEN sale_amount >= 50000 THEN 'High' ... END"
+          },
+          {
+              "id": "q-74-2",
+              "category": "💡 Interview Notes",
+              "question": "How can you calculate total revenue per sales tier using this query?",
+              "whatInterviewerChecks": "Conditional aggregation and grouping by expressions.",
+              "bestReplyScript": "You can group by the CASE expression: `SELECT CASE ... END AS tier, SUM(sale_amount) FROM sales GROUP BY 1`, or compute individual tier sums in one table scan using conditional aggregation: `SUM(CASE WHEN sale_amount >= 100000 THEN sale_amount ELSE 0 END) AS premium_revenue`.",
+              "commonMistakesToAvoid": "Scanning the table multiple times with separate queries.",
+              "keyPoints": [
+                  "Group by computed expressions directly",
+                  "Single-pass conditional sums for reporting dashboards"
+              ],
+              "codeSnippet": "SELECT SUM(CASE WHEN sale_amount >= 100000 THEN sale_amount ELSE 0 END) AS premium_total FROM sales;"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-74-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Checking WHEN sale_amount >= 20000 before higher brackets.",
+              "badSnippet": "CASE WHEN sale_amount >= 20000 THEN 'Medium' WHEN sale_amount >= 100000 THEN 'Premium' END",
+              "failingInput": "Sale of 120,000",
+              "consequence": "Assigns 'Medium' to 120k sales because 120000 >= 20000 is true.",
+              "howToFix": "Evaluate in descending order (100000, then 50000, then 20000).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Forgetting that CASE expressions terminate at the first match."
+          },
+          {
+              "id": "m-74-2",
+              "title": "2. Missing ELSE catch-all",
+              "description": "Omitting ELSE 'Low'.",
+              "badSnippet": "CASE WHEN sale_amount >= 100000 THEN 'Premium' ... END",
+              "failingInput": "Sale of 15,000",
+              "consequence": "Returns NULL for transactions under 20,000.",
+              "howToFix": "Add ELSE 'Low' before END.",
+              "mistake": "Missing default case",
+              "whyItHappens": "Overlooking unmatched transactions in conditional branches."
+          }
+      ]
+  },
+  "ASQL-004": {
+      "id": "sql-74",
+      "title": "Sales Categories",
+      "levelNumber": 74,
+      "problemId": 74,
+      "problemTitle": "Sales Categories",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Amazon",
+          "eBay",
+          "Flipkart",
+          "Shopify",
+          "Stripe"
+      ],
+      "tracing": {
+          "code": "SELECT sale_id,\n       customer_name,\n       sale_amount,\n       CASE\n           WHEN sale_amount >= 100000 THEN 'Premium'\n           WHEN sale_amount >= 50000 THEN 'High'\n           WHEN sale_amount >= 20000 THEN 'Medium'\n           ELSE 'Low'\n       END AS sales_category\nFROM sales\nORDER BY sale_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM sales",
+                      "Action": "Read transaction records"
+                  },
+                  "explanation": "Reads 4 sales: 101 John (120,000), 102 Alice (75,000), 103 Bob (35,000), 104 David (15,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate value tiers"
+                  },
+                  "explanation": "Evaluates: 120k >= 100k -> 'Premium'; 75k >= 50k -> 'High'; 35k >= 20k -> 'Medium'; 15k falls to ELSE -> 'Low'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects sale_id, customer_name, sale_amount, and computed sales_category."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY sale_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by sale_id: 101, 102, 103, 104."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-74-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is descending threshold ordering required for numeric range bucketing?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "In SQL, CASE statements evaluate sequentially from top to bottom and stop checking as soon as the first truthy condition is encountered. If we evaluated `WHEN sale_amount >= 20000` first, a sale of 120,000 would satisfy that first check and immediately be labeled 'Medium'. Evaluating from the highest cutoff (100,000) down to the lowest ensures each row is categorized into its true tier without verbose compound bounds.",
+              "commonMistakesToAvoid": "Ascending condition order or missing default fallback.",
+              "keyPoints": [
+                  "Short-circuit evaluation terminates on first match",
+                  "Descending thresholds ensure strict tiering",
+                  "Avoids redundant BETWEEN ranges"
+              ],
+              "codeSnippet": "CASE WHEN sale_amount >= 100000 THEN 'Premium' WHEN sale_amount >= 50000 THEN 'High' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-74-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Checking WHEN sale_amount >= 20000 before higher brackets.",
+              "badSnippet": "CASE WHEN sale_amount >= 20000 THEN 'Medium' WHEN sale_amount >= 100000 THEN 'Premium' END",
+              "failingInput": "Sale of 120,000",
+              "consequence": "Assigns 'Medium' to 120k sales because 120000 >= 20000 is true.",
+              "howToFix": "Evaluate in descending order (100000, then 50000, then 20000).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Forgetting that CASE expressions terminate at the first match."
+          }
+      ]
+  },
+  "75": {
+      "id": "sql-75",
+      "title": "Bonus Calculation",
+      "levelNumber": 75,
+      "problemId": 75,
+      "problemTitle": "Bonus Calculation",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Deloitte",
+          "Goldman Sachs",
+          "KPMG",
+          "Morgan Stanley",
+          "PwC"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN salary * 0.20\n           WHEN salary >= 70000 THEN salary * 0.15\n           WHEN salary >= 40000 THEN salary * 0.10\n           ELSE salary * 0.05\n       END AS bonus\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 4 employees: 1 John (120,000), 2 Alice (85,000), 3 Bob (50,000), 4 David (30,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation & math",
+                      "Action": "Compute bonus amount"
+                  },
+                  "explanation": "Calculates: 120k * 0.20 = 24,000; 85k * 0.15 = 12,750; 50k * 0.10 = 5,000; 30k * 0.05 = 1,500."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id, employee_name, salary, and computed bonus."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-75-1",
+              "category": "💡 Interview Notes",
+              "question": "Can CASE expressions perform arithmetic operations and calculations directly?",
+              "whatInterviewerChecks": "Understanding of expressions and operator precedence within SQL statements.",
+              "bestReplyScript": "Yes. In SQL, any clause inside a CASE expression (THEN or ELSE) accepts any valid scalar expression, including arithmetic operations, scalar functions, or subqueries. For instance, calculating `salary * 0.20` is evaluated row-by-row on the current record without requiring extra intermediate tables or views.",
+              "commonMistakesToAvoid": "Multiplying by whole percentages (salary * 20 instead of salary * 0.20).",
+              "keyPoints": [
+                  "THEN/ELSE clauses evaluate full scalar expressions",
+                  "Use decimal rates (0.20) rather than whole percentages",
+                  "Calculated in memory per row with O(1) operational cost"
+              ],
+              "codeSnippet": "WHEN salary >= 100000 THEN salary * 0.20"
+          },
+          {
+              "id": "q-75-2",
+              "category": "💡 Interview Notes",
+              "question": "How can you calculate the total company bonus payout across all employees?",
+              "whatInterviewerChecks": "Conditional aggregation pattern.",
+              "bestReplyScript": "You can wrap the entire CASE statement inside a SUM function: `SELECT SUM(CASE WHEN salary >= 100000 THEN salary * 0.20 WHEN salary >= 70000 THEN salary * 0.15 WHEN salary >= 40000 THEN salary * 0.10 ELSE salary * 0.05 END) AS total_bonus_payout FROM employees;`.",
+              "commonMistakesToAvoid": "Exporting data to compute sums in application code.",
+              "keyPoints": [
+                  "Aggregate directly over CASE expression",
+                  "Single-pass calculation across the entire payroll table"
+              ],
+              "codeSnippet": "SELECT SUM(CASE ... END) AS total_bonus FROM employees;"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-75-1",
+              "title": "1. Multiplying by whole integer instead of percentage",
+              "description": "Writing salary * 20 instead of salary * 0.20.",
+              "badSnippet": "WHEN salary >= 100000 THEN salary * 20",
+              "failingInput": "Employee earning 120,000",
+              "consequence": "Computes a bonus of 2,400,000 (2000%) instead of 24,000 (20%).",
+              "howToFix": "Multiply by decimal representation (0.20, 0.15, 0.10, 0.05).",
+              "mistake": "Integer percentage error",
+              "whyItHappens": "Forgetting that percentages are fractions of 100."
+          },
+          {
+              "id": "m-75-2",
+              "title": "2. Inverting threshold sequence",
+              "description": "Evaluating salary >= 40000 before salary >= 100000.",
+              "badSnippet": "WHEN salary >= 40000 THEN salary * 0.10 WHEN salary >= 100000 THEN salary * 0.20",
+              "failingInput": "Employee earning 120,000",
+              "consequence": "Assigns a 10% bonus (12,000) to a 120k earner due to early matching.",
+              "howToFix": "Evaluate in strictly descending order (100k, 70k, 40k).",
+              "mistake": "Evaluation short-circuit flaw",
+              "whyItHappens": "Neglecting the sequential top-down execution order of CASE WHEN."
+          }
+      ]
+  },
+  "ASQL-005": {
+      "id": "sql-75",
+      "title": "Bonus Calculation",
+      "levelNumber": 75,
+      "problemId": 75,
+      "problemTitle": "Bonus Calculation",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Deloitte",
+          "Goldman Sachs",
+          "KPMG",
+          "Morgan Stanley",
+          "PwC"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN salary * 0.20\n           WHEN salary >= 70000 THEN salary * 0.15\n           WHEN salary >= 40000 THEN salary * 0.10\n           ELSE salary * 0.05\n       END AS bonus\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 4 employees: 1 John (120,000), 2 Alice (85,000), 3 Bob (50,000), 4 David (30,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation & math",
+                      "Action": "Compute bonus amount"
+                  },
+                  "explanation": "Calculates: 120k * 0.20 = 24,000; 85k * 0.15 = 12,750; 50k * 0.10 = 5,000; 30k * 0.05 = 1,500."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id, employee_name, salary, and computed bonus."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-75-1",
+              "category": "💡 Interview Notes",
+              "question": "Can CASE expressions perform arithmetic operations and calculations directly?",
+              "whatInterviewerChecks": "Understanding of expressions and operator precedence within SQL statements.",
+              "bestReplyScript": "Yes. In SQL, any clause inside a CASE expression (THEN or ELSE) accepts any valid scalar expression, including arithmetic operations, scalar functions, or subqueries. For instance, calculating `salary * 0.20` is evaluated row-by-row on the current record without requiring extra intermediate tables or views.",
+              "commonMistakesToAvoid": "Multiplying by whole percentages (salary * 20 instead of salary * 0.20).",
+              "keyPoints": [
+                  "THEN/ELSE clauses evaluate full scalar expressions",
+                  "Use decimal rates (0.20) rather than whole percentages",
+                  "Calculated in memory per row with O(1) operational cost"
+              ],
+              "codeSnippet": "WHEN salary >= 100000 THEN salary * 0.20"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-75-1",
+              "title": "1. Multiplying by whole integer instead of percentage",
+              "description": "Writing salary * 20 instead of salary * 0.20.",
+              "badSnippet": "WHEN salary >= 100000 THEN salary * 20",
+              "failingInput": "Employee earning 120,000",
+              "consequence": "Computes a bonus of 2,400,000 (2000%) instead of 24,000 (20%).",
+              "howToFix": "Multiply by decimal representation (0.20, 0.15, 0.10, 0.05).",
+              "mistake": "Integer percentage error",
+              "whyItHappens": "Forgetting that percentages are fractions of 100."
+          }
+      ]
+  },
+  "76": {
+      "id": "sql-76",
+      "title": "Customer Classification",
+      "levelNumber": 76,
+      "problemId": 76,
+      "problemTitle": "Customer Classification",
+      "difficulty": "Hard",
+      "companyTags": [
+          "American Express",
+          "Mastercard",
+          "Sephora",
+          "Starbucks",
+          "Visa"
+      ],
+      "tracing": {
+          "code": "SELECT customer_id,\n       customer_name,\n       total_purchase,\n       CASE\n           WHEN total_purchase >= 100000 THEN 'Platinum'\n           WHEN total_purchase >= 50000 THEN 'Gold'\n           WHEN total_purchase >= 20000 THEN 'Silver'\n           ELSE 'Bronze'\n       END AS customer_type\nFROM customers\nORDER BY customer_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM customers",
+                      "Action": "Read customer records"
+                  },
+                  "explanation": "Reads 4 customers: 1 John (150,000), 2 Alice (80,000), 3 Bob (35,000), 4 David (12,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate loyalty tier"
+                  },
+                  "explanation": "Evaluates: 150k >= 100k -> 'Platinum'; 80k >= 50k -> 'Gold'; 35k >= 20k -> 'Silver'; 12k falls to ELSE -> 'Bronze'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects customer_id, customer_name, total_purchase, and computed customer_type."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY customer_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by customer_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-76-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is the top-down order of WHEN conditions critical in customer segmentation queries?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "In SQL, CASE statements evaluate sequentially from top to bottom and terminate upon the first condition that evaluates to TRUE. If we evaluated `WHEN total_purchase >= 20000 THEN 'Silver'` before the Platinum tier, a high spender with 150,000 would satisfy that first test and immediately be stamped as 'Silver'. Checking the highest threshold (100,000) first guarantees mutually exclusive classification without redundant boolean bounds.",
+              "commonMistakesToAvoid": "Starting with lower thresholds or omitting the default ELSE.",
+              "keyPoints": [
+                  "CASE stops evaluating after the first match",
+                  "Descending thresholds ensure proper cohort placement",
+                  "Avoids redundant BETWEEN ranges"
+              ],
+              "codeSnippet": "CASE WHEN total_purchase >= 100000 THEN 'Platinum' WHEN total_purchase >= 50000 THEN 'Gold' ... END"
+          },
+          {
+              "id": "q-76-2",
+              "category": "💡 Interview Notes",
+              "question": "How can you count how many customers belong to each tier in a single query?",
+              "whatInterviewerChecks": "Aggregation with CASE expressions.",
+              "bestReplyScript": "You can group by the CASE expression: `SELECT CASE ... END AS customer_type, COUNT(*) FROM customers GROUP BY 1`, or compute conditional counts in a single pass: `COUNT(CASE WHEN total_purchase >= 100000 THEN 1 END) AS platinum_members`.",
+              "commonMistakesToAvoid": "Running 4 separate queries to count each tier.",
+              "keyPoints": [
+                  "Group by computed expressions directly",
+                  "Single-pass conditional counts for CRM reporting"
+              ],
+              "codeSnippet": "GROUP BY CASE WHEN total_purchase >= 100000 THEN 'Platinum' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-76-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Checking WHEN total_purchase >= 20000 before higher brackets.",
+              "badSnippet": "CASE WHEN total_purchase >= 20000 THEN 'Silver' WHEN total_purchase >= 100000 THEN 'Platinum' END",
+              "failingInput": "Customer with total_purchase = 150,000",
+              "consequence": "Assigns 'Silver' to 150k spenders because 150000 >= 20000 is true.",
+              "howToFix": "Evaluate in strictly descending order (100k, then 50k, then 20k).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Forgetting that CASE statements terminate at the first truthy condition."
+          },
+          {
+              "id": "m-76-2",
+              "title": "2. Missing ELSE catch-all",
+              "description": "Omitting ELSE 'Bronze'.",
+              "badSnippet": "CASE WHEN total_purchase >= 100000 THEN 'Platinum' ... END",
+              "failingInput": "Customer with total_purchase = 12,000",
+              "consequence": "Returns NULL for customers with spend below 20,000.",
+              "howToFix": "Add ELSE 'Bronze' before END.",
+              "mistake": "Missing default case",
+              "whyItHappens": "Overlooking unmatched records in conditional branches."
+          }
+      ]
+  },
+  "ASQL-006": {
+      "id": "sql-76",
+      "title": "Customer Classification",
+      "levelNumber": 76,
+      "problemId": 76,
+      "problemTitle": "Customer Classification",
+      "difficulty": "Hard",
+      "companyTags": [
+          "American Express",
+          "Mastercard",
+          "Sephora",
+          "Starbucks",
+          "Visa"
+      ],
+      "tracing": {
+          "code": "SELECT customer_id,\n       customer_name,\n       total_purchase,\n       CASE\n           WHEN total_purchase >= 100000 THEN 'Platinum'\n           WHEN total_purchase >= 50000 THEN 'Gold'\n           WHEN total_purchase >= 20000 THEN 'Silver'\n           ELSE 'Bronze'\n       END AS customer_type\nFROM customers\nORDER BY customer_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM customers",
+                      "Action": "Read customer records"
+                  },
+                  "explanation": "Reads 4 customers: 1 John (150,000), 2 Alice (80,000), 3 Bob (35,000), 4 David (12,000)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate loyalty tier"
+                  },
+                  "explanation": "Evaluates: 150k >= 100k -> 'Platinum'; 80k >= 50k -> 'Gold'; 35k >= 20k -> 'Silver'; 12k falls to ELSE -> 'Bronze'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects customer_id, customer_name, total_purchase, and computed customer_type."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY customer_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by customer_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-76-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is the top-down order of WHEN conditions critical in customer segmentation queries?",
+              "whatInterviewerChecks": "Understanding of short-circuit evaluation in SQL expressions.",
+              "bestReplyScript": "In SQL, CASE statements evaluate sequentially from top to bottom and terminate upon the first condition that evaluates to TRUE. If we evaluated `WHEN total_purchase >= 20000 THEN 'Silver'` before the Platinum tier, a high spender with 150,000 would satisfy that first test and immediately be stamped as 'Silver'. Checking the highest threshold (100,000) first guarantees mutually exclusive classification without redundant boolean bounds.",
+              "commonMistakesToAvoid": "Starting with lower thresholds or omitting the default ELSE.",
+              "keyPoints": [
+                  "CASE stops evaluating after the first match",
+                  "Descending thresholds ensure proper cohort placement",
+                  "Avoids redundant BETWEEN ranges"
+              ],
+              "codeSnippet": "CASE WHEN total_purchase >= 100000 THEN 'Platinum' WHEN total_purchase >= 50000 THEN 'Gold' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-76-1",
+              "title": "1. Inverted condition ordering",
+              "description": "Checking WHEN total_purchase >= 20000 before higher brackets.",
+              "badSnippet": "CASE WHEN total_purchase >= 20000 THEN 'Silver' WHEN total_purchase >= 100000 THEN 'Platinum' END",
+              "failingInput": "Customer with total_purchase = 150,000",
+              "consequence": "Assigns 'Silver' to 150k spenders because 150000 >= 20000 is true.",
+              "howToFix": "Evaluate in strictly descending order (100k, then 50k, then 20k).",
+              "mistake": "Incorrect branch priority",
+              "whyItHappens": "Forgetting that CASE statements terminate at the first truthy condition."
+          }
+      ]
+  },
+  "77": {
+      "id": "sql-77",
+      "title": "Pass/Fail Status",
+      "levelNumber": 77,
+      "problemId": 77,
+      "problemTitle": "Pass/Fail Status",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Coursera",
+          "Duolingo",
+          "Harvard edX",
+          "Udemy",
+          "Unacademy"
+      ],
+      "tracing": {
+          "code": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 40 THEN 'Pass'\n           ELSE 'Fail'\n       END AS result\nFROM students\nORDER BY student_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 9,
+                  "vars": {
+                      "Phase": "FROM students",
+                      "Action": "Read student records"
+                  },
+                  "explanation": "Reads 4 students: 1 John (82), 2 Alice (39), 3 Bob (40), 4 David (25)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate passing threshold"
+                  },
+                  "explanation": "Evaluates: 82 >= 40 -> 'Pass'; 39 < 40 -> 'Fail'; 40 >= 40 -> 'Pass'; 25 < 40 -> 'Fail'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects student_id, student_name, marks, and computed result."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 10,
+                  "vars": {
+                      "Phase": "ORDER BY student_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by student_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-77-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is >= 40 required instead of > 40 when implementing pass/fail logic?",
+              "whatInterviewerChecks": "Attention to inclusive vs exclusive boundary conditions.",
+              "bestReplyScript": "In academic and standard grading systems, the passing threshold is inclusive—scoring exactly 40 marks represents a pass. If we used strict inequality `> 40`, a student scoring exactly 40 marks would fail the comparison and be assigned 'Fail' incorrectly. Using `>= 40` correctly honors the inclusive pass boundary.",
+              "commonMistakesToAvoid": "Using strict greater-than (marks > 40) or omitting ELSE.",
+              "keyPoints": [
+                  "Passing thresholds are typically inclusive",
+                  "Strict inequality causes exact boundary scores to fail",
+                  "Inclusive comparison `>=` ensures accurate classification"
+              ],
+              "codeSnippet": "CASE WHEN marks >= 40 THEN 'Pass' ELSE 'Fail' END"
+          },
+          {
+              "id": "q-77-2",
+              "category": "💡 Interview Notes",
+              "question": "Can CASE WHEN have only one WHEN clause?",
+              "whatInterviewerChecks": "Understanding of minimal syntax requirements of CASE expressions.",
+              "bestReplyScript": "Yes. A CASE expression requires a minimum of one WHEN condition. For binary categorization (such as Pass/Fail or Active/Inactive), having a single WHEN condition paired with an ELSE fallback is the most concise and idiomatic SQL syntax.",
+              "commonMistakesToAvoid": "Thinking CASE requires at least two WHEN branches.",
+              "keyPoints": [
+                  "Single WHEN with ELSE is optimal for binary logic",
+                  "Portable across all ANSI-compliant SQL engines"
+              ],
+              "codeSnippet": "CASE WHEN condition THEN 'A' ELSE 'B' END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-77-1",
+              "title": "1. Using strict inequality (> 40)",
+              "description": "Writing marks > 40 instead of marks >= 40.",
+              "badSnippet": "CASE WHEN marks > 40 THEN 'Pass' ELSE 'Fail' END",
+              "failingInput": "Student with marks = 40",
+              "consequence": "Marks exactly 40 as 'Fail' instead of 'Pass'.",
+              "howToFix": "Use inclusive comparison: marks >= 40.",
+              "mistake": "Boundary condition error",
+              "whyItHappens": "Confusing 'greater than' with 'greater than or equal to'."
+          },
+          {
+              "id": "m-77-2",
+              "title": "2. Omitting ELSE fallback",
+              "description": "Leaving off ELSE 'Fail'.",
+              "badSnippet": "CASE WHEN marks >= 40 THEN 'Pass' END",
+              "failingInput": "Student with marks = 39",
+              "consequence": "Returns NULL for failing students instead of 'Fail'.",
+              "howToFix": "Add ELSE 'Fail' before END.",
+              "mistake": "Missing default case",
+              "whyItHappens": "Assuming unmatched rows evaluate to empty string or false."
+          }
+      ]
+  },
+  "ASQL-007": {
+      "id": "sql-77",
+      "title": "Pass/Fail Status",
+      "levelNumber": 77,
+      "problemId": 77,
+      "problemTitle": "Pass/Fail Status",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Coursera",
+          "Duolingo",
+          "Harvard edX",
+          "Udemy",
+          "Unacademy"
+      ],
+      "tracing": {
+          "code": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 40 THEN 'Pass'\n           ELSE 'Fail'\n       END AS result\nFROM students\nORDER BY student_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 9,
+                  "vars": {
+                      "Phase": "FROM students",
+                      "Action": "Read student records"
+                  },
+                  "explanation": "Reads 4 students: 1 John (82), 2 Alice (39), 3 Bob (40), 4 David (25)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Evaluate passing threshold"
+                  },
+                  "explanation": "Evaluates: 82 >= 40 -> 'Pass'; 39 < 40 -> 'Fail'; 40 >= 40 -> 'Pass'; 25 < 40 -> 'Fail'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects student_id, student_name, marks, and computed result."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 10,
+                  "vars": {
+                      "Phase": "ORDER BY student_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by student_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-77-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is >= 40 required instead of > 40 when implementing pass/fail logic?",
+              "whatInterviewerChecks": "Attention to inclusive vs exclusive boundary conditions.",
+              "bestReplyScript": "In academic and standard grading systems, the passing threshold is inclusive—scoring exactly 40 marks represents a pass. If we used strict inequality `> 40`, a student scoring exactly 40 marks would fail the comparison and be assigned 'Fail' incorrectly. Using `>= 40` correctly honors the inclusive pass boundary.",
+              "commonMistakesToAvoid": "Using strict greater-than (marks > 40) or omitting ELSE.",
+              "keyPoints": [
+                  "Passing thresholds are typically inclusive",
+                  "Strict inequality causes exact boundary scores to fail",
+                  "Inclusive comparison `>=` ensures accurate classification"
+              ],
+              "codeSnippet": "CASE WHEN marks >= 40 THEN 'Pass' ELSE 'Fail' END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-77-1",
+              "title": "1. Using strict inequality (> 40)",
+              "description": "Writing marks > 40 instead of marks >= 40.",
+              "badSnippet": "CASE WHEN marks > 40 THEN 'Pass' ELSE 'Fail' END",
+              "failingInput": "Student with marks = 40",
+              "consequence": "Marks exactly 40 as 'Fail' instead of 'Pass'.",
+              "howToFix": "Use inclusive comparison: marks >= 40.",
+              "mistake": "Boundary condition error",
+              "whyItHappens": "Confusing 'greater than' with 'greater than or equal to'."
+          }
+      ]
+  },
+  "78": {
+      "id": "sql-78",
+      "title": "Gender Formatting",
+      "levelNumber": 78,
+      "problemId": 78,
+      "problemTitle": "Gender Formatting",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Accenture",
+          "Cognizant",
+          "Infosys",
+          "TCS",
+          "Wipro"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       gender,\n       CASE\n           WHEN gender = 'M' THEN 'Male'\n           WHEN gender = 'F' THEN 'Female'\n           WHEN gender = 'O' THEN 'Other'\n           ELSE 'Unknown'\n       END AS gender_name\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employee table"
+                  },
+                  "explanation": "Reads 4 employees: 1 John ('M'), 2 Alice ('F'), 3 Chris ('O'), 4 David ('X')."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Decode gender abbreviations"
+                  },
+                  "explanation": "Evaluates: 'M' -> 'Male'; 'F' -> 'Female'; 'O' -> 'Other'; 'X' falls to ELSE -> 'Unknown'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id, employee_name, gender, and computed gender_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-78-1",
+              "category": "💡 Interview Notes",
+              "question": "Why decode stored codes into full text in SQL rather than altering table storage?",
+              "whatInterviewerChecks": "Understanding of storage normalization vs presentation layer concerns.",
+              "bestReplyScript": "Storing single-character abbreviation codes (e.g. 'M', 'F') drastically saves database storage space, optimizes buffer cache utilization, and speeds up B-Tree index traversal. Translating codes into user-friendly display labels belongs at the query or view level, preserving underlying storage efficiency while delivering human-readable reporting.",
+              "commonMistakesToAvoid": "Suggesting that the underlying table should be updated to store redundant text strings.",
+              "keyPoints": [
+                  "Single-char codes save disk storage and index memory",
+                  "Decoding belongs at query/reporting presentation layer",
+                  "Maintains database normalization and performance"
+              ],
+              "codeSnippet": "CASE WHEN gender = 'M' THEN 'Male' ... END"
+          },
+          {
+              "id": "q-78-2",
+              "category": "💡 Interview Notes",
+              "question": "What is the difference between Simple CASE and Searched CASE?",
+              "whatInterviewerChecks": "Knowledge of SQL CASE syntax variants.",
+              "bestReplyScript": "A Simple CASE expression takes an expression once at the top: `CASE gender WHEN 'M' THEN 'Male' ... END`, checking only for equality. A Searched CASE evaluates arbitrary boolean expressions on each line: `CASE WHEN gender = 'M' THEN 'Male' ... END`, allowing comparisons like `>`, `<`, `BETWEEN`, or `IS NULL`.",
+              "commonMistakesToAvoid": "Thinking Simple CASE can perform range evaluations.",
+              "keyPoints": [
+                  "Simple CASE tests equality against a single target expression",
+                  "Searched CASE supports full boolean conditions and range predicates"
+              ],
+              "codeSnippet": "CASE gender WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' ELSE 'Unknown' END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-78-1",
+              "title": "1. Forgetting string literal quotes",
+              "description": "Writing WHEN gender = M without single quotes.",
+              "badSnippet": "WHEN gender = M THEN 'Male'",
+              "failingInput": "Query execution",
+              "consequence": "Database parses M as a column name and fails with a missing column error.",
+              "howToFix": "Wrap string literals in single quotes: 'M'.",
+              "mistake": "Syntax literal error",
+              "whyItHappens": "Confusing column identifiers with string constants."
+          },
+          {
+              "id": "m-78-2",
+              "title": "2. Omitting the ELSE branch",
+              "description": "Leaving off ELSE 'Unknown'.",
+              "badSnippet": "CASE WHEN gender = 'M' THEN 'Male' ... END",
+              "failingInput": "Employee with gender = 'X' or NULL",
+              "consequence": "Returns NULL for unrecognized gender codes.",
+              "howToFix": "Add ELSE 'Unknown' before END.",
+              "mistake": "Missing default branch",
+              "whyItHappens": "Assuming unmatched codes retain their input value."
+          }
+      ]
+  },
+  "ASQL-008": {
+      "id": "sql-78",
+      "title": "Gender Formatting",
+      "levelNumber": 78,
+      "problemId": 78,
+      "problemTitle": "Gender Formatting",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Accenture",
+          "Cognizant",
+          "Infosys",
+          "TCS",
+          "Wipro"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       gender,\n       CASE\n           WHEN gender = 'M' THEN 'Male'\n           WHEN gender = 'F' THEN 'Female'\n           WHEN gender = 'O' THEN 'Other'\n           ELSE 'Unknown'\n       END AS gender_name\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employee table"
+                  },
+                  "explanation": "Reads 4 employees: 1 John ('M'), 2 Alice ('F'), 3 Chris ('O'), 4 David ('X')."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "CASE evaluation",
+                      "Action": "Decode gender abbreviations"
+                  },
+                  "explanation": "Evaluates: 'M' -> 'Male'; 'F' -> 'Female'; 'O' -> 'Other'; 'X' falls to ELSE -> 'Unknown'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects employee_id, employee_name, gender, and computed gender_name."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3, 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-78-1",
+              "category": "💡 Interview Notes",
+              "question": "Why decode stored codes into full text in SQL rather than altering table storage?",
+              "whatInterviewerChecks": "Understanding of storage normalization vs presentation layer concerns.",
+              "bestReplyScript": "Storing single-character abbreviation codes (e.g. 'M', 'F') drastically saves database storage space, optimizes buffer cache utilization, and speeds up B-Tree index traversal. Translating codes into user-friendly display labels belongs at the query or view level, preserving underlying storage efficiency while delivering human-readable reporting.",
+              "commonMistakesToAvoid": "Suggesting that the underlying table should be updated to store redundant text strings.",
+              "keyPoints": [
+                  "Single-char codes save disk storage and index memory",
+                  "Decoding belongs at query/reporting presentation layer",
+                  "Maintains database normalization and performance"
+              ],
+              "codeSnippet": "CASE WHEN gender = 'M' THEN 'Male' ... END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-78-1",
+              "title": "1. Forgetting string literal quotes",
+              "description": "Writing WHEN gender = M without single quotes.",
+              "badSnippet": "WHEN gender = M THEN 'Male'",
+              "failingInput": "Query execution",
+              "consequence": "Database parses M as a column name and fails with a missing column error.",
+              "howToFix": "Wrap string literals in single quotes: 'M'.",
+              "mistake": "Syntax literal error",
+              "whyItHappens": "Confusing column identifiers with string constants."
+          }
+      ]
+  },
+  "79": {
+      "id": "sql-79",
+      "title": "Conditional Aggregation",
+      "levelNumber": 79,
+      "problemId": 79,
+      "problemTitle": "Conditional Aggregation",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Databricks",
+          "Google",
+          "Meta",
+          "Snowflake",
+          "Stripe"
+      ],
+      "tracing": {
+          "code": "SELECT\n    COUNT(*) AS total_students,\n    SUM(\n        CASE\n            WHEN marks >= 40 THEN 1\n            ELSE 0\n        END\n    ) AS passed_students,\n    SUM(\n        CASE\n            WHEN marks < 40 THEN 1\n            ELSE 0\n        END\n    ) AS failed_students\nFROM students;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 15,
+                  "vars": {
+                      "Phase": "FROM students",
+                      "Action": "Initialize table scan"
+                  },
+                  "explanation": "Reads 5 students: 1 John (85), 2 Alice (38), 3 Bob (40), 4 David (25), 5 Emma (91)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Passed Evaluation",
+                      "Action": "Evaluate marks >= 40"
+                  },
+                  "explanation": "Evaluates: 85 -> 1, 38 -> 0, 40 -> 1, 25 -> 0, 91 -> 1. Sum = 3."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 9,
+                  "vars": {
+                      "Phase": "Failed Evaluation",
+                      "Action": "Evaluate marks < 40"
+                  },
+                  "explanation": "Evaluates: 85 -> 0, 38 -> 1, 40 -> 0, 25 -> 1, 91 -> 0. Sum = 2."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "COUNT(*) & SELECT",
+                      "Action": "Emit summary row"
+                  },
+                  "explanation": "Counts 5 total rows. Returns single row: total_students = 5, passed_students = 3, failed_students = 2."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-79-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use SUM(CASE WHEN ... THEN 1 ELSE 0 END) instead of COUNT(*)?",
+              "whatInterviewerChecks": "Understanding of conditional aggregation mechanics.",
+              "bestReplyScript": "COUNT(*) unconditionally tallies every row encountered in the relation. When we need selective counts of subsets (such as students who passed vs failed), wrapping a CASE WHEN that returns 1 for matching rows and 0 for non-matching rows inside SUM() computes the exact count of matches in a single pass without needing separate queries or WHERE clauses.",
+              "commonMistakesToAvoid": "Using COUNT(CASE WHEN condition THEN 0 END) which counts both 1 and 0 as valid non-null rows.",
+              "keyPoints": [
+                  "COUNT(*) counts all rows unconditionally",
+                  "SUM(CASE ... 1 ELSE 0) performs selective conditional counting",
+                  "Computes multiple filtered metrics in a single table scan"
+              ],
+              "codeSnippet": "SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END) AS passed_students"
+          },
+          {
+              "id": "q-79-2",
+              "category": "💡 Interview Notes",
+              "question": "Why is ELSE 0 recommended when pairing CASE with SUM()?",
+              "whatInterviewerChecks": "Handling of NULL values in arithmetic aggregate operations.",
+              "bestReplyScript": "If ELSE is omitted from a CASE statement, unmatched rows evaluate to NULL. While SQL aggregate functions like SUM() ignore NULLs, explicit `ELSE 0` guarantees that if an entire group has zero matches, the sum reliably evaluates to 0 rather than NULL, avoiding arithmetic issues in downstream dashboard calculations.",
+              "commonMistakesToAvoid": "Returning strings like 'Pass' inside SUM().",
+              "keyPoints": [
+                  "Ensures non-null 0 fallback for empty subsets",
+                  "Maintains consistent numeric datatype throughout aggregation"
+              ],
+              "codeSnippet": "CASE WHEN marks >= 40 THEN 1 ELSE 0 END"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-79-1",
+              "title": "1. Returning strings inside SUM()",
+              "description": "Writing SUM(CASE WHEN marks >= 40 THEN 'Pass' END).",
+              "badSnippet": "SUM(CASE WHEN marks >= 40 THEN 'Pass' END)",
+              "failingInput": "Query execution",
+              "consequence": "Database raises a type error: cannot compute SUM of VARCHAR / TEXT data.",
+              "howToFix": "Return numeric 1 and 0: WHEN marks >= 40 THEN 1 ELSE 0.",
+              "mistake": "Datatype mismatch in aggregate function",
+              "whyItHappens": "Confusing visual categorization with mathematical counting."
+          },
+          {
+              "id": "m-79-2",
+              "title": "2. Using COUNT with ELSE 0",
+              "description": "Writing COUNT(CASE WHEN marks >= 40 THEN 1 ELSE 0 END).",
+              "badSnippet": "COUNT(CASE WHEN marks >= 40 THEN 1 ELSE 0 END)",
+              "failingInput": "5 students with 2 failing",
+              "consequence": "Returns 5 for passed_students because COUNT counts all non-null values including 0!",
+              "howToFix": "Use SUM() with 1 and 0, or COUNT() with 1 and NULL (omitting ELSE).",
+              "mistake": "COUNT non-null trap",
+              "whyItHappens": "Misunderstanding that COUNT checks for NOT NULL rather than truthiness."
+          }
+      ]
+  },
+  "ASQL-009": {
+      "id": "sql-79",
+      "title": "Conditional Aggregation",
+      "levelNumber": 79,
+      "problemId": 79,
+      "problemTitle": "Conditional Aggregation",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Databricks",
+          "Google",
+          "Meta",
+          "Snowflake",
+          "Stripe"
+      ],
+      "tracing": {
+          "code": "SELECT\n    COUNT(*) AS total_students,\n    SUM(\n        CASE\n            WHEN marks >= 40 THEN 1\n            ELSE 0\n        END\n    ) AS passed_students,\n    SUM(\n        CASE\n            WHEN marks < 40 THEN 1\n            ELSE 0\n        END\n    ) AS failed_students\nFROM students;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 15,
+                  "vars": {
+                      "Phase": "FROM students",
+                      "Action": "Initialize table scan"
+                  },
+                  "explanation": "Reads 5 students: 1 John (85), 2 Alice (38), 3 Bob (40), 4 David (25), 5 Emma (91)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Passed Evaluation",
+                      "Action": "Evaluate marks >= 40"
+                  },
+                  "explanation": "Evaluates: 85 -> 1, 38 -> 0, 40 -> 1, 25 -> 0, 91 -> 1. Sum = 3."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 9,
+                  "vars": {
+                      "Phase": "Failed Evaluation",
+                      "Action": "Evaluate marks < 40"
+                  },
+                  "explanation": "Evaluates: 85 -> 0, 38 -> 1, 40 -> 0, 25 -> 1, 91 -> 0. Sum = 2."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "COUNT(*) & SELECT",
+                      "Action": "Emit summary row"
+                  },
+                  "explanation": "Counts 5 total rows. Returns single row: total_students = 5, passed_students = 3, failed_students = 2."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-79-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use SUM(CASE WHEN ... THEN 1 ELSE 0 END) instead of COUNT(*)?",
+              "whatInterviewerChecks": "Understanding of conditional aggregation mechanics.",
+              "bestReplyScript": "COUNT(*) unconditionally tallies every row encountered in the relation. When we need selective counts of subsets (such as students who passed vs failed), wrapping a CASE WHEN that returns 1 for matching rows and 0 for non-matching rows inside SUM() computes the exact count of matches in a single pass without needing separate queries or WHERE clauses.",
+              "commonMistakesToAvoid": "Using COUNT(CASE WHEN condition THEN 0 END) which counts both 1 and 0 as valid non-null rows.",
+              "keyPoints": [
+                  "COUNT(*) counts all rows unconditionally",
+                  "SUM(CASE ... 1 ELSE 0) performs selective conditional counting",
+                  "Computes multiple filtered metrics in a single table scan"
+              ],
+              "codeSnippet": "SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END) AS passed_students"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-79-1",
+              "title": "1. Returning strings inside SUM()",
+              "description": "Writing SUM(CASE WHEN marks >= 40 THEN 'Pass' END).",
+              "badSnippet": "SUM(CASE WHEN marks >= 40 THEN 'Pass' END)",
+              "failingInput": "Query execution",
+              "consequence": "Database raises a type error: cannot compute SUM of VARCHAR / TEXT data.",
+              "howToFix": "Return numeric 1 and 0: WHEN marks >= 40 THEN 1 ELSE 0.",
+              "mistake": "Datatype mismatch in aggregate function",
+              "whyItHappens": "Confusing visual categorization with mathematical counting."
+          }
+      ]
+  },
+  "80": {
+      "id": "sql-80",
+      "title": "Multiple CASE Conditions",
+      "levelNumber": 80,
+      "problemId": 80,
+      "problemTitle": "Multiple CASE Conditions",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Adobe",
+          "Amazon",
+          "Apple",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       age,\n       salary,\n       CASE\n           WHEN age < 30 THEN 'Young'\n           WHEN age < 50 THEN 'Mid Age'\n           ELSE 'Senior'\n       END AS age_category,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 50000 THEN 'Medium'\n           ELSE 'Low'\n       END AS salary_category\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 17,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 3 employees: 1 John (age 25, 120k), 2 Alice (age 35, 80k), 3 Bob (age 55, 45k)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "Age Evaluation",
+                      "Action": "Evaluate age brackets"
+                  },
+                  "explanation": "Evaluates: 25 < 30 -> 'Young'; 35 < 50 -> 'Mid Age'; 55 falls to ELSE -> 'Senior'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "Salary Evaluation",
+                      "Action": "Evaluate salary bands"
+                  },
+                  "explanation": "Evaluates: 120k >= 100k -> 'High'; 80k >= 50k -> 'Medium'; 45k falls to ELSE -> 'Low'."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 18,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-80-1",
+              "category": "💡 Interview Notes",
+              "question": "Can multiple independent CASE expressions be evaluated in a single SQL query?",
+              "whatInterviewerChecks": "Understanding of orthogonal column projections in SQL.",
+              "bestReplyScript": "Yes. Each CASE statement is a self-contained scalar expression that generates an independent computed column. A query can contain as many CASE expressions as needed (for age, salary, performance rating, tenure, etc.), and the database engine evaluates each one per row during a single table scan.",
+              "commonMistakesToAvoid": "Attempting to create two separate columns inside a single CASE block.",
+              "keyPoints": [
+                  "Each calculated column requires its own dedicated CASE block",
+                  "Expressions evaluate independently in a single table scan",
+                  "Comma separates adjacent CASE columns in the SELECT clause"
+              ],
+              "codeSnippet": "SELECT ..., CASE ... END AS col1, CASE ... END AS col2 FROM ...;"
+          },
+          {
+              "id": "q-80-2",
+              "category": "💡 Interview Notes",
+              "question": "Can a CASE expression reference an alias created by another CASE expression in the same SELECT?",
+              "whatInterviewerChecks": "Knowledge of SQL lexical scoping and execution order.",
+              "bestReplyScript": "No. In SQL, all expressions in the SELECT list are logically evaluated at the same conceptual step. Therefore, column aliases defined in the SELECT list are not accessible to neighboring expressions in that same SELECT clause. To build upon a computed category, you must either repeat the CASE expression or encapsulate it in a CTE/subquery.",
+              "commonMistakesToAvoid": "Writing `CASE WHEN age_category = 'Young' THEN ...` within the same SELECT statement.",
+              "keyPoints": [
+                  "SELECT aliases are not in scope for sibling columns",
+                  "Use CTEs or subqueries to build upon computed categories"
+              ],
+              "codeSnippet": "WITH categorized AS (SELECT ..., CASE ... END AS age_cat FROM ...) SELECT ... FROM categorized;"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-80-1",
+              "title": "1. Combining two columns into one CASE",
+              "description": "Attempting to emit two columns from one CASE block without a second CASE.",
+              "badSnippet": "CASE WHEN age < 30 THEN 'Young', WHEN salary >= 100000 THEN 'High' END",
+              "failingInput": "Query execution",
+              "consequence": "SQL syntax error: unexpected comma within CASE expression.",
+              "howToFix": "Define two distinct CASE blocks: `CASE ... END AS col1, CASE ... END AS col2`.",
+              "mistake": "Syntax structure misconception",
+              "whyItHappens": "Trying to write multiple column definitions inside one keyword block."
+          },
+          {
+              "id": "m-80-2",
+              "title": "2. Omitting the END keyword on the first CASE",
+              "description": "Leaving off END before the comma separating the two CASE expressions.",
+              "badSnippet": "CASE WHEN age < 30 THEN 'Young' AS age_category, CASE WHEN ...",
+              "failingInput": "Query execution",
+              "consequence": "Syntax error near comma or AS keyword.",
+              "howToFix": "Ensure every CASE is closed with END before aliasing.",
+              "mistake": "Unterminated block error",
+              "whyItHappens": "Rushing syntax without closing compound SQL statements."
+          }
+      ]
+  },
+  "ASQL-010": {
+      "id": "sql-80",
+      "title": "Multiple CASE Conditions",
+      "levelNumber": 80,
+      "problemId": 80,
+      "problemTitle": "Multiple CASE Conditions",
+      "difficulty": "Hard",
+      "companyTags": [
+          "Adobe",
+          "Amazon",
+          "Apple",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT employee_id,\n       employee_name,\n       age,\n       salary,\n       CASE\n           WHEN age < 30 THEN 'Young'\n           WHEN age < 50 THEN 'Mid Age'\n           ELSE 'Senior'\n       END AS age_category,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 50000 THEN 'Medium'\n           ELSE 'Low'\n       END AS salary_category\nFROM employees\nORDER BY employee_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 17,
+                  "vars": {
+                      "Phase": "FROM employees",
+                      "Action": "Read employees table"
+                  },
+                  "explanation": "Reads 3 employees: 1 John (age 25, 120k), 2 Alice (age 35, 80k), 3 Bob (age 55, 45k)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "Age Evaluation",
+                      "Action": "Evaluate age brackets"
+                  },
+                  "explanation": "Evaluates: 25 < 30 -> 'Young'; 35 < 50 -> 'Mid Age'; 55 falls to ELSE -> 'Senior'."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 11,
+                  "vars": {
+                      "Phase": "Salary Evaluation",
+                      "Action": "Evaluate salary bands"
+                  },
+                  "explanation": "Evaluates: 120k >= 100k -> 'High'; 80k >= 50k -> 'Medium'; 45k falls to ELSE -> 'Low'."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 18,
+                  "vars": {
+                      "Phase": "ORDER BY employee_id",
+                      "Action": "Sort results"
+                  },
+                  "explanation": "Sorts ascending by employee_id: 1, 2, 3."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-80-1",
+              "category": "💡 Interview Notes",
+              "question": "Can multiple independent CASE expressions be evaluated in a single SQL query?",
+              "whatInterviewerChecks": "Understanding of orthogonal column projections in SQL.",
+              "bestReplyScript": "Yes. Each CASE statement is a self-contained scalar expression that generates an independent computed column. A query can contain as many CASE expressions as needed (for age, salary, performance rating, tenure, etc.), and the database engine evaluates each one per row during a single table scan.",
+              "commonMistakesToAvoid": "Attempting to create two separate columns inside a single CASE block.",
+              "keyPoints": [
+                  "Each calculated column requires its own dedicated CASE block",
+                  "Expressions evaluate independently in a single table scan",
+                  "Comma separates adjacent CASE columns in the SELECT clause"
+              ],
+              "codeSnippet": "SELECT ..., CASE ... END AS col1, CASE ... END AS col2 FROM ...;"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-80-1",
+              "title": "1. Combining two columns into one CASE",
+              "description": "Attempting to emit two columns from one CASE block without a second CASE.",
+              "badSnippet": "CASE WHEN age < 30 THEN 'Young', WHEN salary >= 100000 THEN 'High' END",
+              "failingInput": "Query execution",
+              "consequence": "SQL syntax error: unexpected comma within CASE expression.",
+              "howToFix": "Define two distinct CASE blocks: `CASE ... END AS col1, CASE ... END AS col2`.",
+              "mistake": "Syntax structure misconception",
+              "whyItHappens": "Trying to write multiple column definitions inside one keyword block."
+          }
+      ]
+  },
+  "81": {
+      "id": "pro-81",
+      "title": "Combine Two Tables",
+      "levelNumber": 81,
+      "problemId": 81,
+      "problemTitle": "Combine Two Tables",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "FROM Person AS p",
+                      "Action": "Read left table Person"
+                  },
+                  "explanation": "Reads 2 persons: 1 (Wang, Allen) and 2 (Alice, Bob)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "LEFT JOIN Address AS a",
+                      "Action": "Match on personId"
+                  },
+                  "explanation": "Person 1 has no matching Address (city/state set to NULL). Person 2 matches Address 1 ('New York City', 'New York')."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects (Allen, Wang, NULL, NULL) and (Bob, Alice, New York City, New York)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-81-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a LEFT JOIN required here instead of an INNER JOIN?",
+              "whatInterviewerChecks": "Understanding of outer joins and NULL preservation.",
+              "bestReplyScript": "The problem specifically mandates that every person must appear in the final output, regardless of whether address information exists. An INNER JOIN discards any person who lacks a matching row in Address. A LEFT JOIN preserves all rows from Person, automatically populating missing address attributes with NULL.",
+              "commonMistakesToAvoid": "Using INNER JOIN which silently filters out persons without addresses.",
+              "keyPoints": [
+                  "LEFT JOIN preserves all left-table rows unconditionally",
+                  "INNER JOIN discards unmatched rows",
+                  "Missing right-table columns naturally evaluate to NULL"
+              ],
+              "codeSnippet": "FROM Person p LEFT JOIN Address a ON p.personId = a.personId"
+          },
+          {
+              "id": "q-81-2",
+              "category": "💡 Interview Notes",
+              "question": "What happens if a person has multiple address records in Address?",
+              "whatInterviewerChecks": "Understanding of cardinality in relational joins.",
+              "bestReplyScript": "A LEFT JOIN with a 1-to-many relationship causes the person row to duplicate for each matching address row. If business requirements dictate returning only one primary address per person, we would need to deduplicate or aggregate, for example using ROW_NUMBER() OVER (PARTITION BY personId ORDER BY addressId DESC).",
+              "commonMistakesToAvoid": "Assuming LEFT JOIN always returns exactly the count of left table rows.",
+              "keyPoints": [
+                  "1-to-many joins duplicate the left record per right match",
+                  "Use window functions or DISTINCT if deduplication is required"
+              ],
+              "codeSnippet": "ROW_NUMBER() OVER (PARTITION BY personId ORDER BY addressId DESC)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-81-1",
+              "title": "1. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Writing INNER JOIN Address a ON p.personId = a.personId.",
+              "badSnippet": "FROM Person p INNER JOIN Address a ON p.personId = a.personId",
+              "failingInput": "Person with personId = 1 (no address)",
+              "consequence": "Allen Wang is completely dropped from the query results.",
+              "howToFix": "Use LEFT JOIN to retain unmatched persons with NULL fields.",
+              "mistake": "Unintended row filtering",
+              "whyItHappens": "Forgetting that INNER JOIN requires matches on both sides."
+          },
+          {
+              "id": "m-81-2",
+              "title": "2. Joining on mismatched keys",
+              "description": "Writing ON p.personId = a.addressId.",
+              "badSnippet": "ON p.personId = a.addressId",
+              "failingInput": "Records where addressId does not equal personId",
+              "consequence": "Incorrectly links persons to arbitrary addresses based on surrogate primary keys.",
+              "howToFix": "Equate the shared foreign key: p.personId = a.personId.",
+              "mistake": "Foreign key confusion",
+              "whyItHappens": "Confusing the child table's primary key (addressId) with its foreign key (personId)."
+          }
+      ]
+  },
+  "Pro-001": {
+      "id": "pro-81",
+      "title": "Combine Two Tables",
+      "levelNumber": 81,
+      "problemId": 81,
+      "problemTitle": "Combine Two Tables",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "FROM Person AS p",
+                      "Action": "Read left table Person"
+                  },
+                  "explanation": "Reads 2 persons: 1 (Wang, Allen) and 2 (Alice, Bob)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "LEFT JOIN Address AS a",
+                      "Action": "Match on personId"
+                  },
+                  "explanation": "Person 1 has no matching Address (city/state set to NULL). Person 2 matches Address 1 ('New York City', 'New York')."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Project columns"
+                  },
+                  "explanation": "Projects (Allen, Wang, NULL, NULL) and (Bob, Alice, New York City, New York)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-81-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a LEFT JOIN required here instead of an INNER JOIN?",
+              "whatInterviewerChecks": "Understanding of outer joins and NULL preservation.",
+              "bestReplyScript": "The problem specifically mandates that every person must appear in the final output, regardless of whether address information exists. An INNER JOIN discards any person who lacks a matching row in Address. A LEFT JOIN preserves all rows from Person, automatically populating missing address attributes with NULL.",
+              "commonMistakesToAvoid": "Using INNER JOIN which silently filters out persons without addresses.",
+              "keyPoints": [
+                  "LEFT JOIN preserves all left-table rows unconditionally",
+                  "INNER JOIN discards unmatched rows",
+                  "Missing right-table columns naturally evaluate to NULL"
+              ],
+              "codeSnippet": "FROM Person p LEFT JOIN Address a ON p.personId = a.personId"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-81-1",
+              "title": "1. Using INNER JOIN instead of LEFT JOIN",
+              "description": "Writing INNER JOIN Address a ON p.personId = a.personId.",
+              "badSnippet": "FROM Person p INNER JOIN Address a ON p.personId = a.personId",
+              "failingInput": "Person with personId = 1 (no address)",
+              "consequence": "Allen Wang is completely dropped from the query results.",
+              "howToFix": "Use LEFT JOIN to retain unmatched persons with NULL fields.",
+              "mistake": "Unintended row filtering",
+              "whyItHappens": "Forgetting that INNER JOIN requires matches on both sides."
+          }
+      ]
+  },
+  "82": {
+      "id": "pro-82",
+      "title": "Employees Earning More Than Their Managers",
+      "levelNumber": 82,
+      "problemId": 82,
+      "problemTitle": "Employees Earning More Than Their Managers",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Employee AS e",
+                      "Action": "Read employees"
+                  },
+                  "explanation": "Reads 4 employees: 1 Joe (70k, mgr 3), 2 Henry (80k, mgr 4), 3 Sam (60k, mgr NULL), 4 Max (90k, mgr NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "JOIN Employee AS m",
+                      "Action": "Match e.managerId = m.id"
+                  },
+                  "explanation": "Joe (70k) matches manager Sam (60k). Henry (80k) matches manager Max (90k). Sam and Max have no managers."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "WHERE e.salary > m.salary",
+                      "Action": "Compare salaries"
+                  },
+                  "explanation": "Joe (70k) > Sam (60k) is TRUE. Henry (80k) > Max (90k) is FALSE."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Returns single qualifying employee: 'Joe'."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-82-1",
+              "category": "💡 Interview Notes",
+              "question": "What is a self-join and why is it necessary for employee-manager comparisons?",
+              "whatInterviewerChecks": "Understanding of self-joins and recursive relational schemas.",
+              "bestReplyScript": "A self-join is a standard join in which a table is joined with itself. In relational databases, hierarchical structures like employee-manager relationships are typically modeled in a single table using an adjacency list pattern (with a managerId foreign key pointing to the same table's id primary key). To compare an employee attribute against their manager's attribute in a single query, we must instantiate two separate aliases of the table—one representing the employee and one representing the manager.",
+              "commonMistakesToAvoid": "Equating e.id = m.id which mistakenly joins the employee to themselves.",
+              "keyPoints": [
+                  "Adjacency list patterns in single tables require self-joins",
+                  "Aliases (e and m) distinguish between child and parent roles",
+                  "Condition e.managerId = m.id correctly aligns employee to manager"
+              ],
+              "codeSnippet": "FROM Employee e JOIN Employee m ON e.managerId = m.id"
+          },
+          {
+              "id": "q-82-2",
+              "category": "💡 Interview Notes",
+              "question": "Why is INNER JOIN used rather than LEFT JOIN in this query?",
+              "whatInterviewerChecks": "Join selection reasoning based on NULL semantics.",
+              "bestReplyScript": "Employees without a manager have `managerId IS NULL` (such as the CEO). Since NULL cannot be greater than any value (NULL comparisons evaluate to UNKNOWN), employees without managers could never satisfy `e.salary > m.salary`. An INNER JOIN naturally filters out employees without managers at join time, which is more efficient than performing an outer join and discarding them in the WHERE clause.",
+              "commonMistakesToAvoid": "Assuming LEFT JOIN is always required when managerId can be NULL.",
+              "keyPoints": [
+                  "Unmanaged employees cannot satisfy a salary comparison",
+                  "INNER JOIN prunes NULL foreign keys early in the query pipeline"
+              ],
+              "codeSnippet": "WHERE e.salary > m.salary"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-82-1",
+              "title": "1. Joining on identical primary keys",
+              "description": "Writing ON e.id = m.id instead of e.managerId = m.id.",
+              "badSnippet": "ON e.id = m.id",
+              "failingInput": "Employee table with salaries",
+              "consequence": "Compares an employee's salary with their own salary; e.salary > m.salary evaluates to false for all rows.",
+              "howToFix": "Match the employee's managerId with the manager's id: e.managerId = m.id.",
+              "mistake": "Self-comparison key error",
+              "whyItHappens": "Conflating the employee's primary identifier with the supervisor's identifier."
+          },
+          {
+              "id": "m-82-2",
+              "title": "2. Inverted inequality",
+              "description": "Writing e.salary < m.salary.",
+              "badSnippet": "WHERE e.salary < m.salary",
+              "failingInput": "Henry (80k) with manager Max (90k)",
+              "consequence": "Returns employees earning less than their managers instead of more.",
+              "howToFix": "Use strictly greater-than: e.salary > m.salary.",
+              "mistake": "Reversed filter logic",
+              "whyItHappens": "Misreading the problem requirement for higher compensation."
+          }
+      ]
+  },
+  "Pro-002": {
+      "id": "pro-82",
+      "title": "Employees Earning More Than Their Managers",
+      "levelNumber": 82,
+      "problemId": 82,
+      "problemTitle": "Employees Earning More Than Their Managers",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Employee AS e",
+                      "Action": "Read employees"
+                  },
+                  "explanation": "Reads 4 employees: 1 Joe (70k, mgr 3), 2 Henry (80k, mgr 4), 3 Sam (60k, mgr NULL), 4 Max (90k, mgr NULL)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "JOIN Employee AS m",
+                      "Action": "Match e.managerId = m.id"
+                  },
+                  "explanation": "Joe (70k) matches manager Sam (60k). Henry (80k) matches manager Max (90k). Sam and Max have no managers."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "WHERE e.salary > m.salary",
+                      "Action": "Compare salaries"
+                  },
+                  "explanation": "Joe (70k) > Sam (60k) is TRUE. Henry (80k) > Max (90k) is FALSE."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Returns single qualifying employee: 'Joe'."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-82-1",
+              "category": "💡 Interview Notes",
+              "question": "What is a self-join and why is it necessary for employee-manager comparisons?",
+              "whatInterviewerChecks": "Understanding of self-joins and recursive relational schemas.",
+              "bestReplyScript": "A self-join is a standard join in which a table is joined with itself. In relational databases, hierarchical structures like employee-manager relationships are typically modeled in a single table using an adjacency list pattern (with a managerId foreign key pointing to the same table's id primary key). To compare an employee attribute against their manager's attribute in a single query, we must instantiate two separate aliases of the table—one representing the employee and one representing the manager.",
+              "commonMistakesToAvoid": "Equating e.id = m.id which mistakenly joins the employee to themselves.",
+              "keyPoints": [
+                  "Adjacency list patterns in single tables require self-joins",
+                  "Aliases (e and m) distinguish between child and parent roles",
+                  "Condition e.managerId = m.id correctly aligns employee to manager"
+              ],
+              "codeSnippet": "FROM Employee e JOIN Employee m ON e.managerId = m.id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-82-1",
+              "title": "1. Joining on identical primary keys",
+              "description": "Writing ON e.id = m.id instead of e.managerId = m.id.",
+              "badSnippet": "ON e.id = m.id",
+              "failingInput": "Employee table with salaries",
+              "consequence": "Compares an employee's salary with their own salary; e.salary > m.salary evaluates to false for all rows.",
+              "howToFix": "Match the employee's managerId with the manager's id: e.managerId = m.id.",
+              "mistake": "Self-comparison key error",
+              "whyItHappens": "Conflating the employee's primary identifier with the supervisor's identifier."
+          }
+      ]
+  },
+  "83": {
+      "id": "pro-83",
+      "title": "Duplicate Emails",
+      "levelNumber": 83,
+      "problemId": 83,
+      "problemTitle": "Duplicate Emails",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Person",
+                      "Action": "Read table"
+                  },
+                  "explanation": "Reads 3 rows: 1 ('a@leetcode.com'), 2 ('b@leetcode.com'), 3 ('a@leetcode.com')."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "GROUP BY email",
+                      "Action": "Group rows by email"
+                  },
+                  "explanation": "Formed groups: 'a@leetcode.com' (count = 2) and 'b@leetcode.com' (count = 1)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) > 1",
+                      "Action": "Filter groups"
+                  },
+                  "explanation": "'a@leetcode.com' (2 > 1) -> KEEP. 'b@leetcode.com' (1 > 1) -> DISCARD."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT email AS Email",
+                      "Action": "Project result"
+                  },
+                  "explanation": "Returns single duplicate email: 'a@leetcode.com'."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-83-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use HAVING instead of WHERE?",
+              "whatInterviewerChecks": "Understanding of the SQL logical execution pipeline.",
+              "bestReplyScript": "The WHERE clause filters individual rows before grouping takes place, so aggregate functions like COUNT(*) are not available in WHERE. The HAVING clause filters groups after the GROUP BY aggregation has calculated bucket statistics, making HAVING the only correct clause for filtering on group counts.",
+              "commonMistakesToAvoid": "Writing WHERE COUNT(*) > 1.",
+              "keyPoints": [
+                  "WHERE filters individual rows before grouping",
+                  "HAVING filters aggregated groups after grouping",
+                  "Aggregate functions cannot be placed in the WHERE clause"
+              ],
+              "codeSnippet": "GROUP BY email HAVING COUNT(*) > 1"
+          },
+          {
+              "id": "q-83-2",
+              "category": "💡 Interview Notes",
+              "question": "Can duplicate emails be detected without using GROUP BY?",
+              "whatInterviewerChecks": "Knowledge of alternative SQL idioms.",
+              "bestReplyScript": "Yes. One can use a self-join `SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id != p2.id` or a correlated EXISTS subquery. However, `GROUP BY email HAVING COUNT(*) > 1` is cleaner, more declarative, and typically executes in a single O(N) hash-aggregate pass.",
+              "commonMistakesToAvoid": "Forgetting DISTINCT when using a self-join.",
+              "keyPoints": [
+                  "Self-join is possible but requires DISTINCT to prevent duplicate output rows",
+                  "GROUP BY + HAVING is the standard canonical SQL approach"
+              ],
+              "codeSnippet": "SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id != p2.id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-83-1",
+              "title": "1. Using WHERE with COUNT(*)",
+              "description": "Writing WHERE COUNT(*) > 1.",
+              "badSnippet": "WHERE COUNT(*) > 1",
+              "failingInput": "Query execution",
+              "consequence": "Database engine throws a syntax error: misuse of aggregate function in WHERE.",
+              "howToFix": "Use the HAVING clause after GROUP BY: HAVING COUNT(*) > 1.",
+              "mistake": "Aggregate in WHERE clause",
+              "whyItHappens": "Misunderstanding the order of operations between filtering and grouping."
+          },
+          {
+              "id": "m-83-2",
+              "title": "2. Omitting GROUP BY",
+              "description": "Writing SELECT email FROM Person HAVING COUNT(*) > 1.",
+              "badSnippet": "SELECT email FROM Person HAVING COUNT(*) > 1",
+              "failingInput": "Query execution",
+              "consequence": "SQL error or aggregates entire table into a single row without distinct email breakdown.",
+              "howToFix": "Include GROUP BY email before HAVING.",
+              "mistake": "Missing grouping specification",
+              "whyItHappens": "Forgetting that group aggregate conditions require defining the grouping key."
+          }
+      ]
+  },
+  "Pro-003": {
+      "id": "pro-83",
+      "title": "Duplicate Emails",
+      "levelNumber": 83,
+      "problemId": 83,
+      "problemTitle": "Duplicate Emails",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Person",
+                      "Action": "Read table"
+                  },
+                  "explanation": "Reads 3 rows: 1 ('a@leetcode.com'), 2 ('b@leetcode.com'), 3 ('a@leetcode.com')."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "GROUP BY email",
+                      "Action": "Group rows by email"
+                  },
+                  "explanation": "Formed groups: 'a@leetcode.com' (count = 2) and 'b@leetcode.com' (count = 1)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "HAVING COUNT(*) > 1",
+                      "Action": "Filter groups"
+                  },
+                  "explanation": "'a@leetcode.com' (2 > 1) -> KEEP. 'b@leetcode.com' (1 > 1) -> DISCARD."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT email AS Email",
+                      "Action": "Project result"
+                  },
+                  "explanation": "Returns single duplicate email: 'a@leetcode.com'."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-83-1",
+              "category": "💡 Interview Notes",
+              "question": "Why use HAVING instead of WHERE?",
+              "whatInterviewerChecks": "Understanding of the SQL logical execution pipeline.",
+              "bestReplyScript": "The WHERE clause filters individual rows before grouping takes place, so aggregate functions like COUNT(*) are not available in WHERE. The HAVING clause filters groups after the GROUP BY aggregation has calculated bucket statistics, making HAVING the only correct clause for filtering on group counts.",
+              "commonMistakesToAvoid": "Writing WHERE COUNT(*) > 1.",
+              "keyPoints": [
+                  "WHERE filters individual rows before grouping",
+                  "HAVING filters aggregated groups after grouping",
+                  "Aggregate functions cannot be placed in the WHERE clause"
+              ],
+              "codeSnippet": "GROUP BY email HAVING COUNT(*) > 1"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-83-1",
+              "title": "1. Using WHERE with COUNT(*)",
+              "description": "Writing WHERE COUNT(*) > 1.",
+              "badSnippet": "WHERE COUNT(*) > 1",
+              "failingInput": "Query execution",
+              "consequence": "Database engine throws a syntax error: misuse of aggregate function in WHERE.",
+              "howToFix": "Use the HAVING clause after GROUP BY: HAVING COUNT(*) > 1.",
+              "mistake": "Aggregate in WHERE clause",
+              "whyItHappens": "Misunderstanding the order of operations between filtering and grouping."
+          }
+      ]
+  },
+  "84": {
+      "id": "pro-84",
+      "title": "Delete Duplicate Emails",
+      "levelNumber": 84,
+      "problemId": 84,
+      "problemTitle": "Delete Duplicate Emails",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Person p1 JOIN Person p2",
+                      "Action": "Match duplicate emails"
+                  },
+                  "explanation": "Finds pairs sharing identical email: (p1: 3, p2: 1 for john@mail.com) and (p1: 5, p2: 2 for bob@mail.com)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "AND p1.id > p2.id",
+                      "Action": "Filter higher IDs"
+                  },
+                  "explanation": "Evaluates: 3 > 1 (TRUE -> mark p1 row 3 for deletion); 5 > 2 (TRUE -> mark p1 row 5 for deletion)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "DELETE p1",
+                      "Action": "Execute row deletion"
+                  },
+                  "explanation": "Purges rows 3 and 5 from Person. Remaining table: 1 (john), 2 (bob), 4 (alice)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-84-1",
+              "category": "💡 Interview Notes",
+              "question": "How does the self-join ensure only the smallest ID is preserved?",
+              "whatInterviewerChecks": "Understanding of multi-table delete semantics and relational ordering.",
+              "bestReplyScript": "By joining `Person p1` with `Person p2` on identical emails and imposing the condition `p1.id > p2.id`, any row in `p1` that has a corresponding row with an earlier (smaller) ID will match the join condition. Deleting from `p1` guarantees that all duplicate rows with higher IDs are deleted, while the record with the absolute minimum ID has no row with a smaller ID to compare against, safely protecting it from deletion.",
+              "commonMistakesToAvoid": "Writing p1.id < p2.id which deletes the earliest record and keeps the latest.",
+              "keyPoints": [
+                  "p1.id > p2.id matches all redundant duplicates with higher IDs",
+                  "Minimum ID row never satisfies > and is safely preserved",
+                  "DELETE p1 specifies the target alias for deletion"
+              ],
+              "codeSnippet": "DELETE p1 FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id > p2.id"
+          },
+          {
+              "id": "q-84-2",
+              "category": "💡 Interview Notes",
+              "question": "How would you write this deletion in standard ANSI SQL without MySQL-specific multi-table DELETE?",
+              "whatInterviewerChecks": "Cross-database portability knowledge (PostgreSQL, SQL Server, SQLite).",
+              "bestReplyScript": "In ANSI SQL, multi-table DELETE syntax is not standard. Instead, we use a subquery: `DELETE FROM Person WHERE id NOT IN (SELECT MIN(id) FROM Person GROUP BY email)`. Alternatively, in modern PostgreSQL or SQL Server, we can use a CTE with `ROW_NUMBER() OVER(PARTITION BY email ORDER BY id)` and delete where `rn > 1`.",
+              "commonMistakesToAvoid": "Assuming MySQL's `DELETE alias FROM` syntax works universally in all engines.",
+              "keyPoints": [
+                  "Subquery with NOT IN (SELECT MIN(id) ...) is standard ANSI SQL",
+                  "Window functions with ROW_NUMBER() provide clear deterministic deduplication"
+              ],
+              "codeSnippet": "DELETE FROM Person WHERE id NOT IN (SELECT MIN(id) FROM Person GROUP BY email)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-84-1",
+              "title": "1. Inverting the ID comparison",
+              "description": "Writing p1.id < p2.id instead of p1.id > p2.id.",
+              "badSnippet": "AND p1.id < p2.id",
+              "failingInput": "Duplicates with IDs 1 and 3",
+              "consequence": "Deletes the smallest ID (1) and preserves the larger ID (3), violating problem instructions.",
+              "howToFix": "Use p1.id > p2.id so that rows with higher IDs are matched and deleted.",
+              "mistake": "Reversed retention criteria",
+              "whyItHappens": "Confusing the condition for what to delete with the condition for what to keep."
+          },
+          {
+              "id": "m-84-2",
+              "title": "2. Joining on ID instead of email",
+              "description": "Writing ON p1.id = p2.id.",
+              "badSnippet": "ON p1.id = p2.id",
+              "failingInput": "Person table with duplicate emails",
+              "consequence": "No duplicate rows are ever detected because each row only joins to itself.",
+              "howToFix": "Join on identical email addresses: ON p1.email = p2.email.",
+              "mistake": "Incorrect join predicate",
+              "whyItHappens": "Rushing join predicates without identifying the duplicate grouping attribute."
+          }
+      ]
+  },
+  "Pro-004": {
+      "id": "pro-84",
+      "title": "Delete Duplicate Emails",
+      "levelNumber": 84,
+      "problemId": 84,
+      "problemTitle": "Delete Duplicate Emails",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Person p1 JOIN Person p2",
+                      "Action": "Match duplicate emails"
+                  },
+                  "explanation": "Finds pairs sharing identical email: (p1: 3, p2: 1 for john@mail.com) and (p1: 5, p2: 2 for bob@mail.com)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "AND p1.id > p2.id",
+                      "Action": "Filter higher IDs"
+                  },
+                  "explanation": "Evaluates: 3 > 1 (TRUE -> mark p1 row 3 for deletion); 5 > 2 (TRUE -> mark p1 row 5 for deletion)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "DELETE p1",
+                      "Action": "Execute row deletion"
+                  },
+                  "explanation": "Purges rows 3 and 5 from Person. Remaining table: 1 (john), 2 (bob), 4 (alice)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-84-1",
+              "category": "💡 Interview Notes",
+              "question": "How does the self-join ensure only the smallest ID is preserved?",
+              "whatInterviewerChecks": "Understanding of multi-table delete semantics and relational ordering.",
+              "bestReplyScript": "By joining `Person p1` with `Person p2` on identical emails and imposing the condition `p1.id > p2.id`, any row in `p1` that has a corresponding row with an earlier (smaller) ID will match the join condition. Deleting from `p1` guarantees that all duplicate rows with higher IDs are deleted, while the record with the absolute minimum ID has no row with a smaller ID to compare against, safely protecting it from deletion.",
+              "commonMistakesToAvoid": "Writing p1.id < p2.id which deletes the earliest record and keeps the latest.",
+              "keyPoints": [
+                  "p1.id > p2.id matches all redundant duplicates with higher IDs",
+                  "Minimum ID row never satisfies > and is safely preserved",
+                  "DELETE p1 specifies the target alias for deletion"
+              ],
+              "codeSnippet": "DELETE p1 FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id > p2.id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-84-1",
+              "title": "1. Inverting the ID comparison",
+              "description": "Writing p1.id < p2.id instead of p1.id > p2.id.",
+              "badSnippet": "AND p1.id < p2.id",
+              "failingInput": "Duplicates with IDs 1 and 3",
+              "consequence": "Deletes the smallest ID (1) and preserves the larger ID (3), violating problem instructions.",
+              "howToFix": "Use p1.id > p2.id so that rows with higher IDs are matched and deleted.",
+              "mistake": "Reversed retention criteria",
+              "whyItHappens": "Confusing the condition for what to delete with the condition for what to keep."
+          }
+      ]
+  },
+  "85": {
+      "id": "pro-85",
+      "title": "Rising Temperature",
+      "levelNumber": 85,
+      "problemId": 85,
+      "problemTitle": "Rising Temperature",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Weather w1 JOIN Weather w2",
+                      "Action": "Match yesterday's record"
+                  },
+                  "explanation": "Pairs consecutive days: (w1: Jan 2 with w2: Jan 1), (w1: Jan 3 with w2: Jan 2), (w1: Jan 4 with w2: Jan 3)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "WHERE w1.temperature > w2.temperature",
+                      "Action": "Compare temperatures"
+                  },
+                  "explanation": "Jan 2 (25 > 10) -> KEEP. Jan 3 (20 > 25) -> DISCARD. Jan 4 (30 > 20) -> KEEP."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT w1.id",
+                      "Action": "Emit IDs"
+                  },
+                  "explanation": "Returns IDs of qualifying days: 2 and 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-85-1",
+              "category": "💡 Interview Notes",
+              "question": "Why should we compare calendar dates using DATEDIFF rather than comparing primary key IDs?",
+              "whatInterviewerChecks": "Understanding of relational data integrity vs surrogate key pitfalls.",
+              "bestReplyScript": "Surrogate primary key IDs (like integer auto-increment values) are never guaranteed to be consecutive in production systems due to transaction rollbacks, deletions, or distributed ID generators (like UUIDs/Snowflakes). Furthermore, weather observation data may have missing days. Joining on `DATEDIFF(w1.recordDate, w2.recordDate) = 1` evaluates the physical calendar date, guaranteeing that the comparison occurs strictly between yesterday and today.",
+              "commonMistakesToAvoid": "Writing ON w1.id = w2.id + 1.",
+              "keyPoints": [
+                  "IDs are surrogate keys and do not track chronological continuity",
+                  "DATEDIFF enforces true calendar day adjacency",
+                  "Missing dates are properly omitted rather than comparing across multi-day gaps"
+              ],
+              "codeSnippet": "ON DATEDIFF(w1.recordDate, w2.recordDate) = 1"
+          },
+          {
+              "id": "q-85-2",
+              "category": "💡 Interview Notes",
+              "question": "Can this problem be solved using the LAG() window function?",
+              "whatInterviewerChecks": "Knowledge of modern analytic SQL extensions.",
+              "bestReplyScript": "Yes. Using `LAG(temperature) OVER (ORDER BY recordDate)` retrieves the previous row's temperature, and `LAG(recordDate) OVER (ORDER BY recordDate)` gets the previous date. We then check in the outer query that `DATEDIFF(recordDate, prev_date) = 1` and `temperature > prev_temp`. Window functions are often faster than self-joins on massive datasets because they only require a single sorted scan.",
+              "commonMistakesToAvoid": "Using LAG(temperature) without also verifying that LAG(recordDate) is exactly 1 day earlier.",
+              "keyPoints": [
+                  "LAG() avoids a quadratic self-join comparison",
+                  "Must verify date continuity even when using LAG()"
+              ],
+              "codeSnippet": "SELECT id FROM (SELECT id, recordDate, temperature, LAG(temperature) OVER (ORDER BY recordDate) as prev_temp, LAG(recordDate) OVER (ORDER BY recordDate) as prev_date FROM Weather) t WHERE DATEDIFF(recordDate, prev_date) = 1 AND temperature > prev_temp"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-85-1",
+              "title": "1. Joining on sequential IDs",
+              "description": "Writing ON w1.id = w2.id + 1.",
+              "badSnippet": "ON w1.id = w2.id + 1",
+              "failingInput": "Weather table with missing observation dates",
+              "consequence": "Compares temperatures across arbitrary gaps or fails when IDs are non-sequential.",
+              "howToFix": "Use DATEDIFF on calendar date columns: DATEDIFF(w1.recordDate, w2.recordDate) = 1.",
+              "mistake": "Surrogate key sequence assumption",
+              "whyItHappens": "Assuming primary keys always increment by 1 without gaps."
+          },
+          {
+              "id": "m-85-2",
+              "title": "2. Using >= instead of strictly >",
+              "description": "Writing w1.temperature >= w2.temperature.",
+              "badSnippet": "WHERE w1.temperature >= w2.temperature",
+              "failingInput": "Days with equal temperatures",
+              "consequence": "Incorrectly returns dates where the temperature remained flat rather than rising.",
+              "howToFix": "Use strictly greater-than: w1.temperature > w2.temperature.",
+              "mistake": "Non-strict comparison operator",
+              "whyItHappens": "Carelessly using >= when the problem asks for strictly higher values."
+          }
+      ]
+  },
+  "Pro-005": {
+      "id": "pro-85",
+      "title": "Rising Temperature",
+      "levelNumber": 85,
+      "problemId": 85,
+      "problemTitle": "Rising Temperature",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Weather w1 JOIN Weather w2",
+                      "Action": "Match yesterday's record"
+                  },
+                  "explanation": "Pairs consecutive days: (w1: Jan 2 with w2: Jan 1), (w1: Jan 3 with w2: Jan 2), (w1: Jan 4 with w2: Jan 3)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "WHERE w1.temperature > w2.temperature",
+                      "Action": "Compare temperatures"
+                  },
+                  "explanation": "Jan 2 (25 > 10) -> KEEP. Jan 3 (20 > 25) -> DISCARD. Jan 4 (30 > 20) -> KEEP."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT w1.id",
+                      "Action": "Emit IDs"
+                  },
+                  "explanation": "Returns IDs of qualifying days: 2 and 4."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-85-1",
+              "category": "💡 Interview Notes",
+              "question": "Why should we compare calendar dates using DATEDIFF rather than comparing primary key IDs?",
+              "whatInterviewerChecks": "Understanding of relational data integrity vs surrogate key pitfalls.",
+              "bestReplyScript": "Surrogate primary key IDs (like integer auto-increment values) are never guaranteed to be consecutive in production systems due to transaction rollbacks, deletions, or distributed ID generators (like UUIDs/Snowflakes). Furthermore, weather observation data may have missing days. Joining on `DATEDIFF(w1.recordDate, w2.recordDate) = 1` evaluates the physical calendar date, guaranteeing that the comparison occurs strictly between yesterday and today.",
+              "commonMistakesToAvoid": "Writing ON w1.id = w2.id + 1.",
+              "keyPoints": [
+                  "IDs are surrogate keys and do not track chronological continuity",
+                  "DATEDIFF enforces true calendar day adjacency",
+                  "Missing dates are properly omitted rather than comparing across multi-day gaps"
+              ],
+              "codeSnippet": "ON DATEDIFF(w1.recordDate, w2.recordDate) = 1"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-85-1",
+              "title": "1. Joining on sequential IDs",
+              "description": "Writing ON w1.id = w2.id + 1.",
+              "badSnippet": "ON w1.id = w2.id + 1",
+              "failingInput": "Weather table with missing observation dates",
+              "consequence": "Compares temperatures across arbitrary gaps or fails when IDs are non-sequential.",
+              "howToFix": "Use DATEDIFF on calendar date columns: DATEDIFF(w1.recordDate, w2.recordDate) = 1.",
+              "mistake": "Surrogate key sequence assumption",
+              "whyItHappens": "Assuming primary keys always increment by 1 without gaps."
+          }
+      ]
+  },
+  "86": {
+      "id": "pro-86",
+      "title": "Game Play Analysis I",
+      "levelNumber": 86,
+      "problemId": 86,
+      "problemTitle": "Game Play Analysis I",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM Activity",
+                      "Action": "Read activity logs"
+                  },
+                  "explanation": "Scans 5 rows across players 1, 2, and 3."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "GROUP BY player_id",
+                      "Action": "Group player sessions"
+                  },
+                  "explanation": "Player 1 has [2016-03-01, 2016-05-02], Player 2 has [2017-06-25], Player 3 has [2016-03-02, 2018-07-03]."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "MIN(event_date)",
+                      "Action": "Calculate earliest date"
+                  },
+                  "explanation": "Player 1 min is 2016-03-01; Player 2 min is 2017-06-25; Player 3 min is 2016-03-02."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Projects (1, 2016-03-01), (2, 2017-06-25), (3, 2016-03-02)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-86-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is MIN(event_date) used rather than sorting with ORDER BY?",
+              "whatInterviewerChecks": "Understanding of group aggregations vs table-level ordering.",
+              "bestReplyScript": "ORDER BY event_date ASC with LIMIT 1 only returns the single earliest login date across the entire table. The problem specifically asks for the first login of every individual player. Using `GROUP BY player_id` segments the table into distinct player partitions, and `MIN(event_date)` calculates the earliest timestamp independently for each player group.",
+              "commonMistakesToAvoid": "Using ORDER BY ... LIMIT 1 or forgetting GROUP BY.",
+              "keyPoints": [
+                  "GROUP BY player_id produces one output row per player",
+                  "MIN() finds the earliest date per group partition",
+                  "ORDER BY sorts rows without partitioning"
+              ],
+              "codeSnippet": "SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id"
+          },
+          {
+              "id": "q-86-2",
+              "category": "💡 Interview Notes",
+              "question": "How would you solve this if you also needed to retrieve the device_id used during that first login?",
+              "whatInterviewerChecks": "Transitioning from scalar aggregations to window functions or joins.",
+              "bestReplyScript": "In SQL, including an unaggregated column like `device_id` in a query with `GROUP BY player_id` violates ANSI SQL standards (or produces arbitrary values in loose MySQL modes). To retrieve the corresponding `device_id`, we would use the window function `ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date)` and filter in an outer query `WHERE rn = 1`, or perform a join back to Activity matching on `(player_id, event_date = first_login)`.",
+              "commonMistakesToAvoid": "Simply adding `device_id` to SELECT without aggregating or including in GROUP BY.",
+              "keyPoints": [
+                  "Unaggregated columns cannot be projected in GROUP BY",
+                  "ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date) preserves full row context"
+              ],
+              "codeSnippet": "SELECT player_id, device_id, event_date FROM (SELECT player_id, device_id, event_date, ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date) rn FROM Activity) t WHERE rn = 1"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-86-1",
+              "title": "1. Using MAX() instead of MIN()",
+              "description": "Writing MAX(event_date) AS first_login.",
+              "badSnippet": "MAX(event_date) AS first_login",
+              "failingInput": "Player 1 with dates 2016-03-01 and 2016-05-02",
+              "consequence": "Returns the player's latest/most recent login (2016-05-02) instead of their initial onboarding date.",
+              "howToFix": "Use MIN(event_date) to isolate the chronologically earliest date.",
+              "mistake": "Opposite aggregate function",
+              "whyItHappens": "Confusing first (earliest/min) with latest (most recent/max)."
+          },
+          {
+              "id": "m-86-2",
+              "title": "2. Forgetting GROUP BY",
+              "description": "Writing SELECT player_id, MIN(event_date) FROM Activity without GROUP BY.",
+              "badSnippet": "SELECT player_id, MIN(event_date) FROM Activity;",
+              "failingInput": "Multi-player Activity table",
+              "consequence": "Database error or collapses all players into a single summary row.",
+              "howToFix": "Include GROUP BY player_id at the end of the query.",
+              "mistake": "Missing GROUP BY clause",
+              "whyItHappens": "Forgetting that aggregate functions with entity identifiers require explicit grouping."
+          }
+      ]
+  },
+  "Pro-006": {
+      "id": "pro-86",
+      "title": "Game Play Analysis I",
+      "levelNumber": 86,
+      "problemId": 86,
+      "problemTitle": "Game Play Analysis I",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "FROM Activity",
+                      "Action": "Read activity logs"
+                  },
+                  "explanation": "Scans 5 rows across players 1, 2, and 3."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "GROUP BY player_id",
+                      "Action": "Group player sessions"
+                  },
+                  "explanation": "Player 1 has [2016-03-01, 2016-05-02], Player 2 has [2017-06-25], Player 3 has [2016-03-02, 2018-07-03]."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "MIN(event_date)",
+                      "Action": "Calculate earliest date"
+                  },
+                  "explanation": "Player 1 min is 2016-03-01; Player 2 min is 2017-06-25; Player 3 min is 2016-03-02."
+              },
+              {
+                  "step": 4,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Projects (1, 2016-03-01), (2, 2017-06-25), (3, 2016-03-02)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-86-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is MIN(event_date) used rather than sorting with ORDER BY?",
+              "whatInterviewerChecks": "Understanding of group aggregations vs table-level ordering.",
+              "bestReplyScript": "ORDER BY event_date ASC with LIMIT 1 only returns the single earliest login date across the entire table. The problem specifically asks for the first login of every individual player. Using `GROUP BY player_id` segments the table into distinct player partitions, and `MIN(event_date)` calculates the earliest timestamp independently for each player group.",
+              "commonMistakesToAvoid": "Using ORDER BY ... LIMIT 1 or forgetting GROUP BY.",
+              "keyPoints": [
+                  "GROUP BY player_id produces one output row per player",
+                  "MIN() finds the earliest date per group partition",
+                  "ORDER BY sorts rows without partitioning"
+              ],
+              "codeSnippet": "SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-86-1",
+              "title": "1. Using MAX() instead of MIN()",
+              "description": "Writing MAX(event_date) AS first_login.",
+              "badSnippet": "MAX(event_date) AS first_login",
+              "failingInput": "Player 1 with dates 2016-03-01 and 2016-05-02",
+              "consequence": "Returns the player's latest/most recent login (2016-05-02) instead of their initial onboarding date.",
+              "howToFix": "Use MIN(event_date) to isolate the chronologically earliest date.",
+              "mistake": "Opposite aggregate function",
+              "whyItHappens": "Confusing first (earliest/min) with latest (most recent/max)."
+          }
+      ]
+  },
+  "87": {
+      "id": "pro-87",
+      "title": "Game Play Analysis II",
+      "levelNumber": 87,
+      "problemId": 87,
+      "problemTitle": "Game Play Analysis II",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "Subquery f",
+                      "Action": "Find earliest dates"
+                  },
+                  "explanation": "Calculates: (1, 2016-03-01), (2, 2017-06-25), (3, 2016-03-02)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "JOIN Activity a ON player_id and event_date",
+                      "Action": "Match rows"
+                  },
+                  "explanation": "Player 1 matches row (1, device 2, 2016-03-01). Player 2 matches (2, device 1, 2017-06-25). Player 3 matches (3, device 4, 2016-03-02)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT a.player_id, a.device_id",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: (1, 2), (2, 1), (3, 4)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-87-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a JOIN required rather than selecting device_id directly in the GROUP BY query?",
+              "whatInterviewerChecks": "Understanding of relational grouping rules and functional dependencies.",
+              "bestReplyScript": "In SQL, aggregating by `player_id` allows computing scalar summaries like `MIN(event_date)`, but unaggregated attributes like `device_id` cannot be included in the SELECT clause without violating SQL syntax rules. Since each player may have used different devices across different dates, the database cannot infer which device corresponds to the minimum date without joining the aggregate result back to the table on `(player_id, event_date = first_login)`.",
+              "commonMistakesToAvoid": "Writing `SELECT player_id, device_id, MIN(event_date) FROM Activity GROUP BY player_id`.",
+              "keyPoints": [
+                  "Unaggregated columns cannot be projected with GROUP BY",
+                  "Joining back on the composite key resolves the matching row context",
+                  "Ensures deterministic retrieval of the first login device"
+              ],
+              "codeSnippet": "ON a.player_id = f.player_id AND a.event_date = f.first_login"
+          },
+          {
+              "id": "q-87-2",
+              "category": "💡 Interview Notes",
+              "question": "How does the ROW_NUMBER() window function alternative compare to the subquery JOIN?",
+              "whatInterviewerChecks": "Evaluating readability and query execution efficiency.",
+              "bestReplyScript": "The window function approach `ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date)` ranks rows chronologically per player and allows filtering `WHERE rn = 1` in an outer query. With a composite index on `(player_id, event_date, device_id)`, `ROW_NUMBER()` is typically faster because it streams through the index in a single pass without performing two separate table scans and a hash join.",
+              "commonMistakesToAvoid": "Using RANK() instead of ROW_NUMBER() if duplicate dates could exist.",
+              "keyPoints": [
+                  "ROW_NUMBER() achieves the same result in a single logical pass",
+                  "Avoids materializing a separate derived subquery table"
+              ],
+              "codeSnippet": "SELECT player_id, device_id FROM (SELECT player_id, device_id, ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date) rn FROM Activity) t WHERE rn = 1"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-87-1",
+              "title": "1. Joining only on player_id",
+              "description": "Writing ON a.player_id = f.player_id without matching event_date.",
+              "badSnippet": "ON a.player_id = f.player_id",
+              "failingInput": "Players with multiple login sessions across devices",
+              "consequence": "Returns every device the player ever used across all dates instead of only their initial login device.",
+              "howToFix": "Include the date match: AND a.event_date = f.first_login.",
+              "mistake": "Incomplete join condition",
+              "whyItHappens": "Forgetting that the join must isolate the specific row corresponding to the minimum date."
+          },
+          {
+              "id": "m-87-2",
+              "title": "2. Grouping by device_id",
+              "description": "Writing GROUP BY device_id instead of player_id.",
+              "badSnippet": "GROUP BY device_id",
+              "failingInput": "Activity dataset with shared device IDs",
+              "consequence": "Groups results by hardware model rather than reporting on individual player accounts.",
+              "howToFix": "Group by player_id: GROUP BY player_id.",
+              "mistake": "Wrong grouping entity",
+              "whyItHappens": "Confusing the target entity (player) with the attribute to retrieve (device)."
+          }
+      ]
+  },
+  "Pro-007": {
+      "id": "pro-87",
+      "title": "Game Play Analysis II",
+      "levelNumber": 87,
+      "problemId": 87,
+      "problemTitle": "Game Play Analysis II",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "Subquery f",
+                      "Action": "Find earliest dates"
+                  },
+                  "explanation": "Calculates: (1, 2016-03-01), (2, 2017-06-25), (3, 2016-03-02)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 12,
+                  "vars": {
+                      "Phase": "JOIN Activity a ON player_id and event_date",
+                      "Action": "Match rows"
+                  },
+                  "explanation": "Player 1 matches row (1, device 2, 2016-03-01). Player 2 matches (2, device 1, 2017-06-25). Player 3 matches (3, device 4, 2016-03-02)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT a.player_id, a.device_id",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: (1, 2), (2, 1), (3, 4)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-87-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is a JOIN required rather than selecting device_id directly in the GROUP BY query?",
+              "whatInterviewerChecks": "Understanding of relational grouping rules and functional dependencies.",
+              "bestReplyScript": "In SQL, aggregating by `player_id` allows computing scalar summaries like `MIN(event_date)`, but unaggregated attributes like `device_id` cannot be included in the SELECT clause without violating SQL syntax rules. Since each player may have used different devices across different dates, the database cannot infer which device corresponds to the minimum date without joining the aggregate result back to the table on `(player_id, event_date = first_login)`.",
+              "commonMistakesToAvoid": "Writing `SELECT player_id, device_id, MIN(event_date) FROM Activity GROUP BY player_id`.",
+              "keyPoints": [
+                  "Unaggregated columns cannot be projected with GROUP BY",
+                  "Joining back on the composite key resolves the matching row context",
+                  "Ensures deterministic retrieval of the first login device"
+              ],
+              "codeSnippet": "ON a.player_id = f.player_id AND a.event_date = f.first_login"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-87-1",
+              "title": "1. Joining only on player_id",
+              "description": "Writing ON a.player_id = f.player_id without matching event_date.",
+              "badSnippet": "ON a.player_id = f.player_id",
+              "failingInput": "Players with multiple login sessions across devices",
+              "consequence": "Returns every device the player ever used across all dates instead of only their initial login device.",
+              "howToFix": "Include the date match: AND a.event_date = f.first_login.",
+              "mistake": "Incomplete join condition",
+              "whyItHappens": "Forgetting that the join must isolate the specific row corresponding to the minimum date."
+          }
+      ]
+  },
+  "88": {
+      "id": "pro-88",
+      "title": "Employee Bonus",
+      "levelNumber": 88,
+      "problemId": 88,
+      "problemTitle": "Employee Bonus",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM Employee e LEFT JOIN Bonus b",
+                      "Action": "Preserve all employees"
+                  },
+                  "explanation": "Brad (empId 3) -> bonus NULL; John (empId 1) -> bonus NULL; Dan (empId 2) -> bonus 500; Thomas (empId 4) -> bonus 2000."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "WHERE b.bonus < 1000 OR b.bonus IS NULL",
+                      "Action": "Filter records"
+                  },
+                  "explanation": "Brad (NULL IS NULL -> TRUE); John (NULL IS NULL -> TRUE); Dan (500 < 1000 -> TRUE); Thomas (2000 < 1000 -> FALSE, 2000 IS NULL -> FALSE, DISCARD)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT e.name, b.bonus",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: (Brad, NULL), (John, NULL), (Dan, 500)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-88-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must we write `OR b.bonus IS NULL` instead of relying solely on `b.bonus < 1000`?",
+              "whatInterviewerChecks": "Understanding of three-valued logic (3VL) in SQL.",
+              "bestReplyScript": "In SQL, comparisons involving NULL evaluate to UNKNOWN rather than TRUE or FALSE. For employees without a bonus, `NULL < 1000` evaluates to UNKNOWN, which the WHERE clause filters out. To retain employees who received no bonus, we must explicitly include `OR b.bonus IS NULL` (or use `WHERE COALESCE(b.bonus, 0) < 1000`).",
+              "commonMistakesToAvoid": "Writing WHERE b.bonus < 1000 without checking for NULL.",
+              "keyPoints": [
+                  "Comparisons with NULL yield UNKNOWN in SQL three-valued logic",
+                  "WHERE clause drops all rows that do not evaluate strictly to TRUE",
+                  "OR b.bonus IS NULL explicitly rescues unmatched LEFT JOIN rows"
+              ],
+              "codeSnippet": "WHERE b.bonus < 1000 OR b.bonus IS NULL"
+          },
+          {
+              "id": "q-88-2",
+              "category": "💡 Interview Notes",
+              "question": "Why does an INNER JOIN fail for this problem?",
+              "whatInterviewerChecks": "Core understanding of join semantics.",
+              "bestReplyScript": "An INNER JOIN requires matching keys in both the left and right relations. Since Brad and John have no records in the Bonus table, an INNER JOIN silently discards them before the WHERE clause is ever evaluated. A LEFT JOIN preserves all records from the Employee relation, padding missing Bonus attributes with NULL.",
+              "commonMistakesToAvoid": "Using INNER JOIN.",
+              "keyPoints": [
+                  "INNER JOIN only retains intersecting keys",
+                  "LEFT JOIN guarantees all left-table rows appear in output"
+              ],
+              "codeSnippet": "FROM Employee e LEFT JOIN Bonus b ON e.empId = b.empId"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-88-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Writing INNER JOIN Bonus b ON e.empId = b.empId.",
+              "badSnippet": "FROM Employee e JOIN Bonus b ON e.empId = b.empId",
+              "failingInput": "Employees without bonus records",
+              "consequence": "Silently eliminates employees who have zero bonus records (e.g. Brad and John).",
+              "howToFix": "Use LEFT JOIN Bonus b ON e.empId = b.empId.",
+              "mistake": "Unintended row filtering via INNER JOIN",
+              "whyItHappens": "Forgetting that INNER JOIN requires matching rows in both tables."
+          },
+          {
+              "id": "m-88-2",
+              "title": "2. Writing b.bonus = NULL",
+              "description": "Writing OR b.bonus = NULL.",
+              "badSnippet": "OR b.bonus = NULL",
+              "failingInput": "NULL bonus values",
+              "consequence": "Always evaluates to UNKNOWN and drops all NULL rows.",
+              "howToFix": "Use the IS NULL operator: OR b.bonus IS NULL.",
+              "mistake": "Equality comparison with NULL",
+              "whyItHappens": "Treating NULL as a concrete literal value rather than an absence of value."
+          }
+      ]
+  },
+  "Pro-008": {
+      "id": "pro-88",
+      "title": "Employee Bonus",
+      "levelNumber": 88,
+      "problemId": 88,
+      "problemTitle": "Employee Bonus",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM Employee e LEFT JOIN Bonus b",
+                      "Action": "Preserve all employees"
+                  },
+                  "explanation": "Brad (empId 3) -> bonus NULL; John (empId 1) -> bonus NULL; Dan (empId 2) -> bonus 500; Thomas (empId 4) -> bonus 2000."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 7,
+                  "vars": {
+                      "Phase": "WHERE b.bonus < 1000 OR b.bonus IS NULL",
+                      "Action": "Filter records"
+                  },
+                  "explanation": "Brad (NULL IS NULL -> TRUE); John (NULL IS NULL -> TRUE); Dan (500 < 1000 -> TRUE); Thomas (2000 < 1000 -> FALSE, 2000 IS NULL -> FALSE, DISCARD)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT e.name, b.bonus",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: (Brad, NULL), (John, NULL), (Dan, 500)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-88-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must we write `OR b.bonus IS NULL` instead of relying solely on `b.bonus < 1000`?",
+              "whatInterviewerChecks": "Understanding of three-valued logic (3VL) in SQL.",
+              "bestReplyScript": "In SQL, comparisons involving NULL evaluate to UNKNOWN rather than TRUE or FALSE. For employees without a bonus, `NULL < 1000` evaluates to UNKNOWN, which the WHERE clause filters out. To retain employees who received no bonus, we must explicitly include `OR b.bonus IS NULL` (or use `WHERE COALESCE(b.bonus, 0) < 1000`).",
+              "commonMistakesToAvoid": "Writing WHERE b.bonus < 1000 without checking for NULL.",
+              "keyPoints": [
+                  "Comparisons with NULL yield UNKNOWN in SQL three-valued logic",
+                  "WHERE clause drops all rows that do not evaluate strictly to TRUE",
+                  "OR b.bonus IS NULL explicitly rescues unmatched LEFT JOIN rows"
+              ],
+              "codeSnippet": "WHERE b.bonus < 1000 OR b.bonus IS NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-88-1",
+              "title": "1. Using INNER JOIN",
+              "description": "Writing INNER JOIN Bonus b ON e.empId = b.empId.",
+              "badSnippet": "FROM Employee e JOIN Bonus b ON e.empId = b.empId",
+              "failingInput": "Employees without bonus records",
+              "consequence": "Silently eliminates employees who have zero bonus records (e.g. Brad and John).",
+              "howToFix": "Use LEFT JOIN Bonus b ON e.empId = b.empId.",
+              "mistake": "Unintended row filtering via INNER JOIN",
+              "whyItHappens": "Forgetting that INNER JOIN requires matching rows in both tables."
+          }
+      ]
+  },
+  "89": {
+      "id": "pro-89",
+      "title": "Find Customer Referee",
+      "levelNumber": 89,
+      "problemId": 89,
+      "problemTitle": "Find Customer Referee",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Customer",
+                      "Action": "Read customer records"
+                  },
+                  "explanation": "Scans 6 rows: Will (NULL), Jane (NULL), Alex (2), Bill (NULL), Zack (1), Mark (2)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "WHERE referee_id <> 2 OR referee_id IS NULL",
+                      "Action": "Evaluate three-valued logic"
+                  },
+                  "explanation": "Will (NULL IS NULL -> TRUE); Jane (NULL IS NULL -> TRUE); Alex (2 <> 2 -> FALSE); Bill (NULL IS NULL -> TRUE); Zack (1 <> 2 -> TRUE); Mark (2 <> 2 -> FALSE)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT name",
+                      "Action": "Emit names"
+                  },
+                  "explanation": "Emits: Will, Jane, Bill, Zack."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-89-1",
+              "category": "💡 Interview Notes",
+              "question": "Why does writing `WHERE referee_id <> 2` fail to return customers with NULL referee_id?",
+              "whatInterviewerChecks": "Understanding of three-valued logic (3VL) and NULL comparison semantics.",
+              "bestReplyScript": "In SQL, comparisons with NULL using comparison operators like `<>`, `!=`, or `=` do not evaluate to TRUE or FALSE; they evaluate to UNKNOWN. The WHERE clause only accepts rows where the condition evaluates strictly to TRUE. Since `NULL <> 2` evaluates to UNKNOWN, all customers with NULL referee_id are silently discarded unless explicitly rescued with `OR referee_id IS NULL`.",
+              "commonMistakesToAvoid": "Writing `WHERE referee_id != 2` or `WHERE referee_id <> 2` without checking for NULL.",
+              "keyPoints": [
+                  "NULL comparison produces UNKNOWN in three-valued logic",
+                  "WHERE requires TRUE to keep a row",
+                  "OR referee_id IS NULL is mandatory to preserve organic users"
+              ],
+              "codeSnippet": "WHERE referee_id <> 2 OR referee_id IS NULL"
+          },
+          {
+              "id": "q-89-2",
+              "category": "💡 Interview Notes",
+              "question": "How can this query be written using COALESCE or modern SQL syntax?",
+              "whatInterviewerChecks": "Alternative idiom knowledge and database dialect awareness.",
+              "bestReplyScript": "We can write `WHERE COALESCE(referee_id, 0) <> 2` which substitutes 0 for NULL before comparing. In PostgreSQL and modern ANSI SQL, we can write `WHERE referee_id IS DISTINCT FROM 2`. In MySQL, the null-safe equality operator `<=>` can be inverted: `WHERE NOT (referee_id <=> 2)`.",
+              "commonMistakesToAvoid": "Using `referee_id = NULL`.",
+              "keyPoints": [
+                  "COALESCE(referee_id, 0) <> 2 provides concise null substitution",
+                  "IS DISTINCT FROM is the ANSI standard null-safe inequality check"
+              ],
+              "codeSnippet": "SELECT name FROM Customer WHERE COALESCE(referee_id, 0) <> 2"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-89-1",
+              "title": "1. Writing only WHERE referee_id <> 2",
+              "description": "Writing WHERE referee_id <> 2 without checking for NULL.",
+              "badSnippet": "WHERE referee_id <> 2",
+              "failingInput": "Customers with referee_id IS NULL (Will, Jane, Bill)",
+              "consequence": "Silently drops all organic customers with NULL referrers due to 3VL UNKNOWN result.",
+              "howToFix": "Add OR referee_id IS NULL: WHERE referee_id <> 2 OR referee_id IS NULL.",
+              "mistake": "Missing NULL handler in inequality",
+              "whyItHappens": "Assuming <> 2 includes everything that is literally not the number 2."
+          },
+          {
+              "id": "m-89-2",
+              "title": "2. Using equality with NULL",
+              "description": "Writing OR referee_id = NULL.",
+              "badSnippet": "OR referee_id = NULL",
+              "failingInput": "NULL referee_id values",
+              "consequence": "Always evaluates to UNKNOWN and drops all NULL rows.",
+              "howToFix": "Use the IS NULL operator: OR referee_id IS NULL.",
+              "mistake": "Invalid NULL equality comparison",
+              "whyItHappens": "Forgetting that NULL represents the absence of a value, not a comparable value."
+          }
+      ]
+  },
+  "Pro-009": {
+      "id": "pro-89",
+      "title": "Find Customer Referee",
+      "levelNumber": 89,
+      "problemId": 89,
+      "problemTitle": "Find Customer Referee",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 2,
+                  "vars": {
+                      "Phase": "FROM Customer",
+                      "Action": "Read customer records"
+                  },
+                  "explanation": "Scans 6 rows: Will (NULL), Jane (NULL), Alex (2), Bill (NULL), Zack (1), Mark (2)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "WHERE referee_id <> 2 OR referee_id IS NULL",
+                      "Action": "Evaluate three-valued logic"
+                  },
+                  "explanation": "Will (NULL IS NULL -> TRUE); Jane (NULL IS NULL -> TRUE); Alex (2 <> 2 -> FALSE); Bill (NULL IS NULL -> TRUE); Zack (1 <> 2 -> TRUE); Mark (2 <> 2 -> FALSE)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT name",
+                      "Action": "Emit names"
+                  },
+                  "explanation": "Emits: Will, Jane, Bill, Zack."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-89-1",
+              "category": "💡 Interview Notes",
+              "question": "Why does writing `WHERE referee_id <> 2` fail to return customers with NULL referee_id?",
+              "whatInterviewerChecks": "Understanding of three-valued logic (3VL) and NULL comparison semantics.",
+              "bestReplyScript": "In SQL, comparisons with NULL using comparison operators like `<>`, `!=`, or `=` do not evaluate to TRUE or FALSE; they evaluate to UNKNOWN. The WHERE clause only accepts rows where the condition evaluates strictly to TRUE. Since `NULL <> 2` evaluates to UNKNOWN, all customers with NULL referee_id are silently discarded unless explicitly rescued with `OR referee_id IS NULL`.",
+              "commonMistakesToAvoid": "Writing `WHERE referee_id != 2` or `WHERE referee_id <> 2` without checking for NULL.",
+              "keyPoints": [
+                  "NULL comparison produces UNKNOWN in three-valued logic",
+                  "WHERE requires TRUE to keep a row",
+                  "OR referee_id IS NULL is mandatory to preserve organic users"
+              ],
+              "codeSnippet": "WHERE referee_id <> 2 OR referee_id IS NULL"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-89-1",
+              "title": "1. Writing only WHERE referee_id <> 2",
+              "description": "Writing WHERE referee_id <> 2 without checking for NULL.",
+              "badSnippet": "WHERE referee_id <> 2",
+              "failingInput": "Customers with referee_id IS NULL (Will, Jane, Bill)",
+              "consequence": "Silently drops all organic customers with NULL referrers due to 3VL UNKNOWN result.",
+              "howToFix": "Add OR referee_id IS NULL: WHERE referee_id <> 2 OR referee_id IS NULL.",
+              "mistake": "Missing NULL handler in inequality",
+              "whyItHappens": "Assuming <> 2 includes everything that is literally not the number 2."
+          }
+      ]
+  },
+  "90": {
+      "id": "pro-90",
+      "title": "Customer Placing the Largest Number of Orders",
+      "levelNumber": 90,
+      "problemId": 90,
+      "problemTitle": "Customer Placing the Largest Number of Orders",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft",
+          "Twitter"
+      ],
+      "tracing": {
+          "code": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "GROUP BY customer_number",
+                      "Action": "Cluster orders"
+                  },
+                  "explanation": "Group customer 1: 2 orders (orders 1, 7). Group customer 2: 2 orders (orders 2, 5). Group customer 3: 3 orders (orders 3, 4, 6)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "ORDER BY COUNT(*) DESC",
+                      "Action": "Sort by order volume"
+                  },
+                  "explanation": "Customer 3 (count = 3), Customer 1 (count = 2), Customer 2 (count = 2)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "LIMIT 1",
+                      "Action": "Take top row"
+                  },
+                  "explanation": "Customer 3 is at the top position; LIMIT 1 extracts customer 3."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-90-1",
+              "category": "💡 Interview Notes",
+              "question": "What is the difference between COUNT(*) and COUNT(customer_number)?",
+              "whatInterviewerChecks": "Understanding of aggregate mechanics and null handling.",
+              "bestReplyScript": "COUNT(*) counts the total number of physical rows within each group partition without inspecting individual columns for null values. COUNT(customer_number) inspects the specific column and only counts non-NULL entries. Since customer_number is not null in Orders, both yield the same result here, but COUNT(*) is idiomatic and allows query engines to choose the smallest available index to count rows.",
+              "commonMistakesToAvoid": "Assuming COUNT(*) is slower than COUNT(column).",
+              "keyPoints": [
+                  "COUNT(*) counts all rows regardless of NULLs",
+                  "COUNT(col) ignores NULL values in that specific column",
+                  "Query engines optimize COUNT(*) using available indexes"
+              ],
+              "codeSnippet": "ORDER BY COUNT(*) DESC"
+          },
+          {
+              "id": "q-90-2",
+              "category": "💡 Interview Notes",
+              "question": "How would you modify this query if multiple customers tied for the highest number of orders and all tied customers must be returned?",
+              "whatInterviewerChecks": "Handling edge cases and tie-breaking using window functions or subqueries.",
+              "bestReplyScript": "If ties are possible, `LIMIT 1` would arbitrarily return only one tied customer. To return all tied leaders, we can use the `DENSE_RANK()` window function: `SELECT customer_number FROM (SELECT customer_number, DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) rnk FROM Orders GROUP BY customer_number) t WHERE rnk = 1`. Alternatively, we can use `HAVING COUNT(*) = (SELECT MAX(cnt) FROM (SELECT COUNT(*) cnt FROM Orders GROUP BY customer_number) sub)`.",
+              "commonMistakesToAvoid": "Using LIMIT 1 when ties are allowed.",
+              "keyPoints": [
+                  "LIMIT 1 truncates ties arbitrarily",
+                  "DENSE_RANK() or HAVING with subquery returns all tied top performers"
+              ],
+              "codeSnippet": "SELECT customer_number FROM (SELECT customer_number, DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) rnk FROM Orders GROUP BY customer_number) t WHERE rnk = 1"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-90-1",
+              "title": "1. Ordering by customer_number instead of order count",
+              "description": "Writing ORDER BY customer_number DESC LIMIT 1.",
+              "badSnippet": "ORDER BY customer_number DESC LIMIT 1",
+              "failingInput": "Orders table where customer 3 placed 1 order and customer 1 placed 5 orders",
+              "consequence": "Returns the highest customer ID instead of the customer with the highest order volume.",
+              "howToFix": "Order by the aggregate count: ORDER BY COUNT(*) DESC.",
+              "mistake": "Sorting by entity identifier instead of aggregate frequency",
+              "whyItHappens": "Confusing sorting by ID value with sorting by group frequency."
+          },
+          {
+              "id": "m-90-2",
+              "title": "2. Omitting GROUP BY",
+              "description": "Writing SELECT customer_number, COUNT(*) FROM Orders ORDER BY COUNT(*) DESC LIMIT 1 without GROUP BY.",
+              "badSnippet": "SELECT customer_number, COUNT(*) FROM Orders;",
+              "failingInput": "Multiple customer rows in Orders",
+              "consequence": "Fails with SQL syntax error (SQLSTATE 42803) or collapses the entire table into one row.",
+              "howToFix": "Add GROUP BY customer_number.",
+              "mistake": "Missing GROUP BY with aggregate function",
+              "whyItHappens": "Forgetting that aggregate counts per customer require group partitioning."
+          }
+      ]
+  },
+  "Pro-010": {
+      "id": "pro-90",
+      "title": "Customer Placing the Largest Number of Orders",
+      "levelNumber": 90,
+      "problemId": 90,
+      "problemTitle": "Customer Placing the Largest Number of Orders",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft",
+          "Twitter"
+      ],
+      "tracing": {
+          "code": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "GROUP BY customer_number",
+                      "Action": "Cluster orders"
+                  },
+                  "explanation": "Group customer 1: 2 orders (orders 1, 7). Group customer 2: 2 orders (orders 2, 5). Group customer 3: 3 orders (orders 3, 4, 6)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "ORDER BY COUNT(*) DESC",
+                      "Action": "Sort by order volume"
+                  },
+                  "explanation": "Customer 3 (count = 3), Customer 1 (count = 2), Customer 2 (count = 2)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "LIMIT 1",
+                      "Action": "Take top row"
+                  },
+                  "explanation": "Customer 3 is at the top position; LIMIT 1 extracts customer 3."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-90-1",
+              "category": "💡 Interview Notes",
+              "question": "What is the difference between COUNT(*) and COUNT(customer_number)?",
+              "whatInterviewerChecks": "Understanding of aggregate mechanics and null handling.",
+              "bestReplyScript": "COUNT(*) counts the total number of physical rows within each group partition without inspecting individual columns for null values. COUNT(customer_number) inspects the specific column and only counts non-NULL entries. Since customer_number is not null in Orders, both yield the same result here, but COUNT(*) is idiomatic and allows query engines to choose the smallest available index to count rows.",
+              "commonMistakesToAvoid": "Assuming COUNT(*) is slower than COUNT(column).",
+              "keyPoints": [
+                  "COUNT(*) counts all rows regardless of NULLs",
+                  "COUNT(col) ignores NULL values in that specific column",
+                  "Query engines optimize COUNT(*) using available indexes"
+              ],
+              "codeSnippet": "ORDER BY COUNT(*) DESC"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-90-1",
+              "title": "1. Ordering by customer_number instead of order count",
+              "description": "Writing ORDER BY customer_number DESC LIMIT 1.",
+              "badSnippet": "ORDER BY customer_number DESC LIMIT 1",
+              "failingInput": "Orders table where customer 3 placed 1 order and customer 1 placed 5 orders",
+              "consequence": "Returns the highest customer ID instead of the customer with the highest order volume.",
+              "howToFix": "Order by the aggregate count: ORDER BY COUNT(*) DESC.",
+              "mistake": "Sorting by entity identifier instead of aggregate frequency",
+              "whyItHappens": "Confusing sorting by ID value with sorting by group frequency."
+          }
+      ]
+  },
+  "91": {
+      "id": "pro-91",
+      "title": "Big Countries",
+      "levelNumber": 91,
+      "problemId": 91,
+      "problemTitle": "Big Countries",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Adobe",
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM World",
+                      "Action": "Read countries"
+                  },
+                  "explanation": "Scans 4 rows: Afghanistan, Albania, Algeria, Andorra."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE area >= 3000000 OR population >= 25000000",
+                      "Action": "Evaluate OR condition"
+                  },
+                  "explanation": "Afghanistan (pop 25500100 >= 25M -> TRUE); Albania (both fail -> FALSE); Algeria (pop 37100000 >= 25M -> TRUE); Andorra (both fail -> FALSE)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT name, population, area",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: (Afghanistan, 25500100, 652230) and (Algeria, 37100000, 2381741)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-91-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is OR used rather than AND in this query?",
+              "whatInterviewerChecks": "Understanding of boolean logic and business requirements.",
+              "bestReplyScript": "The problem states that a country is considered big if its area is at least 3,000,000 OR its population is at least 25,000,000. Satisfying either condition independently qualifies the country. Using AND would incorrectly require both conditions to be true simultaneously, discarding geographically massive countries with smaller populations (like Canada or Australia) and densely populated nations.",
+              "commonMistakesToAvoid": "Using AND instead of OR.",
+              "keyPoints": [
+                  "OR operator returns TRUE if either operand is true",
+                  "AND requires both operands to be true",
+                  "Business rule specifies an alternative qualification"
+              ],
+              "codeSnippet": "WHERE area >= 3000000 OR population >= 25000000"
+          },
+          {
+              "id": "q-91-2",
+              "category": "💡 Interview Notes",
+              "question": "Can this query be written using UNION, and why was UNION historically discussed for this problem?",
+              "whatInterviewerChecks": "Query optimization history and indexing strategies across SQL engines.",
+              "bestReplyScript": "Yes, it can be written as: `SELECT name, population, area FROM World WHERE area >= 3000000 UNION SELECT name, population, area FROM World WHERE population >= 25000000`. Historically in older versions of MySQL (prior to 5.0 index merge improvements), an `OR` condition across two different indexed columns would force a full table scan, whereas `UNION` allowed the engine to perform two separate index lookups and combine results. In modern RDBMSs, the query optimizer uses index merge / bitmap scans so the simple `OR` query is preferred.",
+              "commonMistakesToAvoid": "Using UNION ALL instead of UNION (which would duplicate countries qualifying under both conditions).",
+              "keyPoints": [
+                  "UNION combines results from separate queries with deduplication",
+                  "Modern optimizers handle OR across indexed columns via index merge"
+              ],
+              "codeSnippet": "SELECT name, population, area FROM World WHERE area >= 3000000 UNION SELECT name, population, area FROM World WHERE population >= 25000000"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-91-1",
+              "title": "1. Using AND instead of OR",
+              "description": "Writing WHERE area >= 3000000 AND population >= 25000000.",
+              "badSnippet": "WHERE area >= 3000000 AND population >= 25000000",
+              "failingInput": "Afghanistan (area 652230, pop 25500100)",
+              "consequence": "Filters out countries that meet only one of the two qualifications.",
+              "howToFix": "Use the OR operator: WHERE area >= 3000000 OR population >= 25000000.",
+              "mistake": "Wrong boolean operator",
+              "whyItHappens": "Confusing 'either/or' qualification with joint requirement."
+          },
+          {
+              "id": "m-91-2",
+              "title": "2. Using strict inequality (>)",
+              "description": "Writing area > 3000000 OR population > 25000000.",
+              "badSnippet": "WHERE area > 3000000 OR population > 25000000",
+              "failingInput": "A country with exactly 3,000,000 area or exactly 25,000,000 population",
+              "consequence": "Excludes countries on the exact boundary thresholds.",
+              "howToFix": "Use >=: area >= 3000000 OR population >= 25000000.",
+              "mistake": "Off-by-one / boundary operator error",
+              "whyItHappens": "Misinterpreting 'at least' as strictly greater than."
+          }
+      ]
+  },
+  "Pro-011": {
+      "id": "pro-91",
+      "title": "Big Countries",
+      "levelNumber": 91,
+      "problemId": 91,
+      "problemTitle": "Big Countries",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Adobe",
+          "Amazon",
+          "Apple",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "FROM World",
+                      "Action": "Read countries"
+                  },
+                  "explanation": "Scans 4 rows: Afghanistan, Albania, Algeria, Andorra."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE area >= 3000000 OR population >= 25000000",
+                      "Action": "Evaluate OR condition"
+                  },
+                  "explanation": "Afghanistan (pop 25500100 >= 25M -> TRUE); Albania (both fail -> FALSE); Algeria (pop 37100000 >= 25M -> TRUE); Andorra (both fail -> FALSE)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT name, population, area",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: (Afghanistan, 25500100, 652230) and (Algeria, 37100000, 2381741)."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-91-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is OR used rather than AND in this query?",
+              "whatInterviewerChecks": "Understanding of boolean logic and business requirements.",
+              "bestReplyScript": "The problem states that a country is considered big if its area is at least 3,000,000 OR its population is at least 25,000,000. Satisfying either condition independently qualifies the country. Using AND would incorrectly require both conditions to be true simultaneously, discarding geographically massive countries with smaller populations (like Canada or Australia) and densely populated nations.",
+              "commonMistakesToAvoid": "Using AND instead of OR.",
+              "keyPoints": [
+                  "OR operator returns TRUE if either operand is true",
+                  "AND requires both operands to be true",
+                  "Business rule specifies an alternative qualification"
+              ],
+              "codeSnippet": "WHERE area >= 3000000 OR population >= 25000000"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-91-1",
+              "title": "1. Using AND instead of OR",
+              "description": "Writing WHERE area >= 3000000 AND population >= 25000000.",
+              "badSnippet": "WHERE area >= 3000000 AND population >= 25000000",
+              "failingInput": "Afghanistan (area 652230, pop 25500100)",
+              "consequence": "Filters out countries that meet only one of the two qualifications.",
+              "howToFix": "Use the OR operator: WHERE area >= 3000000 OR population >= 25000000.",
+              "mistake": "Wrong boolean operator",
+              "whyItHappens": "Confusing 'either/or' qualification with joint requirement."
+          }
+      ]
+  },
+  "92": {
+      "id": "pro-92",
+      "title": "Classes With at Least 5 Students",
+      "levelNumber": 92,
+      "problemId": 92,
+      "problemTitle": "Classes With at Least 5 Students",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "GROUP BY class",
+                      "Action": "Partition enrollments"
+                  },
+                  "explanation": "Math bucket: [A, B, C, D, E] (count = 5). Science bucket: [A, B, C] (count = 3)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "HAVING COUNT(student) >= 5",
+                      "Action": "Filter partitions"
+                  },
+                  "explanation": "Math (5 >= 5 -> TRUE); Science (3 >= 5 -> FALSE, DISCARD)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT class",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: Math."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-92-1",
+              "category": "💡 Interview Notes",
+              "question": "Why can't we write `WHERE COUNT(student) >= 5` instead of using HAVING?",
+              "whatInterviewerChecks": "Core understanding of SQL logical query processing and execution order.",
+              "bestReplyScript": "In SQL execution order, the `WHERE` clause is processed before rows are grouped (before `GROUP BY`), and operates on individual rows where group aggregate summaries like `COUNT()` do not yet exist. The `HAVING` clause executes after `GROUP BY`, allowing filtering conditions that evaluate group aggregate expressions like `COUNT(student) >= 5`.",
+              "commonMistakesToAvoid": "Writing `WHERE COUNT(...) >= 5`.",
+              "keyPoints": [
+                  "WHERE filters individual rows prior to grouping",
+                  "HAVING filters groups post-aggregation",
+                  "Aggregate functions are only valid in HAVING and SELECT"
+              ],
+              "codeSnippet": "GROUP BY class HAVING COUNT(student) >= 5"
+          },
+          {
+              "id": "q-92-2",
+              "category": "💡 Interview Notes",
+              "question": "What if duplicate (student, class) entries were allowed in the Courses table?",
+              "whatInterviewerChecks": "Edge case awareness regarding multi-enrollment and DISTINCT modifiers.",
+              "bestReplyScript": "If the table did not enforce a composite primary key on `(student, class)` and allowed duplicate rows, writing `COUNT(student)` would count the same student multiple times. In that scenario, we would write `HAVING COUNT(DISTINCT student) >= 5` to ensure 5 distinct individual students are enrolled.",
+              "commonMistakesToAvoid": "Using COUNT(student) when duplicate enrollments are possible.",
+              "keyPoints": [
+                  "COUNT(DISTINCT student) prevents multiple counting of repeat enrollments",
+                  "With composite primary key (student, class), COUNT(student) is identical"
+              ],
+              "codeSnippet": "HAVING COUNT(DISTINCT student) >= 5"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-92-1",
+              "title": "1. Using WHERE with aggregate functions",
+              "description": "Writing WHERE COUNT(student) >= 5.",
+              "badSnippet": "WHERE COUNT(student) >= 5",
+              "failingInput": "Courses table enrollment data",
+              "consequence": "Throws an immediate SQL syntax/semantic error (SQLSTATE 42803: aggregate functions are not allowed in WHERE).",
+              "howToFix": "Use HAVING: GROUP BY class HAVING COUNT(student) >= 5.",
+              "mistake": "Placing aggregate function in WHERE clause",
+              "whyItHappens": "Confusing pre-aggregation row filtering with post-aggregation group filtering."
+          },
+          {
+              "id": "m-92-2",
+              "title": "2. Using strict greater-than (> 5)",
+              "description": "Writing HAVING COUNT(student) > 5.",
+              "badSnippet": "HAVING COUNT(student) > 5",
+              "failingInput": "Class with exactly 5 students (like Math)",
+              "consequence": "Incorrectly drops classes that meet the requirement of having at least 5 students.",
+              "howToFix": "Use >=: HAVING COUNT(student) >= 5.",
+              "mistake": "Off-by-one comparison operator",
+              "whyItHappens": "Misinterpreting 'at least 5' as strictly greater than 5."
+          }
+      ]
+  },
+  "Pro-012": {
+      "id": "pro-92",
+      "title": "Classes With at Least 5 Students",
+      "levelNumber": 92,
+      "problemId": 92,
+      "problemTitle": "Classes With at Least 5 Students",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Apple",
+          "Facebook",
+          "Google",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "GROUP BY class",
+                      "Action": "Partition enrollments"
+                  },
+                  "explanation": "Math bucket: [A, B, C, D, E] (count = 5). Science bucket: [A, B, C] (count = 3)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "HAVING COUNT(student) >= 5",
+                      "Action": "Filter partitions"
+                  },
+                  "explanation": "Math (5 >= 5 -> TRUE); Science (3 >= 5 -> FALSE, DISCARD)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT class",
+                      "Action": "Emit results"
+                  },
+                  "explanation": "Emits: Math."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-92-1",
+              "category": "💡 Interview Notes",
+              "question": "Why can't we write `WHERE COUNT(student) >= 5` instead of using HAVING?",
+              "whatInterviewerChecks": "Core understanding of SQL logical query processing and execution order.",
+              "bestReplyScript": "In SQL execution order, the `WHERE` clause is processed before rows are grouped (before `GROUP BY`), and operates on individual rows where group aggregate summaries like `COUNT()` do not yet exist. The `HAVING` clause executes after `GROUP BY`, allowing filtering conditions that evaluate group aggregate expressions like `COUNT(student) >= 5`.",
+              "commonMistakesToAvoid": "Writing `WHERE COUNT(...) >= 5`.",
+              "keyPoints": [
+                  "WHERE filters individual rows prior to grouping",
+                  "HAVING filters groups post-aggregation",
+                  "Aggregate functions are only valid in HAVING and SELECT"
+              ],
+              "codeSnippet": "GROUP BY class HAVING COUNT(student) >= 5"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-92-1",
+              "title": "1. Using WHERE with aggregate functions",
+              "description": "Writing WHERE COUNT(student) >= 5.",
+              "badSnippet": "WHERE COUNT(student) >= 5",
+              "failingInput": "Courses table enrollment data",
+              "consequence": "Throws an immediate SQL syntax/semantic error (SQLSTATE 42803: aggregate functions are not allowed in WHERE).",
+              "howToFix": "Use HAVING: GROUP BY class HAVING COUNT(student) >= 5.",
+              "mistake": "Placing aggregate function in WHERE clause",
+              "whyItHappens": "Confusing pre-aggregation row filtering with post-aggregation group filtering."
+          }
+      ]
+  },
+  "93": {
+      "id": "pro-93",
+      "title": "Friend Requests I: Overall Acceptance Rate",
+      "levelNumber": 93,
+      "problemId": 93,
+      "problemTitle": "Friend Requests I: Overall Acceptance Rate",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Facebook",
+          "Google",
+          "LinkedIn",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "Sent Requests",
+                      "Action": "Count distinct friend requests"
+                  },
+                  "explanation": "Pairs: (1, 2), (1, 3), (2, 3) -> 3 distinct invitations."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "Accepted Requests",
+                      "Action": "Count distinct accepted requests"
+                  },
+                  "explanation": "Pairs: (1, 2), (2, 3) -> 2 distinct accepted friendships."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Division & Rounding",
+                      "Action": "Compute ratio and round"
+                  },
+                  "explanation": "2 * 1.0 / 3 = 0.666667; IFNULL keeps 0.666667; ROUND(0.666667, 2) yields 0.67."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-93-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must we count distinct pairs rather than counting raw rows?",
+              "whatInterviewerChecks": "Understanding of business logic requirements and duplicate prevention.",
+              "bestReplyScript": "Users can resend friend requests multiple times if an earlier invitation was ignored or expired. The problem explicitly specifies to count distinct friend request pairs only. Without DISTINCT, duplicate invitation attempts or repeat accepted logs would artificially skew the conversion ratio.",
+              "commonMistakesToAvoid": "Counting raw rows with COUNT(*) without DISTINCT.",
+              "keyPoints": [
+                  "Users may send repeat friend requests",
+                  "Business metric specifies distinct relationship pairs",
+                  "DISTINCT guarantees 1 count per unique pair"
+              ],
+              "codeSnippet": "SELECT DISTINCT sender_id, send_to_id FROM FriendRequest"
+          },
+          {
+              "id": "q-93-2",
+              "category": "💡 Interview Notes",
+              "question": "How does NULLIF protect against division-by-zero errors?",
+              "whatInterviewerChecks": "Defensive programming and arithmetic error handling in SQL.",
+              "bestReplyScript": "In SQL, dividing a number by 0 raises an arithmetic overflow/divide-by-zero error. `NULLIF(expression, 0)` evaluates to NULL whenever expression equals 0. Dividing any number by NULL safely produces NULL instead of throwing an exception. Finally, `IFNULL(..., 0.0)` converts the NULL into 0.00, satisfying the problem requirement to return 0.00 when there are no requests.",
+              "commonMistakesToAvoid": "Dividing directly without checking for a zero denominator.",
+              "keyPoints": [
+                  "Division by 0 crashes SQL queries",
+                  "NULLIF(val, 0) turns 0 into NULL",
+                  "Any number divided by NULL equals NULL",
+                  "IFNULL / COALESCE rescues NULL with 0.0"
+              ],
+              "codeSnippet": "NULLIF((SELECT COUNT(*) FROM ...), 0)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-93-1",
+              "title": "1. Integer division truncation",
+              "description": "Dividing integer counts directly without * 1.0.",
+              "badSnippet": "accepted_count / sent_count",
+              "failingInput": "2 accepted / 3 sent",
+              "consequence": "Rounds down to 0 instead of 0.67 in engines that enforce integer math (PostgreSQL, SQLite, SQL Server).",
+              "howToFix": "Multiply by 1.0 or CAST to FLOAT before dividing: count * 1.0 / denom.",
+              "mistake": "Integer division truncation",
+              "whyItHappens": "Forgetting that dividing two integers yields an integer in SQL standard."
+          },
+          {
+              "id": "m-93-2",
+              "title": "2. Unhandled division by zero",
+              "description": "Failing to handle an empty FriendRequest table.",
+              "badSnippet": "SELECT ROUND(accepted / sent, 2)",
+              "failingInput": "Empty FriendRequest table (0 sent requests)",
+              "consequence": "Throws division by zero error or returns NULL instead of 0.00.",
+              "howToFix": "Use NULLIF and IFNULL: ROUND(IFNULL(num * 1.0 / NULLIF(denom, 0), 0.0), 2).",
+              "mistake": "Unhandled zero denominator",
+              "whyItHappens": "Overlooking the edge case of 0 total friend requests."
+          }
+      ]
+  },
+  "Pro-013": {
+      "id": "pro-93",
+      "title": "Friend Requests I: Overall Acceptance Rate",
+      "levelNumber": 93,
+      "problemId": 93,
+      "problemTitle": "Friend Requests I: Overall Acceptance Rate",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Facebook",
+          "Google",
+          "LinkedIn",
+          "Microsoft"
+      ],
+      "tracing": {
+          "code": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 5,
+                  "vars": {
+                      "Phase": "Sent Requests",
+                      "Action": "Count distinct friend requests"
+                  },
+                  "explanation": "Pairs: (1, 2), (1, 3), (2, 3) -> 3 distinct invitations."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 4,
+                  "vars": {
+                      "Phase": "Accepted Requests",
+                      "Action": "Count distinct accepted requests"
+                  },
+                  "explanation": "Pairs: (1, 2), (2, 3) -> 2 distinct accepted friendships."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Division & Rounding",
+                      "Action": "Compute ratio and round"
+                  },
+                  "explanation": "2 * 1.0 / 3 = 0.666667; IFNULL keeps 0.666667; ROUND(0.666667, 2) yields 0.67."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-93-1",
+              "category": "💡 Interview Notes",
+              "question": "Why must we count distinct pairs rather than counting raw rows?",
+              "whatInterviewerChecks": "Understanding of business logic requirements and duplicate prevention.",
+              "bestReplyScript": "Users can resend friend requests multiple times if an earlier invitation was ignored or expired. The problem explicitly specifies to count distinct friend request pairs only. Without DISTINCT, duplicate invitation attempts or repeat accepted logs would artificially skew the conversion ratio.",
+              "commonMistakesToAvoid": "Counting raw rows with COUNT(*) without DISTINCT.",
+              "keyPoints": [
+                  "Users may send repeat friend requests",
+                  "Business metric specifies distinct relationship pairs",
+                  "DISTINCT guarantees 1 count per unique pair"
+              ],
+              "codeSnippet": "SELECT DISTINCT sender_id, send_to_id FROM FriendRequest"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-93-1",
+              "title": "1. Integer division truncation",
+              "description": "Dividing integer counts directly without * 1.0.",
+              "badSnippet": "accepted_count / sent_count",
+              "failingInput": "2 accepted / 3 sent",
+              "consequence": "Rounds down to 0 instead of 0.67 in engines that enforce integer math (PostgreSQL, SQLite, SQL Server).",
+              "howToFix": "Multiply by 1.0 or CAST to FLOAT before dividing: count * 1.0 / denom.",
+              "mistake": "Integer division truncation",
+              "whyItHappens": "Forgetting that dividing two integers yields an integer in SQL standard."
+          }
+      ]
+  },
+  "94": {
+      "id": "pro-94",
+      "title": "Consecutive Available Seats",
+      "levelNumber": 94,
+      "problemId": 94,
+      "problemTitle": "Consecutive Available Seats",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Self Join",
+                      "Action": "Compare seat pairs"
+                  },
+                  "explanation": "Pairs with ABS(c1 - c2) = 1: (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3), (4, 5), (5, 4)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE c1.free = 1 AND c2.free = 1",
+                      "Action": "Filter pairs"
+                  },
+                  "explanation": "Free pairs: (3, 4), (4, 3), (4, 5), (5, 4). (Seats 1 and 2 excluded because seat 2 is occupied)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT DISTINCT & ORDER BY",
+                      "Action": "Emit sorted seat IDs"
+                  },
+                  "explanation": "Distinct seat_ids from c1: [3, 4, 5]. Sorted ascending: 3, 4, 5."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-94-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is DISTINCT necessary in this query?",
+              "whatInterviewerChecks": "Understanding of self-join multiplicity and overlapping adjacency.",
+              "bestReplyScript": "A seat that has consecutive free seats on both its left and its right sides (such as seat 4 between free seat 3 and free seat 5) matches twice in the self join: once with seat 3 and once with seat 5. Without `DISTINCT`, seat 4 would appear twice in the final output.",
+              "commonMistakesToAvoid": "Omitting DISTINCT and returning duplicate seat rows.",
+              "keyPoints": [
+                  "Interior seats match two adjacent neighbors",
+                  "Self join creates duplicate rows for middle seats",
+                  "DISTINCT ensures each seat ID appears exactly once"
+              ],
+              "codeSnippet": "SELECT DISTINCT c1.seat_id FROM Cinema c1 JOIN Cinema c2 ON ABS(c1.seat_id - c2.seat_id) = 1"
+          },
+          {
+              "id": "q-94-2",
+              "category": "💡 Interview Notes",
+              "question": "How can this problem be solved without a self-join using window functions?",
+              "whatInterviewerChecks": "Advanced SQL proficiency and optimization using LAG and LEAD.",
+              "bestReplyScript": "In systems supporting window functions, we can use `LAG(free)` and `LEAD(free)`: `SELECT seat_id FROM (SELECT seat_id, free, LAG(free) OVER (ORDER BY seat_id) prev_f, LEAD(free) OVER (ORDER BY seat_id) next_f FROM Cinema) t WHERE free = 1 AND (prev_f = 1 OR next_f = 1) ORDER BY seat_id;`. This avoids the quadratic self-join entirely and runs in a single O(N log N) pass.",
+              "commonMistakesToAvoid": "Forgetting that LAG or LEAD can be NULL at the start/end of the table.",
+              "keyPoints": [
+                  "LAG and LEAD inspect previous and following rows without joins",
+                  "Window functions operate in O(N log N) time vs O(N²) self-join",
+                  "Boundary NULLs naturally evaluate to UNKNOWN and are excluded safely"
+              ],
+              "codeSnippet": "SELECT seat_id FROM (SELECT seat_id, free, LAG(free) OVER (ORDER BY seat_id) prev_f, LEAD(free) OVER (ORDER BY seat_id) next_f FROM Cinema) t WHERE free = 1 AND (prev_f = 1 OR next_f = 1)"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-94-1",
+              "title": "1. Forgetting DISTINCT",
+              "description": "Writing SELECT c1.seat_id without DISTINCT.",
+              "badSnippet": "SELECT c1.seat_id FROM Cinema c1 JOIN Cinema c2...",
+              "failingInput": "Seats 3, 4, 5 all free",
+              "consequence": "Returns [3, 4, 4, 5] because seat 4 matches both (4, 3) and (4, 5).",
+              "howToFix": "Add DISTINCT: SELECT DISTINCT c1.seat_id.",
+              "mistake": "Duplicate seat rows in output",
+              "whyItHappens": "Overlooking that middle seats have two neighbors."
+          },
+          {
+              "id": "m-94-2",
+              "title": "2. Verifying only one seat is free",
+              "description": "Writing WHERE c1.free = 1 without checking c2.free = 1.",
+              "badSnippet": "WHERE c1.free = 1",
+              "failingInput": "Seat 1 free, seat 2 occupied",
+              "consequence": "Matches seat 1 with seat 2, erroneously returning seat 1 even though seat 2 is occupied.",
+              "howToFix": "Require both seats to be free: WHERE c1.free = 1 AND c2.free = 1.",
+              "mistake": "Unilateral vacancy check",
+              "whyItHappens": "Forgetting that adjacency requires *both* seats in the pair to be unoccupied."
+          }
+      ]
+  },
+  "Pro-014": {
+      "id": "pro-94",
+      "title": "Consecutive Available Seats",
+      "levelNumber": 94,
+      "problemId": 94,
+      "problemTitle": "Consecutive Available Seats",
+      "difficulty": "Easy",
+      "companyTags": [
+          "Amazon",
+          "Bloomberg",
+          "Facebook",
+          "Google",
+          "Uber"
+      ],
+      "tracing": {
+          "code": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;",
+          "steps": [
+              {
+                  "step": 1,
+                  "lineNumber": 3,
+                  "vars": {
+                      "Phase": "Self Join",
+                      "Action": "Compare seat pairs"
+                  },
+                  "explanation": "Pairs with ABS(c1 - c2) = 1: (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3), (4, 5), (5, 4)."
+              },
+              {
+                  "step": 2,
+                  "lineNumber": 6,
+                  "vars": {
+                      "Phase": "WHERE c1.free = 1 AND c2.free = 1",
+                      "Action": "Filter pairs"
+                  },
+                  "explanation": "Free pairs: (3, 4), (4, 3), (4, 5), (5, 4). (Seats 1 and 2 excluded because seat 2 is occupied)."
+              },
+              {
+                  "step": 3,
+                  "lineNumber": 1,
+                  "vars": {
+                      "Phase": "SELECT DISTINCT & ORDER BY",
+                      "Action": "Emit sorted seat IDs"
+                  },
+                  "explanation": "Distinct seat_ids from c1: [3, 4, 5]. Sorted ascending: 3, 4, 5."
+              }
+          ]
+      },
+      "questions": [
+          {
+              "id": "q-94-1",
+              "category": "💡 Interview Notes",
+              "question": "Why is DISTINCT necessary in this query?",
+              "whatInterviewerChecks": "Understanding of self-join multiplicity and overlapping adjacency.",
+              "bestReplyScript": "A seat that has consecutive free seats on both its left and its right sides (such as seat 4 between free seat 3 and free seat 5) matches twice in the self join: once with seat 3 and once with seat 5. Without `DISTINCT`, seat 4 would appear twice in the final output.",
+              "commonMistakesToAvoid": "Omitting DISTINCT and returning duplicate seat rows.",
+              "keyPoints": [
+                  "Interior seats match two adjacent neighbors",
+                  "Self join creates duplicate rows for middle seats",
+                  "DISTINCT ensures each seat ID appears exactly once"
+              ],
+              "codeSnippet": "SELECT DISTINCT c1.seat_id FROM Cinema c1 JOIN Cinema c2 ON ABS(c1.seat_id - c2.seat_id) = 1"
+          }
+      ],
+      "mistakes": [
+          {
+              "id": "m-94-1",
+              "title": "1. Forgetting DISTINCT",
+              "description": "Writing SELECT c1.seat_id without DISTINCT.",
+              "badSnippet": "SELECT c1.seat_id FROM Cinema c1 JOIN Cinema c2...",
+              "failingInput": "Seats 3, 4, 5 all free",
+              "consequence": "Returns [3, 4, 4, 5] because seat 4 matches both (4, 3) and (4, 5).",
+              "howToFix": "Add DISTINCT: SELECT DISTINCT c1.seat_id.",
+              "mistake": "Duplicate seat rows in output",
+              "whyItHappens": "Overlooking that middle seats have two neighbors."
+          }
+      ]
+  }};
 
 export const ALL_50_STUDY_DATA = ALL_50_INTERVIEW_DATA;

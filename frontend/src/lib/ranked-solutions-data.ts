@@ -3216,292 +3216,2461 @@ const BASE_RANKED_MAP: Record<string, any> = {
     ]
   },
   "SQL-019": {
-    "code_id": "SQL-019",
-    "levelNumber": 54,
-    "title": "HAVING with COUNT()",
-    "solutions": [
-      {
-        "rank": 1,
-        "name": "Canonical Aggregate Filter",
-        "description": "Standard approach using GROUP BY paired with HAVING COUNT(*) filter condition.",
-        "code": "SELECT category_name,\n       COUNT(*) AS product_count\nFROM products\nGROUP BY category_name\nHAVING COUNT(*) >= 10\nORDER BY product_count DESC;",
-        "timeComplexity": "O(N)",
-        "spaceComplexity": "O(G)",
-        "notes": "Optimal and universally supported across all RDBMS engines."
-      }
-    ],
-    "commonMistakes": [
-      "❌ 1. Using WHERE instead of HAVING: WHERE COUNT(*) >= 10 fails because WHERE evaluates row-by-row before aggregates are computed.",
-      "❌ 2. Misusing GROUP BY: Forgetting to GROUP BY category_name causes COUNT(*) to aggregate the entire table, throwing a syntax error on selected category_name.",
-      "❌ 3. Forgetting ORDER BY: Missing ORDER BY product_count DESC yields unordered results."
-    ],
-    "keyTakeaway": "HAVING filters clustered groups post-aggregation (like COUNT >= 10), whereas WHERE filters individual rows pre-aggregation.",
-    "interviewPros": [
-      "Q1. Can you use column aliases in HAVING? Some SQL dialects (like MySQL/PostgreSQL) allow HAVING product_count >= 10, but standard ANSI SQL requires HAVING COUNT(*) >= 10.",
-      "Q2. Why does WHERE COUNT(*) throw an error? Because aggregate calculations do not exist during the WHERE phase of logical query execution.",
-      "Q3. How does the execution engine handle HAVING? It first hashes/sorts the data to form groups, computes the aggregate count, then discards groups failing the HAVING predicate.",
-      "Q4. Can HAVING be used without GROUP BY? Yes, but it acts like a global WHERE clause on a single table-wide aggregate row (rarely used)."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• What is the difference between WHERE and HAVING? (Answer: WHERE filters raw rows; HAVING filters aggregated groups)\n• Can you have both WHERE and HAVING in one query? (Answer: Yes, WHERE filters base data before GROUP BY, and HAVING filters resulting groups)\n• Does HAVING perform well? (Answer: It depends on the size of grouped data; reducing data in WHERE beforehand improves overall performance)",
-      "⚡ Performance Notes:\n• If products table has an index on category_name, grouping happens via efficient index scans instead of hash aggregation.",
-      "🌍 Real-World Use Cases:\n• ✅ Finding active users (HAVING COUNT(login) >= 5)\n• ✅ Identifying repeat customers (HAVING COUNT(order_id) > 1)\n• ✅ Flagging products with low stock alerts across warehouses (HAVING SUM(stock) < 100)"
-    ]
+      "code_id": "SQL-019",
+      "numeric_id": 54,
+      "title": "HAVING with COUNT()",
+      "code": "SELECT category_name,\n       COUNT(*) AS product_count\nFROM products\nGROUP BY category_name\nHAVING COUNT(*) >= 10\nORDER BY product_count DESC;",
+      "timeComplexity": "O(N) (N = Number of Product Records)",
+      "spaceComplexity": "O(G) (G = Number of Categories)",
+      "simplestExplanation": "Groups products by category_name, calculates the total count of products in each category using COUNT(*), filters out categories having fewer than 10 products using HAVING COUNT(*) >= 10, and orders the qualifying categories from highest product count to lowest.",
+      "mentalModel": "Products \u2500\u2500\u25ba GROUP BY category_name \u2500\u2500\u25ba COUNT(*) per Category \u2500\u2500\u25ba HAVING COUNT(*) >= 10 \u2500\u2500\u25ba SELECT category_name, product_count \u2500\u2500\u25ba ORDER BY product_count DESC",
+      "lineByLine": [
+          {
+              "line": "SELECT category_name,",
+              "explanation": "Displays the category name."
+          },
+          {
+              "line": "COUNT(*) AS product_count",
+              "explanation": "Counts all products inside each category group and aliases the count as product_count."
+          },
+          {
+              "line": "FROM products",
+              "explanation": "Reads all product records from the products table."
+          },
+          {
+              "line": "GROUP BY category_name",
+              "explanation": "Groups products belonging to the same category together."
+          },
+          {
+              "line": "HAVING COUNT(*) >= 10",
+              "explanation": "Filters aggregated groups, keeping only categories that contain 10 or more products."
+          },
+          {
+              "line": "ORDER BY product_count DESC;",
+              "explanation": "Sorts output descending so categories with the most products appear first."
+          }
+      ],
+      "beginnerTraps": [
+          "\u274c 1. Using WHERE with COUNT(): WHERE COUNT(*) >= 10 causes an error because WHERE runs before grouping and cannot evaluate aggregate functions.",
+          "\u274c 2. Forgetting GROUP BY: Attempting to select category_name with COUNT(*) without GROUP BY category_name throws an expression not in GROUP BY error.",
+          "\u274c 3. Using COUNT(column_name) when NULLs exist: COUNT(column_name) ignores NULL values, whereas COUNT(*) counts every row.",
+          "\u274c 4. Forgetting ORDER BY: Missing ORDER BY product_count DESC produces unranked, non-deterministic output."
+      ],
+      "keyTakeaway": "HAVING filters groups after aggregation (e.g. COUNT(*) >= 10), whereas WHERE filters individual rows before grouping occurs.",
+      "interviewPros": [
+          "Q1. Why use HAVING instead of WHERE? Because HAVING filters grouped data after aggregation, whereas WHERE cannot evaluate aggregate functions.",
+          "Q2. Can HAVING use COUNT()? Yes, HAVING COUNT(*) >= N is one of the most common SQL interview patterns.",
+          "Q3. What does COUNT(*) count? Every row in the group, including rows containing NULLs in other columns.",
+          "Q4. What is the difference between COUNT(*) and COUNT(col)? COUNT(*) counts all rows; COUNT(col) ignores NULLs in that specific column.",
+          "Q5. Can ORDER BY use aliases? Yes, ORDER BY product_count DESC works because ORDER BY executes after SELECT in logical query processing."
+      ],
+      "interviewCons": [
+          "\u2b50 Questions Interviewers Will Ask:\n\u2022 What is the logical execution order of HAVING vs WHERE? (Answer: FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY)\n\u2022 Can you use both WHERE and HAVING in the same query? (Answer: Yes, WHERE filters base rows first, then GROUP BY groups, then HAVING filters groups)\n\u2022 Can HAVING use column aliases? (Answer: Standard ANSI SQL requires the aggregate function e.g. HAVING COUNT(*) >= 10, though MySQL allows aliases)",
+          "\u26a1 Performance Notes:\n\u2022 An index on category_name speeds up grouping significantly by enabling loose/stream index scans.",
+          "\ud83c\udf0d Real-World Use Cases:\n\u2022 \u2705 Categories with high inventory volumes\n\u2022 \u2705 Active customers with 10+ completed orders\n\u2022 \u2705 High-density delivery zones with multiple shipments"
+      ]
   },
   "SQL-020": {
-    "code_id": "SQL-020",
-    "levelNumber": 55,
-    "title": "HAVING with SUM()",
-    "solutions": [
-      {
-        "rank": 1,
-        "name": "Grouped Aggregate Filter (Recommended)",
-        "description": "Uses standard GROUP BY followed by HAVING SUM() to filter out customers based on total spend.",
-        "code": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING SUM(purchase_amount) > 50000\nORDER BY total_purchase DESC;",
-        "timeComplexity": "O(N)",
-        "spaceComplexity": "O(G)",
-        "notes": "ANSI standard, optimal across all major RDBMS engines."
-      },
-      {
-        "rank": 2,
-        "name": "Alias in HAVING (MySQL Specific)",
-        "description": "MySQL permits using the SELECT alias 'total_purchase' directly in the HAVING clause.",
-        "code": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING total_purchase > 50000\nORDER BY total_purchase DESC;",
-        "timeComplexity": "O(N)",
-        "spaceComplexity": "O(G)",
-        "notes": "Shorter syntax but not standard. Fails in SQL Server, Oracle, and strict PostgreSQL modes."
-      }
-    ],
-    "commonMistakes": [
-      "❌ 1. Using WHERE instead of HAVING: WHERE SUM(purchase_amount) > 50000 causes an error 'aggregate functions are not allowed in WHERE'.",
-      "❌ 2. Forgetting GROUP BY: Without GROUP BY, the query attempts to sum all table records into a single row, causing expression mismatch with customer details.",
-      "❌ 3. Using COUNT() instead of SUM(): COUNT(purchase_amount) calculates the number of transactions, not the monetary total of those transactions.",
-      "❌ 4. Forgetting ORDER BY: Missing ORDER BY total_purchase DESC makes output unpredictable."
-    ],
-    "keyTakeaway": "Use SUM() to aggregate continuous numeric quantities (like money), and HAVING to filter groups by those derived totals.",
-    "interviewPros": [
-      "Q1. Why use HAVING instead of WHERE? Because aggregate values like SUM() only exist after the GROUP BY phase, which happens after WHERE.",
-      "Q2. Can GROUP BY contain multiple columns? Yes, grouping by customer_id and customer_name ensures correct attribution.",
-      "Q3. Why not just group by customer_name? Names aren't always unique! Grouping by customer_id is safer, and including customer_name in GROUP BY allows selecting it without functional dependency errors.",
-      "Q4. Can ORDER BY use aliases? Yes, ORDER BY is evaluated last, so it can reference SELECT aliases like total_purchase."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• What is the difference between SUM() and COUNT()? (Answer: SUM adds numeric values together; COUNT tallies the number of rows)\n• Can you filter by an alias in HAVING? (Answer: Only in some dialects like MySQL; standard SQL requires repeating the aggregate function in HAVING)\n• Does HAVING perform well on large datasets? (Answer: HAVING requires scanning all groups. If we only wanted recent purchases, filtering dates in WHERE first would optimize performance)",
-      "⚡ Performance Notes:\n• A composite index on purchases(customer_id, purchase_amount) can speed up the aggregation if the planner can use an Index-Only Scan.",
-      "🌍 Real-World Use Cases:\n• ✅ Finding high-value VIP customers for loyalty rewards\n• ✅ Finding sales reps who exceeded their quarterly targets\n• ✅ Identifying product categories generating over $1M revenue"
-    ]
+      "code_id": "SQL-020",
+      "numeric_id": 55,
+      "title": "HAVING with SUM()",
+      "code": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING SUM(purchase_amount) > 50000\nORDER BY total_purchase DESC;",
+      "timeComplexity": "O(N) (N = Number of Purchase Records)",
+      "spaceComplexity": "O(G) (G = Number of Customers)",
+      "simplestExplanation": "Groups purchase transactions by customer_id and customer_name, calculates cumulative spend with SUM(purchase_amount), filters out customers whose cumulative spend is \u20b950,000 or less using HAVING SUM(purchase_amount) > 50000, and sorts high spenders first.",
+      "mentalModel": "Purchases \u2500\u2500\u25ba GROUP BY customer_id, customer_name \u2500\u2500\u25ba SUM(purchase_amount) \u2500\u2500\u25ba HAVING SUM > 50000 \u2500\u2500\u25ba SELECT \u2500\u2500\u25ba ORDER BY total_purchase DESC",
+      "lineByLine": [
+          {
+              "line": "SELECT customer_id,",
+              "explanation": "Displays the unique customer ID."
+          },
+          {
+              "line": "customer_name,",
+              "explanation": "Displays the customer name."
+          },
+          {
+              "line": "SUM(purchase_amount) AS total_purchase",
+              "explanation": "Calculates total amount spent across all transactions for each customer."
+          },
+          {
+              "line": "FROM purchases",
+              "explanation": "Reads transaction records from the purchases table."
+          },
+          {
+              "line": "GROUP BY customer_id,",
+              "explanation": "Partitions orders by customer ID."
+          },
+          {
+              "line": "customer_name",
+              "explanation": "Includes customer_name in GROUP BY to satisfy strict ANSI SQL rules for non-aggregated columns."
+          },
+          {
+              "line": "HAVING SUM(purchase_amount) > 50000",
+              "explanation": "Filters out customer groups whose total purchase does not exceed 50,000."
+          },
+          {
+              "line": "ORDER BY total_purchase DESC;",
+              "explanation": "Sorts top spenders in descending order."
+          }
+      ],
+      "beginnerTraps": [
+          "\u274c 1. Using WHERE with SUM(): WHERE SUM(purchase_amount) > 50000 throws an aggregate not allowed in WHERE error.",
+          "\u274c 2. Forgetting customer_name in GROUP BY: Selecting customer_name without including it in GROUP BY causes an error in standard SQL.",
+          "\u274c 3. Confusing SUM() with COUNT(): SUM() calculates total numeric value; COUNT() counts total number of rows.",
+          "\u274c 4. Using >= instead of >: The requirement asks for exceeding 50,000, which strictly requires > 50000."
+      ],
+      "keyTakeaway": "SUM() computes cumulative numeric values across grouped rows, and HAVING filters those sums after aggregation is performed.",
+      "interviewPros": [
+          "Q1. Why must SUM() be filtered with HAVING instead of WHERE? Because aggregate values like SUM() only exist after grouping is completed.",
+          "Q2. Can SUM() return NULL? Yes, if all values in the group are NULL, SUM() returns NULL.",
+          "Q3. What is the difference between SUM() and COUNT()? SUM() adds up numeric column values; COUNT() counts number of records.",
+          "Q4. Why include both customer_id and customer_name in GROUP BY? Because non-aggregated columns in SELECT must appear in GROUP BY to ensure deterministic results.",
+          "Q5. How can we optimize this query? Create a composite index on (customer_id, purchase_amount) to allow index-based aggregation."
+      ],
+      "interviewCons": [
+          "\u2b50 Questions Interviewers Will Ask:\n\u2022 What happens if purchase_amount has negative values? (Answer: SUM() computes the algebraic sum, correctly offsetting refunds/returns)\n\u2022 How does HAVING differ from WHERE performance-wise? (Answer: WHERE filters rows before aggregation to reduce group count; HAVING filters groups after aggregation)\n\u2022 Can you filter both before and after grouping? (Answer: Yes, e.g. WHERE status = 'Completed' GROUP BY customer_id HAVING SUM(amount) > 50000)"
+      ]
   },
   "SQL-021": {
-    "code_id": "SQL-021",
-    "levelNumber": 56,
-    "title": "INNER JOIN",
-    "solutions": [
-      {
-        "rank": 1,
-        "name": "Explicit INNER JOIN (Recommended)",
-        "description": "Standard ANSI syntax using INNER JOIN with explicit ON condition and table aliases.",
-        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Optimal, clean, and unambiguous. Strongly preferred in code reviews."
-      },
-      {
-        "rank": 2,
-        "name": "Implicit Join (Legacy Commas)",
-        "description": "Old-style SQL-89 syntax joining tables in the FROM clause using commas, then filtering with WHERE.",
-        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees e, departments d\nWHERE e.department_id = d.department_id\nORDER BY e.employee_id;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Anti-pattern today. It accidentally creates cross-joins if WHERE is forgotten. Avoid in interviews."
-      }
-    ],
-    "commonMistakes": [
-      "❌ 1. Forgetting the ON clause: Without ON, INNER JOIN acts as a CROSS JOIN producing the Cartesian product of both tables.",
-      "❌ 2. Ambiguous Column References: Writing SELECT department_id throws an error because the DB doesn't know whether to fetch it from employees or departments.",
-      "❌ 3. Using LEFT JOIN when INNER is needed: If the requirement says 'Only display employees who belong to a department', LEFT JOIN fails because it includes employees with NULL departments."
-    ],
-    "keyTakeaway": "INNER JOIN keeps only rows where a match exists on both sides of the join condition.",
-    "interviewPros": [
-      "Q1. Are JOIN and INNER JOIN the same? Yes, INNER is the default join type in SQL if unspecified.",
-      "Q2. What happens to David (NULL department)? David is dropped from the result set because NULL = 101 evaluates to UNKNOWN, which acts like FALSE in a join.",
-      "Q3. Why use table aliases (e, d)? Aliases save typing, prevent ambiguous column errors, and make queries more readable.",
-      "Q4. Can we join more than two tables? Yes, by chaining multiple INNER JOIN ... ON ... clauses sequentially."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• How does the database execute an INNER JOIN? (Answer: Usually via Hash Join, Merge Join, or Nested Loop Join, depending on indexes and table sizes)\n• What happens if the join condition is missing? (Answer: Cartesian product, O(N*M) rows are produced)\n• When would you use LEFT JOIN instead? (Answer: When we want to keep all records from the left table even if they lack a match on the right)",
-      "⚡ Performance Notes:\n• To optimize, ensure foreign key indexes exist on the join columns (e.g., INDEX(department_id) on both tables) to enable fast Merge or Hash joins.",
-      "🌍 Real-World Use Cases:\n• ✅ Attaching lookup values (e.g., status IDs to status names)\n• ✅ Denormalizing dimensional data (e.g., attaching customer details to a sales transaction)"
-    ]
+      "code_id": "SQL-021",
+      "numeric_id": 56,
+      "title": "INNER JOIN",
+      "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+      "timeComplexity": "O(N \u00d7 M) (Without indexes. Optimized by modern databases using indexes)",
+      "spaceComplexity": "O(Result Set)",
+      "simplestExplanation": "Combines rows from employees and departments where department_id matches in both tables. Employees without a department and departments without employees are excluded. The result is ordered by employee_id.",
+      "mentalModel": "Employees (e) \u2500\u2500\u25ba Match department_id \u25c4\u2500\u2500 Departments (d) \u2500\u2500\u25ba Keep Only Matches \u2500\u2500\u25ba SELECT e.id, e.name, d.name \u2500\u2500\u25ba ORDER BY e.employee_id",
+      "lineByLine": [
+          {
+              "line": "SELECT e.employee_id,",
+              "explanation": "Selects employee ID from the employees table."
+          },
+          {
+              "line": "e.employee_name,",
+              "explanation": "Selects employee name from the employees table."
+          },
+          {
+              "line": "d.department_name",
+              "explanation": "Selects department name from the departments table."
+          },
+          {
+              "line": "FROM employees AS e",
+              "explanation": "Scans the employees table, assigning alias e."
+          },
+          {
+              "line": "INNER JOIN departments AS d",
+              "explanation": "Joins with the departments table, assigning alias d."
+          },
+          {
+              "line": "ON e.department_id = d.department_id",
+              "explanation": "Specifies the join condition matching foreign key to primary key."
+          },
+          {
+              "line": "ORDER BY e.employee_id;",
+              "explanation": "Sorts output ascending by employee_id."
+          }
+      ],
+      "beginnerTraps": [
+          "\u274c 1. Forgetting the ON clause: Omitting ON produces a Cartesian product (CROSS JOIN), matching every employee to every department.",
+          "\u274c 2. Joining on the wrong columns: Joining on employee_id = department_id produces invalid matches.",
+          "\u274c 3. Ambiguous column names: Selecting department_id without a table prefix (e. or d.) causes an ambiguous column error.",
+          "\u274c 4. Confusing INNER JOIN with LEFT JOIN: INNER JOIN excludes unmatched rows; if unmatched employees should be shown, use LEFT JOIN."
+      ],
+      "keyTakeaway": "INNER JOIN returns only rows where the join condition is satisfied in both tables.",
+      "interviewPros": [
+          "Q1. What is an INNER JOIN? It returns rows where there is a match in both joined tables.",
+          "Q2. What happens if there is no match? Unmatched rows from both tables are discarded.",
+          "Q3. Is JOIN the same as INNER JOIN? Yes, the INNER keyword is optional in SQL; JOIN defaults to INNER JOIN.",
+          "Q4. Why use table aliases? Aliases make queries cleaner and resolve ambiguous column references.",
+          "Q5. Which join is used most often? INNER JOIN is by far the most commonly used join in database applications."
+      ],
+      "interviewCons": [
+          "\u2b50 Questions Interviewers Will Ask:\n\u2022 What is the difference between ON and WHERE in an INNER JOIN? (Answer: For INNER JOIN they produce identical results, but ON defines the join condition while WHERE filters results)\n\u2022 Can you join more than two tables with INNER JOIN? (Answer: Yes, multiple JOIN ... ON clauses can be chained)\n\u2022 What indexes speed up INNER JOIN? (Answer: An index on the foreign key column e.department_id)"
+      ]
   },
   "SQL-022": {
-    "code_id": "SQL-022",
-    "levelNumber": 57,
-    "title": "LEFT JOIN",
-    "solutions": [
-      {
-        "rank": 1,
-        "name": "Standard LEFT JOIN (Recommended)",
-        "description": "Standard ANSI syntax preserving all left-hand records.",
-        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Optimal and explicitly signals intent to keep unmatched primary records."
-      },
-      {
-        "rank": 2,
-        "name": "LEFT OUTER JOIN (Verbose)",
-        "description": "Explicitly includes the optional OUTER keyword.",
-        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT OUTER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "LEFT JOIN and LEFT OUTER JOIN are perfectly identical in all SQL engines. The OUTER keyword is just noise."
-      }
-    ],
-    "commonMistakes": [
-      "❌ 1. Using INNER JOIN instead of LEFT JOIN: An INNER JOIN drops employees without departments (like David and Emma).",
-      "❌ 2. Putting the wrong table on the left: FROM departments d LEFT JOIN employees e preserves all departments, but drops employees who don't belong to a department (which fails the prompt requirement).",
-      "❌ 3. Filtering right-table NULLs in WHERE: Adding WHERE d.department_name IS NOT NULL turns the LEFT JOIN back into an INNER JOIN."
-    ],
-    "keyTakeaway": "LEFT JOIN guarantees inclusion of every single row from the first (left) table, padding with NULLs whenever the right table lacks a match.",
-    "interviewPros": [
-      "Q1. Are LEFT JOIN and LEFT OUTER JOIN the same? Yes, OUTER is an optional keyword in ANSI SQL.",
-      "Q2. Why is table order important? Table order dictates which table serves as the unconditional base. FROM A LEFT JOIN B keeps all of A.",
-      "Q3. How does LEFT JOIN handle multiple matches? If one employee matched three departments (e.g., composite keys or bad schema), the employee row would duplicate three times.",
-      "Q4. What happens to Emma? Emma's department_id is 105, which doesn't exist. She is preserved, and department_name becomes NULL."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• If you add a WHERE clause on the right table (e.g., WHERE d.department_name = 'HR'), how does it affect the LEFT JOIN? (Answer: It converts the LEFT JOIN into an INNER JOIN because NULL != 'HR'. To keep all left rows, that condition must be moved to the ON clause.)\n• How do you find employees with NO department? (Answer: SELECT ... FROM employees e LEFT JOIN departments d ON ... WHERE d.department_id IS NULL)",
-      "⚡ Performance Notes:\n• LEFT JOINs prevent the optimizer from rearranging join order (unlike INNER JOINs), meaning table evaluation sequence is strictly determined by the query text.",
-      "🌍 Real-World Use Cases:\n• ✅ Generating complete rosters showing all personnel, even unassigned ones\n• ✅ Finding missing data (e.g., Customers without Orders using WHERE order_id IS NULL)"
-    ]
+      "code_id": "SQL-022",
+      "numeric_id": 57,
+      "title": "LEFT JOIN",
+      "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+      "timeComplexity": "O(N \u00d7 M) (Without indexes. Modern databases optimize joins using indexes and join algorithms)",
+      "spaceComplexity": "O(Result Set)",
+      "simplestExplanation": "Returns all records from the left table (employees) regardless of whether they have a matching department. If an employee has no matching department, department_name displays as NULL. The output is sorted by employee_id.",
+      "mentalModel": "All Employees (Left) \u2500\u2500\u25ba Match department_id \u2500\u2500\u25ba Department found? Show department_name : Show NULL \u2500\u2500\u25ba ORDER BY e.employee_id",
+      "lineByLine": [
+          {
+              "line": "SELECT e.employee_id,",
+              "explanation": "Selects employee ID from employees."
+          },
+          {
+              "line": "e.employee_name,",
+              "explanation": "Selects employee name from employees."
+          },
+          {
+              "line": "d.department_name",
+              "explanation": "Selects department name from departments (or NULL if no match)."
+          },
+          {
+              "line": "FROM employees AS e",
+              "explanation": "Specifies employees as the left table (fully preserved)."
+          },
+          {
+              "line": "LEFT JOIN departments AS d",
+              "explanation": "Joins departments on the right side."
+          },
+          {
+              "line": "ON e.department_id = d.department_id",
+              "explanation": "Matches rows by department_id."
+          },
+          {
+              "line": "ORDER BY e.employee_id;",
+              "explanation": "Sorts output ascending by employee_id."
+          }
+      ],
+      "beginnerTraps": [
+          "\u274c 1. Confusing LEFT JOIN with INNER JOIN: Using INNER JOIN drops unassigned employees like David and Emma.",
+          "\u274c 2. Filtering the right table in WHERE: Placing right-table conditions in WHERE (e.g. WHERE d.department_name = 'HR') accidentally converts LEFT JOIN into an INNER JOIN.",
+          "\u274c 3. Forgetting the ON clause: Missing ON produces an invalid Cartesian product.",
+          "\u274c 4. Expecting NULL rows to disappear: LEFT JOIN explicitly retains unmatched rows from the left table with NULL right-side values."
+      ],
+      "keyTakeaway": "LEFT JOIN returns all rows from the left table and matched rows from the right table, filling unmatched right-side attributes with NULL.",
+      "interviewPros": [
+          "Q1. What is a LEFT JOIN? It returns all rows from the left table and matching rows from the right table.",
+          "Q2. What happens when there is no match? Right-side columns are filled with NULL.",
+          "Q3. Which table is the left table? The table declared after FROM is the left table; the table declared after LEFT JOIN is the right table.",
+          "Q4. Difference between INNER JOIN and LEFT JOIN? INNER JOIN returns only matching rows; LEFT JOIN returns all rows from the left table plus matching rows from the right.",
+          "Q5. Is LEFT JOIN the same as LEFT OUTER JOIN? Yes, the OUTER keyword is optional."
+      ],
+      "interviewCons": [
+          "\u2b50 Questions Interviewers Will Ask:\n\u2022 How do you find employees with NO department using LEFT JOIN? (Answer: Add WHERE d.department_id IS NULL)\n\u2022 What is the difference between ON and WHERE in a LEFT JOIN? (Answer: Conditions in ON filter the right table before joining; conditions in WHERE filter the final joined result)\n\u2022 Does table order matter in LEFT JOIN? (Answer: Yes! Swapping the tables completely changes which table is fully preserved)"
+      ]
   },
   "SQL-023": {
-    "code_id": "SQL-023",
-    "levelNumber": 58,
-    "title": "RIGHT JOIN",
-    "solutions": [
-      {
-        "rank": 1,
-        "name": "RIGHT JOIN (Standard SQL)",
-        "description": "Uses standard RIGHT JOIN syntax to ensure all departments are retained in the result set.",
-        "code": "SELECT d.department_name,\n       e.employee_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Direct translation of the requirement 'Include departments even if no employees are assigned'."
-      },
-      {
-        "rank": 2,
-        "name": "LEFT JOIN Equivalent (Recommended in Practice)",
-        "description": "Swaps the table order and uses LEFT JOIN, achieving identical results while bypassing SQLite's lack of RIGHT JOIN support.",
-        "code": "SELECT d.department_name,\n       e.employee_name\nFROM departments AS d\nLEFT JOIN employees AS e\nON d.department_id = e.department_id\nORDER BY d.department_name;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Preferred by most engineering teams for readability and universal compatibility (including SQLite)."
-      }
-    ],
-    "commonMistakes": [
-      "❌ 1. Confusing LEFT and RIGHT JOINs: Writing FROM departments d RIGHT JOIN employees e keeps all employees instead of all departments, defeating the purpose of the audit.",
-      "❌ 2. Trying to run RIGHT JOIN in SQLite: SQLite's query parser throws an error for RIGHT JOIN, meaning it must be rewritten as a LEFT JOIN.",
-      "❌ 3. Filtering left-side NULLs in WHERE: Adding WHERE e.employee_name IS NOT NULL converts the RIGHT JOIN into an INNER JOIN."
-    ],
-    "keyTakeaway": "RIGHT JOIN unconditionally retains all records from the right-hand table. Because humans naturally read left-to-right, rewriting RIGHT JOINs as LEFT JOINs is a ubiquitous industry best practice.",
-    "interviewPros": [
-      "Q1. Are LEFT JOIN and RIGHT JOIN functionally identical? Yes, mathematically they are mirror images. A LEFT JOIN B is perfectly equivalent to B RIGHT JOIN A.",
-      "Q2. Why does Marketing return NULL for employee_name? Because Marketing exists in the right table (departments) but has no matching rows in the left table (employees).",
-      "Q3. Is RIGHT OUTER JOIN different? No, OUTER is an optional keyword. RIGHT JOIN and RIGHT OUTER JOIN mean the same thing.",
-      "Q4. Can you use RIGHT JOIN in SQLite? No, SQLite specifically omitted RIGHT and FULL joins to maintain a small footprint, enforcing the use of LEFT JOIN instead."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• If RIGHT JOIN and LEFT JOIN do the same thing, why avoid RIGHT JOIN? (Answer: Readability. It's easier to reason about data flowing from the first table mentioned on the left, outwards to the right.)\n• How do you find a department with ZERO employees? (Answer: A RIGHT JOIN where the employee primary key IS NULL)",
-      "⚡ Performance Notes:\n• When parsed, most modern SQL optimizers (like PostgreSQL or MySQL) internally rewrite RIGHT JOINs into LEFT JOINs before generating the execution plan.",
-      "🌍 Real-World Use Cases:\n• ✅ Validating catalog completeness (e.g., finding Product Categories with zero active listings)\n• ✅ Identifying unused infrastructure (e.g., Servers with no active connections)"
-    ]
+      "code_id": "SQL-023",
+      "numeric_id": 58,
+      "title": "RIGHT JOIN",
+      "code": "SELECT d.department_name,\n       e.employee_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+      "timeComplexity": "O(N \u00d7 M) (Without indexes. Optimized by modern databases using indexes)",
+      "spaceComplexity": "O(Result Set)",
+      "simplestExplanation": "Returns all records from the right table (departments) and matching rows from the left table (employees). Departments with no assigned employees (like Marketing) appear in the result with employee_name as NULL. The output is sorted alphabetically by department_name.",
+      "mentalModel": "Employees (Left) \u2500\u2500\u25ba Match department_id \u25c4\u2500\u2500 All Departments (Right) \u2500\u2500\u25ba Keep All Departments \u2500\u2500\u25ba Employee missing? Show NULL \u2500\u2500\u25ba ORDER BY d.department_name",
+      "lineByLine": [
+          {
+              "line": "SELECT d.department_name,",
+              "explanation": "Selects department name from the departments table."
+          },
+          {
+              "line": "e.employee_name",
+              "explanation": "Selects employee name (or NULL if no employees in that department)."
+          },
+          {
+              "line": "FROM employees AS e",
+              "explanation": "Specifies employees as the left table."
+          },
+          {
+              "line": "RIGHT JOIN departments AS d",
+              "explanation": "Specifies departments as the preserved right table."
+          },
+          {
+              "line": "ON e.department_id = d.department_id",
+              "explanation": "Joins tables on department_id."
+          },
+          {
+              "line": "ORDER BY d.department_name;",
+              "explanation": "Sorts alphabetically by department_name."
+          }
+      ],
+      "beginnerTraps": [
+          "\u274c 1. Confusing RIGHT JOIN with LEFT JOIN: RIGHT JOIN preserves the right-side table (departments), not the left.",
+          "\u274c 2. Expecting unmatched right rows to disappear: Marketing has 0 employees but is preserved with NULL.",
+          "\u274c 3. Filtering the left table in WHERE: Placing left-table filters in WHERE converts RIGHT JOIN into an INNER JOIN.",
+          "\u274c 4. Using RIGHT JOIN in older SQLite: Older SQLite versions (< 3.39) lacked RIGHT JOIN; swapping tables with LEFT JOIN is functionally identical."
+      ],
+      "keyTakeaway": "RIGHT JOIN guarantees that every row from the right table appears in the output, with missing left-table columns evaluating to NULL.",
+      "interviewPros": [
+          "Q1. What does RIGHT JOIN do? It returns all rows from the right table and matching rows from the left table.",
+          "Q2. What happens when there is no match? Left-table columns evaluate to NULL.",
+          "Q3. How can RIGHT JOIN be rewritten with LEFT JOIN? Swap table positions: FROM departments d LEFT JOIN employees e.",
+          "Q4. Which join is more commonly used in real projects? LEFT JOIN is overwhelmingly preferred for code readability (reading left-to-right).",
+          "Q5. Is RIGHT JOIN the same as RIGHT OUTER JOIN? Yes, OUTER is optional."
+      ],
+      "interviewCons": [
+          "\u2b50 Questions Interviewers Will Ask:\n\u2022 Why do most style guides recommend avoiding RIGHT JOIN? (Answer: Because LEFT JOIN is more intuitive to read from left to right, and any RIGHT JOIN can be rewritten as a LEFT JOIN)\n\u2022 How do you identify departments with zero employees? (Answer: Use RIGHT JOIN with WHERE e.employee_id IS NULL)\n\u2022 What happens if the join condition matches multiple rows? (Answer: The department row is duplicated for each matching employee)"
+      ]
   },
   "SQL-024": {
-    "code_id": "SQL-024",
-    "levelNumber": 59,
-    "title": "FULL JOIN",
-    "solutions": [
-      {
-        "rank": 1,
-        "name": "FULL JOIN (PostgreSQL / SQL Server / Oracle)",
-        "description": "Standard ANSI syntax preserving records from both tables.",
-        "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nFULL JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Optimal and explicitly signals intent to keep all records from both sides."
-      },
-      {
-        "rank": 2,
-        "name": "LEFT JOIN + UNION (MySQL / SQLite Compatible)",
-        "description": "Since MySQL and SQLite do not support FULL JOIN, it must be simulated by UNIONing a LEFT JOIN and a RIGHT JOIN (or in SQLite's case, reversed LEFT JOINs).",
-        "code": "SELECT e.employee_name, d.department_name\nFROM employees e\nLEFT JOIN departments d ON e.department_id = d.department_id\nUNION\nSELECT e.employee_name, d.department_name\nFROM employees e\nRIGHT JOIN departments d ON e.department_id = d.department_id\nORDER BY department_name;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Essential workaround for MySQL. Note that UNION natively removes duplicates, creating the perfect FULL JOIN behavior."
-      }
-    ],
-    "commonMistakes": [
-      "❌ 1. Using FULL JOIN in MySQL or SQLite: It will throw a syntax error. You must be prepared to write the UNION fallback in interviews.",
-      "❌ 2. Confusing FULL JOIN with CROSS JOIN: CROSS JOIN creates every possible pairing (Cartesian product) regardless of department_id matching. FULL JOIN only creates matched pairs, padding unmatched items with NULLs.",
-      "❌ 3. Using UNION ALL for the fallback: Using UNION ALL instead of UNION in the MySQL workaround will cause matching rows (which exist in both the LEFT and RIGHT join results) to appear twice."
-    ],
-    "keyTakeaway": "FULL JOIN is the union of a LEFT JOIN and a RIGHT JOIN, making it the perfect tool for bi-directional data reconciliation.",
-    "interviewPros": [
-      "Q1. Is FULL JOIN different from FULL OUTER JOIN? No, they are exactly the same.",
-      "Q2. What happens to David and Marketing? David gets a NULL department, and Marketing gets a NULL employee. Both are preserved in the final output.",
-      "Q3. How do you find anomalies (rows that failed to match)? Add WHERE e.employee_id IS NULL OR d.department_id IS NULL.",
-      "Q4. Can you use a FULL JOIN in MySQL? No, but you can simulate it using a LEFT JOIN, a UNION, and a RIGHT JOIN."
-    ],
-    "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• Write a query to find employees without departments AND departments without employees in a SINGLE query. (Answer: Use a FULL JOIN with a WHERE clause checking for NULLs on either side)\n• What is the performance impact of simulating FULL JOIN in MySQL? (Answer: It's expensive because it requires executing two separate joins and then performing a distinct sort to eliminate the duplicates via UNION)",
-      "⚡ Performance Notes:\n• FULL JOINs are inherently expensive because they cannot easily discard rows early. They require processing the entirety of both tables.",
-      "🌍 Real-World Use Cases:\n• ✅ Data Reconciliation (e.g., comparing last month's inventory against this month's to find new items and deleted items simultaneously)\n• ✅ Merger Audits (e.g., aligning HR systems from two acquired companies)"
-    ]
+      "code_id": "SQL-024",
+      "numeric_id": 59,
+      "title": "FULL JOIN",
+      "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nFULL JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+      "timeComplexity": "O(N \u00d7 M) (Without indexes. Optimized internally by modern databases)",
+      "spaceComplexity": "O(Result Set)",
+      "simplestExplanation": "Combines the results of both LEFT JOIN and RIGHT JOIN. It returns all employees and all departments. Employees without departments appear with department_name as NULL, and departments without employees appear with employee_name as NULL. The output is sorted by department_name.",
+      "mentalModel": "All Employees \u2500\u2500\u25ba Match department_id \u25c4\u2500\u2500 All Departments \u2500\u2500\u25ba Keep Matches + Keep Unmatched Employees + Keep Unmatched Departments \u2500\u2500\u25ba Fill Missing with NULL",
+      "lineByLine": [
+          {
+              "line": "SELECT e.employee_name,",
+              "explanation": "Selects employee name."
+          },
+          {
+              "line": "d.department_name",
+              "explanation": "Selects department name."
+          },
+          {
+              "line": "FROM employees AS e",
+              "explanation": "References the employees table."
+          },
+          {
+              "line": "FULL JOIN departments AS d",
+              "explanation": "Performs a full outer join with departments."
+          },
+          {
+              "line": "ON e.department_id = d.department_id",
+              "explanation": "Matches rows on department_id."
+          },
+          {
+              "line": "ORDER BY d.department_name;",
+              "explanation": "Sorts output by department_name."
+          }
+      ],
+      "beginnerTraps": [
+          "\u274c 1. Confusing FULL JOIN with INNER JOIN: INNER JOIN excludes all unmatched records; FULL JOIN keeps all records from both tables.",
+          "\u274c 2. Assuming FULL JOIN works in MySQL: MySQL does not support FULL JOIN directly; developers must use LEFT JOIN UNION RIGHT JOIN.",
+          "\u274c 3. Forgetting the ON clause: Missing ON produces an invalid cartesian join.",
+          "\u274c 4. Overlooking NULL handling in ORDER BY: NULL values may sort first or last depending on the database engine."
+      ],
+      "keyTakeaway": "FULL JOIN provides complete visibility across both datasets by combining matching rows and preserving all unmatched rows from both tables with NULLs.",
+      "interviewPros": [
+          "Q1. What is a FULL JOIN? It returns all rows from both tables, filling NULLs wherever matches do not exist.",
+          "Q2. Which databases support FULL JOIN? PostgreSQL, SQL Server, Oracle, and modern SQLite (3.39+). MySQL does not.",
+          "Q3. How do you simulate FULL JOIN in MySQL? Use SELECT ... FROM A LEFT JOIN B UNION SELECT ... FROM A RIGHT JOIN B.",
+          "Q4. Is FULL JOIN the same as FULL OUTER JOIN? Yes, the OUTER keyword is optional.",
+          "Q5. When should you use FULL JOIN? When performing data reconciliation or auditing discrepancies between two tables."
+      ],
+      "interviewCons": [
+          "\u2b50 Questions Interviewers Will Ask:\n\u2022 How do you find rows that exist in only ONE of the two tables? (Answer: Use FULL JOIN WHERE e.department_id IS NULL OR d.department_id IS NULL)\n\u2022 What is the difference between UNION and FULL JOIN? (Answer: UNION combines results vertically across compatible columns; FULL JOIN combines tables horizontally across joined relations)\n\u2022 How expensive is a FULL JOIN? (Answer: It requires scanning both relations completely, making it more resource-intensive than INNER or LEFT joins)"
+      ]
   },
   "SQL-025": {
-    "code_id": "SQL-025",
-    "levelNumber": 60,
-    "title": "SELF JOIN",
-    "solutions": [
+      "code_id": "SQL-025",
+      "numeric_id": 60,
+      "title": "SELF JOIN",
+      "code": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
+      "timeComplexity": "O(N \u00d7 M) (Optimized with indexes on join columns)",
+      "spaceComplexity": "O(Result Set)",
+      "simplestExplanation": "A table joined with itself using aliases to distinguish the two roles. The first copy (alias e) represents the employee, and the second copy (alias m) represents their manager. The LEFT JOIN ensures top-level leaders with no manager (manager_id = NULL) are retained. The output is sorted alphabetically by employee_name.",
+      "mentalModel": "Employees (as Staff: e) \u2500\u2500\u25ba Match e.manager_id = m.employee_id \u25c4\u2500\u2500 Employees (as Manager: m) \u2500\u2500\u25ba SELECT e.name, m.name \u2500\u2500\u25ba ORDER BY e.employee_name",
+      "lineByLine": [
+          {
+              "line": "SELECT e.employee_name,",
+              "explanation": "Displays the employee's name from alias e."
+          },
+          {
+              "line": "m.employee_name AS manager_name",
+              "explanation": "Displays the manager's name from alias m, aliased as manager_name."
+          },
+          {
+              "line": "FROM employees AS e",
+              "explanation": "First instance of employees representing individual staff."
+          },
+          {
+              "line": "LEFT JOIN employees AS m",
+              "explanation": "Second instance of employees representing managers."
+          },
+          {
+              "line": "ON e.manager_id = m.employee_id",
+              "explanation": "Connects employee's manager_id to the manager's employee_id."
+          },
+          {
+              "line": "ORDER BY e.employee_name;",
+              "explanation": "Sorts output alphabetically by employee_name."
+          }
+      ],
+      "beginnerTraps": [
+          "\u274c 1. Forgetting aliases: Writing FROM employees JOIN employees without aliases throws a syntax error because SQL cannot differentiate the two instances.",
+          "\u274c 2. Joining the wrong columns: Writing ON e.employee_id = m.employee_id compares each row to itself.",
+          "\u274c 3. Using INNER JOIN instead of LEFT JOIN: INNER JOIN excludes employees who don't have a manager (e.g. CEO or founder).",
+          "\u274c 4. Forgetting the ON clause: Produces a cartesian product of every employee paired with every other employee."
+      ],
+      "keyTakeaway": "SELF JOIN is a technique of joining a table to itself using aliases, indispensable for hierarchical and parent-child data structures.",
+      "interviewPros": [
+          "Q1. What is a SELF JOIN? A join where a table is joined with itself.",
+          "Q2. Why are table aliases mandatory? To allow SQL to distinguish between the two instances of the same table.",
+          "Q3. Can INNER JOIN be used in a SELF JOIN? Yes, but employees without managers will be excluded.",
+          "Q4. Which join is generally preferred for hierarchies? LEFT JOIN, because it preserves root-level nodes (like CEOs).",
+          "Q5. Is SELF JOIN a distinct SQL keyword? No, it simply uses standard JOIN syntax (INNER, LEFT, etc.) on the same table."
+      ],
+      "interviewCons": [
+          "\u2b50 Questions Interviewers Will Ask:\n\u2022 How do you handle multi-level hierarchies (e.g. employee -> manager -> VP)? (Answer: Chain multiple SELF JOINs or use a Recursive Common Table Expression [CTE])\n\u2022 How do you find employees who are also managers? (Answer: SELECT DISTINCT m.employee_name FROM employees e JOIN employees m ON e.manager_id = m.employee_id)\n\u2022 What indexes optimize a SELF JOIN? (Answer: Indexes on employee_id and manager_id)"
+      ]
+  }
+,
+  "SQL-026": {
+    "code_id": "SQL-026",
+    "numeric_id": 61,
+    "title": "CROSS JOIN",
+    "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nCROSS JOIN departments AS d\nORDER BY e.employee_name,\n         d.department_name;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Combines every row from employees with every row from departments to create all possible employee-department pairs (a Cartesian Product). No ON condition is needed because no columns are matched. The output is sorted by employee_name, then department_name.",
+    "mentalModel": "Employees (3 rows) ──► CROSS JOIN ◄── Departments (2 rows) ──► Cartesian Product (3 × 2 = 6 rows) ──► ORDER BY e.employee_name, d.department_name",
+    "lineByLine": [
       {
-        "rank": 1,
-        "name": "LEFT JOIN to Self (Recommended)",
-        "description": "Uses LEFT JOIN on the same table to safely retrieve the organizational hierarchy.",
-        "code": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Optimal solution. Ensures employees without managers (like the CEO) are still present in the output."
+        "line": "SELECT e.employee_name,",
+        "explanation": "Selects the employee name from the employees table."
       },
       {
-        "rank": 2,
-        "name": "INNER JOIN to Self (Strict)",
-        "description": "Uses INNER JOIN, which acts as a filter dropping employees without a manager.",
-        "code": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\INNER JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
-        "timeComplexity": "O(N × M)",
-        "spaceComplexity": "O(Result Set)",
-        "notes": "Fails the prompt's implicit requirement to 'display each employee', since 'Sophia' gets excluded. Acceptable only if the prompt strictly says 'display employees who have managers'."
+        "line": "d.department_name",
+        "explanation": "Selects the department name from the departments table."
+      },
+      {
+        "line": "FROM employees AS e",
+        "explanation": "Scans all employee records from the employees table."
+      },
+      {
+        "line": "CROSS JOIN departments AS d",
+        "explanation": "Pairs each employee with every single department without any matching condition."
+      },
+      {
+        "line": "ORDER BY e.employee_name,",
+        "explanation": "Sorts the output alphabetically by employee name first."
+      },
+      {
+        "line": "d.department_name;",
+        "explanation": "Sorts ties alphabetically by department name."
       }
     ],
-    "commonMistakes": [
-      "❌ 1. Omitting Table Aliases: Writing FROM employees JOIN employees throws an ambiguous table error. The database needs e and m to differentiate the copies.",
-      "❌ 2. Joining on the wrong columns: Writing ON e.employee_id = m.employee_id matches every employee to themselves, outputting 'John -> John'.",
-      "❌ 3. Reversing the logic: Writing ON e.employee_id = m.manager_id prints the manager's name in the 'employee' column and the subordinate in the 'manager' column."
+    "beginnerTraps": [
+      "❌ 1. Using an ON clause: CROSS JOIN does not use an ON matching predicate. Adding ON causes a syntax error or converts it to an INNER JOIN.",
+      "❌ 2. Confusing CROSS JOIN with INNER JOIN: INNER JOIN filters matching rows; CROSS JOIN generates every possible combination.",
+      "❌ 3. Running CROSS JOIN on large tables: Pairing two tables of 1,000 rows each generates 1,000,000 output rows, causing high memory usage and slow performance."
     ],
-    "keyTakeaway": "A SELF JOIN is just a regular join using table aliases. Always use LEFT JOIN for hierarchical self joins to prevent dropping the top-level root node (the CEO).",
+    "keyTakeaway": "CROSS JOIN returns every possible combination of rows from two tables (Cartesian Product), where total rows equals Rows A × Rows B.",
     "interviewPros": [
-      "Q1. Is SELF JOIN a special keyword? No, it's just a conceptual term for joining a table to itself using standard JOIN operators.",
-      "Q2. Why is LEFT JOIN preferred over INNER JOIN here? If you use INNER JOIN, employees who report to nobody (manager_id IS NULL) disappear.",
-      "Q3. How do you find the CEO? SELECT employee_name FROM employees WHERE manager_id IS NULL.",
-      "Q4. Can you join a table to itself three times? Yes! (e.g., finding an employee's manager's manager)."
+      "Q1. What is a CROSS JOIN? It returns every possible combination of rows from two tables without checking matching keys.",
+      "Q2. Does CROSS JOIN require an ON clause? No, CROSS JOIN strictly operates without an ON condition.",
+      "Q3. What is a Cartesian Product? The mathematical product where every element of set A is paired with every element of set B.",
+      "Q4. If Table A has 8 rows and Table B has 6 rows, how many rows are returned? 8 × 6 = 48 rows.",
+      "Q5. Can CROSS JOIN be written implicitly? Yes, using FROM table1, table2 without a WHERE clause."
     ],
     "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• Given an employee, write a query to find ALL their direct reports. (Answer: Simply reverse the SELECT logic, or use ON m.employee_id = e.manager_id GROUP BY m.employee_name)",
-      "⚡ Performance Notes:\n• Self joins can be notoriously slow on massive tables (like web session logs) unless the join keys (manager_id, employee_id) are heavily indexed.",
-      "🌍 Real-World Use Cases:\n• ✅ Flattening organizational charts\n• ✅ Analyzing consecutive events in a log table (e.g., joining Row N to Row N+1 based on timestamps)\n• ✅ Resolving Parent-Child category hierarchies (e.g., Electronics -> Laptops)"
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between CROSS JOIN and FULL OUTER JOIN? (Answer: FULL JOIN returns matched rows and unmatched rows with NULLs; CROSS JOIN multiplies all rows indiscriminately)\n• When is CROSS JOIN used in production? (Answer: Generating matrix reports, matrix scheduling, color/size SKU variants, and test fixture permutations)\n• How do you prevent accidental CROSS JOINs? (Answer: Always ensure JOINs have valid ON conditions and linters flag comma-separated table syntax)"
     ]
-  }
-};
+  },
+  "SQL-027": {
+    "code_id": "SQL-027",
+    "numeric_id": 62,
+    "title": "Employees with Department Names",
+    "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M) (Without indexes. Optimized with indexes in modern databases)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Joins employees with departments using an INNER JOIN on department_id. It replaces raw numeric IDs with clear department names, excluding any unassigned staff, and sorts the final roster by employee_id.",
+    "mentalModel": "Employees (e) ──► Match department_id = d.department_id ◄── Departments (d) ──► Combine Matching Rows ──► SELECT e.id, e.name, d.name ──► ORDER BY e.employee_id",
+    "lineByLine": [
+      {
+        "line": "SELECT e.employee_id,",
+        "explanation": "Retrieves the unique employee ID."
+      },
+      {
+        "line": "e.employee_name,",
+        "explanation": "Retrieves the employee name."
+      },
+      {
+        "line": "d.department_name",
+        "explanation": "Retrieves the corresponding department name from the departments table."
+      },
+      {
+        "line": "FROM employees AS e",
+        "explanation": "Scans the employees table using alias e."
+      },
+      {
+        "line": "INNER JOIN departments AS d",
+        "explanation": "Joins the departments table using alias d."
+      },
+      {
+        "line": "ON e.department_id = d.department_id",
+        "explanation": "Specifies the join condition matching foreign key to primary key."
+      },
+      {
+        "line": "ORDER BY e.employee_id;",
+        "explanation": "Sorts the output rows ascending by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining on the wrong columns: Writing ON e.employee_id = d.department_id compares employee ID to department ID, yielding incorrect or empty results.",
+      "❌ 2. Forgetting the ON clause: Omitting ON produces an unintended Cartesian Product.",
+      "❌ 3. Selecting ambiguous columns: Selecting department_id without specifying e. or d. throws an ambiguous column reference error.",
+      "❌ 4. Using LEFT JOIN unnecessarily: When business requirements specify only displaying employees who belong to a valid department, INNER JOIN is preferred."
+    ],
+    "keyTakeaway": "INNER JOIN combines related data from normalized tables by matching key columns in the ON clause, preventing data redundancy.",
+    "interviewPros": [
+      "Q1. Why do we need a JOIN here? Because related employee and department data are stored in separate normalized tables to eliminate redundancy.",
+      "Q2. Why not store department_name directly in employees? Storing department_name in employees would create data redundancy and update anomalies.",
+      "Q3. What if an employee has no department? INNER JOIN excludes that employee. A LEFT JOIN would be needed to retain them with a NULL department_name.",
+      "Q4. Can JOIN and INNER JOIN be used interchangeably? Yes, JOIN defaults to INNER JOIN in SQL.",
+      "Q5. Which columns should be indexed? Indexes on employees.department_id and departments.department_id optimize lookup speeds."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What happens if department_id contains NULLs? (Answer: Rows with NULL department_id fail the equality comparison and are excluded from the INNER JOIN)\n• How does the optimizer execute this join? (Answer: Hash Join or Index Nested Loop Join using the indexed department_id)\n• Can you alias tables with AS? (Answer: Yes, AS is optional for table aliases in SQL, e.g. FROM employees e)"
+    ]
+  },
+  "SQL-028": {
+    "code_id": "SQL-028",
+    "numeric_id": 63,
+    "title": "Customers with Orders",
+    "code": "SELECT o.order_id,\n       c.customer_name,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nORDER BY o.order_id;",
+    "timeComplexity": "O(N × M) (Without indexes. Modern databases optimize joins using indexes)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Performs an INNER JOIN between orders and customers on customer_id. Only customers who have placed at least one order are displayed. Customers with multiple orders appear once per order (one-to-many relationship). The result is sorted by order_id.",
+    "mentalModel": "Orders (o) ──► Match o.customer_id = c.customer_id ◄── Customers (c) ──► Combine Matching Records ──► SELECT o.order_id, c.name, o.date, o.amount ──► ORDER BY o.order_id",
+    "lineByLine": [
+      {
+        "line": "SELECT o.order_id,",
+        "explanation": "Retrieves the unique order ID from the orders table."
+      },
+      {
+        "line": "c.customer_name,",
+        "explanation": "Retrieves the purchaser's name from the customers table."
+      },
+      {
+        "line": "o.order_date,",
+        "explanation": "Retrieves the date the order was placed."
+      },
+      {
+        "line": "o.total_amount",
+        "explanation": "Retrieves the total purchase amount for the order."
+      },
+      {
+        "line": "FROM orders AS o",
+        "explanation": "Scans the orders table using alias o."
+      },
+      {
+        "line": "INNER JOIN customers AS c",
+        "explanation": "Joins the customers table using alias c."
+      },
+      {
+        "line": "ON o.customer_id = c.customer_id",
+        "explanation": "Matches the foreign key in orders to the primary key in customers."
+      },
+      {
+        "line": "ORDER BY o.order_id;",
+        "explanation": "Sorts the output rows in ascending order by order_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining on the wrong columns: Writing ON o.order_id = c.customer_id compares order ID to customer ID, producing invalid matches.",
+      "❌ 2. Forgetting the ON clause: Writing FROM orders INNER JOIN customers without ON produces an expensive Cartesian product.",
+      "❌ 3. Selecting ambiguous columns: Selecting customer_id without specifying o. or c. throws an ambiguous column reference error.",
+      "❌ 4. Using LEFT JOIN unnecessarily: If the goal is only to display customers who have placed orders, INNER JOIN is the correct tool."
+    ],
+    "keyTakeaway": "INNER JOIN between a child transaction table (orders) and parent entity table (customers) models a one-to-many relationship, naturally excluding parent rows with no activity.",
+    "interviewPros": [
+      "Q1. Why use INNER JOIN instead of LEFT JOIN? Because we only want customers who placed orders. Customers with zero orders (like Bob) are excluded.",
+      "Q2. Can one customer have multiple orders? Yes, this is a standard one-to-many relationship. John appears twice because he placed two separate orders.",
+      "Q3. Why isn't customer_name stored directly in orders? To prevent data redundancy and maintain third normal form (3NF) database design.",
+      "Q4. What happens if an order has an invalid customer_id? INNER JOIN discards orders without a matching customer.",
+      "Q5. Which columns should be indexed? Indexes on orders.customer_id and customers.customer_id optimize join execution speeds."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What query displays ALL customers including those who never ordered? (Answer: SELECT ... FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id)\n• How do you count total orders per customer? (Answer: Use GROUP BY c.customer_id, c.customer_name with COUNT(o.order_id))\n• How does the database optimize this one-to-many join? (Answer: Index scan on customers primary key customer_id for each order row)"
+    ]
+  },
+  "SQL-029": {
+    "code_id": "SQL-029",
+    "numeric_id": 64,
+    "title": "Customers without Orders",
+    "code": "SELECT c.customer_id,\n       c.customer_name\nFROM customers AS c\nLEFT JOIN orders AS o\nON c.customer_id = o.customer_id\nWHERE o.customer_id IS NULL\nORDER BY c.customer_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We start with all customers via LEFT JOIN against orders. When a customer has never placed an order, all joined order columns become NULL. We then filter WHERE o.customer_id IS NULL to keep only those customers without orders.",
+    "mentalModel": "Imagine a roll call sheet of every customer. For each name, we check the order logbook. If an entry exists, we cross their name off our target list. If their line is completely blank (NULL), we keep them on our report!",
+    "lineByLine": [
+      {
+        "line": "SELECT c.customer_id,",
+        "explanation": "Retrieves the unique identifier of the customer."
+      },
+      {
+        "line": "       c.customer_name",
+        "explanation": "Retrieves the name of the customer."
+      },
+      {
+        "line": "FROM customers AS c",
+        "explanation": "Starts from the customers table as the primary (left) table."
+      },
+      {
+        "line": "LEFT JOIN orders AS o",
+        "explanation": "Attempts to match each customer against records in the orders table, preserving customers even if no orders exist."
+      },
+      {
+        "line": "ON c.customer_id = o.customer_id",
+        "explanation": "Matches orders to customers based on customer_id."
+      },
+      {
+        "line": "WHERE o.customer_id IS NULL",
+        "explanation": "Filters for rows where no matching order was found, meaning the customer has never placed an order."
+      },
+      {
+        "line": "ORDER BY c.customer_id;",
+        "explanation": "Sorts the resulting customers in ascending order by customer_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using INNER JOIN: INNER JOIN discards unmatched rows entirely, leaving zero rows if looking for non-orderers.",
+      "❌ 2. Writing WHERE o.customer_id = NULL: In SQL, comparing with NULL via '=' evaluates to UNKNOWN. You MUST use IS NULL.",
+      "❌ 3. Joining on the wrong column: Joining c.customer_name = o.customer_id compares names to numeric IDs.",
+      "❌ 4. Filtering the wrong table: Filtering c.customer_id IS NULL would search for customers without an ID, not customers without an order."
+    ],
+    "keyTakeaway": "LEFT JOIN combined with a WHERE joined_table.foreign_key IS NULL filter is the classic SQL Anti-Join technique to identify records without child transactions.",
+    "interviewPros": [
+      "Q1. Why is LEFT JOIN used? To keep all customers, even those who have never placed an order.",
+      "Q2. Why use IS NULL? To identify rows from the right table that had no match and were populated with NULLs.",
+      "Q3. Can INNER JOIN solve this? No, INNER JOIN discards unmatched records.",
+      "Q4. What is another way to solve this? Using NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id) or NOT IN.",
+      "Q5. Which method is faster? NOT EXISTS is often faster on large datasets because it terminates as soon as a single match is found."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between LEFT JOIN ... WHERE IS NULL and NOT EXISTS?\n• How does NOT IN behave if the subquery returns a NULL value? (Trap: NOT IN returns zero rows if any subquery item is NULL!)\n• Which columns should be indexed for maximum performance on this anti-join? (Answer: Index on orders.customer_id and customers.customer_id)"
+    ]
+  },
+  "SQL-030": {
+    "code_id": "SQL-030",
+    "numeric_id": 65,
+    "title": "Orders without Customers",
+    "code": "SELECT o.order_id,\n       o.customer_id,\n       o.order_date,\n       o.total_amount\nFROM orders AS o\nLEFT JOIN customers AS c\nON o.customer_id = c.customer_id\nWHERE c.customer_id IS NULL\nORDER BY o.order_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We start with all orders via LEFT JOIN against customers. For orphan orders referencing non-existent customers, joined customer columns become NULL. We then filter WHERE c.customer_id IS NULL to output only those orphan orders.",
+    "mentalModel": "Imagine a package delivery warehouse. Every parcel has a recipient customer ID. We look up each customer ID in our customer roster. If the customer isn't in our system (NULL result), that parcel is an orphan package flagged for investigation!",
+    "lineByLine": [
+      {
+        "line": "SELECT o.order_id,",
+        "explanation": "Retrieves the unique identifier of the order."
+      },
+      {
+        "line": "       o.customer_id,",
+        "explanation": "Retrieves the customer ID referenced by the order."
+      },
+      {
+        "line": "       o.order_date,",
+        "explanation": "Retrieves the date the order was created."
+      },
+      {
+        "line": "       o.total_amount",
+        "explanation": "Retrieves the monetary total of the order."
+      },
+      {
+        "line": "FROM orders AS o",
+        "explanation": "Starts from the orders table as the primary (left) table."
+      },
+      {
+        "line": "LEFT JOIN customers AS c",
+        "explanation": "Performs a LEFT JOIN with customers, preserving every order row regardless of whether a matching customer exists."
+      },
+      {
+        "line": "ON o.customer_id = c.customer_id",
+        "explanation": "Matches orders to customers using customer_id."
+      },
+      {
+        "line": "WHERE c.customer_id IS NULL",
+        "explanation": "Filters for records where no corresponding customer was found, identifying orphan orders."
+      },
+      {
+        "line": "ORDER BY o.order_id;",
+        "explanation": "Sorts the resulting orphan orders in ascending order by order_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using INNER JOIN: INNER JOIN automatically discards orders with unmatched customer IDs, concealing data integrity issues.",
+      "❌ 2. Writing WHERE c.customer_id = NULL: In SQL, comparing NULL with '=' yields UNKNOWN; always use IS NULL.",
+      "❌ 3. Joining on wrong columns: Writing ON o.order_id = c.customer_id compares order IDs to customer IDs.",
+      "❌ 4. Filtering the wrong table: Writing WHERE o.customer_id IS NULL searches for orders that have no customer_id value, rather than orders referencing non-existent customers."
+    ],
+    "keyTakeaway": "An orphan record occurs when a child record references a missing parent key; detecting them with LEFT JOIN ... WHERE parent.id IS NULL is crucial for auditing data integrity and enforcing referential consistency.",
+    "interviewPros": [
+      "Q1. What is an orphan record? A record that references another record that does not exist in the parent table.",
+      "Q2. Why use LEFT JOIN? To keep every order while checking whether a matching customer exists.",
+      "Q3. Why use IS NULL? Because unmatched parent rows yield NULL in all parent attributes after a LEFT JOIN.",
+      "Q4. How are orphan records prevented in production? By establishing foreign key constraints (FOREIGN KEY (customer_id) REFERENCES customers(customer_id)).",
+      "Q5. Can NOT EXISTS solve this? Yes, using WHERE NOT EXISTS (SELECT 1 FROM customers c WHERE c.customer_id = o.customer_id)."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between Customers without Orders and Orders without Customers? (Customers without orders starts with customers; Orders without customers starts with orders)\n• How do database engines enforce foreign keys during deletions? (Cascade, Set Null, Restrict/No Action)\n• Why might orphan records exist in real-world systems? (Data migration glitches, non-transactional batch ingestion, legacy systems without foreign key constraints)"
+    ]
+  },
+  "SQL-031": {
+    "code_id": "SQL-031",
+    "numeric_id": 66,
+    "title": "Students with Course Names",
+    "code": "SELECT s.student_id,\n       s.student_name,\n       c.course_name\nFROM students AS s\nINNER JOIN courses AS c\nON s.course_id = c.course_id\nORDER BY s.student_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Students stores only course_id, and courses stores course_name. We use an INNER JOIN to match course_id between both tables, pulling the course_name alongside each student's details, sorted by student_id.",
+    "mentalModel": "Think of student ID cards that have a course code stamped on the back. To print their full transcript, the registrar matches the code on each student's card to the master course directory book and copies the full course title onto their certificate!",
+    "lineByLine": [
+      {
+        "line": "SELECT s.student_id,",
+        "explanation": "Retrieves the student's unique identification number."
+      },
+      {
+        "line": "       s.student_name,",
+        "explanation": "Retrieves the student's full name."
+      },
+      {
+        "line": "       c.course_name",
+        "explanation": "Retrieves the enrolled course name from the courses table."
+      },
+      {
+        "line": "FROM students AS s",
+        "explanation": "Reads records from the students table using alias s."
+      },
+      {
+        "line": "INNER JOIN courses AS c",
+        "explanation": "Joins the courses table using alias c."
+      },
+      {
+        "line": "ON s.course_id = c.course_id",
+        "explanation": "Pairs rows where the student's enrolled course_id equals the course catalog's course_id."
+      },
+      {
+        "line": "ORDER BY s.student_id;",
+        "explanation": "Sorts the output rows in ascending order by student_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining on the wrong columns: Writing ON s.student_id = c.course_id compares student IDs to course IDs, resulting in invalid or zero matches.",
+      "❌ 2. Forgetting the ON clause: Writing FROM students INNER JOIN courses without ON generates an unintended Cartesian product.",
+      "❌ 3. Selecting ambiguous columns: Referencing course_id directly without table alias prefix (s.course_id or c.course_id) results in an ambiguous column error.",
+      "❌ 4. Using LEFT JOIN unnecessarily: When the objective specifies only enrolled students with matching courses, INNER JOIN is the correct choice."
+    ],
+    "keyTakeaway": "INNER JOIN merges related entities across normalized schemas by matching foreign keys to primary keys, eliminating duplication while guaranteeing valid relationships.",
+    "interviewPros": [
+      "Q1. Why use INNER JOIN? Because only students enrolled in a valid course should be returned in the roster.",
+      "Q2. Why store course_id instead of course_name in students? To normalize data, eliminating redundant text storage and avoiding update anomalies.",
+      "Q3. Can one course have multiple students? Yes, courses-to-students is a standard one-to-many relationship.",
+      "Q4. What JOIN would include students not enrolled in any course? LEFT JOIN students to courses.",
+      "Q5. Which columns should be indexed? Indexing students.course_id and courses.course_id optimizes join lookups from O(N × M) to O(N log M)."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between JOIN and INNER JOIN? (They are syntactically and semantically identical in SQL)\n• What happens to students whose course_id is NULL under INNER JOIN? (They are filtered out; use LEFT JOIN to retain them)\n• How would you find courses that currently have zero enrolled students? (SELECT c.course_name FROM courses c LEFT JOIN students s ON c.course_id = s.course_id WHERE s.student_id IS NULL)"
+    ]
+  },
+  "SQL-032": {
+    "code_id": "SQL-032",
+    "numeric_id": 67,
+    "title": "Employees without Managers",
+    "code": "SELECT employee_id,\n       employee_name\nFROM employees\nWHERE manager_id IS NULL\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Every employee typically has a manager_id pointing to their superior. Top executives like CEOs report to no one, so their manager_id is NULL. We simply filter with WHERE manager_id IS NULL and sort by employee_id.",
+    "mentalModel": "Picture the corporate organizational tree. While branches connect subordinates up to their leads, the roots/crown at the very top (the CEO) have no branch above them—their manager slot is completely blank (NULL)!",
+    "lineByLine": [
+      {
+        "line": "SELECT employee_id,",
+        "explanation": "Retrieves the employee's unique identifier."
+      },
+      {
+        "line": "       employee_name",
+        "explanation": "Retrieves the name of the employee."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Scans the employees table."
+      },
+      {
+        "line": "WHERE manager_id IS NULL",
+        "explanation": "Filters rows to retain only employees with no manager assigned (manager_id is NULL)."
+      },
+      {
+        "line": "ORDER BY employee_id;",
+        "explanation": "Sorts results in ascending order by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Writing WHERE manager_id = NULL: In SQL, comparing NULL with '=' yields UNKNOWN; you must use IS NULL.",
+      "❌ 2. Using a JOIN unnecessarily: Writing a SELF JOIN to check if manager_id is NULL adds unnecessary overhead when a simple WHERE filter suffices.",
+      "❌ 3. Forgetting ORDER BY: Omitting ORDER BY employee_id causes non-deterministic output order."
+    ],
+    "keyTakeaway": "NULL represents the absence of a value; top-level hierarchical nodes are naturally captured using the WHERE column IS NULL predicate without needing a join.",
+    "interviewPros": [
+      "Q1. Why use IS NULL? Because in SQL, NULL denotes the absence of a value and cannot be evaluated with the equality operator =.",
+      "Q2. Is a JOIN required for this problem? No, a simple WHERE filter on manager_id IS NULL directly solves the requirement in O(N) time.",
+      "Q3. Who typically has a NULL manager_id? CEOs, founders, board members, or top-level independent contractors.",
+      "Q4. What if there are multiple top executives? All rows with manager_id IS NULL are returned.",
+      "Q5. How can this query be optimized? Adding an index on manager_id allows the engine to perform an index lookup rather than a full table scan."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between = NULL and IS NULL? (= NULL evaluates to UNKNOWN and returns 0 rows; IS NULL correctly detects NULL values)\n• How would you write this using COALESCE or IFNULL? (WHERE COALESCE(manager_id, -1) = -1)\n• How do you query the full management reporting chain from CEO down to junior staff? (Use a Recursive CTE with UNION ALL)"
+    ]
+  },
+  "SQL-033": {
+    "code_id": "SQL-033",
+    "numeric_id": 68,
+    "title": "Manager and Employee Names",
+    "code": "SELECT e.employee_id,\n       e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Because managers are also employees in the same table, we join employees to itself using two aliases: e for the employee and m for the manager. We connect e.manager_id = m.employee_id with a LEFT JOIN so the CEO (whose manager is NULL) is still included.",
+    "mentalModel": "Imagine every employee in the company holding an index card with their ID, name, and their boss's ID. When we line them up, we look across the room at the other workers to find who matches the boss's ID on their card, writing that boss's name next to theirs. If an employee has no boss ID (like the CEO), we leave the line blank (NULL)!",
+    "lineByLine": [
+      {
+        "line": "SELECT e.employee_id,",
+        "explanation": "Retrieves the subordinate employee's unique identifier."
+      },
+      {
+        "line": "       e.employee_name,",
+        "explanation": "Retrieves the subordinate employee's name."
+      },
+      {
+        "line": "       m.employee_name AS manager_name",
+        "explanation": "Retrieves the manager's name from the joined manager instance (m), aliased as manager_name."
+      },
+      {
+        "line": "FROM employees AS e",
+        "explanation": "Treats the primary table scan as the subordinate employee entity."
+      },
+      {
+        "line": "LEFT JOIN employees AS m",
+        "explanation": "Joins the same employees table to represent managers; LEFT JOIN preserves employees with no manager."
+      },
+      {
+        "line": "ON e.manager_id = m.employee_id",
+        "explanation": "Matches the employee's manager_id against the manager's employee_id."
+      },
+      {
+        "line": "ORDER BY e.employee_id;",
+        "explanation": "Sorts results in ascending order by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using INNER JOIN: INNER JOIN removes employees with NULL manager_id, accidentally eliminating the CEO/executives.",
+      "❌ 2. Joining the wrong columns: Writing ON e.employee_id = m.employee_id joins every employee to themselves instead of their manager.",
+      "❌ 3. Forgetting table aliases: Omitting aliases causes ambiguous table errors because SQL cannot distinguish between the employee and manager instances."
+    ],
+    "keyTakeaway": "A SELF JOIN using distinct aliases (e, m) and a LEFT JOIN allows resolving recursive parent-child relationships stored in a single table while retaining top-level hierarchy leaders.",
+    "interviewPros": [
+      "Q1. What is a SELF JOIN? A technique where a table is joined with itself using distinct table aliases.",
+      "Q2. Why use LEFT JOIN? To preserve top-level executives (like the CEO) who report to no one and have a NULL manager_id.",
+      "Q3. Why are aliases required? Because the engine needs distinct identifiers to differentiate the subordinate role from the managerial role on the same underlying table.",
+      "Q4. Which employee has NULL as manager_name? The CEO, Founder, or Managing Director.",
+      "Q5. Which columns should be indexed? Primary key on employee_id and a secondary index on manager_id ensure high-speed hash/merge joins."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between INNER JOIN and LEFT JOIN in a self-join scenario? (INNER JOIN excludes root executives; LEFT JOIN preserves them with NULL)\n• How would you find all direct reports for a specific manager? (Filter WHERE m.employee_name = 'Alice')\n• How do you traverse deep multi-level reporting hierarchies? (Use Recursive Common Table Expressions / CTEs)"
+    ]
+  },
+  "SQL-034": {
+    "code_id": "SQL-034",
+    "numeric_id": 69,
+    "title": "Multiple Table Joins",
+    "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name,\n       l.city\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nINNER JOIN locations AS l\nON d.location_id = l.location_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M × K)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Employees are linked to departments via department_id, and departments are linked to locations via location_id. We connect the three tables using two consecutive INNER JOINs and sort by employee_id.",
+    "mentalModel": "Imagine a bridge between three islands: Island 1 (Employees) has a bridge to Island 2 (Departments) via Department IDs. Island 2 has another bridge to Island 3 (Locations) via Location IDs. By crossing both bridges in sequence, we can pick up the employee's name, department name, and city all in one single journey!",
+    "lineByLine": [
+      {
+        "line": "SELECT e.employee_id,",
+        "explanation": "Retrieves the employee's unique ID."
+      },
+      {
+        "line": "       e.employee_name,",
+        "explanation": "Retrieves the employee's full name."
+      },
+      {
+        "line": "       d.department_name,",
+        "explanation": "Retrieves the department name from departments table."
+      },
+      {
+        "line": "       l.city",
+        "explanation": "Retrieves the city name from locations table."
+      },
+      {
+        "line": "FROM employees AS e",
+        "explanation": "Scans the primary employees table using alias e."
+      },
+      {
+        "line": "INNER JOIN departments AS d",
+        "explanation": "First join: connects employees to departments."
+      },
+      {
+        "line": "ON e.department_id = d.department_id",
+        "explanation": "Matches each employee's department_id to the primary key in departments."
+      },
+      {
+        "line": "INNER JOIN locations AS l",
+        "explanation": "Second join: connects departments to locations."
+      },
+      {
+        "line": "ON d.location_id = l.location_id",
+        "explanation": "Matches each department's location_id to the primary key in locations."
+      },
+      {
+        "line": "ORDER BY e.employee_id;",
+        "explanation": "Sorts the combined output records in ascending order by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining incorrect columns: Writing ON e.employee_id = d.department_id attempts to join employee ID to department ID.",
+      "❌ 2. Missing the second join: Forgetting to join locations makes it impossible to retrieve the city.",
+      "❌ 3. Ambiguous column names: Referencing department_id or location_id without prefixing the table alias causes an ambiguous column error.",
+      "❌ 4. Joining tables out of relational order: Trying to join employees directly to locations without passing through departments fails because employees lacks a location_id foreign key."
+    ],
+    "keyTakeaway": "Multi-table joins traverse relational foreign-key pathways sequentially (Entity A -> Entity B -> Entity C), assembling normalized data across the database schema.",
+    "interviewPros": [
+      "Q1. Can SQL join more than two tables? Yes, queries can chain multiple joins connecting three or more normalized tables.",
+      "Q2. What determines the join order? The foreign key relationships connecting primary keys across tables.",
+      "Q3. Why use table aliases? Aliases (e, d, l) prevent column name collisions and make complex multi-join queries clean and readable.",
+      "Q4. What if an employee does not have a department? An INNER JOIN excludes them; use LEFT JOINs to retain them.",
+      "Q5. Which columns should be indexed? Indexes on join keys (employees.department_id, departments.department_id, departments.location_id, locations.location_id) optimize join planning."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• In what order does the SQL query optimizer execute multiple joins? (Uses cost-based estimation, often starting with the most selective table)\n• What happens if one of the intermediate tables has duplicate keys? (A Cartesian fan-out can occur, multiplying rows)\n• How do multiple LEFT JOINs differ from multiple INNER JOINs? (Any failure in an INNER JOIN drops the entire row; LEFT JOINs propagate NULLs forward)"
+    ]
+  },
+  "SQL-035": {
+    "code_id": "SQL-035",
+    "numeric_id": 70,
+    "title": "Join Three Tables",
+    "code": "SELECT o.order_id,\n       c.customer_name,\n       p.product_name,\n       p.price\nFROM orders AS o\nINNER JOIN customers AS c\nON o.customer_id = c.customer_id\nINNER JOIN products AS p\nON o.product_id = p.product_id\nORDER BY o.order_id;",
+    "timeComplexity": "O(N × M × K)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "Every order has a customer_id and a product_id. We start with orders, use an INNER JOIN to attach customer names from customers, and a second INNER JOIN to attach product details from products, sorted by order_id.",
+    "mentalModel": "Think of a receipt invoice. The order receipt has a customer number and an item SKU. The system matches the customer number to the user directory to print their name, and matches the SKU to the product catalog to print the product title and price on the invoice!",
+    "lineByLine": [
+      {
+        "line": "SELECT o.order_id,",
+        "explanation": "Retrieves the order ID from the orders table."
+      },
+      {
+        "line": "       c.customer_name,",
+        "explanation": "Retrieves the buyer's name from the customers table."
+      },
+      {
+        "line": "       p.product_name,",
+        "explanation": "Retrieves the item description from the products table."
+      },
+      {
+        "line": "       p.price",
+        "explanation": "Retrieves the unit price from the products table."
+      },
+      {
+        "line": "FROM orders AS o",
+        "explanation": "Starts from the transaction table (orders) as the primary driving table."
+      },
+      {
+        "line": "INNER JOIN customers AS c",
+        "explanation": "Joins customers table using alias c."
+      },
+      {
+        "line": "ON o.customer_id = c.customer_id",
+        "explanation": "Matches the purchaser ID on the order to the customer ID in customers."
+      },
+      {
+        "line": "INNER JOIN products AS p",
+        "explanation": "Joins products table using alias p."
+      },
+      {
+        "line": "ON o.product_id = p.product_id",
+        "explanation": "Matches the purchased item SKU on the order to product_id in products."
+      },
+      {
+        "line": "ORDER BY o.order_id;",
+        "explanation": "Sorts results in ascending order by order_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining incorrect foreign keys: Writing ON o.order_id = p.product_id compares order IDs to product IDs.",
+      "❌ 2. Omitting one of the joins: Omitting either customers or products makes their corresponding attributes inaccessible.",
+      "❌ 3. Ambiguous column names: Referencing customer_id or product_id without an alias throws an ambiguous column error.",
+      "❌ 4. Starting with the wrong table: Starting with customers without considering orders can lead to complex left joins or missing transaction records."
+    ],
+    "keyTakeaway": "In star/snowflake reporting schemas, starting from the central transaction fact table (orders) and joining out to dimension tables (customers, products) yields clean, natural multi-way relational joins.",
+    "interviewPros": [
+      "Q1. Why start from the Orders table? Because each output row corresponds to an individual order transaction.",
+      "Q2. Why use multiple joins? The necessary fields (customer name, item details, order ID) reside across three normalized tables.",
+      "Q3. How can join performance be optimized? Ensure indexes exist on orders.customer_id, orders.product_id, customers.customer_id, and products.product_id.",
+      "Q4. What if an order has an invalid product_id? INNER JOIN eliminates that order; a LEFT JOIN would retain it with NULL product fields.",
+      "Q5. Can this query join more than 3 tables? Yes, real-world queries frequently join payment, shipping, and discount tables in the same chain."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between Star Schema and Snowflake Schema joins?\n• How would you calculate total customer spend across all products? (Use SUM(p.price) with GROUP BY c.customer_id, c.customer_name)\n• What happens if a customer placed multiple orders? (The customer name repeats for each unique order row)"
+    ]
+  },
+  "ASQL-001": {
+    "code_id": "ASQL-001",
+    "numeric_id": 71,
+    "title": "Grade Students",
+    "code": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 90 THEN 'A'\n           WHEN marks >= 80 THEN 'B'\n           WHEN marks >= 70 THEN 'C'\n           WHEN marks >= 60 THEN 'D'\n           ELSE 'F'\n       END AS grade\nFROM students\nORDER BY student_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We evaluate each student's score from top to bottom using CASE WHEN: scores 90+ get 'A', 80+ get 'B', 70+ get 'C', 60+ get 'D', and anything below 60 falls through to ELSE 'F'.",
+    "mentalModel": "Think of a coin sorter machine with decreasing slot sizes. Large coins fall into the first slot (A), medium coins into the second (B), and smaller coins pass down until the catch-all tray at the bottom (F) catches whatever didn't fit above!",
+    "lineByLine": [
+      {
+        "line": "SELECT student_id,",
+        "explanation": "Retrieves the student's unique ID."
+      },
+      {
+        "line": "       student_name,",
+        "explanation": "Retrieves the student's full name."
+      },
+      {
+        "line": "       marks,",
+        "explanation": "Retrieves the raw numerical score."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Initiates conditional branching expression."
+      },
+      {
+        "line": "           WHEN marks >= 90 THEN 'A'",
+        "explanation": "Assigns 'A' if marks are 90 or above."
+      },
+      {
+        "line": "           WHEN marks >= 80 THEN 'B'",
+        "explanation": "Assigns 'B' if marks are 80 to 89."
+      },
+      {
+        "line": "           WHEN marks >= 70 THEN 'C'",
+        "explanation": "Assigns 'C' if marks are 70 to 79."
+      },
+      {
+        "line": "           WHEN marks >= 60 THEN 'D'",
+        "explanation": "Assigns 'D' if marks are 60 to 69."
+      },
+      {
+        "line": "           ELSE 'F'",
+        "explanation": "Default fallback assigning 'F' to scores under 60."
+      },
+      {
+        "line": "       END AS grade",
+        "explanation": "Closes the CASE block and aliases the computed column as grade."
+      },
+      {
+        "line": "FROM students",
+        "explanation": "Reads records from the students table."
+      },
+      {
+        "line": "ORDER BY student_id;",
+        "explanation": "Sorts output rows in ascending order by student_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Reversing condition order: Checking WHEN marks >= 60 first causes any score above 60 (including 95) to immediately receive a 'D' due to short-circuiting.",
+      "❌ 2. Forgetting the ELSE clause: Omitting ELSE causes any score not matching the explicit WHEN rules to evaluate to NULL instead of 'F'.",
+      "❌ 3. Forgetting the END keyword: In SQL, every CASE expression must terminate with END before specifying an alias."
+    ],
+    "keyTakeaway": "SQL CASE WHEN evaluates top-to-bottom and stops at the first matching condition; always order descending when testing greater-than-or-equal thresholds.",
+    "interviewPros": [
+      "Q1. Does CASE evaluate all conditions? No, it short-circuits and returns as soon as the first truthy condition is encountered.",
+      "Q2. Why is descending order required here? Because testing `marks >= 60` first would match 95, preventing the `>= 90` branch from ever executing.",
+      "Q3. Is ELSE mandatory? No, but omitted ELSE defaults unmatched rows to NULL.",
+      "Q4. Can CASE expressions be nested or used inside aggregations? Yes, conditional aggregation (e.g. SUM(CASE WHEN ...)) is a standard interview pattern.",
+      "Q5. Can CASE be used in WHERE or ORDER BY? Yes, CASE expressions are valid anywhere an expression is accepted."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between Simple CASE (CASE expr WHEN val THEN ...) and Searched CASE (CASE WHEN condition THEN ...)?\n• How would you count how many students received an 'A' using conditional aggregation? (COUNT(CASE WHEN marks >= 90 THEN 1 END))\n• How does SQL handle NULL values inside a CASE expression? (NULL evaluated against comparisons yields UNKNOWN and falls through to ELSE)"
+    ]
+  },
+  "ASQL-002": {
+    "code_id": "ASQL-002",
+    "numeric_id": 72,
+    "title": "Salary Bands",
+    "code": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 70000 THEN 'Medium'\n           WHEN salary >= 40000 THEN 'Low'\n           ELSE 'Very Low'\n       END AS salary_band\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We classify employees into salary brackets using a CASE statement: salaries 100,000+ get 'High', 70,000+ get 'Medium', 40,000+ get 'Low', and anything lower falls into ELSE 'Very Low', sorted by employee_id.",
+    "mentalModel": "Think of income tax brackets or salary tiers at a company. By checking from the top tier down, anyone earning six figures gets stamped 'High' immediately, while others trickle down to 'Medium', 'Low', or 'Very Low'!",
+    "lineByLine": [
+      {
+        "line": "SELECT employee_id,",
+        "explanation": "Retrieves the employee's unique identifier."
+      },
+      {
+        "line": "       employee_name,",
+        "explanation": "Retrieves the employee's full name."
+      },
+      {
+        "line": "       salary,",
+        "explanation": "Retrieves the base compensation amount."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Begins conditional evaluation expression."
+      },
+      {
+        "line": "           WHEN salary >= 100000 THEN 'High'",
+        "explanation": "Labels salaries 100k and above as 'High'."
+      },
+      {
+        "line": "           WHEN salary >= 70000 THEN 'Medium'",
+        "explanation": "Labels salaries between 70k and 99.9k as 'Medium'."
+      },
+      {
+        "line": "           WHEN salary >= 40000 THEN 'Low'",
+        "explanation": "Labels salaries between 40k and 69.9k as 'Low'."
+      },
+      {
+        "line": "           ELSE 'Very Low'",
+        "explanation": "Default fallback assigning 'Very Low' to salaries below 40k."
+      },
+      {
+        "line": "       END AS salary_band",
+        "explanation": "Terminates the CASE block and aliases the output column as salary_band."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Reads rows from the employees table."
+      },
+      {
+        "line": "ORDER BY employee_id;",
+        "explanation": "Sorts the output rows in ascending order by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Wrong clause order: Placing WHEN salary >= 40000 THEN 'Low' before 100000 causes high earners (like 120,000) to incorrectly be classified as 'Low'.",
+      "❌ 2. Omitting the ELSE branch: Without ELSE 'Very Low', any employee with a salary below 40,000 will be evaluated to NULL.",
+      "❌ 3. Writing unnecessary compound conditions: Writing WHEN salary >= 70000 AND salary < 100000 is verbose and redundant when descending order is maintained."
+    ],
+    "keyTakeaway": "Sequential CASE evaluation provides clean numerical categorization; maintaining descending order guarantees mutually exclusive brackets without redundant boolean expressions.",
+    "interviewPros": [
+      "Q1. Why is the order of WHEN clauses important? CASE statements evaluate top-to-bottom and exit upon the first truthy condition.",
+      "Q2. Can CASE expressions return numeric values? Yes, CASE can return text, integers, floats, or dates.",
+      "Q3. Can CASE be used in an ORDER BY clause? Yes, CASE is often used in ORDER BY to apply custom sorting orders (e.g. ORDER BY CASE salary_band WHEN 'High' THEN 1 ... END).",
+      "Q4. What is the time complexity? O(N) linear time as each row is evaluated in constant time.",
+      "Q5. How would you pivot the counts of employees in each band? Using SUM(CASE WHEN salary_band = 'High' THEN 1 ELSE 0 END) grouped by department."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How would you handle negative or NULL salary values? (Include explicit WHEN salary IS NULL or WHEN salary < 0 conditions)\n• How does CASE differ between PostgreSQL, MySQL, and SQL Server? (CASE is ANSI standard and behaves identically across all major SQL dialects)\n• Can a CASE expression return different datatypes in different branches? (No, all THEN and ELSE return expressions must evaluate to compatible datatypes)"
+    ]
+  },
+  "ASQL-003": {
+    "code_id": "ASQL-003",
+    "numeric_id": 73,
+    "title": "Age Groups",
+    "code": "SELECT person_id,\n       person_name,\n       age,\n       CASE\n           WHEN age >= 60 THEN 'Senior Citizen'\n           WHEN age >= 20 THEN 'Adult'\n           WHEN age >= 13 THEN 'Teen'\n           ELSE 'Child'\n       END AS age_group\nFROM persons\nORDER BY person_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We classify people by age from highest threshold to lowest using CASE WHEN: age 60+ gets 'Senior Citizen', 20+ gets 'Adult', 13+ gets 'Teen', and any age below 13 falls through to ELSE 'Child', sorted by person_id.",
+    "mentalModel": "Imagine a theme park queue with age gates. Visitors aged 60+ go to the Senior Citizen lane, 20+ to Adult, 13+ to Teen, and anyone younger is automatically welcomed into the Child group!",
+    "lineByLine": [
+      {
+        "line": "SELECT person_id,",
+        "explanation": "Retrieves the person's unique identifier."
+      },
+      {
+        "line": "       person_name,",
+        "explanation": "Retrieves the person's full name."
+      },
+      {
+        "line": "       age,",
+        "explanation": "Retrieves the person's age in years."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Initiates conditional classification expression."
+      },
+      {
+        "line": "           WHEN age >= 60 THEN 'Senior Citizen'",
+        "explanation": "Classifies ages 60 and above as 'Senior Citizen'."
+      },
+      {
+        "line": "           WHEN age >= 20 THEN 'Adult'",
+        "explanation": "Classifies ages 20 to 59 as 'Adult'."
+      },
+      {
+        "line": "           WHEN age >= 13 THEN 'Teen'",
+        "explanation": "Classifies ages 13 to 19 as 'Teen'."
+      },
+      {
+        "line": "           ELSE 'Child'",
+        "explanation": "Default fallback classifying ages 0 to 12 as 'Child'."
+      },
+      {
+        "line": "       END AS age_group",
+        "explanation": "Closes the CASE expression and aliases the resulting column as age_group."
+      },
+      {
+        "line": "FROM persons",
+        "explanation": "Reads records from the persons table."
+      },
+      {
+        "line": "ORDER BY person_id;",
+        "explanation": "Sorts results in ascending order by person_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Testing lower ages first: Placing WHEN age >= 0 THEN 'Child' at the top causes everyone (including a 67-year-old) to be labeled 'Child' due to short-circuiting.",
+      "❌ 2. Omitting the ELSE branch: Without ELSE 'Child', children aged 0-12 evaluate to NULL.",
+      "❌ 3. Writing complex BETWEEN ranges: Writing WHEN age BETWEEN 20 AND 59 is redundant and error-prone compared to clean descending `>=` thresholds."
+    ],
+    "keyTakeaway": "Evaluating numerical brackets from highest to lowest in CASE statements creates a clean cascading filter that prevents overlapping boundary bugs.",
+    "interviewPros": [
+      "Q1. Why start with age >= 60? Because CASE short-circuits at the first match; descending order guarantees high ages aren't trapped by lower thresholds.",
+      "Q2. Does CASE stop checking once a condition is met? Yes, subsequent WHEN clauses are completely skipped.",
+      "Q3. Can CASE return numeric codes instead of text? Yes, e.g. returning 1 for Senior, 2 for Adult, etc.",
+      "Q4. Can you group by this age group to see demographic distribution? Yes: `SELECT CASE ... END AS age_group, COUNT(*) FROM persons GROUP BY 1`.",
+      "Q5. How does CASE handle NULL age values? A NULL age fails all comparisons and falls into ELSE unless explicitly handled with `WHEN age IS NULL`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How would you validate that ages cannot be negative? (Add WHEN age < 0 THEN 'Invalid' or an integrity constraint CHECK (age >= 0))\n• Can CASE expressions be evaluated in parallel across rows? (Yes, database query executors easily vectorize CASE expressions across columnar or row buffers)\n• How do you implement dynamic age group bucket sizing? (Join with an age_bands reference table using ON persons.age BETWEEN age_bands.min_age AND age_bands.max_age)"
+    ]
+  },
+  "ASQL-004": {
+    "code_id": "ASQL-004",
+    "numeric_id": 74,
+    "title": "Sales Categories",
+    "code": "SELECT sale_id,\n       customer_name,\n       sale_amount,\n       CASE\n           WHEN sale_amount >= 100000 THEN 'Premium'\n           WHEN sale_amount >= 50000 THEN 'High'\n           WHEN sale_amount >= 20000 THEN 'Medium'\n           ELSE 'Low'\n       END AS sales_category\nFROM sales\nORDER BY sale_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We classify transactions into sales tiers based on sale_amount: 100k+ is 'Premium', 50k+ is 'High', 20k+ is 'Medium', and anything below 20k falls into ELSE 'Low', sorted by sale_id.",
+    "mentalModel": "Imagine a VIP reward system for purchases. Any mega transaction of 100k+ gets a 'Premium' badge right away. Moderately high ones get 'High', standard ones get 'Medium', and smaller transactions fall into 'Low'!",
+    "lineByLine": [
+      {
+        "line": "SELECT sale_id,",
+        "explanation": "Retrieves the transaction's unique ID."
+      },
+      {
+        "line": "       customer_name,",
+        "explanation": "Retrieves the purchaser's name."
+      },
+      {
+        "line": "       sale_amount,",
+        "explanation": "Retrieves the monetary sale total."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Begins conditional classification expression."
+      },
+      {
+        "line": "           WHEN sale_amount >= 100000 THEN 'Premium'",
+        "explanation": "Assigns 'Premium' tier to sales 100k and above."
+      },
+      {
+        "line": "           WHEN sale_amount >= 50000 THEN 'High'",
+        "explanation": "Assigns 'High' tier to sales from 50k to 99.9k."
+      },
+      {
+        "line": "           WHEN sale_amount >= 20000 THEN 'Medium'",
+        "explanation": "Assigns 'Medium' tier to sales from 20k to 49.9k."
+      },
+      {
+        "line": "           ELSE 'Low'",
+        "explanation": "Default fallback assigning 'Low' to transactions under 20k."
+      },
+      {
+        "line": "       END AS sales_category",
+        "explanation": "Terminates the CASE block and aliases the computed tier as sales_category."
+      },
+      {
+        "line": "FROM sales",
+        "explanation": "Reads records from the sales table."
+      },
+      {
+        "line": "ORDER BY sale_id;",
+        "explanation": "Sorts results in ascending order by sale_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Reversing condition priority: Testing WHEN sale_amount >= 20000 first causes a 120,000 sale to be stamped 'Medium' due to short-circuiting.",
+      "❌ 2. Forgetting the ELSE clause: Without ELSE 'Low', sales under 20,000 evaluate to NULL.",
+      "❌ 3. Redundant BETWEEN checks: Writing WHEN sale_amount BETWEEN 50000 AND 99999 is verbose when descending order naturally establishes the ceiling."
+    ],
+    "keyTakeaway": "Cascading CASE WHEN statements offer high-performance transactional bucketing without the overhead of lookup tables or complex joins.",
+    "interviewPros": [
+      "Q1. Why start with sale_amount >= 100000? CASE evaluates top-down; descending order prevents higher amounts from matching lower bands.",
+      "Q2. Can CASE expressions be nested? Yes, nested CASE statements are supported though flat descending structures are preferred for readability.",
+      "Q3. How can you find the total revenue generated by Premium sales? Using conditional aggregation: `SUM(CASE WHEN sale_amount >= 100000 THEN sale_amount ELSE 0 END)`.",
+      "Q4. Where can CASE be used in SQL? SELECT, ORDER BY, GROUP BY, HAVING, and inside aggregate functions.",
+      "Q5. Can CASE return numeric scores instead of labels? Yes, e.g. returning tier codes 1, 2, 3, 4."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How does the database optimizer handle CASE in index lookups? (Expressions on columns in WHERE generally cannot use B-Tree indexes unless a functional index exists)\n• How would you handle refunds or negative sales amounts? (Add WHEN sale_amount < 0 THEN 'Refund' or a CHECK constraint)\n• How does CASE perform over millions of rows? (Extremely fast O(N) evaluation that vectorizes well in modern columnar engines)"
+    ]
+  },
+  "ASQL-005": {
+    "code_id": "ASQL-005",
+    "numeric_id": 75,
+    "title": "Bonus Calculation",
+    "code": "SELECT employee_id,\n       employee_name,\n       salary,\n       CASE\n           WHEN salary >= 100000 THEN salary * 0.20\n           WHEN salary >= 70000 THEN salary * 0.15\n           WHEN salary >= 40000 THEN salary * 0.10\n           ELSE salary * 0.05\n       END AS bonus\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We compute employee bonuses dynamically using CASE WHEN: salaries 100k+ get 20% (salary * 0.20), 70k+ get 15%, 40k+ get 10%, and below 40k gets 5% (salary * 0.05), sorted by employee_id.",
+    "mentalModel": "Think of a tiered commission rate. Rather than just applying a text tag, the database calculates an exact bonus paycheck by multiplying the employee's base salary by their tier's decimal rate directly inside each branch!",
+    "lineByLine": [
+      {
+        "line": "SELECT employee_id,",
+        "explanation": "Retrieves the employee's unique identifier."
+      },
+      {
+        "line": "       employee_name,",
+        "explanation": "Retrieves the employee's full name."
+      },
+      {
+        "line": "       salary,",
+        "explanation": "Retrieves the base compensation amount."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Begins dynamic numeric conditional calculation."
+      },
+      {
+        "line": "           WHEN salary >= 100000 THEN salary * 0.20",
+        "explanation": "Calculates 20% bonus for salaries 100,000 and above."
+      },
+      {
+        "line": "           WHEN salary >= 70000 THEN salary * 0.15",
+        "explanation": "Calculates 15% bonus for salaries 70,000 to 99,999."
+      },
+      {
+        "line": "           WHEN salary >= 40000 THEN salary * 0.10",
+        "explanation": "Calculates 10% bonus for salaries 40,000 to 69,999."
+      },
+      {
+        "line": "           ELSE salary * 0.05",
+        "explanation": "Default fallback calculating 5% bonus for salaries below 40,000."
+      },
+      {
+        "line": "       END AS bonus",
+        "explanation": "Terminates the CASE block and aliases the computed bonus column."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "ORDER BY employee_id;",
+        "explanation": "Sorts results in ascending order by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Multiplying by whole integer instead of percentage: Writing salary * 20 computes 2000% rather than 20% (use 0.20).",
+      "❌ 2. Inverting condition hierarchy: Checking WHEN salary >= 40000 first assigns 10% bonus to a 120,000 earner instead of 20%.",
+      "❌ 3. Omitting the ELSE branch: Leaves employees earning under 40k with NULL bonuses instead of 5%.",
+      "❌ 4. Type mismatch: Returning text in one branch and numbers in another causes a datatype conversion error in strict SQL engines."
+    ],
+    "keyTakeaway": "SQL CASE WHEN branches are full expressions capable of inline arithmetic operations (e.g. salary * 0.20), enabling clean dynamic payroll and financial computations.",
+    "interviewPros": [
+      "Q1. Can CASE expressions perform calculations and arithmetic? Yes, each THEN/ELSE clause can contain full mathematical expressions, function calls, or subqueries.",
+      "Q2. Why multiply by 0.20 instead of 20? 0.20 represents 20/100 (20%); multiplying by 20 would yield twenty times the base salary.",
+      "Q3. Can ROUND() be wrapped around the CASE expression? Yes: `ROUND(CASE ... END, 2)` formats the computed bonus to 2 decimal currency places.",
+      "Q4. Can you calculate total company bonus payout? Yes: `SUM(CASE WHEN salary >= 100000 THEN salary * 0.20 ... END)`.",
+      "Q5. What is the time complexity? O(N) linear time with constant time arithmetic per row."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What happens if salary is NULL? (Multiplication with NULL returns NULL; use COALESCE(salary, 0) or an explicit IS NULL branch)\n• How do floating-point rounding errors affect financial arithmetic in SQL? (In production, use NUMERIC/DECIMAL types instead of FLOAT/REAL for monetary calculations)\n• How would you give an extra flat bonus on top of the percentage? (e.g. `(salary * 0.20) + 5000` inside the THEN branch)"
+    ]
+  },
+  "ASQL-006": {
+    "code_id": "ASQL-006",
+    "numeric_id": 76,
+    "title": "Customer Classification",
+    "code": "SELECT customer_id,\n       customer_name,\n       total_purchase,\n       CASE\n           WHEN total_purchase >= 100000 THEN 'Platinum'\n           WHEN total_purchase >= 50000 THEN 'Gold'\n           WHEN total_purchase >= 20000 THEN 'Silver'\n           ELSE 'Bronze'\n       END AS customer_type\nFROM customers\nORDER BY customer_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We evaluate total_purchase from highest threshold to lowest using CASE WHEN: spend 100k+ is 'Platinum', 50k+ is 'Gold', 20k+ is 'Silver', and anything lower falls into ELSE 'Bronze', sorted by customer_id.",
+    "mentalModel": "Think of frequent flyer or credit card loyalty tiers. A shopper spending 150k immediately earns the top-tier Platinum card, while lower spenders cascade down into Gold, Silver, or Bronze!",
+    "lineByLine": [
+      {
+        "line": "SELECT customer_id,",
+        "explanation": "Retrieves the customer's unique ID."
+      },
+      {
+        "line": "       customer_name,",
+        "explanation": "Retrieves the customer's full name."
+      },
+      {
+        "line": "       total_purchase,",
+        "explanation": "Retrieves cumulative lifetime purchase spend."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Initiates conditional loyalty classification."
+      },
+      {
+        "line": "           WHEN total_purchase >= 100000 THEN 'Platinum'",
+        "explanation": "Assigns 'Platinum' tier to total spend of 100,000 and above."
+      },
+      {
+        "line": "           WHEN total_purchase >= 50000 THEN 'Gold'",
+        "explanation": "Assigns 'Gold' tier to total spend between 50,000 and 99,999."
+      },
+      {
+        "line": "           WHEN total_purchase >= 20000 THEN 'Silver'",
+        "explanation": "Assigns 'Silver' tier to total spend between 20,000 and 49,999."
+      },
+      {
+        "line": "           ELSE 'Bronze'",
+        "explanation": "Default fallback assigning 'Bronze' to spend below 20,000."
+      },
+      {
+        "line": "       END AS customer_type",
+        "explanation": "Terminates the CASE block and aliases the computed tier as customer_type."
+      },
+      {
+        "line": "FROM customers",
+        "explanation": "Reads records from the customers table."
+      },
+      {
+        "line": "ORDER BY customer_id;",
+        "explanation": "Sorts results in ascending order by customer_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Reversing condition priority: Placing WHEN total_purchase >= 20000 THEN 'Silver' at the top causes 150k spenders to be labeled 'Silver' due to short-circuiting.",
+      "❌ 2. Omitting the ELSE branch: Causes customers with spend under 20k to receive NULL rather than 'Bronze'.",
+      "❌ 3. Redundant BETWEEN syntax: Using BETWEEN 50000 AND 99999 is unnecessary and prone to off-by-one errors when descending order is maintained."
+    ],
+    "keyTakeaway": "Cascading CASE expressions partition continuous numeric variables into discrete cohorts in linear O(N) time with minimal execution overhead.",
+    "interviewPros": [
+      "Q1. Why check >= 100000 first? Because SQL evaluates top-to-bottom and exits at the first match; higher thresholds must be evaluated first.",
+      "Q2. How can you find the count of customers in each loyalty tier? Group by the CASE expression: `SELECT CASE ... END AS tier, COUNT(*) FROM customers GROUP BY 1`.",
+      "Q3. How can you find total revenue by tier? Using conditional aggregation: `SUM(CASE WHEN total_purchase >= 100000 THEN total_purchase ELSE 0 END)`.",
+      "Q4. Can CASE return numeric tier codes? Yes, e.g. returning 1, 2, 3, 4 instead of string labels.",
+      "Q5. Can this query run without an index on total_purchase? Yes, though for large tables an index aids filtering if a WHERE clause is added."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between static CASE bucketing vs dynamic NTILE(4) bucketing? (CASE uses fixed business rule thresholds; NTILE splits the population into 4 equal-sized quartiles regardless of spend values)\n• How do you handle customers with 0 or negative purchases? (Add WHEN total_purchase <= 0 THEN 'Inactive' or a CHECK constraint)\n• How can loyalty tiers be stored if business rules change frequently? (Maintain a loyalty_tiers metadata lookup table and join with `BETWEEN min_spend AND max_spend`)"
+    ]
+  },
+  "ASQL-007": {
+    "code_id": "ASQL-007",
+    "numeric_id": 77,
+    "title": "Pass/Fail Status",
+    "code": "SELECT student_id,\n       student_name,\n       marks,\n       CASE\n           WHEN marks >= 40 THEN 'Pass'\n           ELSE 'Fail'\n       END AS result\nFROM students\nORDER BY student_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We evaluate each student's marks with CASE WHEN: scores of 40 or greater receive 'Pass', while any score below 40 falls into ELSE 'Fail', sorted by student_id.",
+    "mentalModel": "Think of a security barrier set at a height of 40 inches. Anyone 40 or above gets through with a green 'Pass' stamp; anyone shorter receives a red 'Fail' stamp!",
+    "lineByLine": [
+      {
+        "line": "SELECT student_id,",
+        "explanation": "Retrieves the student's unique ID."
+      },
+      {
+        "line": "       student_name,",
+        "explanation": "Retrieves the student's full name."
+      },
+      {
+        "line": "       marks,",
+        "explanation": "Retrieves the raw numerical score."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Begins conditional evaluation expression."
+      },
+      {
+        "line": "           WHEN marks >= 40 THEN 'Pass'",
+        "explanation": "Assigns 'Pass' to marks 40 and above."
+      },
+      {
+        "line": "           ELSE 'Fail'",
+        "explanation": "Default fallback assigning 'Fail' to marks under 40."
+      },
+      {
+        "line": "       END AS result",
+        "explanation": "Closes the CASE expression and aliases the outcome column as result."
+      },
+      {
+        "line": "FROM students",
+        "explanation": "Reads records from the students table."
+      },
+      {
+        "line": "ORDER BY student_id;",
+        "explanation": "Sorts results in ascending order by student_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using strict greater-than (> 40): Writing WHEN marks > 40 causes a student who scored exactly 40 to fail unfairly.",
+      "❌ 2. Omitting the ELSE clause: Causes failing students to receive NULL rather than 'Fail'.",
+      "❌ 3. Reversing the inequality (marks <= 40): Inverts the academic logic, causing failing students to be labeled as 'Pass'."
+    ],
+    "keyTakeaway": "A single WHEN branch with an explicit ELSE clause is the cleanest, most efficient pattern for binary categorization in SQL.",
+    "interviewPros": [
+      "Q1. Can CASE have only a single WHEN clause? Yes, CASE requires at least one WHEN condition; simple binary logic requires only one WHEN and an ELSE.",
+      "Q2. Why is >= 40 used instead of > 40? 40 marks is the passing grade boundary; inclusive comparison ensures 40 is categorized as Pass.",
+      "Q3. How can you count the total number of passing students? Using conditional aggregation: `COUNT(CASE WHEN marks >= 40 THEN 1 END)` or `SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END)`.",
+      "Q4. Can you calculate the pass percentage? Yes: `ROUND(AVG(CASE WHEN marks >= 40 THEN 100.0 ELSE 0.0 END), 2)`.",
+      "Q5. Can this logic be used in an IIF() function? In SQL Server and SQLite (newer versions), `IIF(marks >= 40, 'Pass', 'Fail')` is supported, but standard CASE WHEN is portable across all SQL engines."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How does SQL handle NULL values in marks? (NULL >= 40 evaluates to UNKNOWN, which defaults to the ELSE branch, assigning 'Fail'; use `WHEN marks IS NULL THEN 'Absent'` if distinction is needed)\n• How would you filter for only passing students? (Either repeat `WHERE marks >= 40` or wrap in a CTE/subquery to filter by `result = 'Pass'`)\n• Why can't you write WHERE result = 'Pass' directly in the same SELECT query? (Because the WHERE clause executes before the SELECT clause assigns the column alias)"
+    ]
+  },
+  "ASQL-008": {
+    "code_id": "ASQL-008",
+    "numeric_id": 78,
+    "title": "Gender Formatting",
+    "code": "SELECT employee_id,\n       employee_name,\n       gender,\n       CASE\n           WHEN gender = 'M' THEN 'Male'\n           WHEN gender = 'F' THEN 'Female'\n           WHEN gender = 'O' THEN 'Other'\n           ELSE 'Unknown'\n       END AS gender_name\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We decode raw gender codes using CASE WHEN: 'M' becomes 'Male', 'F' becomes 'Female', 'O' becomes 'Other', and any invalid or unknown code defaults to ELSE 'Unknown', sorted by employee_id.",
+    "mentalModel": "Think of a legend decoder on a map. Instead of printing cryptic abbreviations like 'M' or 'F' on official reports, the database translates each letter into its complete, polished english word!",
+    "lineByLine": [
+      {
+        "line": "SELECT employee_id,",
+        "explanation": "Retrieves the employee's unique ID."
+      },
+      {
+        "line": "       employee_name,",
+        "explanation": "Retrieves the employee's full name."
+      },
+      {
+        "line": "       gender,",
+        "explanation": "Retrieves the stored single-character gender code."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Initiates conditional code translation."
+      },
+      {
+        "line": "           WHEN gender = 'M' THEN 'Male'",
+        "explanation": "Decodes code 'M' to 'Male'."
+      },
+      {
+        "line": "           WHEN gender = 'F' THEN 'Female'",
+        "explanation": "Decodes code 'F' to 'Female'."
+      },
+      {
+        "line": "           WHEN gender = 'O' THEN 'Other'",
+        "explanation": "Decodes code 'O' to 'Other'."
+      },
+      {
+        "line": "           ELSE 'Unknown'",
+        "explanation": "Default fallback assigning 'Unknown' to unexpected codes (e.g. 'X') or NULL values."
+      },
+      {
+        "line": "       END AS gender_name",
+        "explanation": "Terminates the CASE block and aliases the output column as gender_name."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "ORDER BY employee_id;",
+        "explanation": "Sorts results in ascending order by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Omitting single quotes around string literals: Writing WHEN gender = M instead of 'M' causes a column lookup syntax error.",
+      "❌ 2. Omitting the ELSE branch: Causes unlisted codes (like 'X') or NULLs to evaluate to NULL instead of 'Unknown'.",
+      "❌ 3. Checking for the long name: Writing WHEN gender = 'Male' fails because the underlying column stores 'M'."
+    ],
+    "keyTakeaway": "Discrete value mapping via CASE WHEN is the standard SQL method for transforming internal database codes into client-friendly display labels.",
+    "interviewPros": [
+      "Q1. Why decode in SQL rather than updating the database table? Because single-character codes save significant storage space and index memory; decoding is done purely at the presentation/query layer.",
+      "Q2. What happens if gender is NULL? NULL comparisons evaluate to UNKNOWN, cleanly falling through to the ELSE branch to return 'Unknown'.",
+      "Q3. How can you pivot employee counts by gender into columns? Using conditional aggregation: `COUNT(CASE WHEN gender = 'M' THEN 1 END) AS male_count, COUNT(CASE WHEN gender = 'F' THEN 1 END) AS female_count`.",
+      "Q4. Can CASE handle case-insensitive codes (e.g. 'm' and 'M')? Yes: `WHEN UPPER(gender) = 'M' THEN 'Male'`.",
+      "Q5. Can this be written as a simple CASE expression? Yes: `CASE gender WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' WHEN 'O' THEN 'Other' ELSE 'Unknown' END`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between Simple CASE (CASE expr WHEN val THEN ...) and Searched CASE (CASE WHEN condition THEN ...)? (Simple CASE tests equality against a single base expression; Searched CASE supports arbitrary boolean conditions and ranges)\n• When should you replace a CASE statement with a lookup table? (When there are dozens of codes or codes change dynamically without code redeployment, a dim_gender lookup table joined via foreign key is preferable)\n• How does database collation affect string comparisons in CASE? (Collation determines whether comparisons are case-sensitive or accent-sensitive)"
+    ]
+  },
+  "ASQL-009": {
+    "code_id": "ASQL-009",
+    "numeric_id": 79,
+    "title": "Conditional Aggregation",
+    "code": "SELECT\n    COUNT(*) AS total_students,\n    SUM(\n        CASE\n            WHEN marks >= 40 THEN 1\n            ELSE 0\n        END\n    ) AS passed_students,\n    SUM(\n        CASE\n            WHEN marks < 40 THEN 1\n            ELSE 0\n        END\n    ) AS failed_students\nFROM students;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "We compute total student count using COUNT(*), and calculate passing and failing student totals in the same scan by wrapping CASE WHEN statements inside SUM(): returning 1 for matches and 0 otherwise.",
+    "mentalModel": "Imagine a scorekeeper holding two counters. When a passing score comes in, they add 1 to the 'Pass' counter and 0 to the 'Fail' counter. At the end of the line, both tallies together with the total head-count are displayed on one neat dashboard row!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of summary metrics."
+      },
+      {
+        "line": "    COUNT(*) AS total_students,",
+        "explanation": "Counts the total number of students in the table."
+      },
+      {
+        "line": "    SUM(",
+        "explanation": "Opens summation aggregate function for conditional passed count."
+      },
+      {
+        "line": "        CASE",
+        "explanation": "Evaluates pass criteria per student."
+      },
+      {
+        "line": "            WHEN marks >= 40 THEN 1",
+        "explanation": "Emits 1 when marks are 40 or greater."
+      },
+      {
+        "line": "            ELSE 0",
+        "explanation": "Emits 0 when marks are below 40."
+      },
+      {
+        "line": "        END",
+        "explanation": "Closes the CASE evaluation."
+      },
+      {
+        "line": "    ) AS passed_students,",
+        "explanation": "Sums the 1s and 0s, aliasing the total as passed_students."
+      },
+      {
+        "line": "    SUM(",
+        "explanation": "Opens summation aggregate function for conditional failed count."
+      },
+      {
+        "line": "        CASE",
+        "explanation": "Evaluates fail criteria per student."
+      },
+      {
+        "line": "            WHEN marks < 40 THEN 1",
+        "explanation": "Emits 1 when marks are strictly below 40."
+      },
+      {
+        "line": "            ELSE 0",
+        "explanation": "Emits 0 when marks are 40 or greater."
+      },
+      {
+        "line": "        END",
+        "explanation": "Closes the CASE evaluation."
+      },
+      {
+        "line": "    ) AS failed_students",
+        "explanation": "Sums the 1s and 0s, aliasing the total as failed_students."
+      },
+      {
+        "line": "FROM students;",
+        "explanation": "Executes single-table scan over the students table without needing a GROUP BY clause."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Returning text inside SUM(): Writing SUM(CASE WHEN marks >= 40 THEN 'Pass' END) causes a numeric type conversion error.",
+      "❌ 2. Forgetting ELSE 0: Omitting ELSE returns NULL for unmatched rows, which while ignored by SUM, can cause unintended edge cases in mathematical expressions.",
+      "❌ 3. Attempting to use COUNT(CASE WHEN marks >= 40 THEN 0 END): COUNT counts non-null values! It would count 0 as a valid row. You must use SUM with 1 and 0, or COUNT with 1 and NULL."
+    ],
+    "keyTakeaway": "Conditional aggregation via SUM(CASE WHEN ... THEN 1 ELSE 0 END) enables multiple filtered metrics to be computed simultaneously in a single table scan.",
+    "interviewPros": [
+      "Q1. Why use SUM(CASE WHEN ... THEN 1 ELSE 0 END) instead of COUNT(*)? COUNT(*) counts every single row; conditional SUM allows selective counting based on boolean criteria.",
+      "Q2. Why return 1 and 0? SUM() mathematically adds numbers; emitting 1 for matches and 0 for non-matches totals the exact number of matching occurrences.",
+      "Q3. Can this pattern be used to calculate percentages? Yes: `ROUND(100.0 * SUM(CASE WHEN marks >= 40 THEN 1 ELSE 0 END) / COUNT(*), 2) AS pass_rate`.",
+      "Q4. Can you use COUNT(CASE WHEN marks >= 40 THEN 1 END) without ELSE? Yes, because COUNT ignores NULLs; if ELSE is omitted, unmatched rows evaluate to NULL and are not counted.",
+      "Q5. What is the space complexity? O(1) auxiliary space because aggregation maintains running scalar accumulators in memory."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the FILTER clause in PostgreSQL and SQLite 3.30+? (`COUNT(*) FILTER (WHERE marks >= 40)` is the modern SQL standard shorthand for conditional aggregation)\n• How does conditional aggregation compare to running multiple SELECT queries with UNION? (Conditional aggregation requires only 1 table scan O(N), whereas multiple queries scan the table multiple times O(K × N))\n• How do you pivot row values into columns dynamically without conditional aggregation? (In database engines with PIVOT support, PIVOT can be used, but SUM(CASE ...) is universal across every SQL engine)"
+    ]
+  },
+  "ASQL-010": {
+    "code_id": "ASQL-010",
+    "numeric_id": 80,
+    "title": "Multiple CASE Conditions",
+    "code": "SELECT employee_id,\n       employee_name,\n       age,\n       salary,\n       CASE\n           WHEN age < 30 THEN 'Young'\n           WHEN age < 50 THEN 'Mid Age'\n           ELSE 'Senior'\n       END AS age_category,\n       CASE\n           WHEN salary >= 100000 THEN 'High'\n           WHEN salary >= 50000 THEN 'Medium'\n           ELSE 'Low'\n       END AS salary_category\nFROM employees\nORDER BY employee_id;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We generate two separate calculated columns in the same SELECT statement: one CASE WHEN categorizes age (< 30 Young, < 50 Mid Age, ELSE Senior) and a second CASE WHEN categorizes salary (>= 100k High, >= 50k Medium, ELSE Low), sorted by employee_id.",
+    "mentalModel": "Imagine an employee badge printer. Machine #1 stamps an age cohort sticker ('Young', 'Mid Age', 'Senior') on the top corner, and Machine #2 stamps a salary band sticker ('High', 'Medium', 'Low') on the bottom corner. Both operations run in parallel on the same badge!",
+    "lineByLine": [
+      {
+        "line": "SELECT employee_id,",
+        "explanation": "Retrieves the employee's unique ID."
+      },
+      {
+        "line": "       employee_name,",
+        "explanation": "Retrieves the employee's full name."
+      },
+      {
+        "line": "       age,",
+        "explanation": "Retrieves the recorded age."
+      },
+      {
+        "line": "       salary,",
+        "explanation": "Retrieves the base compensation amount."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Opens first CASE expression for age segmentation."
+      },
+      {
+        "line": "           WHEN age < 30 THEN 'Young'",
+        "explanation": "Assigns 'Young' to ages below 30."
+      },
+      {
+        "line": "           WHEN age < 50 THEN 'Mid Age'",
+        "explanation": "Assigns 'Mid Age' to ages from 30 to 49."
+      },
+      {
+        "line": "           ELSE 'Senior'",
+        "explanation": "Default fallback assigning 'Senior' to ages 50 and above."
+      },
+      {
+        "line": "       END AS age_category,",
+        "explanation": "Closes first CASE and aliases the column as age_category."
+      },
+      {
+        "line": "       CASE",
+        "explanation": "Opens second independent CASE expression for compensation tiering."
+      },
+      {
+        "line": "           WHEN salary >= 100000 THEN 'High'",
+        "explanation": "Assigns 'High' to salaries 100,000 and above."
+      },
+      {
+        "line": "           WHEN salary >= 50000 THEN 'Medium'",
+        "explanation": "Assigns 'Medium' to salaries between 50,000 and 99,999."
+      },
+      {
+        "line": "           ELSE 'Low'",
+        "explanation": "Default fallback assigning 'Low' to salaries below 50,000."
+      },
+      {
+        "line": "       END AS salary_category",
+        "explanation": "Closes second CASE and aliases the column as salary_category."
+      },
+      {
+        "line": "FROM employees",
+        "explanation": "Reads records from the employees table."
+      },
+      {
+        "line": "ORDER BY employee_id;",
+        "explanation": "Sorts results in ascending order by employee_id."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Trying to compute two columns inside a single CASE block: Each computed column requires its own dedicated CASE ... END block separated by a comma.",
+      "❌ 2. Forgetting END on the first CASE: Causes a syntax parsing error before the comma.",
+      "❌ 3. Reversing age priority: Writing WHEN age >= 0 THEN 'Young' first traps all older employees as 'Young'."
+    ],
+    "keyTakeaway": "Multiple CASE WHEN blocks can coexist in a single SELECT projection, allowing multiple independent business categorizations in one query pass.",
+    "interviewPros": [
+      "Q1. Can one SELECT query contain multiple CASE statements? Yes, each CASE statement is an independent scalar expression that produces its own column.",
+      "Q2. Do the two CASE expressions affect each other? No, they operate on completely independent attributes (age vs salary) and evaluate in parallel per row.",
+      "Q3. Can you combine both into a cross-tabulation grid? Yes, you can group by both: `SELECT age_category, salary_category, COUNT(*) FROM (...) GROUP BY 1, 2`.",
+      "Q4. Can a CASE expression reference the alias of another CASE expression? No, aliases defined in SELECT cannot be referenced in the same SELECT clause; you must repeat the expression or wrap it in a CTE/subquery.",
+      "Q5. What is the execution cost of multiple CASE blocks? Negligible; modern CPUs evaluate simple conditional branches in nanoseconds during the single table scan."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How would you generate a composite category (e.g. 'Young High Earner')? (Use boolean AND inside a single CASE: `WHEN age < 30 AND salary >= 100000 THEN 'Young High Earner'` or concatenate both column results)\n• How do database query planners vectorize multiple CASE expressions? (Columnar storage engines vectorize each projection expression across SIMD registers across column blocks)\n• What are generated columns (stored/virtual) in MySQL/PostgreSQL? (You can define generated columns directly on the table DDL using these CASE expressions so they are computed automatically upon INSERT/UPDATE)"
+    ]
+  },
+  "Pro-001": {
+    "code_id": "Pro-001",
+    "numeric_id": 81,
+    "title": "Combine Two Tables",
+    "code": "SELECT\n    p.firstName,\n    p.lastName,\n    a.city,\n    a.state\nFROM Person AS p\nLEFT JOIN Address AS a\nON p.personId = a.personId;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We perform a LEFT JOIN from Person to Address matching on personId so every person is returned, with city and state filled with NULL for anyone lacking an address.",
+    "mentalModel": "Think of a company directory. Everyone gets an ID card printed with their first and last name. If they registered an office address, their city and state are stamped on; otherwise, those fields remain blank (NULL), but their card is never thrown away!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of specified personal and geographical attributes."
+      },
+      {
+        "line": "    p.firstName,",
+        "explanation": "Retrieves the person's first name."
+      },
+      {
+        "line": "    p.lastName,",
+        "explanation": "Retrieves the person's last name."
+      },
+      {
+        "line": "    a.city,",
+        "explanation": "Retrieves the city from Address (evaluates to NULL if no matching address exists)."
+      },
+      {
+        "line": "    a.state",
+        "explanation": "Retrieves the state from Address (evaluates to NULL if no matching address exists)."
+      },
+      {
+        "line": "FROM Person AS p",
+        "explanation": "Designates Person as the primary left table whose rows must all be preserved."
+      },
+      {
+        "line": "LEFT JOIN Address AS a",
+        "explanation": "Performs an outer join against Address, retaining all left-side rows regardless of a match."
+      },
+      {
+        "line": "ON p.personId = a.personId;",
+        "explanation": "Joins records by equating primary key Person.personId with foreign key Address.personId."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using INNER JOIN instead of LEFT JOIN: Drops individuals (like Allen Wang) who do not have an address registered.",
+      "❌ 2. Equating the wrong key columns: Writing ON p.personId = a.addressId joins person IDs with address IDs.",
+      "❌ 3. Swapping table positions: Writing FROM Address a LEFT JOIN Person p drops persons who do not have addresses."
+    ],
+    "keyTakeaway": "A LEFT JOIN preserves every row from the primary left table, returning NULL for unmatched right-table columns.",
+    "interviewPros": [
+      "Q1. Why is LEFT JOIN chosen over INNER JOIN? Because the problem statement explicitly requires returning all persons, even when their address is missing (with NULL for city/state).",
+      "Q2. Which table belongs on the left side of the JOIN? The Person table, because its rows must unconditionally appear in the final output.",
+      "Q3. How does the database optimize this query? If indexes exist on Person.personId and Address.personId, the optimizer uses an Index Nested Loops Join or Hash Outer Join in O(N + M) time.",
+      "Q4. What if a person has multiple addresses? A LEFT JOIN would duplicate the person row for each matching address; if only one address is desired, deduplication or aggregation (e.g. ROW_NUMBER()) would be needed.",
+      "Q5. Can this query be written with a correlated subquery? Yes, but joining is significantly more idiomatic and scalable than correlated scalar subqueries in SELECT."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between filtering on Address in the ON clause vs the WHERE clause? (Filtering in ON preserves unmatched Person rows with NULLs; filtering in WHERE turns the LEFT JOIN into an INNER JOIN by discarding NULLs)\n• How does the query engine handle NULL in the join condition? (NULL = NULL evaluates to UNKNOWN, so rows with NULL personId will never match an address)\n• How would you find ONLY persons who lack an address? (Add `WHERE a.personId IS NULL` after the LEFT JOIN)"
+    ]
+  },
+  "Pro-002": {
+    "code_id": "Pro-002",
+    "numeric_id": 82,
+    "title": "Employees Earning More Than Their Managers",
+    "code": "SELECT e.name AS Employee\nFROM Employee AS e\nJOIN Employee AS m\nON e.managerId = m.id\nWHERE e.salary > m.salary;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We perform a SELF JOIN on the Employee table, matching the employee's managerId to the manager's id, and filter for rows where the employee's salary is strictly higher than their manager's.",
+    "mentalModel": "Imagine every employee holding a folder with their own salary and their boss's ID. In line, they walk up to their boss, compare the paystubs side-by-side, and only those out-earning their manager step into the winner's circle!",
+    "lineByLine": [
+      {
+        "line": "SELECT e.name AS Employee",
+        "explanation": "Selects the employee's name and aliases the column as Employee."
+      },
+      {
+        "line": "FROM Employee AS e",
+        "explanation": "Designates the Employee table under alias e representing individual employees."
+      },
+      {
+        "line": "JOIN Employee AS m",
+        "explanation": "Joins the same Employee table under alias m representing their respective managers."
+      },
+      {
+        "line": "ON e.managerId = m.id",
+        "explanation": "Matches each employee's managerId foreign key to the manager's primary key id."
+      },
+      {
+        "line": "WHERE e.salary > m.salary;",
+        "explanation": "Filters only for instances where the employee earns strictly more than their manager."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining on identical primary keys: Writing ON e.id = m.id compares each employee to themselves rather than their supervisor.",
+      "❌ 2. Reversing inequality: Writing e.salary < m.salary isolates underpaid employees instead of overpaid employees.",
+      "❌ 3. Forgetting table aliases: Using Employee.salary without aliases creates ambiguous column references since both tables have identical schemas."
+    ],
+    "keyTakeaway": "A self-join resolves parent-child and hierarchical relationships stored within a single database table by treating aliases as separate logical tables.",
+    "interviewPros": [
+      "Q1. What is a self-join and when is it necessary? A self-join is when a table is joined with itself; it is necessary when recursive or hierarchical relationships (e.g. employee-manager, bill-of-materials, parent-child categories) exist in one table.",
+      "Q2. Why is INNER JOIN appropriate here instead of LEFT JOIN? Employees without managers (managerId IS NULL, e.g. CEO) can never have a manager salary to compare against, so inner joining safely excludes them.",
+      "Q3. How can this query be optimized? Adding an index on `managerId` and `(managerId, salary)` turns the join into a fast index lookup.",
+      "Q4. Can this be solved with a correlated subquery? Yes: `WHERE salary > (SELECT salary FROM Employee m WHERE m.id = e.managerId)`, but a self-join is typically favored for performance and readability.",
+      "Q5. What happens if e.salary = m.salary? The condition `>` is strict, so equal salaries are correctly excluded."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What happens if managerId is NULL? (In an INNER JOIN, NULL = id evaluates to UNKNOWN and the row is dropped, which is correct since no manager exists)\n• How would you find all levels in an organization hierarchy (e.g. employee -> manager -> VP -> CEO)? (Requires a Recursive CTE using `WITH RECURSIVE`)\n• How do implicit joins `FROM Employee e, Employee m WHERE e.managerId = m.id` compare to explicit `JOIN`? (Both produce identical query execution plans, but explicit ANSI JOIN is industry best practice)"
+    ]
+  },
+  "Pro-003": {
+    "code_id": "Pro-003",
+    "numeric_id": 83,
+    "title": "Duplicate Emails",
+    "code": "SELECT email AS Email\nFROM Person\nGROUP BY email\nHAVING COUNT(*) > 1;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We group all records in Person by email and use HAVING COUNT(*) > 1 to filter and return only the emails that appear more than once.",
+    "mentalModel": "Imagine sorting incoming mail into pigeonholes labeled with each email address. Once all letters are sorted, you walk along the boxes and pick up only the ones that hold 2 or more envelopes!",
+    "lineByLine": [
+      {
+        "line": "SELECT email AS Email",
+        "explanation": "Selects the email address attribute, aliasing the column as Email."
+      },
+      {
+        "line": "FROM Person",
+        "explanation": "Scans the Person table containing contact identity records."
+      },
+      {
+        "line": "GROUP BY email",
+        "explanation": "Aggregates identical email addresses into distinct group buckets."
+      },
+      {
+        "line": "HAVING COUNT(*) > 1;",
+        "explanation": "Filters groups post-aggregation, keeping only emails that have a row count strictly greater than 1."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using WHERE COUNT(*) > 1: Aggregation functions cannot appear in the WHERE clause because WHERE executes before grouping occurs.",
+      "❌ 2. Omitting GROUP BY: Running HAVING COUNT(*) > 1 without GROUP BY evaluates the entire table as a single grand-total group.",
+      "❌ 3. Forgetting the output alias: Problem specifically asks for column header 'Email' rather than 'email'."
+    ],
+    "keyTakeaway": "HAVING evaluates aggregated group properties (like COUNT(*) > 1), whereas WHERE filters individual rows before grouping.",
+    "interviewPros": [
+      "Q1. Why must HAVING be used instead of WHERE? WHERE evaluates row-by-row before any aggregation or grouping occurs; HAVING evaluates after groups are formed, allowing criteria on aggregate functions like COUNT(*).",
+      "Q2. What is the execution order of this query? FROM Person -> GROUP BY email -> HAVING COUNT(*) > 1 -> SELECT email AS Email.",
+      "Q3. How does database indexing help this query? A B-tree index on `email` allows the engine to perform a stream aggregate or index skip scan rather than a full table hash-aggregation.",
+      "Q4. Can this be written without GROUP BY? Yes, using a self-join `SELECT DISTINCT p1.email FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id != p2.id` or `EXISTS`, but GROUP BY + HAVING is cleaner and more optimal.",
+      "Q5. Is COUNT(*) preferred over COUNT(id)? Yes, COUNT(*) clearly conveys counting the number of records in each bucket without null-checking overhead."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How would you delete duplicates, keeping only the record with the smallest id? (DELETE p1 FROM Person p1 JOIN Person p2 ON p1.email = p2.email AND p1.id > p2.id)\n• What happens if email contains NULL values? (SQL groups NULLs into a single group; if multiple rows have NULL, HAVING COUNT(*) > 1 would return NULL unless filtered by `WHERE email IS NOT NULL`)\n• How does the database implement GROUP BY under the hood? (Hash Aggregation or Sort/Stream Aggregation depending on index availability and memory budget)"
+    ]
+  },
+  "Pro-004": {
+    "code_id": "Pro-004",
+    "numeric_id": 84,
+    "title": "Delete Duplicate Emails",
+    "code": "DELETE p1\nFROM Person p1\nJOIN Person p2\nON p1.email = p2.email\nAND p1.id > p2.id;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "We perform a self-join on Person matching identical email addresses, and delete only the records from alias p1 where p1's id is strictly greater than p2's id, preserving the record with the minimum id.",
+    "mentalModel": "Imagine two identical stacks of index cards. Whenever you spot two cards sharing the same email address, you compare their ID numbers. You shred the card with the bigger ID number and keep the card with the lower ID number!",
+    "lineByLine": [
+      {
+        "line": "DELETE p1",
+        "explanation": "Directs the deletion operation specifically at rows belonging to the p1 table alias."
+      },
+      {
+        "line": "FROM Person p1",
+        "explanation": "Instantiates the first copy of the Person table as the deletion target."
+      },
+      {
+        "line": "JOIN Person p2",
+        "explanation": "Self-joins a second copy of Person as the comparison reference."
+      },
+      {
+        "line": "ON p1.email = p2.email",
+        "explanation": "Pairs records that have identical email addresses."
+      },
+      {
+        "line": "AND p1.id > p2.id;",
+        "explanation": "Ensures only rows with higher IDs match for deletion, protecting the lowest ID."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Reversing the inequality: Writing p1.id < p2.id deletes the smallest ID and keeps the largest duplicate.",
+      "❌ 2. Joining by ID: Writing ON p1.id = p2.id compares each row to itself and finds zero duplicates.",
+      "❌ 3. Forgetting the email comparison: Writing only p1.id > p2.id deletes all rows except the absolute first row of the entire table."
+    ],
+    "keyTakeaway": "Multi-table DELETE syntax with a self-join condition `p1.id > p2.id` removes redundant records in-place while keeping the first occurrence.",
+    "interviewPros": [
+      "Q1. Why target DELETE p1 instead of DELETE Person? In multi-table DELETE syntax, specifying the alias `p1` tells the query planner exactly which table copy to delete rows from.",
+      "Q2. What if an email has 3 or 4 duplicates (e.g. IDs 2, 5, 9)? The condition `p1.id > p2.id` matches 5 (5 > 2) and 9 (9 > 2), deleting both 5 and 9 and leaving only ID 2 intact.",
+      "Q3. How can this query be written in PostgreSQL or SQLite? Using a subquery `DELETE FROM Person WHERE id NOT IN (SELECT MIN(id) FROM Person GROUP BY email)` or a CTE with ROW_NUMBER().",
+      "Q4. What is the time complexity? O(N log N) with an index on `email`; without an index, the nested join check requires O(N²).",
+      "Q5. Can this be done with ROW_NUMBER()? Yes: `WITH cte AS (SELECT id, ROW_NUMBER() OVER(PARTITION BY email ORDER BY id) as rn FROM Person) DELETE FROM Person WHERE id IN (SELECT id FROM cte WHERE rn > 1)`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Why does MySQL permit DELETE with JOIN while standard ANSI SQL requires subqueries? (MySQL supports multi-table DELETE extensions for performance; in standard SQL `WHERE id NOT IN (SELECT MIN(id)...)` or CTE is required)\n• What locking occurs during this DELETE? (Row-level exclusive locks on deleted records; on large production tables, batching in chunks like LIMIT 5000 prevents table lock escalation)\n• Why can't we write `DELETE FROM Person WHERE id NOT IN (SELECT MIN(id) FROM Person GROUP BY email)` directly in older MySQL? (MySQL throws error 1093 'You can't specify target table for update in FROM clause'; requires wrapping in an extra subquery)"
+    ]
+  },
+  "Pro-005": {
+    "code_id": "Pro-005",
+    "numeric_id": 85,
+    "title": "Rising Temperature",
+    "code": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\nON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We perform a self-join on Weather where w1 represents today and w2 represents yesterday (matching on DATEDIFF = 1), and return today's id whenever today's temperature is strictly greater than yesterday's.",
+    "mentalModel": "Imagine flipping through a desk calendar day-by-day. Every morning, you peek at yesterday's page. If today's thermometer reading is higher than yesterday's note, you stamp today's date with a green star!",
+    "lineByLine": [
+      {
+        "line": "SELECT w1.id",
+        "explanation": "Projects the identifier for today's weather observation."
+      },
+      {
+        "line": "FROM Weather w1",
+        "explanation": "Designates w1 as the observation for today."
+      },
+      {
+        "line": "JOIN Weather w2",
+        "explanation": "Self-joins a second instance w2 representing yesterday's observation."
+      },
+      {
+        "line": "ON DATEDIFF(w1.recordDate, w2.recordDate) = 1",
+        "explanation": "Enforces that w1's date is exactly 1 calendar day ahead of w2's date."
+      },
+      {
+        "line": "WHERE w1.temperature > w2.temperature;",
+        "explanation": "Filters for records where today's temperature is strictly greater than yesterday's."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Joining on ID (ON w1.id = w2.id + 1): IDs are not guaranteed to be consecutive; missing observation days cause subtle false matches.",
+      "❌ 2. Comparing dates with >: Writing w1.recordDate > w2.recordDate joins today with all previous historical dates instead of strictly yesterday.",
+      "❌ 3. Using >= instead of >: Problem requires temperatures to be strictly higher than the previous day."
+    ],
+    "keyTakeaway": "Always compute temporal adjacency with calendar date functions (e.g. `DATEDIFF(d1, d2) = 1`) rather than relying on surrogate primary keys.",
+    "interviewPros": [
+      "Q1. Why is comparing IDs (w1.id = w2.id + 1) incorrect? Because IDs can have gaps due to deletions, missing sensors, or distributed key generation, meaning id + 1 may represent a date weeks later or not exist at all.",
+      "Q2. What does DATEDIFF(w1.recordDate, w2.recordDate) = 1 do? In MySQL, DATEDIFF(date1, date2) computes date1 - date2 in days; equaling 1 guarantees exactly consecutive days.",
+      "Q3. How can this be solved in PostgreSQL or SQLite? In SQLite/PostgreSQL: `ON julianday(w1.recordDate) - julianday(w2.recordDate) = 1` or `ON w1.recordDate = DATE(w2.recordDate, '+1 day')`.",
+      "Q4. Can this be solved with window functions? Yes: `SELECT id FROM (SELECT id, recordDate, temperature, LAG(temperature) OVER (ORDER BY recordDate) prev_temp, LAG(recordDate) OVER (ORDER BY recordDate) prev_date FROM Weather) t WHERE DATEDIFF(recordDate, prev_date) = 1 AND temperature > prev_temp`.",
+      "Q5. How to optimize this query? Create a composite B-tree index on `Weather(recordDate, temperature)`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Why might LAG() perform better than a self-join on huge datasets? (LAG() processes data in a single sorted pass O(N log N) using a window spool, avoiding an O(N²) cartesian comparison before date filtering)\n• What happens on the very first day in the table? (It has no matching yesterday row in an INNER JOIN, so it evaluates to NULL and is safely omitted)\n• How does the query handle date format strings like YYYY-MM-DD? (ISO-8601 strings parse cleanly into standard database DATE types)"
+    ]
+  },
+  "Pro-006": {
+    "code_id": "Pro-006",
+    "numeric_id": 86,
+    "title": "Game Play Analysis I",
+    "code": "SELECT\n    player_id,\n    MIN(event_date) AS first_login\nFROM Activity\nGROUP BY player_id;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We group the Activity table by player_id and apply the MIN(event_date) aggregate function to isolate the earliest login date for each player.",
+    "mentalModel": "Imagine every gamer has a gaming passport stamped with their play dates. You stack each gamer's passport pages in order, look at the very first page stamp, and write that down as their first login!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of player identifier and their earliest login date."
+      },
+      {
+        "line": "    player_id,",
+        "explanation": "Outputs the unique player identifier."
+      },
+      {
+        "line": "    MIN(event_date) AS first_login",
+        "explanation": "Calculates the earliest date per player and aliases it as first_login."
+      },
+      {
+        "line": "FROM Activity",
+        "explanation": "Scans gaming activity logs from the Activity table."
+      },
+      {
+        "line": "GROUP BY player_id;",
+        "explanation": "Clusters records belonging to the same player into distinct aggregation groups."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using MAX(event_date): Returns the player's most recent login instead of their earliest initial login.",
+      "❌ 2. Forgetting GROUP BY: Writing SELECT MIN(event_date) collapses the entire table into a single global row.",
+      "❌ 3. Grouping by device_id: Groups by gaming device rather than individual player accounts."
+    ],
+    "keyTakeaway": "Pairing GROUP BY with MIN(date_column) is the canonical solution for finding onboarding dates and initial touchpoints in user telemetry.",
+    "interviewPros": [
+      "Q1. Why is MIN() appropriate for finding the first date? Dates in SQL are chronologically comparable scalar values; the minimum value corresponds strictly to the earliest date in time.",
+      "Q2. What if a player logged in multiple times on their first day? The primary key is (player_id, event_date), so at most one record exists per day; MIN(event_date) cleanly yields that single date.",
+      "Q3. How can this query be indexed for maximum performance? A composite B-tree index on `Activity(player_id, event_date)` enables a loose index scan or tight index stream aggregation in O(N) time with zero disk sorting.",
+      "Q4. Can this be solved with ROW_NUMBER()? Yes: `SELECT player_id, event_date AS first_login FROM (SELECT player_id, event_date, ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date) rn FROM Activity) t WHERE rn = 1`.",
+      "Q5. When is ROW_NUMBER() preferred over GROUP BY MIN()? When you also need to retrieve other non-aggregated columns from the first login row (e.g. device_id or games_played)."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is Game Play Analysis II asking for? (It asks for the device_id corresponding to this first login, which requires either a JOIN back on (player_id, first_login) or ROW_NUMBER())\n• How does the optimizer handle GROUP BY on a composite primary key? (Since player_id is the leading column of the composite primary key, the engine reads directly in index order without sorting)\n• What if the table contains millions of rows? (Index-only scan on (player_id, event_date) avoids reading the full table heap entirely)"
+    ]
+  },
+  "Pro-007": {
+    "code_id": "Pro-007",
+    "numeric_id": 87,
+    "title": "Game Play Analysis II",
+    "code": "SELECT\n    a.player_id,\n    a.device_id\nFROM Activity a\nJOIN\n(\n    SELECT\n        player_id,\n        MIN(event_date) AS first_login\n    FROM Activity\n    GROUP BY player_id\n) f\nON a.player_id = f.player_id\nAND a.event_date = f.first_login;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We find each player's earliest login date using a GROUP BY MIN(event_date) subquery, then join that result back to the Activity table on player_id and event_date to retrieve the exact device_id used on that day.",
+    "mentalModel": "Imagine finding the earliest date stamp in a gamer's logbook. Now that you know the date, you flip back to that specific log entry and read off the hardware console model scribbled next to it!",
+    "lineByLine": [
+      {
+        "line": "SELECT a.player_id, a.device_id",
+        "explanation": "Selects the player ID and the hardware device used during their initial session."
+      },
+      {
+        "line": "FROM Activity a",
+        "explanation": "Scans the full Activity log table."
+      },
+      {
+        "line": "JOIN (SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id) f",
+        "explanation": "Constructs an in-line summary table mapping each player to their earliest recorded login date."
+      },
+      {
+        "line": "ON a.player_id = f.player_id",
+        "explanation": "Aligns summary records with the corresponding player."
+      },
+      {
+        "line": "AND a.event_date = f.first_login;",
+        "explanation": "Filters for the exact row where the login date matches that player's earliest date."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Writing SELECT player_id, device_id, MIN(event_date): Invalid SQL because device_id is not included in the GROUP BY clause and is unaggregated.",
+      "❌ 2. Joining only on player_id: Omitting `AND a.event_date = f.first_login` returns every device ever used by each player instead of only the first.",
+      "❌ 3. Grouping by device_id: Changes the grouping grain to device models rather than individual player accounts."
+    ],
+    "keyTakeaway": "To fetch accompanying attributes of an aggregated extreme (like the device used on the MIN date), compute the extreme in a subquery and join back on the composite key.",
+    "interviewPros": [
+      "Q1. Why can't we simply write `SELECT player_id, device_id, MIN(event_date) FROM Activity GROUP BY player_id`? In strict SQL mode (and ANSI standards), every column in SELECT must either appear in GROUP BY or be enclosed in an aggregate function; device_id is neither.",
+      "Q2. What is the fundamental interview pattern demonstrated here? 'Find an aggregate value, then join back to retrieve related row-level attributes.'",
+      "Q3. How can this query be solved using window functions? `SELECT player_id, device_id FROM (SELECT player_id, device_id, ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date) AS rn FROM Activity) t WHERE rn = 1`.",
+      "Q4. Which approach is more performant: Subquery JOIN or ROW_NUMBER()? With a composite index `(player_id, event_date, device_id)`, ROW_NUMBER() executes in a single streaming index scan without requiring two table scans.",
+      "Q5. Can this be solved with a correlated subquery in WHERE? Yes: `WHERE (player_id, event_date) IN (SELECT player_id, MIN(event_date) FROM Activity GROUP BY player_id)`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What if a player logged in from two different devices on their very first day? (The problem states (player_id, event_date) is primary key, meaning a player has at most 1 login record per day, eliminating tie-breaks)\n• How does the query plan change when using `IN ((player_id, MIN(event_date)))` vs `INNER JOIN`? (Most modern query optimizers rewrite tuple IN subqueries into equivalent semi-joins or hash joins)\n• What index strategy works best? (Covering index on `(player_id, event_date, device_id)` provides an index-only scan)"
+    ]
+  },
+  "Pro-008": {
+    "code_id": "Pro-008",
+    "numeric_id": 88,
+    "title": "Employee Bonus",
+    "code": "SELECT\n    e.name,\n    b.bonus\nFROM Employee e\nLEFT JOIN Bonus b\nON e.empId = b.empId\nWHERE b.bonus < 1000\n   OR b.bonus IS NULL;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We use a LEFT JOIN to combine Employee and Bonus records while keeping all employees, then filter for rows where bonus is strictly less than 1000 OR bonus IS NULL.",
+    "mentalModel": "Imagine handing out payroll envelopes. Some employees have a bonus slip inside, and others don't. You pick out everyone whose slip shows less than $1,000, PLUS everyone whose envelope has no bonus slip at all!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of employee name and bonus amount."
+      },
+      {
+        "line": "    e.name,",
+        "explanation": "Retrieves the employee's name from the Employee relation."
+      },
+      {
+        "line": "    b.bonus",
+        "explanation": "Retrieves the bonus figure (or NULL) from the Bonus relation."
+      },
+      {
+        "line": "FROM Employee e",
+        "explanation": "Establishes Employee as the primary preserved relation in the left join."
+      },
+      {
+        "line": "LEFT JOIN Bonus b",
+        "explanation": "Preserves all employees even if they lack an entry in the Bonus table."
+      },
+      {
+        "line": "ON e.empId = b.empId",
+        "explanation": "Matches bonus records to employees by primary/foreign key empId."
+      },
+      {
+        "line": "WHERE b.bonus < 1000",
+        "explanation": "Filters for records where a bonus was awarded but is strictly below 1000."
+      },
+      {
+        "line": "   OR b.bonus IS NULL;",
+        "explanation": "Also includes employees who have no bonus record at all (represented as NULL)."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using INNER JOIN: Drops employees who never received a bonus, excluding Brad and John entirely.",
+      "❌ 2. Writing b.bonus = NULL: In SQL, NULL cannot be compared with equality; you must write `b.bonus IS NULL`.",
+      "❌ 3. Using AND instead of OR: Writing `b.bonus < 1000 AND b.bonus IS NULL` is impossible and returns 0 rows.",
+      "❌ 4. Using <= 1000: Problem states strictly less than 1000."
+    ],
+    "keyTakeaway": "In three-valued logic, `NULL < 1000` evaluates to UNKNOWN. To include missing rows in a LEFT JOIN, explicitly check `OR column IS NULL` or use `COALESCE(column, 0) < 1000`.",
+    "interviewPros": [
+      "Q1. Why does an INNER JOIN fail for this problem? An INNER JOIN requires matching keys in both tables; employees without bonuses have no matching row in Bonus and would be silently discarded.",
+      "Q2. Why is `b.bonus = NULL` incorrect in SQL? SQL implements three-valued logic (TRUE, FALSE, UNKNOWN). Comparing anything with NULL using `=` results in UNKNOWN, which the WHERE clause filters out. `IS NULL` is the only syntax that evaluates to TRUE for nulls.",
+      "Q3. How does COALESCE provide an alternative solution? `WHERE COALESCE(b.bonus, 0) < 1000` replaces NULL with 0 before the comparison; since 0 < 1000, missing bonuses evaluate to TRUE in a single comparison.",
+      "Q4. What is the time complexity? O(N + M) assuming indexes exist on `Employee.empId` and `Bonus.empId`.",
+      "Q5. What if the problem asked for 'employees with bonus >= 1000'? In that case an INNER JOIN is sufficient because NULL values are excluded anyway."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is three-valued logic (3VL)? (SQL boolean logic where expressions evaluate to TRUE, FALSE, or UNKNOWN; WHERE only retains rows that evaluate strictly to TRUE)\n• How does moving the condition to the ON clause change the result? (Putting `ON e.empId = b.empId AND b.bonus < 1000` in a LEFT JOIN preserves all employees, but displays Thomas with bonus NULL instead of excluding him!)\n• Can COALESCE prevent index usage? (Applying functions on indexed columns can prevent sargability, though on the non-preserved side of a LEFT JOIN WHERE filter it has minimal index impact)"
+    ]
+  },
+  "Pro-009": {
+    "code_id": "Pro-009",
+    "numeric_id": 89,
+    "title": "Find Customer Referee",
+    "code": "SELECT name\nFROM Customer\nWHERE referee_id <> 2\n   OR referee_id IS NULL;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "We filter for customers whose referee_id is not equal to 2, and explicitly include rows where referee_id IS NULL to ensure organic customers without referrers are not discarded by SQL's three-valued logic.",
+    "mentalModel": "Imagine greeting guests at a VIP event. If someone says 'Alex sent me!' (Alex has ID 2), you turn them away. But if someone says 'John sent me' (ID 1) OR 'I came by myself with no referral' (NULL), you warmly welcome them in!",
+    "lineByLine": [
+      {
+        "line": "SELECT name",
+        "explanation": "Extracts the customer's name from matching records."
+      },
+      {
+        "line": "FROM Customer",
+        "explanation": "Scans rows from the Customer table."
+      },
+      {
+        "line": "WHERE referee_id <> 2",
+        "explanation": "Retains customers referred by anyone other than user 2."
+      },
+      {
+        "line": "   OR referee_id IS NULL;",
+        "explanation": "Explicitly preserves organic customers who were referred by nobody (referee_id is NULL)."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Writing only WHERE referee_id <> 2: Because NULL <> 2 evaluates to UNKNOWN, all customers with NULL referrers (Will, Jane, Bill) are silently discarded!",
+      "❌ 2. Writing referee_id != NULL: Comparisons with NULL using != or = always evaluate to UNKNOWN and match nothing.",
+      "❌ 3. Using AND instead of OR: Writing `WHERE referee_id <> 2 AND referee_id IS NULL` is contradictory and returns 0 rows."
+    ],
+    "keyTakeaway": "In SQL, `NULL <> value` evaluates to UNKNOWN, not TRUE. To retain missing/unknown values in inequality filters, always write `WHERE col <> val OR col IS NULL` or use `COALESCE(col, default) <> val`.",
+    "interviewPros": [
+      "Q1. Why doesn't `WHERE referee_id <> 2` include NULL values? SQL uses three-valued logic: TRUE, FALSE, and UNKNOWN. Comparing any value with NULL using comparison operators like `<>`, `!=`, or `=` yields UNKNOWN. Since the WHERE clause only accepts expressions that evaluate to TRUE, UNKNOWN rows are dropped.",
+      "Q2. What is the difference between `<>` and `!=` in SQL? `<>` is the standard ANSI SQL inequality operator supported across all engines; `!=` is supported by most modern RDBMSs as an alias, but neither handles NULL values without `IS NULL`.",
+      "Q3. How can this query be written using COALESCE? `SELECT name FROM Customer WHERE COALESCE(referee_id, 0) <> 2;` replacing NULL with 0 before comparing.",
+      "Q4. Can this be written with IFNULL or NVL? Yes: `IFNULL(referee_id, 0) <> 2` in MySQL/SQLite or `NVL(referee_id, 0) <> 2` in Oracle.",
+      "Q5. How can this query be optimized on huge tables? Add a B-tree index on `Customer(referee_id)` or a partial index `WHERE referee_id <> 2 OR referee_id IS NULL`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the NULL-safe equality operator in MySQL? (`<=>` operator; `NOT (referee_id <=> 2)` handles NULL cleanly without OR!)\n• How does SQL standard `IS DISTINCT FROM` work? (`WHERE referee_id IS DISTINCT FROM 2` in PostgreSQL and modern SQL standards treats NULL as a distinct comparable value, cleanly solving this without OR)\n• Why is COALESCE potentially less performant with indexes? (Wrapping a column in a function like `COALESCE(col, 0)` can prevent index seek usage, causing a full table scan)"
+    ]
+  },
+  "Pro-010": {
+    "code_id": "Pro-010",
+    "numeric_id": 90,
+    "title": "Customer Placing the Largest Number of Orders",
+    "code": "SELECT customer_number\nFROM Orders\nGROUP BY customer_number\nORDER BY COUNT(*) DESC\nLIMIT 1;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We group orders by customer_number, count how many orders each customer placed using COUNT(*), sort the counts in descending order, and pick the top customer with LIMIT 1.",
+    "mentalModel": "Imagine a stack of receipt slips. You sort them into piles by customer name, count the height of each pile, place the tallest pile at the front of your desk, and read off the customer number on top!",
+    "lineByLine": [
+      {
+        "line": "SELECT customer_number",
+        "explanation": "Selects the customer ID of the top purchaser."
+      },
+      {
+        "line": "FROM Orders",
+        "explanation": "Scans all orders from the Orders relation."
+      },
+      {
+        "line": "GROUP BY customer_number",
+        "explanation": "Aggregates orders into distinct groups per customer."
+      },
+      {
+        "line": "ORDER BY COUNT(*) DESC",
+        "explanation": "Sorts the aggregated customer groups from highest order count to lowest."
+      },
+      {
+        "line": "LIMIT 1;",
+        "explanation": "Restricts output to only the first row (the highest volume customer)."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Omitting GROUP BY: Writing SELECT COUNT(*) FROM Orders counts the whole table instead of grouping by customer.",
+      "❌ 2. Sorting ASC instead of DESC: Writing ORDER BY COUNT(*) ASC returns the customer with the lowest order count.",
+      "❌ 3. Ordering by customer_number: Writing ORDER BY customer_number DESC sorts customer IDs instead of order totals."
+    ],
+    "keyTakeaway": "The sequence `GROUP BY ... ORDER BY COUNT(*) DESC LIMIT 1` is the canonical pattern for finding the most frequent entity or mode in SQL.",
+    "interviewPros": [
+      "Q1. Why is COUNT(*) used instead of COUNT(customer_number)? COUNT(*) counts all rows in the group without inspecting individual columns for nulls, which is idiomatic and optimized by database query planners.",
+      "Q2. Why is LIMIT 1 appropriate here? The problem guarantees that exactly one customer has the maximum number of orders, meaning ties do not exist.",
+      "Q3. How would you handle potential ties where multiple customers share the maximum count? Use DENSE_RANK() or RANK(): `SELECT customer_number FROM (SELECT customer_number, DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) rnk FROM Orders GROUP BY customer_number) t WHERE rnk = 1` or `HAVING COUNT(*) = (SELECT MAX(cnt) FROM (SELECT COUNT(*) cnt FROM Orders GROUP BY customer_number) t)`.",
+      "Q4. What is the time complexity? O(N log N) due to sorting N customer groups. With an index on `Orders(customer_number)`, the grouping step takes O(N).",
+      "Q5. Can this be written with TOP in SQL Server? Yes: `SELECT TOP 1 customer_number FROM Orders GROUP BY customer_number ORDER BY COUNT(*) DESC`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What happens if the table is empty? (Returns 0 rows, which is valid empty output)\n• How does the optimizer process ORDER BY aggregate functions? (The engine computes aggregates during the GROUP BY stage, stores them in an intermediate worktable, and sorts the grouped rows before applying the LIMIT/TOP operator)\n• What index strategy works best? (An index on `Orders(customer_number)` enables stream aggregation without hash/sort grouping)"
+    ]
+  },
+  "Pro-011": {
+    "code_id": "Pro-011",
+    "numeric_id": 91,
+    "title": "Big Countries",
+    "code": "SELECT\n    name,\n    population,\n    area\nFROM World\nWHERE area >= 3000000\n   OR population >= 25000000;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "simplestExplanation": "We check each country row and select its name, population, and area if either its area is at least 3,000,000 OR its population is at least 25,000,000.",
+    "mentalModel": "Imagine a world atlas. You highlight a country if it takes up a massive amount of physical land on the map (area >= 3M) OR if it is packed with a massive crowd of people (population >= 25M). Either qualification gets it into your VIP atlas!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of requested demographic fields."
+      },
+      {
+        "line": "    name,",
+        "explanation": "Retrieves the country name."
+      },
+      {
+        "line": "    population,",
+        "explanation": "Retrieves the resident population count."
+      },
+      {
+        "line": "    area",
+        "explanation": "Retrieves the total geographic land area."
+      },
+      {
+        "line": "FROM World",
+        "explanation": "Scans rows from the World demographic database."
+      },
+      {
+        "line": "WHERE area >= 3000000",
+        "explanation": "Checks if the territory meets or exceeds 3,000,000 square units."
+      },
+      {
+        "line": "   OR population >= 25000000;",
+        "explanation": "Includes countries whose population meets or exceeds 25,000,000 even if their area is smaller."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using AND instead of OR: Writing `WHERE area >= 3000000 AND population >= 25000000` requires both conditions and drops huge countries with smaller populations like Canada or dense smaller countries.",
+      "❌ 2. Using > instead of >=: Problem states 'at least', which includes the exact boundary values.",
+      "❌ 3. Projecting extra columns: Writing SELECT * includes continent and gdp which fails column parity."
+    ],
+    "keyTakeaway": "Use the logical OR operator when membership in a class requires satisfying at least one criterion, and >= for inclusive 'at least' boundary semantics.",
+    "interviewPros": [
+      "Q1. Why is OR used rather than AND? The problem statement specifies that a country is big if its area is at least 3M OR its population is at least 25M; meeting either criterion suffices.",
+      "Q2. What does 'at least' signify in SQL comparisons? 'At least' translates to the inclusive greater-than-or-equal-to `>=` operator.",
+      "Q3. How can UNION be used as an alternative to OR? `SELECT name, population, area FROM World WHERE area >= 3000000 UNION SELECT name, population, area FROM World WHERE population >= 25000000;`. In MySQL/older engines, UNION can sometimes utilize independent indexes on area and population better than an OR condition (index merge).",
+      "Q4. When is UNION better or worse than OR? In modern optimizers with Index Merge or Bitmap Index Scans, `OR` is executed efficiently in a single query plan; `UNION` introduces a deduplication sort pass unless written as `UNION ALL` with mutually exclusive filters.",
+      "Q5. What is the time complexity? O(N) linear table scan without indexes, or O(log N + K) with B-tree indexes."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Why did LeetCode discuss UNION vs OR performance for this problem? (In older MySQL versions without index merge, OR forced a full table scan, while UNION allowed two separate index seeks)\n• Why is UNION ALL dangerous here if used carelessly? (Countries satisfying both area >= 3M and population >= 25M would be duplicated!)\n• What type should GDP be stored as? (BIGINT to avoid 32-bit integer overflow for trillion-dollar economies)"
+    ]
+  },
+  "Pro-012": {
+    "code_id": "Pro-012",
+    "numeric_id": 92,
+    "title": "Classes With at Least 5 Students",
+    "code": "SELECT class\nFROM Courses\nGROUP BY class\nHAVING COUNT(student) >= 5;",
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We group student enrollments by class, count the number of students enrolled in each class, and use HAVING COUNT(student) >= 5 to return only classes meeting the enrollment minimum.",
+    "mentalModel": "Imagine a university registration office. You sort enrollment slips into classroom folders, count how many student slips are inside each folder, and only approve classes whose folders contain 5 or more slips!",
+    "lineByLine": [
+      {
+        "line": "SELECT class",
+        "explanation": "Selects the name of qualifying course subjects."
+      },
+      {
+        "line": "FROM Courses",
+        "explanation": "Scans all enrollment records from Courses."
+      },
+      {
+        "line": "GROUP BY class",
+        "explanation": "Aggregates enrollments into distinct course partitions."
+      },
+      {
+        "line": "HAVING COUNT(student) >= 5;",
+        "explanation": "Filters the aggregated course groups, keeping only those with at least 5 enrolled students."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using WHERE instead of HAVING: Writing `WHERE COUNT(student) >= 5` causes a syntax error because WHERE cannot evaluate aggregate functions.",
+      "❌ 2. Using strict inequality (> 5): Excludes classes with exactly 5 students, violating 'at least 5'.",
+      "❌ 3. Grouping by student: Counts how many classes each student takes rather than how many students are enrolled in each class."
+    ],
+    "keyTakeaway": "HAVING filters aggregated groups after GROUP BY and evaluates aggregate expressions like COUNT(), whereas WHERE filters row-by-row before aggregation occurs.",
+    "interviewPros": [
+      "Q1. Why must HAVING be used instead of WHERE? WHERE filters individual rows before grouping takes place and cannot evaluate group-level aggregate functions like `COUNT()`. HAVING is specifically designed to filter groups after GROUP BY has aggregated rows.",
+      "Q2. Can COUNT(*) be used instead of COUNT(student)? Yes, because the table's primary key is `(student, class)`, ensuring `student` is never NULL.",
+      "Q3. What if duplicate student enrollments were possible? In modern versions or if duplicates were allowed without a composite primary key, we would write `HAVING COUNT(DISTINCT student) >= 5` to ensure each student is counted only once per class.",
+      "Q4. What is the time complexity? O(N log N) or O(N) depending on whether the database engine uses hash-based or sort-based aggregation.",
+      "Q5. Can this be written with a subquery? Yes: `SELECT class FROM (SELECT class, COUNT(student) cnt FROM Courses GROUP BY class) t WHERE cnt >= 5;`."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What was the historical trick with COUNT(DISTINCT student) on LeetCode? (Earlier problem definitions didn't have (student, class) as primary key, making COUNT(DISTINCT student) necessary)\n• How does the execution pipeline flow? (FROM -> GROUP BY -> AGGREGATION -> HAVING -> SELECT)\n• What index optimizes this query? (An index on `Courses(class, student)` enables loose/stream aggregation directly from index leaves)"
+    ]
+  },
+  "Pro-013": {
+    "code_id": "Pro-013",
+    "numeric_id": 93,
+    "title": "Friend Requests I: Overall Acceptance Rate",
+    "code": "SELECT\n    ROUND(\n        IFNULL(\n            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /\n            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),\n            0.0\n        ),\n        2\n    ) AS accept_rate;",
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We count distinct accepted friendship pairs, divide by distinct sent friend request pairs (using floating-point arithmetic), guard against zero sent requests with IFNULL/NULLIF, and round to 2 decimal places.",
+    "mentalModel": "Imagine sending out wedding invitations. You count the unique households you invited (sent requests) and count how many sent back an 'attending' RSVP (accepted requests). Divide RSVPs by total invites sent, and if nobody was invited, your acceptance rate is simply 0.00!",
+    "lineByLine": [
+      {
+        "line": "SELECT",
+        "explanation": "Initiates projection of the final acceptance rate metric."
+      },
+      {
+        "line": "    ROUND(",
+        "explanation": "Rounds the computed decimal quotient to exactly 2 decimal places."
+      },
+      {
+        "line": "        IFNULL(",
+        "explanation": "Replaces NULL with 0.0 if the denominator is zero (or tables are empty)."
+      },
+      {
+        "line": "            (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM RequestAccepted) a) * 1.0 /",
+        "explanation": "Counts distinct accepted pairs and multiplies by 1.0 to ensure floating-point division."
+      },
+      {
+        "line": "            NULLIF((SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM FriendRequest) r), 0),",
+        "explanation": "Counts distinct sent pairs, converting a count of 0 to NULL to prevent division-by-zero errors."
+      },
+      {
+        "line": "            0.0",
+        "explanation": "Fallback default rate if no requests exist."
+      },
+      {
+        "line": "        ),",
+        "explanation": "Closes the IFNULL wrapper."
+      },
+      {
+        "line": "        2",
+        "explanation": "Specifies 2 digits of fractional precision."
+      },
+      {
+        "line": "    ) AS accept_rate;",
+        "explanation": "Aliases output column as accept_rate."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Using COUNT(*) directly without DISTINCT: Repeat friend request attempts would inflate totals.",
+      "❌ 2. Integer division truncation: Dividing integer counts directly in engines like SQL Server or PostgreSQL yields 0 instead of 0.67 without `* 1.0`.",
+      "❌ 3. Forgetting division-by-zero handling: If FriendRequest has 0 rows, dividing by 0 crashes without NULLIF/IFNULL.",
+      "❌ 4. Forgetting ROUND(..., 2): Problem explicitly requires 2 decimal places."
+    ],
+    "keyTakeaway": "When calculating ratios across separate tables in SQL, compute distinct counts in independent scalar subqueries, force floating-point arithmetic with `* 1.0`, and safeguard against empty sets using `NULLIF()` and `IFNULL()`.",
+    "interviewPros": [
+      "Q1. Why are distinct pairs required? The problem states to count distinct friend request pairs; users may resend requests after an initial decline or expiration.",
+      "Q2. Why is `* 1.0` or `CAST AS FLOAT` necessary? In many SQL dialects (PostgreSQL, SQL Server, SQLite), dividing two integers performs integer division, discarding decimal remainders and resulting in `0` instead of `0.67`.",
+      "Q3. How does NULLIF prevent division by zero? `NULLIF(count, 0)` returns NULL if count is 0. In SQL, dividing any number by NULL yields NULL (rather than throwing a runtime divide-by-zero error). Then `IFNULL(..., 0.0)` cleanly converts NULL to 0.0.",
+      "Q4. Why use scalar subqueries instead of joining FriendRequest and RequestAccepted? Joining the two tables directly on `(sender_id = requester_id AND send_to_id = accepter_id)` can create Cartesian explosion on repeat attempts and complicates calculating the global denominator.",
+      "Q5. Can this rate exceed 1.0 in real-world messy data? Yes, if accepted requests exist without an initial logged request; in production pipelines you would clamp with `LEAST(..., 1.0)` or log data anomalies."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What happens if FriendRequest has 0 rows? (NULLIF turns 0 into NULL, division yields NULL, IFNULL returns 0.0, ROUND produces 0.00)\n• Can MySQL syntax `COUNT(DISTINCT sender_id, send_to_id)` be used? (MySQL supports multi-column COUNT(DISTINCT a, b), but ANSI standard subqueries `SELECT DISTINCT ...` are portable across Postgres, SQLite, and Oracle)\n• What indexes optimize this calculation? (Composite indexes `FriendRequest(sender_id, send_to_id)` and `RequestAccepted(requester_id, accepter_id)` enable index-only scans)"
+    ]
+  },
+  "Pro-014": {
+    "code_id": "Pro-014",
+    "numeric_id": 94,
+    "title": "Consecutive Available Seats",
+    "code": "SELECT DISTINCT\n    c1.seat_id\nFROM Cinema c1\nJOIN Cinema c2\nON ABS(c1.seat_id - c2.seat_id) = 1\nWHERE c1.free = 1\n  AND c2.free = 1\nORDER BY c1.seat_id;",
+    "timeComplexity": "O(N²)",
+    "spaceComplexity": "O(Result Set)",
+    "simplestExplanation": "We join the Cinema table to itself matching adjacent seats where the absolute difference in seat_id is 1. If both seats are free, we select the seat_id and deduplicate using DISTINCT.",
+    "mentalModel": "Imagine walking along a cinema row looking for seats for a date. You check each empty seat: does it have an empty neighbor on its left OR on its right? If yes, that seat is part of a consecutive free pair and you highlight it on your seating chart!",
+    "lineByLine": [
+      {
+        "line": "SELECT DISTINCT",
+        "explanation": "Removes duplicate seat IDs because a seat with two free neighbors (e.g. seat 4) matches both."
+      },
+      {
+        "line": "    c1.seat_id",
+        "explanation": "Extracts the seat number from the primary table alias."
+      },
+      {
+        "line": "FROM Cinema c1",
+        "explanation": "Scans the cinema seating chart as the primary seat."
+      },
+      {
+        "line": "JOIN Cinema c2",
+        "explanation": "Self-joins the cinema seating chart as the candidate neighbor seat."
+      },
+      {
+        "line": "ON ABS(c1.seat_id - c2.seat_id) = 1",
+        "explanation": "Pairs seats that are immediately adjacent in the row (difference of exactly 1)."
+      },
+      {
+        "line": "WHERE c1.free = 1",
+        "explanation": "Verifies that the primary seat is free/unoccupied."
+      },
+      {
+        "line": "  AND c2.free = 1",
+        "explanation": "Verifies that the adjacent neighbor seat is also free/unoccupied."
+      },
+      {
+        "line": "ORDER BY c1.seat_id;",
+        "explanation": "Sorts the available consecutive seat numbers in ascending order."
+      }
+    ],
+    "beginnerTraps": [
+      "❌ 1. Omitting DISTINCT: Middle seats flanked by two free seats (like seat 4 between 3 and 5) appear twice.",
+      "❌ 2. Checking only one seat: Writing `WHERE c1.free = 1` without `AND c2.free = 1` includes occupied neighbors.",
+      "❌ 3. Comparing seat to itself: Writing `ABS(c1.seat_id - c2.seat_id) = 0` checks if a seat is free, not if it has consecutive neighbors."
+    ],
+    "keyTakeaway": "Self joins with `ABS(t1.id - t2.id) = 1` provide a simple declarative way to inspect immediate neighbor relationships across rows in SQL.",
+    "interviewPros": [
+      "Q1. Why is a self join appropriate here? The problem requires comparing adjacent rows within the exact same table (Cinema) to check if a seat's neighboring rows satisfy a shared condition.",
+      "Q2. Why use ABS(c1.seat_id - c2.seat_id) = 1? It symmetrically captures both the preceding seat (`c1 = c2 - 1`) and the succeeding seat (`c1 = c2 + 1`) in a single succinct join predicate.",
+      "Q3. Why is DISTINCT mandatory? If seat 4 is adjacent to free seat 3 and free seat 5, the self join produces two matching pairs for seat 4 (`(4, 3)` and `(4, 5)`). DISTINCT prevents seat 4 from showing up twice in the final output.",
+      "Q4. How can this be solved using window functions in modern databases? Using `LAG()` and `LEAD()`: `SELECT seat_id FROM (SELECT seat_id, free, LAG(free) OVER (ORDER BY seat_id) prev_free, LEAD(free) OVER (ORDER BY seat_id) next_free FROM Cinema) t WHERE free = 1 AND (prev_free = 1 OR next_free = 1) ORDER BY seat_id;`. This runs in O(N log N) without the O(N²) self join cost!",
+      "Q5. What indexes optimize this query? An index on `Cinema(seat_id, free)` allows index seek lookups on adjacent IDs directly from the B-tree."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Compare the self-join approach vs LAG/LEAD window functions. (Self-join is O(N²) unindexed or O(N log N) with index seek; LAG/LEAD is strictly O(N) streaming scan after sort)\n• What if seat numbers have gaps (e.g. aisle breaks)? (If physical aisle seats have missing numbers, ABS(id - id) = 1 naturally respects the gap without false adjacent pairing)\n• How does the execution engine handle ABS in the join condition? (Functions on join columns can inhibit index seeks; writing `ON c1.seat_id = c2.seat_id + 1 OR c1.seat_id = c2.seat_id - 1` is more sargable in older query planners)"
+    ]
+  }};
 
 export const ALL_PROBLEM_SOLUTIONS: Record<string, any> = {
   ...BASE_RANKED_MAP,

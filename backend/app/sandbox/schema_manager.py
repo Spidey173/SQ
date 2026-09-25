@@ -106,6 +106,12 @@ TABLE_DDL: Dict[str, str] = {
     user_id INTEGER,
     login_date DATE,
     device TEXT
+);""",
+    "purchases": """CREATE TABLE purchases (
+    purchase_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    customer_name TEXT,
+    purchase_amount REAL
 );"""
 }
 
@@ -177,8 +183,14 @@ def get_relevant_tables_for_challenge(title: str, objective: str = "", starter_c
         "courses": ["course", "credit"],
         "enrollments": ["enrollment"],
         "branches": ["branch", "profit"],
-        "user_logins": ["user_login", "login_id", "login_date", "device", "login history"]
+        "user_logins": ["user_login", "login_id", "login_date", "device", "login history"],
+        "purchases": ["purchase", "purchases"],
+        "locations": ["location", "city"],
+        "persons": ["person", "persons", "age group", "age_group"]
     }
+    
+    if "having with sum" in combined or "from purchases" in combined:
+        return ["purchases"]
     
     for tbl, kws in table_keywords.items():
         if any(kw in combined for kw in kws):
@@ -190,10 +202,600 @@ def get_relevant_tables_for_challenge(title: str, objective: str = "", starter_c
     return found
 
 def generate_setup_sql_for_challenge(title: str, objective: str = "", starter_code: str = "", story: str = "") -> str:
+    combined_lower = f"{title} {objective} {starter_code} {story}".lower()
+    if any(term in combined_lower for term in ["combine two tables", "personid", "addressid", "from person"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Person
+DROP TABLE IF EXISTS Address;
+DROP TABLE IF EXISTS Person;
+CREATE TABLE Person (
+    personId INTEGER PRIMARY KEY,
+    lastName VARCHAR(50),
+    firstName VARCHAR(50)
+);
+
+-- Table: Address
+CREATE TABLE Address (
+    addressId INTEGER PRIMARY KEY,
+    personId INTEGER,
+    city VARCHAR(50),
+    state VARCHAR(50)
+);
+
+-- Sample Data: Person
+INSERT INTO Person VALUES (1, 'Wang', 'Allen');
+INSERT INTO Person VALUES (2, 'Alice', 'Bob');
+
+-- Sample Data: Address
+INSERT INTO Address VALUES (1, 2, 'New York City', 'New York');
+"""
+
+    if any(term in combined_lower for term in ["sales person", "salesperson", "company named \"red\"", "company named 'red'", "company c"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: SalesPerson
+DROP TABLE IF EXISTS SalesPerson;
+CREATE TABLE SalesPerson (
+    sales_id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    salary INTEGER,
+    commission_rate INTEGER,
+    hire_date DATE
+);
+
+-- Table: Company
+DROP TABLE IF EXISTS Company;
+CREATE TABLE Company (
+    com_id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(50)
+);
+
+-- Table: Orders
+DROP TABLE IF EXISTS Orders;
+CREATE TABLE Orders (
+    order_id INTEGER PRIMARY KEY,
+    order_date DATE,
+    com_id INTEGER,
+    sales_id INTEGER,
+    amount INTEGER
+);
+
+-- Sample Data: SalesPerson
+INSERT INTO SalesPerson VALUES (1, 'John', 100000, 6, '2006-04-01');
+INSERT INTO SalesPerson VALUES (2, 'Amy', 12000, 5, '2010-05-01');
+INSERT INTO SalesPerson VALUES (3, 'Mark', 65000, 12, '2008-12-25');
+INSERT INTO SalesPerson VALUES (4, 'Pam', 25000, 25, '2005-01-01');
+
+-- Sample Data: Company
+INSERT INTO Company VALUES (1, 'RED', 'Boston');
+INSERT INTO Company VALUES (2, 'BLUE', 'New York');
+
+-- Sample Data: Orders
+INSERT INTO Orders VALUES (1, '2014-01-01', 1, 1, 10000);
+INSERT INTO Orders VALUES (2, '2014-02-01', 2, 2, 5000);
+INSERT INTO Orders VALUES (3, '2014-03-01', 2, 3, 50000);
+"""
+
+    if any(term in combined_lower for term in ["consecutive available seats", "cinema", "seat_id", "free"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Cinema
+DROP TABLE IF EXISTS Cinema;
+CREATE TABLE Cinema (
+    seat_id INTEGER PRIMARY KEY,
+    free INTEGER
+);
+
+-- Sample Data: Cinema
+INSERT INTO Cinema VALUES (1, 1);
+INSERT INTO Cinema VALUES (2, 0);
+INSERT INTO Cinema VALUES (3, 1);
+INSERT INTO Cinema VALUES (4, 1);
+INSERT INTO Cinema VALUES (5, 1);
+"""
+
+    if any(term in combined_lower for term in ["overall acceptance rate", "friendrequest", "requestaccepted", "accept_rate"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: FriendRequest
+DROP TABLE IF EXISTS FriendRequest;
+CREATE TABLE FriendRequest (
+    sender_id INTEGER,
+    send_to_id INTEGER,
+    request_date DATE
+);
+
+-- Table: RequestAccepted
+DROP TABLE IF EXISTS RequestAccepted;
+CREATE TABLE RequestAccepted (
+    requester_id INTEGER,
+    accepter_id INTEGER,
+    accept_date DATE
+);
+
+-- Sample Data: FriendRequest
+INSERT INTO FriendRequest VALUES (1, 2, '2016-06-01');
+INSERT INTO FriendRequest VALUES (1, 3, '2016-06-02');
+INSERT INTO FriendRequest VALUES (2, 3, '2016-06-02');
+
+-- Sample Data: RequestAccepted
+INSERT INTO RequestAccepted VALUES (1, 2, '2016-06-03');
+INSERT INTO RequestAccepted VALUES (2, 3, '2016-06-08');
+"""
+
+    if any(term in combined_lower for term in ["at least 5 students", "courses", "student", "class"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Courses
+DROP TABLE IF EXISTS Courses;
+CREATE TABLE Courses (
+    student VARCHAR(50),
+    class VARCHAR(50),
+    PRIMARY KEY (student, class)
+);
+
+-- Sample Data: Courses
+INSERT INTO Courses VALUES ('A', 'Math');
+INSERT INTO Courses VALUES ('B', 'Math');
+INSERT INTO Courses VALUES ('C', 'Math');
+INSERT INTO Courses VALUES ('D', 'Math');
+INSERT INTO Courses VALUES ('E', 'Math');
+INSERT INTO Courses VALUES ('A', 'Science');
+INSERT INTO Courses VALUES ('B', 'Science');
+INSERT INTO Courses VALUES ('C', 'Science');
+"""
+
+    if any(term in combined_lower for term in ["big countries", "world", "3000000", "25000000"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: World
+DROP TABLE IF EXISTS World;
+CREATE TABLE World (
+    name VARCHAR(50) PRIMARY KEY,
+    continent VARCHAR(50),
+    area INTEGER,
+    population INTEGER,
+    gdp BIGINT
+);
+
+-- Sample Data: World
+INSERT INTO World VALUES ('Afghanistan', 'Asia', 652230, 25500100, 20343000000);
+INSERT INTO World VALUES ('Albania', 'Europe', 28748, 2831741, 12960000000);
+INSERT INTO World VALUES ('Algeria', 'Africa', 2381741, 37100000, 188681000000);
+INSERT INTO World VALUES ('Andorra', 'Europe', 468, 78115, 3712000000);
+"""
+
+    if any(term in combined_lower for term in ["largest number of orders", "customer placing the largest", "order_number", "customer_number"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Orders
+DROP TABLE IF EXISTS Orders;
+CREATE TABLE Orders (
+    order_number INTEGER PRIMARY KEY,
+    customer_number INTEGER
+);
+
+-- Sample Data: Orders
+INSERT INTO Orders VALUES (1, 1);
+INSERT INTO Orders VALUES (2, 2);
+INSERT INTO Orders VALUES (3, 3);
+INSERT INTO Orders VALUES (4, 3);
+INSERT INTO Orders VALUES (5, 2);
+INSERT INTO Orders VALUES (6, 3);
+INSERT INTO Orders VALUES (7, 1);
+"""
+
+    if any(term in combined_lower for term in ["customer referee", "find customer referee", "referee_id"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Customer
+DROP TABLE IF EXISTS Customer;
+CREATE TABLE Customer (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    referee_id INTEGER
+);
+
+-- Sample Data: Customer
+INSERT INTO Customer VALUES (1, 'Will', NULL);
+INSERT INTO Customer VALUES (2, 'Jane', NULL);
+INSERT INTO Customer VALUES (3, 'Alex', 2);
+INSERT INTO Customer VALUES (4, 'Bill', NULL);
+INSERT INTO Customer VALUES (5, 'Zack', 1);
+INSERT INTO Customer VALUES (6, 'Mark', 2);
+"""
+
+    if any(term in combined_lower for term in ["employee bonus", "bonus < 1000", "empid"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Employee
+DROP TABLE IF EXISTS Bonus;
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    empId INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    supervisor INTEGER,
+    salary INTEGER
+);
+
+-- Table: Bonus
+CREATE TABLE Bonus (
+    empId INTEGER,
+    bonus INTEGER
+);
+
+-- Sample Data: Employee
+INSERT INTO Employee VALUES (3, 'Brad', NULL, 4000);
+INSERT INTO Employee VALUES (1, 'John', 3, 1000);
+INSERT INTO Employee VALUES (2, 'Dan', 3, 2000);
+INSERT INTO Employee VALUES (4, 'Thomas', 3, 4000);
+
+-- Sample Data: Bonus
+INSERT INTO Bonus VALUES (2, 500);
+INSERT INTO Bonus VALUES (4, 2000);
+"""
+
+    if any(term in combined_lower for term in ["employees earning more than their managers", "more than their manager", "managerid"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Employee
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    salary INTEGER,
+    managerId INTEGER
+);
+
+-- Sample Data: Employee
+INSERT INTO Employee VALUES (1, 'Joe', 70000, 3);
+INSERT INTO Employee VALUES (2, 'Henry', 80000, 4);
+INSERT INTO Employee VALUES (3, 'Sam', 60000, NULL);
+INSERT INTO Employee VALUES (4, 'Max', 90000, NULL);
+"""
+
+    if any(term in combined_lower for term in ["game play analysis", "activity", "first_login", "games_played"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Activity
+DROP TABLE IF EXISTS Activity;
+CREATE TABLE Activity (
+    player_id INTEGER,
+    device_id INTEGER,
+    event_date DATE,
+    games_played INTEGER,
+    PRIMARY KEY (player_id, event_date)
+);
+
+-- Sample Data: Activity
+INSERT INTO Activity VALUES (1, 2, '2016-03-01', 5);
+INSERT INTO Activity VALUES (1, 3, '2016-05-02', 6);
+INSERT INTO Activity VALUES (2, 1, '2017-06-25', 1);
+INSERT INTO Activity VALUES (3, 4, '2016-03-02', 0);
+INSERT INTO Activity VALUES (3, 5, '2018-07-03', 5);
+"""
+
+    if any(term in combined_lower for term in ["rising temperature", "weather", "recorddate"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Weather
+DROP TABLE IF EXISTS Weather;
+CREATE TABLE Weather (
+    id INTEGER PRIMARY KEY,
+    recordDate DATE,
+    temperature INTEGER
+);
+
+-- Sample Data: Weather
+INSERT INTO Weather VALUES (1, '2015-01-01', 10);
+INSERT INTO Weather VALUES (2, '2015-01-02', 25);
+INSERT INTO Weather VALUES (3, '2015-01-03', 20);
+INSERT INTO Weather VALUES (4, '2015-01-04', 30);
+"""
+
+    if any(term in combined_lower for term in ["delete duplicate emails", "delete all duplicate email"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Person
+DROP TABLE IF EXISTS Person;
+CREATE TABLE Person (
+    id INTEGER PRIMARY KEY,
+    email VARCHAR(50)
+);
+
+-- Sample Data: Person
+INSERT INTO Person VALUES (1, 'john@mail.com');
+INSERT INTO Person VALUES (2, 'bob@mail.com');
+INSERT INTO Person VALUES (3, 'john@mail.com');
+INSERT INTO Person VALUES (4, 'alice@mail.com');
+INSERT INTO Person VALUES (5, 'bob@mail.com');
+"""
+
+    if any(term in combined_lower for term in ["duplicate emails", "duplicate email", "report all duplicate email"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: Person
+DROP TABLE IF EXISTS Person;
+CREATE TABLE Person (
+    id INTEGER PRIMARY KEY,
+    email VARCHAR(50)
+);
+
+-- Sample Data: Person
+INSERT INTO Person VALUES (1, 'a@leetcode.com');
+INSERT INTO Person VALUES (2, 'b@leetcode.com');
+INSERT INTO Person VALUES (3, 'a@leetcode.com');
+"""
+
     tables = get_relevant_tables_for_challenge(title, objective, starter_code, story)
     parts = ["-- Step 1: Database Schema & Data Setup", "-- Run this script to create and populate the practice database tables.\n"]
     
     for tbl in tables:
+            if tbl in ["customers", "orders"] and any(term in (title + " " + objective).lower() for term in ["customers with orders", "customers without orders", "never placed an order", "orders without customers", "not have a matching customer", "orphan"]):
+                if tbl == "customers":
+                    if any(term in (title + " " + objective).lower() for term in ["orders without customers", "not have a matching customer", "orphan"]):
+                        cust_rows = """INSERT INTO customers VALUES (1, 'John');
+INSERT INTO customers VALUES (2, 'Alice');
+INSERT INTO customers VALUES (3, 'Bob');"""
+                    elif any(term in (title + " " + objective).lower() for term in ["without orders", "never placed an order"]):
+                        cust_rows = """INSERT INTO customers VALUES (1, 'John');
+INSERT INTO customers VALUES (2, 'Alice');
+INSERT INTO customers VALUES (3, 'Bob');
+INSERT INTO customers VALUES (4, 'David');"""
+                    else:
+                        cust_rows = """INSERT INTO customers VALUES (1, 'John');
+INSERT INTO customers VALUES (2, 'Alice');
+INSERT INTO customers VALUES (3, 'Bob');"""
+                    parts.append(f"""-- Table: customers
+DROP TABLE IF EXISTS customers;
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+-- Sample Data: customers
+{cust_rows}
+""")
+                elif tbl == "orders":
+                    if any(term in (title + " " + objective).lower() for term in ["orders without customers", "not have a matching customer", "orphan"]):
+                        orders_rows = """INSERT INTO orders VALUES (101, 1, '2026-01-10', 500);
+INSERT INTO orders VALUES (102, 2, '2026-01-12', 900);
+INSERT INTO orders VALUES (103, 5, '2026-01-15', 1200);
+INSERT INTO orders VALUES (104, 6, '2026-01-18', 750);"""
+                    else:
+                        orders_rows = """INSERT INTO orders VALUES (101, 1, '2026-01-10', 500);
+INSERT INTO orders VALUES (102, 2, '2026-01-15', 800);
+INSERT INTO orders VALUES (103, 1, '2026-01-18', 1200);"""
+                    parts.append(f"""-- Table: orders
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    order_date DATE,
+    total_amount REAL
+);
+
+-- Sample Data: orders
+{orders_rows}
+""")
+                continue
+
+            if tbl in ["students", "courses"] and any(term in (title + " " + objective).lower() for term in ["course name", "course names", "enrolled in"]):
+                if tbl == "students":
+                    parts.append("""-- Table: students
+DROP TABLE IF EXISTS students;
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    student_name TEXT,
+    course_id INTEGER
+);
+
+-- Sample Data: students
+INSERT INTO students VALUES (1, 'Rahul', 101);
+INSERT INTO students VALUES (2, 'Priya', 102);
+INSERT INTO students VALUES (3, 'Ankit', 103);
+""")
+                elif tbl == "courses":
+                    parts.append("""-- Table: courses
+DROP TABLE IF EXISTS courses;
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    course_name TEXT
+);
+
+-- Sample Data: courses
+INSERT INTO courses VALUES (101, 'Python');
+INSERT INTO courses VALUES (102, 'SQL');
+INSERT INTO courses VALUES (103, 'Java');
+""")
+                continue
+
+            if any(term in (title + " " + objective).lower() for term in ["multiple table joins", "department and city"]):
+                if tbl == "employees":
+                    parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department_id INTEGER
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 101);
+""")
+                elif tbl == "departments":
+                    parts.append("""-- Table: departments
+DROP TABLE IF EXISTS departments;
+CREATE TABLE departments (
+    department_id INTEGER PRIMARY KEY,
+    department_name TEXT,
+    location_id INTEGER
+);
+
+-- Sample Data: departments
+INSERT INTO departments VALUES (101, 'IT', 1);
+INSERT INTO departments VALUES (102, 'HR', 2);
+""")
+                elif tbl == "locations":
+                    parts.append("""-- Table: locations
+DROP TABLE IF EXISTS locations;
+CREATE TABLE locations (
+    location_id INTEGER PRIMARY KEY,
+    city TEXT
+);
+
+-- Sample Data: locations
+INSERT INTO locations VALUES (1, 'Bangalore');
+INSERT INTO locations VALUES (2, 'Mumbai');
+""")
+                continue
+
+            if tbl == "customers" and any(term in (title + " " + objective).lower() for term in ["customer classification", "classify customers based on their total purchase", "customer_type", "total_purchase"]):
+                parts.append("""-- Table: customers
+DROP TABLE IF EXISTS customers;
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    total_purchase REAL
+);
+
+-- Sample Data: customers
+INSERT INTO customers VALUES (1, 'John', 150000);
+INSERT INTO customers VALUES (2, 'Alice', 80000);
+INSERT INTO customers VALUES (3, 'Bob', 35000);
+INSERT INTO customers VALUES (4, 'David', 12000);
+""")
+                continue
+
+            if any(term in (title + " " + objective).lower() for term in ["join three tables", "customer's name and the product details", "customer_name and the product"]):
+                if tbl == "customers":
+                    parts.append("""-- Table: customers
+DROP TABLE IF EXISTS customers;
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+-- Sample Data: customers
+INSERT INTO customers VALUES (1, 'John');
+INSERT INTO customers VALUES (2, 'Alice');
+""")
+                elif tbl == "orders":
+                    parts.append("""-- Table: orders
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    product_id INTEGER
+);
+
+-- Sample Data: orders
+INSERT INTO orders VALUES (101, 1, 501);
+INSERT INTO orders VALUES (102, 2, 502);
+INSERT INTO orders VALUES (103, 1, 503);
+""")
+                elif tbl == "products":
+                    parts.append("""-- Table: products
+DROP TABLE IF EXISTS products;
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    price REAL
+);
+
+-- Sample Data: products
+INSERT INTO products VALUES (501, 'Laptop', 75000);
+INSERT INTO products VALUES (502, 'Keyboard', 1500);
+INSERT INTO products VALUES (503, 'Mouse', 800);
+""")
+                continue
+
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["multiple case conditions", "age_category", "salary_category", "generate two new columns"]):
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    age INTEGER,
+    salary REAL
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 25, 120000);
+INSERT INTO employees VALUES (2, 'Alice', 35, 80000);
+INSERT INTO employees VALUES (3, 'Bob', 55, 45000);
+""")
+                continue
+
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["gender formatting", "display the full gender name", "gender_name"]):
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    gender TEXT
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 'M');
+INSERT INTO employees VALUES (2, 'Alice', 'F');
+INSERT INTO employees VALUES (3, 'Chris', 'O');
+INSERT INTO employees VALUES (4, 'David', 'X');
+""")
+                continue
+
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["bonus calculation", "calculate the employee's bonus", "calculate the employee bonus"]):
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    salary REAL
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 120000);
+INSERT INTO employees VALUES (2, 'Alice', 85000);
+INSERT INTO employees VALUES (3, 'Bob', 50000);
+INSERT INTO employees VALUES (4, 'David', 30000);
+""")
+                continue
+
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["salary bands", "salary band", "classify employees into salary bands"]):
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    salary REAL
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 120000);
+INSERT INTO employees VALUES (2, 'Alice', 85000);
+INSERT INTO employees VALUES (3, 'Bob', 55000);
+INSERT INTO employees VALUES (4, 'David', 32000);
+""")
+                continue
+
             if tbl == "employees" and "lowest salary department" in (title + " " + objective).lower():
                 parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
@@ -235,6 +837,93 @@ INSERT INTO employees VALUES (6, 'Sophia', 'HR', 'Mumbai', 110000);
 """)
                 continue
 
+            if tbl == "persons" or (tbl == "employees" and "classify each person into an age group" in (title + " " + objective).lower()):
+                parts.append("""-- Table: persons
+DROP TABLE IF EXISTS persons;
+CREATE TABLE persons (
+    person_id INTEGER PRIMARY KEY,
+    person_name TEXT,
+    age INTEGER
+);
+
+-- Sample Data: persons
+INSERT INTO persons VALUES (1, 'John', 8);
+INSERT INTO persons VALUES (2, 'Alice', 16);
+INSERT INTO persons VALUES (3, 'Bob', 30);
+INSERT INTO persons VALUES (4, 'David', 67);
+""")
+                continue
+
+            if tbl == "sales" and any(term in (title + " " + objective).lower() for term in ["sales categories", "sales category", "classify each sale into a category"]):
+                parts.append("""-- Table: sales
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    sale_amount REAL
+);
+
+-- Sample Data: sales
+INSERT INTO sales VALUES (101, 'John', 120000);
+INSERT INTO sales VALUES (102, 'Alice', 75000);
+INSERT INTO sales VALUES (103, 'Bob', 35000);
+INSERT INTO sales VALUES (104, 'David', 15000);
+""")
+                continue
+
+            if tbl == "students" and any(term in (title + " " + objective).lower() for term in ["conditional aggregation", "total_students", "passed_students", "failed_students"]):
+                parts.append("""-- Table: students
+DROP TABLE IF EXISTS students;
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    student_name TEXT,
+    marks INTEGER
+);
+
+-- Sample Data: students
+INSERT INTO students VALUES (1, 'John', 85);
+INSERT INTO students VALUES (2, 'Alice', 38);
+INSERT INTO students VALUES (3, 'Bob', 40);
+INSERT INTO students VALUES (4, 'David', 25);
+INSERT INTO students VALUES (5, 'Emma', 91);
+""")
+                continue
+
+            if tbl == "students" and any(term in (title + " " + objective).lower() for term in ["pass/fail status", "pass/fail", "passed or failed", "marks >= 40", "marks < 40"]):
+                parts.append("""-- Table: students
+DROP TABLE IF EXISTS students;
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    student_name TEXT,
+    marks INTEGER
+);
+
+-- Sample Data: students
+INSERT INTO students VALUES (1, 'John', 82);
+INSERT INTO students VALUES (2, 'Alice', 39);
+INSERT INTO students VALUES (3, 'Bob', 40);
+INSERT INTO students VALUES (4, 'David', 25);
+""")
+                continue
+
+            if tbl == "students" and any(term in (title + " " + objective).lower() for term in ["grade students", "assign grades", "marks obtained (0–100)", "marks obtained (0-100)"]):
+                parts.append("""-- Table: students
+DROP TABLE IF EXISTS students;
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    student_name TEXT,
+    marks INTEGER
+);
+
+-- Sample Data: students
+INSERT INTO students VALUES (1, 'John', 95);
+INSERT INTO students VALUES (2, 'Alice', 82);
+INSERT INTO students VALUES (3, 'Bob', 74);
+INSERT INTO students VALUES (4, 'David', 63);
+INSERT INTO students VALUES (5, 'Emma', 48);
+""")
+                continue
+
             if tbl == "students" and "average marks above 80" in (title + " " + objective).lower():
                 parts.append("""-- Table: students
 DROP TABLE IF EXISTS students;
@@ -255,7 +944,7 @@ INSERT INTO students VALUES (6, 'Sneha', '10C', 90);
 """)
                 continue
                 
-            if tbl in ["employees", "departments"] and any(term in (title + " " + objective).lower() for term in ["inner join", "left join", "right join", "full join"]):
+            if tbl in ["employees", "departments"] and any(term in (title + " " + objective).lower() for term in ["inner join", "left join", "right join", "full join", "cross join", "department name", "department names"]):
                 if tbl == "employees":
                     parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
@@ -265,13 +954,26 @@ CREATE TABLE employees (
     department_id INTEGER
 );
 
--- Sample Data: employees
-INSERT INTO employees VALUES (1, 'John', 101);
+-- Sample Data: employees""")
+                    if "cross join" in (title + " " + objective).lower():
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 103);""")
+                    elif "right join" in (title + " " + objective).lower():
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 103);""")
+                    elif "inner join" in (title + " " + objective).lower():
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 103);
+INSERT INTO employees VALUES (4, 'David', NULL);""")
+                    else:
+                        parts.append("""INSERT INTO employees VALUES (1, 'John', 101);
 INSERT INTO employees VALUES (2, 'Alice', 102);
 INSERT INTO employees VALUES (3, 'Bob', 103);
 INSERT INTO employees VALUES (4, 'David', NULL);
-INSERT INTO employees VALUES (5, 'Emma', 105);
-""")
+INSERT INTO employees VALUES (5, 'Emma', 105);""")
                 elif tbl == "departments":
                     parts.append("""-- Table: departments
 DROP TABLE IF EXISTS departments;
@@ -280,14 +982,53 @@ CREATE TABLE departments (
     department_name TEXT
 );
 
--- Sample Data: departments
-INSERT INTO departments VALUES (101, 'HR');
+-- Sample Data: departments""")
+                    if "cross join" in (title + " " + objective).lower():
+                        parts.append("""INSERT INTO departments VALUES (101, 'HR');
+INSERT INTO departments VALUES (102, 'IT');""")
+                    else:
+                        parts.append("""INSERT INTO departments VALUES (101, 'HR');
 INSERT INTO departments VALUES (102, 'IT');
 INSERT INTO departments VALUES (103, 'Finance');
-INSERT INTO departments VALUES (104, 'Marketing');
-""")
+INSERT INTO departments VALUES (104, 'Marketing');""")
                 continue
                 
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["without managers", "do not have a manager", "no manager"]):
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    manager_id INTEGER
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', NULL);
+INSERT INTO employees VALUES (2, 'Alice', 1);
+INSERT INTO employees VALUES (3, 'Bob', 1);
+INSERT INTO employees VALUES (4, 'David', 2);
+INSERT INTO employees VALUES (5, 'Emma', NULL);
+""")
+                continue
+
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["manager and employee names", "along with their manager's name"]):
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    manager_id INTEGER
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', NULL);
+INSERT INTO employees VALUES (2, 'Alice', 1);
+INSERT INTO employees VALUES (3, 'Bob', 1);
+INSERT INTO employees VALUES (4, 'David', 2);
+INSERT INTO employees VALUES (5, 'Emma', 2);
+""")
+                continue
+
             if tbl == "employees" and "self join" in (title + " " + objective).lower():
                 parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
@@ -307,7 +1048,11 @@ INSERT INTO employees VALUES (5, 'Sophia', NULL);
                 continue
 
             if tbl == "products" and "having with count" in (title + " " + objective).lower():
-                parts.append("""-- Table: products
+                sports_rows = "\n".join([f"INSERT INTO products VALUES ({i}, 'Item {i}', 'Sports');" for i in range(1, 21)])
+                elec_rows = "\n".join([f"INSERT INTO products VALUES ({i}, 'Item {i}', 'Electronics');" for i in range(21, 36)])
+                fash_rows = "\n".join([f"INSERT INTO products VALUES ({i}, 'Item {i}', 'Fashion');" for i in range(36, 48)])
+                groc_rows = "\n".join([f"INSERT INTO products VALUES ({i}, 'Item {i}', 'Grocery');" for i in range(48, 56)])
+                parts.append(f"""-- Table: products
 DROP TABLE IF EXISTS products;
 CREATE TABLE products (
     product_id INTEGER PRIMARY KEY,
@@ -316,21 +1061,10 @@ CREATE TABLE products (
 );
 
 -- Sample Data: products
-INSERT INTO products VALUES (1, 'Laptop', 'Electronics');
-INSERT INTO products VALUES (2, 'Mouse', 'Electronics');
-INSERT INTO products VALUES (3, 'Keyboard', 'Electronics');
-INSERT INTO products VALUES (4, 'Monitor', 'Electronics');
-INSERT INTO products VALUES (5, 'Headphones', 'Electronics');
-INSERT INTO products VALUES (6, 'Webcam', 'Electronics');
-INSERT INTO products VALUES (7, 'Microphone', 'Electronics');
-INSERT INTO products VALUES (8, 'Speaker', 'Electronics');
-INSERT INTO products VALUES (9, 'Printer', 'Electronics');
-INSERT INTO products VALUES (10, 'Tablet', 'Electronics');
-INSERT INTO products VALUES (11, 'Smartphone', 'Electronics');
-INSERT INTO products VALUES (12, 'Shoes', 'Fashion');
-INSERT INTO products VALUES (13, 'T-Shirt', 'Fashion');
-INSERT INTO products VALUES (14, 'Jeans', 'Fashion');
-INSERT INTO products VALUES (15, 'Rice', 'Grocery');
+{sports_rows}
+{elec_rows}
+{fash_rows}
+{groc_rows}
 """)
                 continue
 
