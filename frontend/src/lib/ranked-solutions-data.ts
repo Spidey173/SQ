@@ -3214,6 +3214,292 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "🎓 Company Interview Tip: 'How do you group by 3 or more dimensions?' ── Demonstrate that GROUP BY department_name, city, gender works seamlessly for 3D analytical breakdowns! 🚀",
       "🔥 Pro Tip (Interview Trick Question): If asked whether column order in GROUP BY changes the resulting counts, answer NO—the total counts per pair remain identical regardless of column sequence in GROUP BY! 🚀"
     ]
+  },
+  "SQL-019": {
+    "code_id": "SQL-019",
+    "levelNumber": 54,
+    "title": "HAVING with COUNT()",
+    "solutions": [
+      {
+        "rank": 1,
+        "name": "Canonical Aggregate Filter",
+        "description": "Standard approach using GROUP BY paired with HAVING COUNT(*) filter condition.",
+        "code": "SELECT category_name,\n       COUNT(*) AS product_count\nFROM products\nGROUP BY category_name\nHAVING COUNT(*) >= 10\nORDER BY product_count DESC;",
+        "timeComplexity": "O(N)",
+        "spaceComplexity": "O(G)",
+        "notes": "Optimal and universally supported across all RDBMS engines."
+      }
+    ],
+    "commonMistakes": [
+      "❌ 1. Using WHERE instead of HAVING: WHERE COUNT(*) >= 10 fails because WHERE evaluates row-by-row before aggregates are computed.",
+      "❌ 2. Misusing GROUP BY: Forgetting to GROUP BY category_name causes COUNT(*) to aggregate the entire table, throwing a syntax error on selected category_name.",
+      "❌ 3. Forgetting ORDER BY: Missing ORDER BY product_count DESC yields unordered results."
+    ],
+    "keyTakeaway": "HAVING filters clustered groups post-aggregation (like COUNT >= 10), whereas WHERE filters individual rows pre-aggregation.",
+    "interviewPros": [
+      "Q1. Can you use column aliases in HAVING? Some SQL dialects (like MySQL/PostgreSQL) allow HAVING product_count >= 10, but standard ANSI SQL requires HAVING COUNT(*) >= 10.",
+      "Q2. Why does WHERE COUNT(*) throw an error? Because aggregate calculations do not exist during the WHERE phase of logical query execution.",
+      "Q3. How does the execution engine handle HAVING? It first hashes/sorts the data to form groups, computes the aggregate count, then discards groups failing the HAVING predicate.",
+      "Q4. Can HAVING be used without GROUP BY? Yes, but it acts like a global WHERE clause on a single table-wide aggregate row (rarely used)."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between WHERE and HAVING? (Answer: WHERE filters raw rows; HAVING filters aggregated groups)\n• Can you have both WHERE and HAVING in one query? (Answer: Yes, WHERE filters base data before GROUP BY, and HAVING filters resulting groups)\n• Does HAVING perform well? (Answer: It depends on the size of grouped data; reducing data in WHERE beforehand improves overall performance)",
+      "⚡ Performance Notes:\n• If products table has an index on category_name, grouping happens via efficient index scans instead of hash aggregation.",
+      "🌍 Real-World Use Cases:\n• ✅ Finding active users (HAVING COUNT(login) >= 5)\n• ✅ Identifying repeat customers (HAVING COUNT(order_id) > 1)\n• ✅ Flagging products with low stock alerts across warehouses (HAVING SUM(stock) < 100)"
+    ]
+  },
+  "SQL-020": {
+    "code_id": "SQL-020",
+    "levelNumber": 55,
+    "title": "HAVING with SUM()",
+    "solutions": [
+      {
+        "rank": 1,
+        "name": "Grouped Aggregate Filter (Recommended)",
+        "description": "Uses standard GROUP BY followed by HAVING SUM() to filter out customers based on total spend.",
+        "code": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING SUM(purchase_amount) > 50000\nORDER BY total_purchase DESC;",
+        "timeComplexity": "O(N)",
+        "spaceComplexity": "O(G)",
+        "notes": "ANSI standard, optimal across all major RDBMS engines."
+      },
+      {
+        "rank": 2,
+        "name": "Alias in HAVING (MySQL Specific)",
+        "description": "MySQL permits using the SELECT alias 'total_purchase' directly in the HAVING clause.",
+        "code": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING total_purchase > 50000\nORDER BY total_purchase DESC;",
+        "timeComplexity": "O(N)",
+        "spaceComplexity": "O(G)",
+        "notes": "Shorter syntax but not standard. Fails in SQL Server, Oracle, and strict PostgreSQL modes."
+      }
+    ],
+    "commonMistakes": [
+      "❌ 1. Using WHERE instead of HAVING: WHERE SUM(purchase_amount) > 50000 causes an error 'aggregate functions are not allowed in WHERE'.",
+      "❌ 2. Forgetting GROUP BY: Without GROUP BY, the query attempts to sum all table records into a single row, causing expression mismatch with customer details.",
+      "❌ 3. Using COUNT() instead of SUM(): COUNT(purchase_amount) calculates the number of transactions, not the monetary total of those transactions.",
+      "❌ 4. Forgetting ORDER BY: Missing ORDER BY total_purchase DESC makes output unpredictable."
+    ],
+    "keyTakeaway": "Use SUM() to aggregate continuous numeric quantities (like money), and HAVING to filter groups by those derived totals.",
+    "interviewPros": [
+      "Q1. Why use HAVING instead of WHERE? Because aggregate values like SUM() only exist after the GROUP BY phase, which happens after WHERE.",
+      "Q2. Can GROUP BY contain multiple columns? Yes, grouping by customer_id and customer_name ensures correct attribution.",
+      "Q3. Why not just group by customer_name? Names aren't always unique! Grouping by customer_id is safer, and including customer_name in GROUP BY allows selecting it without functional dependency errors.",
+      "Q4. Can ORDER BY use aliases? Yes, ORDER BY is evaluated last, so it can reference SELECT aliases like total_purchase."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• What is the difference between SUM() and COUNT()? (Answer: SUM adds numeric values together; COUNT tallies the number of rows)\n• Can you filter by an alias in HAVING? (Answer: Only in some dialects like MySQL; standard SQL requires repeating the aggregate function in HAVING)\n• Does HAVING perform well on large datasets? (Answer: HAVING requires scanning all groups. If we only wanted recent purchases, filtering dates in WHERE first would optimize performance)",
+      "⚡ Performance Notes:\n• A composite index on purchases(customer_id, purchase_amount) can speed up the aggregation if the planner can use an Index-Only Scan.",
+      "🌍 Real-World Use Cases:\n• ✅ Finding high-value VIP customers for loyalty rewards\n• ✅ Finding sales reps who exceeded their quarterly targets\n• ✅ Identifying product categories generating over $1M revenue"
+    ]
+  },
+  "SQL-021": {
+    "code_id": "SQL-021",
+    "levelNumber": 56,
+    "title": "INNER JOIN",
+    "solutions": [
+      {
+        "rank": 1,
+        "name": "Explicit INNER JOIN (Recommended)",
+        "description": "Standard ANSI syntax using INNER JOIN with explicit ON condition and table aliases.",
+        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Optimal, clean, and unambiguous. Strongly preferred in code reviews."
+      },
+      {
+        "rank": 2,
+        "name": "Implicit Join (Legacy Commas)",
+        "description": "Old-style SQL-89 syntax joining tables in the FROM clause using commas, then filtering with WHERE.",
+        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees e, departments d\nWHERE e.department_id = d.department_id\nORDER BY e.employee_id;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Anti-pattern today. It accidentally creates cross-joins if WHERE is forgotten. Avoid in interviews."
+      }
+    ],
+    "commonMistakes": [
+      "❌ 1. Forgetting the ON clause: Without ON, INNER JOIN acts as a CROSS JOIN producing the Cartesian product of both tables.",
+      "❌ 2. Ambiguous Column References: Writing SELECT department_id throws an error because the DB doesn't know whether to fetch it from employees or departments.",
+      "❌ 3. Using LEFT JOIN when INNER is needed: If the requirement says 'Only display employees who belong to a department', LEFT JOIN fails because it includes employees with NULL departments."
+    ],
+    "keyTakeaway": "INNER JOIN keeps only rows where a match exists on both sides of the join condition.",
+    "interviewPros": [
+      "Q1. Are JOIN and INNER JOIN the same? Yes, INNER is the default join type in SQL if unspecified.",
+      "Q2. What happens to David (NULL department)? David is dropped from the result set because NULL = 101 evaluates to UNKNOWN, which acts like FALSE in a join.",
+      "Q3. Why use table aliases (e, d)? Aliases save typing, prevent ambiguous column errors, and make queries more readable.",
+      "Q4. Can we join more than two tables? Yes, by chaining multiple INNER JOIN ... ON ... clauses sequentially."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• How does the database execute an INNER JOIN? (Answer: Usually via Hash Join, Merge Join, or Nested Loop Join, depending on indexes and table sizes)\n• What happens if the join condition is missing? (Answer: Cartesian product, O(N*M) rows are produced)\n• When would you use LEFT JOIN instead? (Answer: When we want to keep all records from the left table even if they lack a match on the right)",
+      "⚡ Performance Notes:\n• To optimize, ensure foreign key indexes exist on the join columns (e.g., INDEX(department_id) on both tables) to enable fast Merge or Hash joins.",
+      "🌍 Real-World Use Cases:\n• ✅ Attaching lookup values (e.g., status IDs to status names)\n• ✅ Denormalizing dimensional data (e.g., attaching customer details to a sales transaction)"
+    ]
+  },
+  "SQL-022": {
+    "code_id": "SQL-022",
+    "levelNumber": 57,
+    "title": "LEFT JOIN",
+    "solutions": [
+      {
+        "rank": 1,
+        "name": "Standard LEFT JOIN (Recommended)",
+        "description": "Standard ANSI syntax preserving all left-hand records.",
+        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Optimal and explicitly signals intent to keep unmatched primary records."
+      },
+      {
+        "rank": 2,
+        "name": "LEFT OUTER JOIN (Verbose)",
+        "description": "Explicitly includes the optional OUTER keyword.",
+        "code": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT OUTER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "LEFT JOIN and LEFT OUTER JOIN are perfectly identical in all SQL engines. The OUTER keyword is just noise."
+      }
+    ],
+    "commonMistakes": [
+      "❌ 1. Using INNER JOIN instead of LEFT JOIN: An INNER JOIN drops employees without departments (like David and Emma).",
+      "❌ 2. Putting the wrong table on the left: FROM departments d LEFT JOIN employees e preserves all departments, but drops employees who don't belong to a department (which fails the prompt requirement).",
+      "❌ 3. Filtering right-table NULLs in WHERE: Adding WHERE d.department_name IS NOT NULL turns the LEFT JOIN back into an INNER JOIN."
+    ],
+    "keyTakeaway": "LEFT JOIN guarantees inclusion of every single row from the first (left) table, padding with NULLs whenever the right table lacks a match.",
+    "interviewPros": [
+      "Q1. Are LEFT JOIN and LEFT OUTER JOIN the same? Yes, OUTER is an optional keyword in ANSI SQL.",
+      "Q2. Why is table order important? Table order dictates which table serves as the unconditional base. FROM A LEFT JOIN B keeps all of A.",
+      "Q3. How does LEFT JOIN handle multiple matches? If one employee matched three departments (e.g., composite keys or bad schema), the employee row would duplicate three times.",
+      "Q4. What happens to Emma? Emma's department_id is 105, which doesn't exist. She is preserved, and department_name becomes NULL."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• If you add a WHERE clause on the right table (e.g., WHERE d.department_name = 'HR'), how does it affect the LEFT JOIN? (Answer: It converts the LEFT JOIN into an INNER JOIN because NULL != 'HR'. To keep all left rows, that condition must be moved to the ON clause.)\n• How do you find employees with NO department? (Answer: SELECT ... FROM employees e LEFT JOIN departments d ON ... WHERE d.department_id IS NULL)",
+      "⚡ Performance Notes:\n• LEFT JOINs prevent the optimizer from rearranging join order (unlike INNER JOINs), meaning table evaluation sequence is strictly determined by the query text.",
+      "🌍 Real-World Use Cases:\n• ✅ Generating complete rosters showing all personnel, even unassigned ones\n• ✅ Finding missing data (e.g., Customers without Orders using WHERE order_id IS NULL)"
+    ]
+  },
+  "SQL-023": {
+    "code_id": "SQL-023",
+    "levelNumber": 58,
+    "title": "RIGHT JOIN",
+    "solutions": [
+      {
+        "rank": 1,
+        "name": "RIGHT JOIN (Standard SQL)",
+        "description": "Uses standard RIGHT JOIN syntax to ensure all departments are retained in the result set.",
+        "code": "SELECT d.department_name,\n       e.employee_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Direct translation of the requirement 'Include departments even if no employees are assigned'."
+      },
+      {
+        "rank": 2,
+        "name": "LEFT JOIN Equivalent (Recommended in Practice)",
+        "description": "Swaps the table order and uses LEFT JOIN, achieving identical results while bypassing SQLite's lack of RIGHT JOIN support.",
+        "code": "SELECT d.department_name,\n       e.employee_name\nFROM departments AS d\nLEFT JOIN employees AS e\nON d.department_id = e.department_id\nORDER BY d.department_name;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Preferred by most engineering teams for readability and universal compatibility (including SQLite)."
+      }
+    ],
+    "commonMistakes": [
+      "❌ 1. Confusing LEFT and RIGHT JOINs: Writing FROM departments d RIGHT JOIN employees e keeps all employees instead of all departments, defeating the purpose of the audit.",
+      "❌ 2. Trying to run RIGHT JOIN in SQLite: SQLite's query parser throws an error for RIGHT JOIN, meaning it must be rewritten as a LEFT JOIN.",
+      "❌ 3. Filtering left-side NULLs in WHERE: Adding WHERE e.employee_name IS NOT NULL converts the RIGHT JOIN into an INNER JOIN."
+    ],
+    "keyTakeaway": "RIGHT JOIN unconditionally retains all records from the right-hand table. Because humans naturally read left-to-right, rewriting RIGHT JOINs as LEFT JOINs is a ubiquitous industry best practice.",
+    "interviewPros": [
+      "Q1. Are LEFT JOIN and RIGHT JOIN functionally identical? Yes, mathematically they are mirror images. A LEFT JOIN B is perfectly equivalent to B RIGHT JOIN A.",
+      "Q2. Why does Marketing return NULL for employee_name? Because Marketing exists in the right table (departments) but has no matching rows in the left table (employees).",
+      "Q3. Is RIGHT OUTER JOIN different? No, OUTER is an optional keyword. RIGHT JOIN and RIGHT OUTER JOIN mean the same thing.",
+      "Q4. Can you use RIGHT JOIN in SQLite? No, SQLite specifically omitted RIGHT and FULL joins to maintain a small footprint, enforcing the use of LEFT JOIN instead."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• If RIGHT JOIN and LEFT JOIN do the same thing, why avoid RIGHT JOIN? (Answer: Readability. It's easier to reason about data flowing from the first table mentioned on the left, outwards to the right.)\n• How do you find a department with ZERO employees? (Answer: A RIGHT JOIN where the employee primary key IS NULL)",
+      "⚡ Performance Notes:\n• When parsed, most modern SQL optimizers (like PostgreSQL or MySQL) internally rewrite RIGHT JOINs into LEFT JOINs before generating the execution plan.",
+      "🌍 Real-World Use Cases:\n• ✅ Validating catalog completeness (e.g., finding Product Categories with zero active listings)\n• ✅ Identifying unused infrastructure (e.g., Servers with no active connections)"
+    ]
+  },
+  "SQL-024": {
+    "code_id": "SQL-024",
+    "levelNumber": 59,
+    "title": "FULL JOIN",
+    "solutions": [
+      {
+        "rank": 1,
+        "name": "FULL JOIN (PostgreSQL / SQL Server / Oracle)",
+        "description": "Standard ANSI syntax preserving records from both tables.",
+        "code": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nFULL JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Optimal and explicitly signals intent to keep all records from both sides."
+      },
+      {
+        "rank": 2,
+        "name": "LEFT JOIN + UNION (MySQL / SQLite Compatible)",
+        "description": "Since MySQL and SQLite do not support FULL JOIN, it must be simulated by UNIONing a LEFT JOIN and a RIGHT JOIN (or in SQLite's case, reversed LEFT JOINs).",
+        "code": "SELECT e.employee_name, d.department_name\nFROM employees e\nLEFT JOIN departments d ON e.department_id = d.department_id\nUNION\nSELECT e.employee_name, d.department_name\nFROM employees e\nRIGHT JOIN departments d ON e.department_id = d.department_id\nORDER BY department_name;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Essential workaround for MySQL. Note that UNION natively removes duplicates, creating the perfect FULL JOIN behavior."
+      }
+    ],
+    "commonMistakes": [
+      "❌ 1. Using FULL JOIN in MySQL or SQLite: It will throw a syntax error. You must be prepared to write the UNION fallback in interviews.",
+      "❌ 2. Confusing FULL JOIN with CROSS JOIN: CROSS JOIN creates every possible pairing (Cartesian product) regardless of department_id matching. FULL JOIN only creates matched pairs, padding unmatched items with NULLs.",
+      "❌ 3. Using UNION ALL for the fallback: Using UNION ALL instead of UNION in the MySQL workaround will cause matching rows (which exist in both the LEFT and RIGHT join results) to appear twice."
+    ],
+    "keyTakeaway": "FULL JOIN is the union of a LEFT JOIN and a RIGHT JOIN, making it the perfect tool for bi-directional data reconciliation.",
+    "interviewPros": [
+      "Q1. Is FULL JOIN different from FULL OUTER JOIN? No, they are exactly the same.",
+      "Q2. What happens to David and Marketing? David gets a NULL department, and Marketing gets a NULL employee. Both are preserved in the final output.",
+      "Q3. How do you find anomalies (rows that failed to match)? Add WHERE e.employee_id IS NULL OR d.department_id IS NULL.",
+      "Q4. Can you use a FULL JOIN in MySQL? No, but you can simulate it using a LEFT JOIN, a UNION, and a RIGHT JOIN."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Write a query to find employees without departments AND departments without employees in a SINGLE query. (Answer: Use a FULL JOIN with a WHERE clause checking for NULLs on either side)\n• What is the performance impact of simulating FULL JOIN in MySQL? (Answer: It's expensive because it requires executing two separate joins and then performing a distinct sort to eliminate the duplicates via UNION)",
+      "⚡ Performance Notes:\n• FULL JOINs are inherently expensive because they cannot easily discard rows early. They require processing the entirety of both tables.",
+      "🌍 Real-World Use Cases:\n• ✅ Data Reconciliation (e.g., comparing last month's inventory against this month's to find new items and deleted items simultaneously)\n• ✅ Merger Audits (e.g., aligning HR systems from two acquired companies)"
+    ]
+  },
+  "SQL-025": {
+    "code_id": "SQL-025",
+    "levelNumber": 60,
+    "title": "SELF JOIN",
+    "solutions": [
+      {
+        "rank": 1,
+        "name": "LEFT JOIN to Self (Recommended)",
+        "description": "Uses LEFT JOIN on the same table to safely retrieve the organizational hierarchy.",
+        "code": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Optimal solution. Ensures employees without managers (like the CEO) are still present in the output."
+      },
+      {
+        "rank": 2,
+        "name": "INNER JOIN to Self (Strict)",
+        "description": "Uses INNER JOIN, which acts as a filter dropping employees without a manager.",
+        "code": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\INNER JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
+        "timeComplexity": "O(N × M)",
+        "spaceComplexity": "O(Result Set)",
+        "notes": "Fails the prompt's implicit requirement to 'display each employee', since 'Sophia' gets excluded. Acceptable only if the prompt strictly says 'display employees who have managers'."
+      }
+    ],
+    "commonMistakes": [
+      "❌ 1. Omitting Table Aliases: Writing FROM employees JOIN employees throws an ambiguous table error. The database needs e and m to differentiate the copies.",
+      "❌ 2. Joining on the wrong columns: Writing ON e.employee_id = m.employee_id matches every employee to themselves, outputting 'John -> John'.",
+      "❌ 3. Reversing the logic: Writing ON e.employee_id = m.manager_id prints the manager's name in the 'employee' column and the subordinate in the 'manager' column."
+    ],
+    "keyTakeaway": "A SELF JOIN is just a regular join using table aliases. Always use LEFT JOIN for hierarchical self joins to prevent dropping the top-level root node (the CEO).",
+    "interviewPros": [
+      "Q1. Is SELF JOIN a special keyword? No, it's just a conceptual term for joining a table to itself using standard JOIN operators.",
+      "Q2. Why is LEFT JOIN preferred over INNER JOIN here? If you use INNER JOIN, employees who report to nobody (manager_id IS NULL) disappear.",
+      "Q3. How do you find the CEO? SELECT employee_name FROM employees WHERE manager_id IS NULL.",
+      "Q4. Can you join a table to itself three times? Yes! (e.g., finding an employee's manager's manager)."
+    ],
+    "interviewCons": [
+      "⭐ Questions Interviewers Will Ask:\n• Given an employee, write a query to find ALL their direct reports. (Answer: Simply reverse the SELECT logic, or use ON m.employee_id = e.manager_id GROUP BY m.employee_name)",
+      "⚡ Performance Notes:\n• Self joins can be notoriously slow on massive tables (like web session logs) unless the join keys (manager_id, employee_id) are heavily indexed.",
+      "🌍 Real-World Use Cases:\n• ✅ Flattening organizational charts\n• ✅ Analyzing consecutive events in a log table (e.g., joining Row N to Row N+1 based on timestamps)\n• ✅ Resolving Parent-Child category hierarchies (e.g., Electronics -> Laptops)"
+    ]
   }
 };
 

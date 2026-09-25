@@ -1448,5 +1448,201 @@
     "difficulty": "Easy",
     "track": "core",
     "code_id": "SQL-018"
+  },
+  {
+    "level_number": 54,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "HAVING with COUNT()",
+    "story": "An online shopping website's inventory team wants to perform a category-wise audit. Products belong to different categories, and they need to focus on large categories that contain a significant number of products.",
+    "objective": "Write an SQL query to find product categories that contain at least 10 products. Return category_name, product_count. Sort the result by product_count in descending order.",
+    "starter_code": "-- Problem #SQL-019: HAVING with COUNT()\n-- Write your SQL query below\n\n",
+    "expected_output": "category_name | product_count\n-----------------------------\nElectronics | 11",
+    "hints": [
+      "Use GROUP BY category_name.",
+      "Use COUNT(*) AS product_count.",
+      "Use HAVING COUNT(*) >= 10 to filter the grouped categories.",
+      "Sort with ORDER BY product_count DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT category_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10 ORDER BY product_count DESC;",
+        "hidden": false,
+        "description": "Find categories with >= 10 products"
+      }
+    ],
+    "explanation": "SELECT category_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10 ORDER BY product_count DESC;",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-019"
+  },
+  {
+    "level_number": 55,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "HAVING with SUM()",
+    "story": "An online shopping platform's marketing team is launching a VIP loyalty program. They want to identify high-value customers who have spent a significant amount of money across all their orders combined.",
+    "objective": "Write an SQL query to find customers whose total purchase amount exceeds 50,000. Return customer_id, customer_name, and total_purchase. Sort the result by total_purchase in descending order.",
+    "starter_code": "-- Problem #SQL-020: HAVING with SUM()\n-- Write your SQL query below\n\n",
+    "expected_output": "customer_id | customer_name | total_purchase\n--------------------------------------------\n101 | Rahul | 60000\n103 | Amit | 55000",
+    "hints": [
+      "Use GROUP BY customer_id, customer_name.",
+      "Use SUM(purchase_amount) AS total_purchase.",
+      "Use HAVING SUM(purchase_amount) > 50000.",
+      "Use ORDER BY total_purchase DESC."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING SUM(purchase_amount) > 50000 ORDER BY total_purchase DESC;",
+        "hidden": false,
+        "description": "Find VIP customers with total spend > 50000"
+      }
+    ],
+    "explanation": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING SUM(purchase_amount) > 50000 ORDER BY total_purchase DESC;",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-020"
+  },
+  {
+    "level_number": 56,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "INNER JOIN",
+    "story": "The HR department needs a consolidated report that displays each employee alongside the actual name of their department, instead of just the department ID.",
+    "objective": "Write an SQL query to display employees along with their department names. Return employee_id, employee_name, and department_name. Only display employees who belong to a department. Sort the result by employee_id.",
+    "starter_code": "-- Problem #SQL-021: INNER JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | department_name\n---------------------------------------------\n1 | John | HR\n2 | Alice | IT\n3 | Bob | Finance",
+    "hints": [
+      "Use INNER JOIN to combine the employees and departments tables.",
+      "The join condition should be ON e.department_id = d.department_id.",
+      "Select e.employee_id, e.employee_name, and d.department_name.",
+      "Order by e.employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
+        "hidden": false,
+        "description": "Inner join employees and departments"
+      }
+    ],
+    "explanation": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-021"
+  },
+  {
+    "level_number": 57,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "LEFT JOIN",
+    "story": "The HR department needs a full roster of all employees, including their department names. Crucially, even new hires who haven't been assigned a department yet must appear on this list.",
+    "objective": "Write an SQL query to display all employees along with their department names. Return employee_id, employee_name, and department_name. Include employees even if they are not assigned to any department. Sort the result by employee_id.",
+    "starter_code": "-- Problem #SQL-022: LEFT JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_id | employee_name | department_name\n---------------------------------------------\n1 | John | HR\n2 | Alice | IT\n3 | Bob | Finance\n4 | David | NULL\n5 | Emma | NULL",
+    "hints": [
+      "Use LEFT JOIN to combine the employees and departments tables.",
+      "Make sure employees is the left table (after FROM).",
+      "The join condition is ON e.department_id = d.department_id.",
+      "Select e.employee_id, e.employee_name, d.department_name and ORDER BY e.employee_id."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e LEFT JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
+        "hidden": false,
+        "description": "Left join employees and departments"
+      }
+    ],
+    "explanation": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e LEFT JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id;",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-022"
+  },
+  {
+    "level_number": 58,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "RIGHT JOIN",
+    "story": "The finance team is auditing departmental budgets and needs a complete list of all departments and their assigned employees. They specifically requested that empty departments (like the new Marketing branch) still appear on the report to track zero-headcount budgets.",
+    "objective": "Write an SQL query to display all departments along with their employees. Return department_name and employee_name. Include departments even if no employees are assigned to them. Sort the result by department_name.",
+    "starter_code": "-- Problem #SQL-023: RIGHT JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "department_name | employee_name\n-------------------------------\nFinance | Bob\nHR | John\nIT | Alice\nMarketing | NULL",
+    "hints": [
+      "Use RIGHT JOIN to combine the employees and departments tables.",
+      "Make sure departments is the right table (after RIGHT JOIN).",
+      "The join condition is ON e.department_id = d.department_id.",
+      "Select d.department_name, e.employee_name and ORDER BY d.department_name."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT d.department_name, e.employee_name FROM employees AS e RIGHT JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
+        "hidden": false,
+        "description": "Right join employees and departments"
+      }
+    ],
+    "explanation": "SELECT d.department_name, e.employee_name FROM employees AS e RIGHT JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-023"
+  },
+  {
+    "level_number": 59,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "FULL JOIN",
+    "story": "During a corporate merger audit, analysts must reconcile the employee roster against the department directory. They need a comprehensive mapping showing every single employee and every single department, catching both unassigned employees and empty departments in one view.",
+    "objective": "Write an SQL query to display all employees and all departments, whether or not they have matching records. Return employee_name and department_name. Include employees without departments and departments without employees. Sort the result by department_name.",
+    "starter_code": "-- Problem #SQL-024: FULL JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_name | department_name\n-------------------------------\nBob | Finance\nJohn | HR\nAlice | IT\nNULL | Marketing\nDavid | NULL\nEmma | NULL",
+    "hints": [
+      "Use FULL JOIN (or FULL OUTER JOIN) to combine the employees and departments tables.",
+      "The join condition should be ON e.department_id = d.department_id.",
+      "Select e.employee_name and d.department_name.",
+      "Make sure to ORDER BY d.department_name."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_name, d.department_name FROM employees AS e FULL JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
+        "hidden": false,
+        "description": "Full join employees and departments"
+      }
+    ],
+    "explanation": "SELECT e.employee_name, d.department_name FROM employees AS e FULL JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name;",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-024"
+  },
+  {
+    "level_number": 60,
+    "chapter_id": 3,
+    "chapter_title": "Module 3: Core SQL Analytics",
+    "title": "SELF JOIN",
+    "story": "HR is auditing the reporting structure of the company. The organizational chart is stored inside a single table, where each employee's record contains a reference to their manager's employee ID. They need a flattened report showing every employee mapped directly to their manager's name.",
+    "objective": "Write an SQL query to display each employee along with their manager's name. Return employee_name and manager_name. Sort the result by employee_name.",
+    "starter_code": "-- Problem #SQL-025: SELF JOIN\n-- Write your SQL query below\n\n",
+    "expected_output": "employee_name | manager_name\n----------------------------\nAlice | Robert\nDavid | Robert\nJohn | Robert\nRobert | Sophia\nSophia | NULL",
+    "hints": [
+      "You need to join the employees table to itself.",
+      "Use aliases to distinguish the two copies, e.g., employees AS e and employees AS m.",
+      "The join condition is e.manager_id = m.employee_id.",
+      "Use LEFT JOIN if you want to include employees who don't have a manager."
+    ],
+    "test_cases": [
+      {
+        "input": "",
+        "expected": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_name;",
+        "hidden": false,
+        "description": "Self join employees to get managers"
+      }
+    ],
+    "explanation": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_name;",
+    "difficulty": "Easy",
+    "track": "core",
+    "code_id": "SQL-025"
   }
 ]

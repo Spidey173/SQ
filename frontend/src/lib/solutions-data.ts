@@ -540,6 +540,76 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "spaceComplexity": "O(G)",
     "explanation": "Executes SELECT department_name, city, COUNT(*) AS employee_count FROM employees GROUP BY department_name, city ORDER BY department_name, city, partitioning employee records into unique composite department-city pairs, counting total headcount within each multi-column group, and sorting by department name and city.",
     "keyTakeaway": "Grouping by multiple columns creates a aggregate bucket for every unique combination of values across those specified columns."
+  },
+  "SQL-019": {
+    "code_id": "SQL-019",
+    "levelNumber": 54,
+    "title": "HAVING with COUNT()",
+    "optimalCode": "SELECT category_name,\n       COUNT(*) AS product_count\nFROM products\nGROUP BY category_name\nHAVING COUNT(*) >= 10\nORDER BY product_count DESC;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT category_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10 ORDER BY product_count DESC, partitioning products into category buckets, counting items per bucket, filtering out categories with fewer than 10 items via HAVING, and sorting largest categories first.",
+    "keyTakeaway": "Use HAVING COUNT(*) >= N to filter groups based on the total number of items contained within each group."
+  },
+  "SQL-020": {
+    "code_id": "SQL-020",
+    "levelNumber": 55,
+    "title": "HAVING with SUM()",
+    "optimalCode": "SELECT customer_id,\n       customer_name,\n       SUM(purchase_amount) AS total_purchase\nFROM purchases\nGROUP BY customer_id,\n         customer_name\nHAVING SUM(purchase_amount) > 50000\nORDER BY total_purchase DESC;",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING SUM(purchase_amount) > 50000 ORDER BY total_purchase DESC, grouping records per customer, computing total spend with SUM(purchase_amount), filtering out customers below 50000 with HAVING, and sorting high-rollers first.",
+    "keyTakeaway": "Aggregate function SUM() must be filtered in the HAVING clause because it evaluates aggregated groups after they are formed."
+  },
+  "SQL-021": {
+    "code_id": "SQL-021",
+    "levelNumber": 56,
+    "title": "INNER JOIN",
+    "optimalCode": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nINNER JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e INNER JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id, linking employee records to department records exclusively where the foreign key department_id matches, discarding unmatched rows from either side, and sorting by employee ID.",
+    "keyTakeaway": "INNER JOIN acts as an intersection operation, returning only rows that have matching values in both tables based on the ON condition."
+  },
+  "SQL-022": {
+    "code_id": "SQL-022",
+    "levelNumber": 57,
+    "title": "LEFT JOIN",
+    "optimalCode": "SELECT e.employee_id,\n       e.employee_name,\n       d.department_name\nFROM employees AS e\nLEFT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY e.employee_id;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_id, e.employee_name, d.department_name FROM employees AS e LEFT JOIN departments AS d ON e.department_id = d.department_id ORDER BY e.employee_id, returning all rows from the primary left table (employees) and appending matching department names from the right table. If an employee has no valid department, it fills the right side with NULLs.",
+    "keyTakeaway": "LEFT JOIN ensures zero data loss from the left-hand table, preserving all primary records even if related lookup data is missing."
+  },
+  "SQL-023": {
+    "code_id": "SQL-023",
+    "levelNumber": 58,
+    "title": "RIGHT JOIN",
+    "optimalCode": "SELECT d.department_name,\n       e.employee_name\nFROM employees AS e\nRIGHT JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT d.department_name, e.employee_name FROM employees AS e RIGHT JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name, guaranteeing that every department record from the right-hand table is included in the output. For empty departments like Marketing, corresponding employee columns evaluate to NULL.",
+    "keyTakeaway": "RIGHT JOIN preserves all records from the right-side table. However, since it is syntactically equivalent to a LEFT JOIN with swapped table order, most teams prefer standardizing on LEFT JOIN for readability."
+  },
+  "SQL-024": {
+    "code_id": "SQL-024",
+    "levelNumber": 59,
+    "title": "FULL JOIN",
+    "optimalCode": "SELECT e.employee_name,\n       d.department_name\nFROM employees AS e\nFULL JOIN departments AS d\nON e.department_id = d.department_id\nORDER BY d.department_name;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_name, d.department_name FROM employees AS e FULL JOIN departments AS d ON e.department_id = d.department_id ORDER BY d.department_name, combining the results of a LEFT JOIN and a RIGHT JOIN. It preserves matching records, unmatched employees (NULL department), and empty departments (NULL employee) all in a single result set.",
+    "keyTakeaway": "FULL JOIN ensures zero data loss from BOTH tables, making it perfect for finding mismatches or reconciling missing data between two datasets."
+  },
+  "SQL-025": {
+    "code_id": "SQL-025",
+    "levelNumber": 60,
+    "title": "SELF JOIN",
+    "optimalCode": "SELECT e.employee_name,\n       m.employee_name AS manager_name\nFROM employees AS e\nLEFT JOIN employees AS m\nON e.manager_id = m.employee_id\nORDER BY e.employee_name;",
+    "timeComplexity": "O(N × M)",
+    "spaceComplexity": "O(Result Set)",
+    "explanation": "Executes SELECT e.employee_name, m.employee_name AS manager_name FROM employees AS e LEFT JOIN employees AS m ON e.manager_id = m.employee_id ORDER BY e.employee_name. It treats the single 'employees' table as two distinct entities using aliases (e and m), looking up the manager's ID from the 'e' side against the employee ID on the 'm' side. The LEFT JOIN ensures top-level executives (who have no manager) are still included.",
+    "keyTakeaway": "SELF JOIN is not a special keyword, but a technique of aliasing the same table twice to resolve hierarchical or sequential relationships contained within a single dataset."
   }
 };
 

@@ -254,6 +254,106 @@ INSERT INTO students VALUES (5, 'Rohan', '10C', 95);
 INSERT INTO students VALUES (6, 'Sneha', '10C', 90);
 """)
                 continue
+                
+            if tbl in ["employees", "departments"] and any(term in (title + " " + objective).lower() for term in ["inner join", "left join", "right join", "full join"]):
+                if tbl == "employees":
+                    parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department_id INTEGER
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 101);
+INSERT INTO employees VALUES (2, 'Alice', 102);
+INSERT INTO employees VALUES (3, 'Bob', 103);
+INSERT INTO employees VALUES (4, 'David', NULL);
+INSERT INTO employees VALUES (5, 'Emma', 105);
+""")
+                elif tbl == "departments":
+                    parts.append("""-- Table: departments
+DROP TABLE IF EXISTS departments;
+CREATE TABLE departments (
+    department_id INTEGER PRIMARY KEY,
+    department_name TEXT
+);
+
+-- Sample Data: departments
+INSERT INTO departments VALUES (101, 'HR');
+INSERT INTO departments VALUES (102, 'IT');
+INSERT INTO departments VALUES (103, 'Finance');
+INSERT INTO departments VALUES (104, 'Marketing');
+""")
+                continue
+                
+            if tbl == "employees" and "self join" in (title + " " + objective).lower():
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    manager_id INTEGER
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 3);
+INSERT INTO employees VALUES (2, 'Alice', 3);
+INSERT INTO employees VALUES (3, 'Robert', 5);
+INSERT INTO employees VALUES (4, 'David', 3);
+INSERT INTO employees VALUES (5, 'Sophia', NULL);
+""")
+                continue
+
+            if tbl == "products" and "having with count" in (title + " " + objective).lower():
+                parts.append("""-- Table: products
+DROP TABLE IF EXISTS products;
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    category_name TEXT
+);
+
+-- Sample Data: products
+INSERT INTO products VALUES (1, 'Laptop', 'Electronics');
+INSERT INTO products VALUES (2, 'Mouse', 'Electronics');
+INSERT INTO products VALUES (3, 'Keyboard', 'Electronics');
+INSERT INTO products VALUES (4, 'Monitor', 'Electronics');
+INSERT INTO products VALUES (5, 'Headphones', 'Electronics');
+INSERT INTO products VALUES (6, 'Webcam', 'Electronics');
+INSERT INTO products VALUES (7, 'Microphone', 'Electronics');
+INSERT INTO products VALUES (8, 'Speaker', 'Electronics');
+INSERT INTO products VALUES (9, 'Printer', 'Electronics');
+INSERT INTO products VALUES (10, 'Tablet', 'Electronics');
+INSERT INTO products VALUES (11, 'Smartphone', 'Electronics');
+INSERT INTO products VALUES (12, 'Shoes', 'Fashion');
+INSERT INTO products VALUES (13, 'T-Shirt', 'Fashion');
+INSERT INTO products VALUES (14, 'Jeans', 'Fashion');
+INSERT INTO products VALUES (15, 'Rice', 'Grocery');
+""")
+                continue
+
+            if tbl == "purchases" and "having with sum" in (title + " " + objective).lower():
+                parts.append("""-- Table: purchases
+DROP TABLE IF EXISTS purchases;
+CREATE TABLE purchases (
+    purchase_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    customer_name TEXT,
+    purchase_amount REAL
+);
+
+-- Sample Data: purchases
+INSERT INTO purchases VALUES (1, 101, 'Rahul', 15000);
+INSERT INTO purchases VALUES (2, 101, 'Rahul', 20000);
+INSERT INTO purchases VALUES (3, 101, 'Rahul', 25000);
+INSERT INTO purchases VALUES (4, 102, 'Priya', 10000);
+INSERT INTO purchases VALUES (5, 102, 'Priya', 12000);
+INSERT INTO purchases VALUES (6, 103, 'Amit', 30000);
+INSERT INTO purchases VALUES (7, 103, 'Amit', 25000);
+""")
+                continue
 
             if tbl == "employees" and "highest salary department" in (title + " " + objective).lower():
                 parts.append("""-- Table: employees

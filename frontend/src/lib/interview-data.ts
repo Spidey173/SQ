@@ -12484,6 +12484,319 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
         "whyItHappens": "Forgetting that headcount reporting requires counting rows per bucket."
       }
     ]
+  },
+  "SQL-019": {
+    "code_id": "SQL-019",
+    "levelNumber": 54,
+    "title": "HAVING with COUNT()",
+    "mistakes": [
+      {
+        "id": "m-54-1",
+        "title": "1. Filtering with WHERE Instead of HAVING",
+        "description": "Attempting to filter aggregate counts using WHERE COUNT(*) >= 10.",
+        "badSnippet": "SELECT category_name, COUNT(*) AS product_count FROM products WHERE COUNT(*) >= 10 GROUP BY category_name;",
+        "failingInput": "WHERE COUNT(*) filter requirement",
+        "consequence": "Throws a syntax error 'aggregate functions are not allowed in WHERE'.",
+        "howToFix": "Move aggregate filter COUNT(*) >= 10 to HAVING clause after GROUP BY.",
+        "mistake": "Using aggregate in WHERE",
+        "whyItHappens": "Misunderstanding logical execution sequence (WHERE acts before grouping)."
+      },
+      {
+        "id": "m-54-2",
+        "title": "2. Selecting Columns Not in GROUP BY",
+        "description": "Adding product_name to SELECT without adding it to GROUP BY.",
+        "badSnippet": "SELECT category_name, product_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10;",
+        "failingInput": "Invalid SELECT clause columns",
+        "consequence": "Throws 'Expression not in GROUP BY key' error in strict ANSI SQL.",
+        "howToFix": "Remove product_name from SELECT, since we are returning one row per category, not per product.",
+        "mistake": "Non-aggregated/non-grouped column selection",
+        "whyItHappens": "Attempting to view item details while concurrently aggregating group metrics."
+      },
+      {
+        "id": "m-54-3",
+        "title": "3. Omitting GROUP BY",
+        "description": "Filtering with HAVING without establishing aggregate buckets.",
+        "badSnippet": "SELECT category_name, COUNT(*) AS product_count FROM products HAVING COUNT(*) >= 10;",
+        "failingInput": "Missing GROUP BY requirement",
+        "consequence": "Aggregates the entire products table into one global row (if valid in some dialects) or errors out on category_name selection.",
+        "howToFix": "Include GROUP BY category_name.",
+        "mistake": "Missing GROUP BY clause",
+        "whyItHappens": "Assuming HAVING implicitly creates groups based on SELECT."
+      },
+      {
+        "id": "m-54-4",
+        "title": "4. Forgetting ORDER BY",
+        "description": "Omitting the ORDER BY product_count DESC clause.",
+        "badSnippet": "SELECT category_name, COUNT(*) AS product_count FROM products GROUP BY category_name HAVING COUNT(*) >= 10;",
+        "failingInput": "Sorted category headcount requirement",
+        "consequence": "Outputs passing categories in random order.",
+        "howToFix": "Append ORDER BY product_count DESC.",
+        "mistake": "Missing ORDER BY clause",
+        "whyItHappens": "Focusing solely on filtering group logic and overlooking presentation constraints."
+      }
+    ]
+  },
+  "SQL-020": {
+    "code_id": "SQL-020",
+    "levelNumber": 55,
+    "title": "HAVING with SUM()",
+    "mistakes": [
+      {
+        "id": "m-55-1",
+        "title": "1. Filtering Aggregates in WHERE",
+        "description": "Attempting to filter total purchase amounts using WHERE SUM(purchase_amount) > 50000.",
+        "badSnippet": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases WHERE SUM(purchase_amount) > 50000 GROUP BY customer_id, customer_name;",
+        "failingInput": "VIP total purchase > 50000 filter requirement",
+        "consequence": "Throws a syntax error because aggregate functions cannot be used in the WHERE clause.",
+        "howToFix": "Move SUM(purchase_amount) > 50000 to a HAVING clause after GROUP BY.",
+        "mistake": "Using aggregate in WHERE",
+        "whyItHappens": "Misunderstanding that WHERE filters raw rows before aggregation, while HAVING filters the derived groups."
+      },
+      {
+        "id": "m-55-2",
+        "title": "2. Using COUNT() instead of SUM()",
+        "description": "Counting the number of orders instead of summing their monetary value.",
+        "badSnippet": "SELECT customer_id, customer_name, COUNT(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING COUNT(purchase_amount) > 50000;",
+        "failingInput": "Total monetary purchase amount calculation",
+        "consequence": "Computes transaction frequency rather than total spent, returning incorrect (empty) results.",
+        "howToFix": "Replace COUNT(purchase_amount) with SUM(purchase_amount).",
+        "mistake": "Wrong aggregate function",
+        "whyItHappens": "Confusing the aggregation of quantity (COUNT) with total additive value (SUM)."
+      },
+      {
+        "id": "m-55-3",
+        "title": "3. Omitting GROUP BY Columns",
+        "description": "Selecting customer_name without including it in the GROUP BY clause.",
+        "badSnippet": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id HAVING SUM(purchase_amount) > 50000;",
+        "failingInput": "ANSI SQL strict grouping compliance",
+        "consequence": "Throws an 'Expression not in GROUP BY key' error on strict SQL engines (e.g. Postgres).",
+        "howToFix": "Add customer_name to the GROUP BY clause: GROUP BY customer_id, customer_name.",
+        "mistake": "Non-aggregated column selection",
+        "whyItHappens": "Assuming GROUP BY on primary key (customer_id) is sufficient for all other attributes in SELECT."
+      },
+      {
+        "id": "m-55-4",
+        "title": "4. Omitting the ORDER BY Clause",
+        "description": "Forgetting to sort the high-roller customers.",
+        "badSnippet": "SELECT customer_id, customer_name, SUM(purchase_amount) AS total_purchase FROM purchases GROUP BY customer_id, customer_name HAVING SUM(purchase_amount) > 50000;",
+        "failingInput": "Sorted VIP customer list requirement",
+        "consequence": "Returns the correct VIPs but in random/unspecified database retrieval order.",
+        "howToFix": "Append ORDER BY total_purchase DESC.",
+        "mistake": "Missing ORDER BY clause",
+        "whyItHappens": "Overlooking presentation requirements after successfully implementing complex aggregation logic."
+      }
+    ]
+  },
+  "SQL-021": {
+    "code_id": "SQL-021",
+    "levelNumber": 56,
+    "title": "INNER JOIN",
+    "mistakes": [
+      {
+        "id": "m-56-1",
+        "title": "1. Forgetting the ON Clause",
+        "description": "Joining tables without specifying how they relate.",
+        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e INNER JOIN departments d;",
+        "failingInput": "Relational constraints and mapping requirement",
+        "consequence": "Causes a syntax error or performs a Cartesian Product (Cross Join) matching every employee with every department.",
+        "howToFix": "Add ON e.department_id = d.department_id.",
+        "mistake": "Missing JOIN condition",
+        "whyItHappens": "Forgetting that databases need explicit instructions on which keys map to each other."
+      },
+      {
+        "id": "m-56-2",
+        "title": "2. Ambiguous Column References",
+        "description": "Selecting a column that exists in both tables without an alias.",
+        "badSnippet": "SELECT employee_id, employee_name, department_id FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "Ambiguous identifier resolution",
+        "consequence": "Throws 'column reference department_id is ambiguous' error.",
+        "howToFix": "Specify the table alias: e.department_id or d.department_id.",
+        "mistake": "Ambiguous column name",
+        "whyItHappens": "Assuming the database can infer which table to pull the column from."
+      },
+      {
+        "id": "m-56-3",
+        "title": "3. Using LEFT JOIN Instead of INNER JOIN",
+        "description": "Using a LEFT JOIN when the prompt asks to exclusively display employees with a department.",
+        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "Exclusive match constraint ('Only display employees who belong to a department')",
+        "consequence": "Includes employees with NULL departments, failing the strict requirement.",
+        "howToFix": "Change LEFT JOIN to INNER JOIN.",
+        "mistake": "Wrong join type",
+        "whyItHappens": "Defaulting to LEFT JOIN out of habit without analyzing the inclusion/exclusion requirements of the prompt."
+      },
+      {
+        "id": "m-56-4",
+        "title": "4. Joining on the Wrong Columns",
+        "description": "Matching mismatched keys.",
+        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e INNER JOIN departments d ON e.employee_id = d.department_id;",
+        "failingInput": "Foreign key to primary key mapping",
+        "consequence": "Produces an empty or nonsensical result set because employee IDs don't correspond to department IDs.",
+        "howToFix": "Match the correct foreign key: ON e.department_id = d.department_id.",
+        "mistake": "Invalid JOIN condition",
+        "whyItHappens": "Typographical error or misunderstanding the ERD (Entity Relationship Diagram)."
+      }
+    ]
+  },
+  "SQL-022": {
+    "code_id": "SQL-022",
+    "levelNumber": 57,
+    "title": "LEFT JOIN",
+    "mistakes": [
+      {
+        "id": "m-57-1",
+        "title": "1. Using INNER JOIN instead of LEFT JOIN",
+        "description": "Failing to recognize the requirement to include unmatched left-table rows.",
+        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "Employees without a department",
+        "consequence": "Drops employees like David and Emma from the result entirely.",
+        "howToFix": "Replace INNER JOIN with LEFT JOIN.",
+        "mistake": "Wrong join type",
+        "whyItHappens": "Muscle memory favors INNER JOIN, causing developers to miss the phrase 'even if they are not assigned'."
+      },
+      {
+        "id": "m-57-2",
+        "title": "2. Putting the wrong table on the left",
+        "description": "Swapping the order of tables in the FROM and JOIN clauses.",
+        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id;",
+        "failingInput": "Unassigned employees and empty departments",
+        "consequence": "Preserves all departments (even empty ones) but drops employees without a department.",
+        "howToFix": "Ensure the table you want to unconditionally preserve is on the left: FROM employees e LEFT JOIN departments d.",
+        "mistake": "Reversed table order",
+        "whyItHappens": "Misunderstanding that LEFT JOIN is not commutative (A LEFT JOIN B ≠ B LEFT JOIN A)."
+      },
+      {
+        "id": "m-57-3",
+        "title": "3. Accidentally converting LEFT JOIN to INNER JOIN",
+        "description": "Adding a WHERE clause on the right table that filters out the NULLs generated by the LEFT JOIN.",
+        "badSnippet": "SELECT e.employee_id, e.employee_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id WHERE d.department_name IS NOT NULL;",
+        "failingInput": "Unmatched left rows",
+        "consequence": "Rows where d.department_name is NULL evaluate to UNKNOWN and are dropped, turning the query back into an INNER JOIN.",
+        "howToFix": "Remove the WHERE clause. If you must filter the right table while keeping all left rows, put the condition in the ON clause.",
+        "mistake": "WHERE clause overriding LEFT JOIN",
+        "whyItHappens": "Attempting to clean up 'bad' data without realizing the NULLs are structurally required."
+      }
+    ]
+  },
+  "SQL-023": {
+    "code_id": "SQL-023",
+    "levelNumber": 58,
+    "title": "RIGHT JOIN",
+    "mistakes": [
+      {
+        "id": "m-58-1",
+        "title": "1. Using SQLite where RIGHT JOIN is unsupported",
+        "description": "Attempting to execute a RIGHT JOIN query on an SQLite database.",
+        "badSnippet": "SELECT d.department_name, e.employee_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "SQLite execution environment",
+        "consequence": "Throws a 'RIGHT and FULL OUTER JOINs are not currently supported' error.",
+        "howToFix": "Swap the tables and use a LEFT JOIN: FROM departments d LEFT JOIN employees e.",
+        "mistake": "Dialect incompatibility",
+        "whyItHappens": "Not knowing the exact syntax limitations of the target SQL dialect."
+      },
+      {
+        "id": "m-58-2",
+        "title": "2. Confusing LEFT and RIGHT directionality",
+        "description": "Using RIGHT JOIN but intending to keep the left table's records.",
+        "badSnippet": "SELECT d.department_name, e.employee_name FROM departments d RIGHT JOIN employees e ON d.department_id = e.department_id;",
+        "failingInput": "Requirement to show all departments",
+        "consequence": "Keeps all employees instead of all departments, completely reversing the logic requested by the prompt.",
+        "howToFix": "Either swap the tables or change the join to a LEFT JOIN.",
+        "mistake": "Reversed join logic",
+        "whyItHappens": "Guessing the join direction instead of mapping the 'mandatory inclusion' requirement to the correct side of the JOIN keyword."
+      },
+      {
+        "id": "m-58-3",
+        "title": "3. Selecting columns from the wrong table",
+        "description": "Selecting department_name from the employees table when it doesn't exist or is NULL.",
+        "badSnippet": "SELECT e.department_name, e.employee_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "Schema validation",
+        "consequence": "Throws a 'column does not exist' error, because the employees table only holds department_id, not department_name.",
+        "howToFix": "Prefix the column with the correct table alias: d.department_name.",
+        "mistake": "Invalid column reference",
+        "whyItHappens": "Failing to thoroughly analyze the provided schema definitions before writing the SELECT clause."
+      }
+    ]
+  },
+  "SQL-024": {
+    "code_id": "SQL-024",
+    "levelNumber": 59,
+    "title": "FULL JOIN",
+    "mistakes": [
+      {
+        "id": "m-59-1",
+        "title": "1. Using FULL JOIN in MySQL",
+        "description": "Writing FULL JOIN syntax when working in a MySQL environment.",
+        "badSnippet": "SELECT e.employee_name, d.department_name FROM employees e FULL JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "MySQL parsing engine",
+        "consequence": "Throws a syntax error since MySQL lacks a native FULL JOIN operator.",
+        "howToFix": "Use the LEFT JOIN UNION RIGHT JOIN workaround.",
+        "mistake": "Dialect incompatibility",
+        "whyItHappens": "Assuming all ANSI standard SQL commands are universally supported across all RDBMS platforms."
+      },
+      {
+        "id": "m-59-2",
+        "title": "2. Confusing FULL JOIN with CROSS JOIN",
+        "description": "Failing to provide an ON clause, resulting in a Cartesian product.",
+        "badSnippet": "SELECT e.employee_name, d.department_name FROM employees e FULL JOIN departments d;",
+        "failingInput": "Join condition constraint",
+        "consequence": "Generates a massive combination of every employee paired with every department, failing to preserve the true relational structure.",
+        "howToFix": "Add the ON e.department_id = d.department_id condition.",
+        "mistake": "Missing join condition",
+        "whyItHappens": "Believing 'full' means 'all possible combinations' rather than 'preserve all unmatched rows'."
+      },
+      {
+        "id": "m-59-3",
+        "title": "3. Using UNION ALL in the MySQL Workaround",
+        "description": "Simulating a FULL JOIN with UNION ALL instead of UNION.",
+        "badSnippet": "SELECT e.employee_name, d.department_name FROM employees e LEFT JOIN departments d ON e.department_id = d.department_id UNION ALL SELECT e.employee_name, d.department_name FROM employees e RIGHT JOIN departments d ON e.department_id = d.department_id;",
+        "failingInput": "Data deduplication requirement",
+        "consequence": "Causes employees who DO have a matching department to appear twice in the result set.",
+        "howToFix": "Replace UNION ALL with UNION, which natively deduplicates the overlapping records.",
+        "mistake": "Improper set operator",
+        "whyItHappens": "Using UNION ALL to avoid the sorting overhead of UNION, without realizing the duplicates actually break the logic."
+      }
+    ]
+  },
+  "SQL-025": {
+    "code_id": "SQL-025",
+    "levelNumber": 60,
+    "title": "SELF JOIN",
+    "mistakes": [
+      {
+        "id": "m-60-1",
+        "title": "1. Forgetting to alias the tables",
+        "description": "Attempting to join the table to itself without assigning distinct aliases.",
+        "badSnippet": "SELECT employee_name FROM employees JOIN employees ON manager_id = employee_id;",
+        "failingInput": "Query parser",
+        "consequence": "Throws an 'ambiguous column name' or 'not unique table/alias' syntax error.",
+        "howToFix": "Use AS to alias the tables (e.g., employees e, employees m) and prefix all column references.",
+        "mistake": "Ambiguous table reference",
+        "whyItHappens": "Not realizing that SQL treats identical table names in the FROM/JOIN clause as indistinguishable without aliases."
+      },
+      {
+        "id": "m-60-2",
+        "title": "2. Reversing the ON condition logic",
+        "description": "Matching the employee's ID to the manager's manager ID instead of matching the employee's manager ID to the manager's employee ID.",
+        "badSnippet": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees e LEFT JOIN employees m ON e.employee_id = m.manager_id;",
+        "failingInput": "Parent-child mapping",
+        "consequence": "Outputs the employee's direct reports instead of their manager.",
+        "howToFix": "Reverse the logic: ON e.manager_id = m.employee_id.",
+        "mistake": "Reversed hierarchical logic",
+        "whyItHappens": "Confusion over which alias represents the 'parent' and which represents the 'child' in the hierarchy."
+      },
+      {
+        "id": "m-60-3",
+        "title": "3. Using INNER JOIN instead of LEFT JOIN",
+        "description": "Using an INNER JOIN to map the hierarchy.",
+        "badSnippet": "SELECT e.employee_name, m.employee_name AS manager_name FROM employees e INNER JOIN employees m ON e.manager_id = m.employee_id;",
+        "failingInput": "Employees at the top of the hierarchy (e.g., CEO)",
+        "consequence": "The CEO (or anyone without a manager) is completely excluded from the result set.",
+        "howToFix": "Change INNER JOIN to LEFT JOIN to preserve the root nodes.",
+        "mistake": "Wrong join type",
+        "whyItHappens": "Defaulting to INNER JOIN out of habit without considering the edge case of top-level employees with a NULL manager."
+      }
+    ]
   }
 };
 
