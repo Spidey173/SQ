@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -19,10 +19,20 @@ _PUBLIC_CHAPTERS_CACHE: List[ChapterGroup] = []
 
 @router.get("/chapters", response_model=List[ChapterGroup])
 async def list_chapters(
+    response: Response,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user_optional)
 ):
     global _PUBLIC_CHAPTERS_CACHE
+
+    # Edge caching headers:
+    # If anonymous user, cache at edge CDN for 5 minutes, allow stale-while-revalidate for 24h
+    if not current_user:
+        response.headers["Cache-Control"] = "public, s-maxage=300, stale-while-revalidate=86400"
+    else:
+        # Private per user so browsers cache locally for 30s
+        response.headers["Cache-Control"] = "private, max-age=30, stale-while-revalidate=300"
+
 
     # CACHE-FIRST: Use in-memory cache for challenges instead of hitting Neon DB every time
     # This alone saves ~200-500ms per request on Neon serverless
@@ -114,9 +124,15 @@ from app.crud import resolve_challenge
 @router.get("/{level_id}", response_model=ChallengeDetail)
 async def get_challenge_detail(
     level_id: str,
+    response: Response,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user_optional)
 ):
+    if not current_user:
+        response.headers["Cache-Control"] = "public, s-maxage=600, stale-while-revalidate=86400"
+    else:
+        response.headers["Cache-Control"] = "private, max-age=60, stale-while-revalidate=300"
+
     ch = await resolve_challenge(db, level_id)
 
     if not ch:

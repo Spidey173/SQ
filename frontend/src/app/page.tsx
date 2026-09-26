@@ -42,6 +42,21 @@ export default function DashboardPage() {
   const [lastActiveId, setLastActiveId] = useState<number | string>('Basics-001');
   const [submissions, setSubmissions] = useState<SubmissionLogEntry[]>([]);
 
+  // Instant hydration from local storage on mount (0ms render like localhost)
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem('sqlquest_curriculum_fast_v1');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setChapters(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   useEffect(() => {
     async function loadData(forceRefresh = false) {
       try {
@@ -51,7 +66,15 @@ export default function DashboardPage() {
           persistence.getLastActiveProblemId().catch(() => 'Basics-001'),
           persistence.getSubmissions().catch(() => [] as SubmissionLogEntry[]),
         ]);
-        const flatLevels = (chaps || []).flatMap((c) => c.levels || []);
+        if (Array.isArray(chaps) && chaps.length > 0) {
+          try {
+            localStorage.setItem('sqlquest_curriculum_fast_v1', JSON.stringify(chaps));
+          } catch {
+            // ignore
+          }
+          setChapters(chaps);
+        }
+        const flatLevels = ((chaps && chaps.length > 0) ? chaps : chapters).flatMap((c) => c.levels || []);
         const backendSolved = flatLevels.filter((l) => l.passed).map((l) => l.code_id || l.id);
 
         let resolvedSolved: Array<number | string>;

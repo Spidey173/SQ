@@ -71,16 +71,23 @@ function CurriculumExplorerContent() {
   const [viewMode, setViewMode] = useState<'table' | 'modules'>('table');
   const [loading, setLoading] = useState(true);
 
+  // Instantly hydrate from local cache on mount if available (0ms render like localhost)
   useEffect(() => {
     try {
-      localStorage.removeItem('pq_cached_chapters_v3');
-      localStorage.removeItem('sqlquest_curriculum_v4');
-      localStorage.removeItem('sqlquest_curriculum_v5');
+      const cached = localStorage.getItem('sqlquest_curriculum_fast_v1');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setChapters(parsed);
+          setLoading(false);
+        }
+      }
     } catch {
       // ignore
     }
+  }, []);
 
-
+  useEffect(() => {
     async function loadData(forceRefresh = false) {
       try {
         const [chaps, localSolved] = await Promise.all([
@@ -89,15 +96,15 @@ function CurriculumExplorerContent() {
         ]);
         if (Array.isArray(chaps) && chaps.length > 0) {
           try {
-            localStorage.setItem('sqlquest_curriculum_v5', JSON.stringify(chaps));
+            localStorage.setItem('sqlquest_curriculum_fast_v1', JSON.stringify(chaps));
           } catch {
             // ignore
           }
+          setChapters(chaps);
         }
-        const flatLevels = (chaps || []).flatMap((c) => c.levels || []);
+        const flatLevels = ((chaps && chaps.length > 0) ? chaps : chapters).flatMap((c) => c.levels || []);
         const backendSolved = flatLevels.filter((l) => l.passed).map((l) => l.id);
         const merged = Array.from(new Set([...backendSolved, ...localSolved]));
-        setChapters(chaps);
         setSolvedIds(merged);
       } catch (err) {
         console.error('Failed to load curriculum:', err);
