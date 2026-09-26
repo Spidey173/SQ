@@ -21,6 +21,10 @@ class CacheStore:
         # User progress cache: user_id -> (Dict[challenge_id, UserProgress], expire_time)
         self._progress: Dict[int, tuple[Dict[int, UserProgress], float]] = {}
 
+        # Setup SQL cache: challenge_id -> generated setup SQL string
+        self._setup_sql: Dict[int, str] = {}
+        self._relevant_tables: Dict[int, List[str]] = {}
+
     def is_curriculum_loaded(self) -> bool:
         return len(self._all_challenges) > 0
 
@@ -162,6 +166,19 @@ class CacheStore:
 
     def invalidate_progress(self, user_id: int):
         self._progress.pop(user_id, None)
+
+    # Setup SQL cache (avoids expensive regex matching on every query run)
+    def get_cached_setup_sql(self, challenge_id: int) -> Optional[str]:
+        return self._setup_sql.get(challenge_id)
+
+    def set_cached_setup_sql(self, challenge_id: int, sql: str):
+        self._setup_sql[challenge_id] = sql
+
+    def get_cached_relevant_tables(self, challenge_id: int) -> Optional[List[str]]:
+        return self._relevant_tables.get(challenge_id)
+
+    def set_cached_relevant_tables(self, challenge_id: int, tables: List[str]):
+        self._relevant_tables[challenge_id] = tables
 
 
 # Global singleton cache

@@ -18,8 +18,14 @@ elif db_url.startswith("sqlite:///"):
 from sqlalchemy import event
 
 is_postgres = "postgresql" in db_url
+
+# Neon pooler (PgBouncer) REQUIRES statement_cache_size=0 because PgBouncer
+# transaction mode doesn't support asyncpg prepared statement caching.
+# If you switch to a direct (non-pooler) Neon URL, you can remove this.
+is_neon_pooler = "pooler" in db_url
 connect_args = (
-    {"statement_cache_size": 0} if is_postgres else ({"check_same_thread": False} if "sqlite" in db_url else {})
+    {"statement_cache_size": 0} if (is_postgres and is_neon_pooler) else
+    ({} if is_postgres else ({"check_same_thread": False} if "sqlite" in db_url else {}))
 )
 
 engine_kwargs = {
@@ -30,10 +36,16 @@ engine_kwargs = {
 
 if is_postgres:
     engine_kwargs.update({
-        "pool_pre_ping": False,
-        "pool_recycle": 180,
-        "pool_size": 10,
-        "max_overflow": 20,
+        # CRITICAL for Neon: pre_ping detects stale connections after cold start
+        "pool_pre_ping": True,
+        # Recycle connections every 10 minutes (Neon keeps idle connections ~5 min)
+        "pool_recycle": 600,
+        # Neon free tier supports ~5 concurrent connections — keep pool small
+        "pool_size": 3,
+        # Allow up to 5 overflow connections for burst traffic
+        "max_overflow": 5,
+        # Don't wait forever for a connection from the pool
+        "pool_timeout": 30,
     })
 
 engine = create_async_engine(db_url, **engine_kwargs)

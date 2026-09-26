@@ -6,7 +6,7 @@ import uuid
 from app.database import get_db
 from app.models import User
 from app.schemas import UserCreate, UserLogin, Token, UserResponse
-from app.security import hash_password, verify_password, create_access_token, get_current_user
+from app.security import hash_password, verify_password, verify_password_async, create_access_token, get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -69,7 +69,7 @@ async def login(user_in: UserLogin, db: AsyncSession = Depends(get_db)):
         )
     )
     user = res.scalars().first()
-    if not user or not verify_password(user_in.password, user.hashed_password):
+    if not user or not await verify_password_async(user_in.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username/email or password.",

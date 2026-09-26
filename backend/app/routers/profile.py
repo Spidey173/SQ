@@ -16,11 +16,21 @@ async def get_player_profile(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Total challenges
-    total_ch_res = await db.execute(select(func.count(Challenge.id)))
-    total_challenges = total_ch_res.scalar() or 250
+    from app.cache import cache
 
-    # User progress
+    # Use cached challenges instead of hitting Neon for total count
+    if cache.is_curriculum_loaded():
+        all_challenges = cache.get_all_challenges()
+        total_challenges = len(all_challenges)
+    else:
+        total_ch_res = await db.execute(select(func.count(Challenge.id)))
+        total_challenges = total_ch_res.scalar() or 250
+        ch_res = await db.execute(select(Challenge).order_by(Challenge.id.asc()))
+        all_challenges = ch_res.scalars().all()
+        if all_challenges:
+            cache.set_challenges(all_challenges)
+
+    # User progress — single query
     prog_res = await db.execute(
         select(UserProgress, Challenge).join(Challenge, UserProgress.challenge_id == Challenge.id)
         .where(UserProgress.user_id == current_user.id)
@@ -31,10 +41,7 @@ async def get_player_profile(
     total_stars = sum(p.stars for p, ch in user_progs if p.passed)
     max_stars = total_challenges * 3
 
-    # Chapter breakdown
-    ch_res = await db.execute(select(Challenge).order_by(Challenge.id.asc()))
-    all_challenges = ch_res.scalars().all()
-
+    # Chapter breakdown using cached challenges
     chapter_map = {}
     for ch in all_challenges:
         cid = ch.chapter_id
@@ -90,16 +97,16 @@ async def get_player_profile(
     if not weak_topics:
         weak_topics.append("Keep practicing advanced algorithms!")
 
-    # Submissions for accuracy
+    # Consolidated: get total and passed submission counts in ONE query
     sub_res = await db.execute(
-        select(func.count(Submission.id)).where(Submission.user_id == current_user.id)
+        select(
+            func.count(Submission.id),
+            func.count(Submission.id).filter(Submission.status == "PASSED")
+        ).where(Submission.user_id == current_user.id)
     )
-    total_subs = sub_res.scalar() or 0
-
-    sub_pass_res = await db.execute(
-        select(func.count(Submission.id)).where(Submission.user_id == current_user.id, Submission.status == "PASSED")
-    )
-    passed_subs = sub_pass_res.scalar() or 0
+    sub_row = sub_res.one()
+    total_subs = sub_row[0] or 0
+    passed_subs = sub_row[1] or 0
 
     accuracy = round((passed_subs / total_subs * 100), 1) if total_subs > 0 else 100.0
 

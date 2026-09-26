@@ -58,4 +58,13 @@ async def root():
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "healthy", "version": settings.VERSION}
+    from app.database import AsyncSessionLocal
+    from sqlalchemy import text
+    db_status = "unknown"
+    try:
+        async with AsyncSessionLocal() as session:
+            await session.execute(text("SELECT 1"))
+            db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)[:100]}"
+    return {"status": "healthy", "version": settings.VERSION, "database": db_status}

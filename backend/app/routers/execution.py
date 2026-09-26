@@ -191,9 +191,14 @@ async def run_query(req: CodeRunRequest, db: AsyncSession = Depends(get_db)):
     session_key = f"{req.session_id or 'default'}_{ch.id}"
     session_dump = USER_DB_SESSIONS.get(session_key)
 
-    # If no custom session, auto-seed from the challenge's own setup SQL
+    # If no custom session, auto-seed from the challenge's own setup SQL (cached)
     if not session_dump:
-        session_dump = generate_setup_sql_for_challenge(ch.title, ch.objective, ch.starter_code)
+        cached_sql = cache.get_cached_setup_sql(ch.id)
+        if cached_sql:
+            session_dump = cached_sql
+        else:
+            session_dump = generate_setup_sql_for_challenge(ch.title, ch.objective, ch.starter_code)
+            cache.set_cached_setup_sql(ch.id, session_dump)
 
     # If custom input is provided, run single test
     if req.custom_input is not None and req.custom_input != "":
@@ -261,9 +266,14 @@ async def submit_query(
     session_key = f"{req.session_id or 'default'}_{ch.id}"
     session_dump = USER_DB_SESSIONS.get(session_key)
 
-    # If no custom session, auto-seed from the challenge's own setup SQL
+    # If no custom session, auto-seed from the challenge's own setup SQL (cached)
     if not session_dump:
-        session_dump = generate_setup_sql_for_challenge(ch.title, ch.objective, ch.starter_code)
+        cached_sql = cache.get_cached_setup_sql(ch.id)
+        if cached_sql:
+            session_dump = cached_sql
+        else:
+            session_dump = generate_setup_sql_for_challenge(ch.title, ch.objective, ch.starter_code)
+            cache.set_cached_setup_sql(ch.id, session_dump)
 
     # Fetch previous progress if logged in
     progress = None
@@ -299,11 +309,19 @@ async def submit_query(
         )
         db.add(sub)
 
-    # Find next challenge in sequential curriculum order
-    next_ch_res = await db.execute(
-        select(Challenge).where(Challenge.id > ch.id).order_by(Challenge.id.asc())
-    )
-    next_ch = next_ch_res.scalars().first()
+    # Find next challenge from cache instead of querying Neon DB
+    next_ch = None
+    all_challenges = cache.get_all_challenges()
+    if all_challenges:
+        for c in all_challenges:
+            if c.id > ch.id:
+                next_ch = c
+                break
+    else:
+        next_ch_res = await db.execute(
+            select(Challenge).where(Challenge.id > ch.id).order_by(Challenge.id.asc())
+        )
+        next_ch = next_ch_res.scalars().first()
 
     first_actual = test_results[0].get("actual_output", "") if test_results else ""
     first_error = test_results[0].get("error", "") if (test_results and not passed_all) else ""
