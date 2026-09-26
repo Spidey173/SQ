@@ -164,10 +164,13 @@ export const api = {
   },
 
   async submitCode(challengeId: number | string, code: string, hintsUsed: number = 0, sessionId?: string): Promise<CodeSubmitResponse> {
-    return request('/execution/submit', {
+    const res = await request<CodeSubmitResponse>('/execution/submit', {
       method: 'POST',
       body: JSON.stringify({ challenge_id: challengeId, code, hints_used: hintsUsed, session_id: sessionId }),
     });
+    _challengeCache.delete(String(challengeId));
+    _chaptersCache = null;
+    return res;
   },
 
   // Profile

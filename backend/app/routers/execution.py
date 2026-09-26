@@ -386,6 +386,7 @@ async def submit_query(
                     progress.code_submitted = req.code
 
             await db.commit()
+            cache.invalidate_progress(current_user.id)
 
         return CodeSubmitResponse(
             success=False,
