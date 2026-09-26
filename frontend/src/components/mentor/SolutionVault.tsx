@@ -4,10 +4,17 @@ import React, { useState } from 'react';
 import {
   Lock, Unlock, Sparkles, Trophy, Check,
   Copy, ArrowRight, Zap, AlertTriangle, BookOpen, Clock,
-  Cpu, HelpCircle
+  Cpu, HelpCircle, Layers, Database, Server
 } from 'lucide-react';
 import { ChallengeDetail } from '@/lib/types';
 import { getProblemSolution, ProblemSolution } from '@/lib/problem-intelligence';
+import {
+  getDialectComparison,
+  DialectComparison,
+  SqlDialectId,
+  SQL_DIALECTS
+} from '@/lib/dialect-comparisons';
+import { DialectComparisonView } from './DialectComparisonView';
 
 interface SolutionVaultProps {
   problem: ChallengeDetail;
@@ -31,10 +38,18 @@ export const SolutionVault: React.FC<SolutionVaultProps> = ({
   const [isBreakingLock, setIsBreakingLock] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [activeDialect, setActiveDialect] = useState<SqlDialectId>('sqlite');
+  const [loadedDialectMsg, setLoadedDialectMsg] = useState<string | null>(null);
 
   const solution: ProblemSolution = React.useMemo(() => {
     return getProblemSolution(problem);
   }, [problem]);
+
+  const dialectComparison: DialectComparison = React.useMemo(() => {
+    return getDialectComparison(problem, solution?.code);
+  }, [problem, solution]);
+
+  const activeCode = dialectComparison.queries[activeDialect]?.code || solution.code;
 
   const handleCopy = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -163,30 +178,74 @@ export const SolutionVault: React.FC<SolutionVaultProps> = ({
               </h5>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono">
+            <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
               <span className="px-2.5 py-1 rounded-md bg-[#0D1117] border border-[#30363D] text-[#58A6FF] flex items-center gap-1">
                 <Clock className="w-3 h-3" /> Time: {solution.timeComplexity}
               </span>
               <span className="px-2.5 py-1 rounded-md bg-[#0D1117] border border-[#30363D] text-[#A371F7] flex items-center gap-1">
                 <Cpu className="w-3 h-3" /> Space: {solution.spaceComplexity}
               </span>
+              <button
+                onClick={() => {
+                  const el = document.getElementById('dialect-comparison-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={`px-2.5 py-1 rounded-md border flex items-center gap-1.5 transition-all text-xs font-semibold cursor-pointer ${
+                  dialectComparison.hasDivergence
+                    ? 'bg-amber-500/10 border-amber-500/40 text-amber-400 hover:bg-amber-500/20 shadow-sm'
+                    : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                }`}
+                title="Jump to Cross-Engine Dialect Comparison"
+              >
+                <Layers className="w-3 h-3" />
+                <span>{dialectComparison.varianceBadge}</span>
+              </button>
             </div>
           </div>
 
-          {/* Code Canvas with Load/Copy buttons */}
+          {/* Code Canvas with Dialect Switcher, Load, and Copy buttons */}
           <div className="rounded-xl border border-[#30363D] bg-[#0D1117] overflow-hidden">
-            <div className="flex items-center justify-between px-3 py-2 bg-[#161B22]/80 border-b border-[#21262D] text-xs">
-              <span className="font-mono text-[#8B949E] text-[11px]">SQL Solution</span>
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-3 py-2 bg-[#161B22]/90 border-b border-[#21262D] text-xs gap-2">
+              {/* Dialect Tabs */}
+              <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+                {(['sqlite', 'postgres', 'mysql', 'snowflake'] as SqlDialectId[]).map((dId) => {
+                  const meta = SQL_DIALECTS[dId];
+                  const isSelected = activeDialect === dId;
+                  return (
+                    <button
+                      key={dId}
+                      onClick={() => setActiveDialect(dId)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-medium transition-all flex items-center gap-1.5 shrink-0 ${
+                        isSelected
+                          ? `${meta.badgeBg} ${meta.badgeText} border ${meta.badgeBorder} shadow-sm font-bold`
+                          : 'text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#21262D] border border-transparent'
+                      }`}
+                    >
+                      {dId === 'sqlite' && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />}
+                      <span>{meta.name}</span>
+                      {dId === 'sqlite' && <span className="text-[9px] text-cyan-400/80 font-normal">(Sandbox)</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 self-end sm:self-auto">
                 <button
-                  onClick={() => handleCopy(solution.code)}
+                  onClick={() => handleCopy(activeCode)}
                   className="px-2.5 py-1 rounded-md border border-[#30363D] bg-[#21262D] text-[#8B949E] hover:text-[#E6EDF3] hover:border-[#8B949E] transition-all flex items-center gap-1 text-[11px] font-medium"
                 >
                   {copiedCode ? <Check className="w-3 h-3 text-[#3FB950]" /> : <Copy className="w-3 h-3" />}
-                  <span>{copiedCode ? 'Copied' : 'Copy'}</span>
+                  <span>{copiedCode ? 'Copied' : `Copy ${SQL_DIALECTS[activeDialect].name}`}</span>
                 </button>
                 <button
-                  onClick={() => handleLoad(solution.code)}
+                  onClick={() => {
+                    handleLoad(activeCode);
+                    if (activeDialect !== 'sqlite') {
+                      setLoadedDialectMsg(`Loaded ${SQL_DIALECTS[activeDialect].name} syntax. Note: Running queries in editor executes against SQLite sandbox.`);
+                      setTimeout(() => setLoadedDialectMsg(null), 4000);
+                    }
+                  }}
                   className="px-2.5 py-1 rounded-md bg-[#1F6FEB] hover:bg-[#388BFD] text-white transition-all flex items-center gap-1 text-[11px] font-semibold shadow-md shadow-[#1F6FEB]/20"
                 >
                   {loaded ? <Check className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
@@ -194,8 +253,38 @@ export const SolutionVault: React.FC<SolutionVaultProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* Non-sandbox Dialect Banner */}
+            {activeDialect !== 'sqlite' && (
+              <div className="px-3.5 py-2 bg-gradient-to-r from-[#1A1E24] to-[#12161D] border-b border-[#21262D] text-xs flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                  <span className="text-[11px] text-[#E6EDF3] font-mono">
+                    <strong className={SQL_DIALECTS[activeDialect].badgeText}>{SQL_DIALECTS[activeDialect].name} {SQL_DIALECTS[activeDialect].version}</strong> syntax.{' '}
+                    <span className="text-[#8B949E] hidden md:inline">
+                      {dialectComparison.queries[activeDialect]?.notes || 'Canonical syntax for this engine.'}
+                    </span>
+                  </span>
+                </div>
+                <button
+                  onClick={() => setActiveDialect('sqlite')}
+                  className="text-[10px] font-mono text-cyan-400 hover:text-cyan-300 underline underline-offset-2 shrink-0"
+                >
+                  Reset to SQLite Sandbox
+                </button>
+              </div>
+            )}
+
+            {/* Toast alert on loading non-sandbox SQL */}
+            {loadedDialectMsg && (
+              <div className="px-3.5 py-2 bg-amber-500/15 border-b border-amber-500/30 text-xs text-amber-300 flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span>{loadedDialectMsg}</span>
+              </div>
+            )}
+
             <pre className="p-4 sm:p-5 font-mono text-sm sm:text-base text-[#E6EDF3] leading-relaxed overflow-x-auto whitespace-pre selection:bg-[#58A6FF]/20">
-              {solution.code}
+              {activeCode}
             </pre>
           </div>
 
@@ -276,7 +365,23 @@ export const SolutionVault: React.FC<SolutionVaultProps> = ({
             </div>
           )}
 
-          {/* 6. Deep Dive Interview, Performance & Real-World Use Case Cards (Stacked Vertically with Rich Color Themes) */}
+          {/* 6. Cross-Dialect Interview Comparison Section */}
+          <div id="dialect-comparison-section" className="scroll-mt-4 pt-1">
+            <DialectComparisonView
+              comparison={dialectComparison}
+              activeDialect={activeDialect}
+              onSelectDialect={(dId) => setActiveDialect(dId)}
+              onLoadCodeToEditor={(code, dId) => {
+                handleLoad(code);
+                if (dId !== 'sqlite') {
+                  setLoadedDialectMsg(`Loaded ${SQL_DIALECTS[dId].name} syntax into Monaco. Note: Execution runs against the SQLite sandbox.`);
+                  setTimeout(() => setLoadedDialectMsg(null), 4000);
+                }
+              }}
+            />
+          </div>
+
+          {/* 7. Deep Dive Interview, Performance & Real-World Use Case Cards (Stacked Vertically with Rich Color Themes) */}
           {solution.interviewCons && (
             <div className="space-y-4 pt-1">
               {(Array.isArray(solution.interviewCons) ? solution.interviewCons : [solution.interviewCons]).map((item, idx) => (

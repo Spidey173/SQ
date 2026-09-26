@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, Building2 } from 'lucide-react';
+import { Code2, Building2, Layers } from 'lucide-react';
 import { ChallengeDetail } from '@/lib/types';
 
 interface ProblemSpecViewProps {
@@ -44,6 +44,10 @@ export const ProblemOneSpecView: React.FC<ProblemSpecViewProps> = ({ problem, on
           </span>
           <span className="px-2 py-0.5 rounded-[4px] bg-[#0E1A12] border border-[#2E4A35] text-[#38A169] font-mono text-xs font-semibold">
             {difficulty} • Core Concept
+          </span>
+          <span className="px-2 py-0.5 rounded-[4px] bg-[#161B22] border border-[#30363D] text-[#8B949E] font-mono text-xs font-medium flex items-center gap-1.5">
+            <Layers className="w-3 h-3 text-[#58A6FF]" />
+            <span>SQLite • Postgres • MySQL • Snowflake</span>
           </span>
         </div>
         <h1 className="text-xl sm:text-2xl font-extrabold text-[#F5F5F5] tracking-tight">
