@@ -5,7 +5,12 @@ import {
   SchemaSetupResponse, SchemaTableInfo
 } from './types';
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') ? 'https://sql-quest-backend.vercel.app' : '');
+const envApi = process.env.NEXT_PUBLIC_API_URL?.trim();
+const rawApiUrl = (envApi && envApi.startsWith('http'))
+  ? envApi
+  : (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')
+      ? 'https://sql-quest-backend.vercel.app'
+      : '');
 const API_BASE = rawApiUrl
   ? (rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, '')}/api`)
   : '/api';
