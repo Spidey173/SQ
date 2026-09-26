@@ -27,6 +27,7 @@ class UserResponse(BaseModel):
     username: str
     email: str
     role: str
+    streak: int = 0
     avatar: str
     theme: str
     created_at: datetime
