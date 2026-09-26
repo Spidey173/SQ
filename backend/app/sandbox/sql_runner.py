@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS employees (
     salary REAL,
     manager_id INTEGER,
     department_id INTEGER,
-    department_name TEXT,
     age INTEGER,
     city TEXT,
     gender TEXT,
@@ -137,14 +136,14 @@ INSERT INTO departments VALUES (104, 'HR', 'Boston');
 INSERT INTO departments VALUES (105, 'Finance', 'New York');
 
 -- Employees
-INSERT INTO employees VALUES (1, 'John', 'Doe', 'john.doe@email.com', '555-0101', '2020-01-15', 'Software Engineer', 85000, NULL, 101, 'Engineering', 28, 'New York', 'Male', 'NY');
-INSERT INTO employees VALUES (2, 'Jane', 'Smith', 'jane.smith@email.com', '555-0102', '2019-03-22', 'Engineering Manager', 120000, NULL, 101, 'Engineering', 35, 'New York', 'Female', 'NY');
-INSERT INTO employees VALUES (3, 'Bob', 'Johnson', 'bob.j@email.com', '555-0103', '2021-06-01', 'Sales Exec', 60000, 2, 102, 'Sales', 32, 'Chicago', 'Male', 'IL');
-INSERT INTO employees VALUES (4, 'Alice', 'Williams', 'alice.w@email.com', '555-0104', '2018-11-12', 'Sales Director', 110000, NULL, 102, 'Sales', 40, 'Chicago', 'Female', 'IL');
-INSERT INTO employees VALUES (5, 'Charlie', 'Brown', 'charlie.b@email.com', '555-0105', '2022-02-10', 'Marketing Specialist', 55000, 4, 103, 'Marketing', 25, 'San Francisco', 'Male', 'CA');
-INSERT INTO employees VALUES (6, 'Diana', 'Prince', 'diana.p@email.com', '555-0106', '2017-08-05', 'HR Lead', 75000, NULL, 104, 'HR', 38, 'Boston', 'Female', 'MA');
-INSERT INTO employees VALUES (7, 'Eva', 'Green', 'eva.g@email.com', '555-0107', '2023-01-01', 'Software Engineer', 90000, 2, 101, 'Engineering', 26, 'New York', 'Female', 'NY');
-INSERT INTO employees VALUES (8, 'Frank', 'Miller', 'frank.m@email.com', '555-0108', '2020-09-15', 'Financial Analyst', 70000, NULL, 105, 'Finance', 30, 'New York', 'Male', 'NY');
+INSERT INTO employees VALUES (1, 'John', 'Doe', 'john.doe@email.com', '555-0101', '2020-01-15', 'Software Engineer', 85000, NULL, 101, 28, 'New York', 'Male', 'NY');
+INSERT INTO employees VALUES (2, 'Jane', 'Smith', 'jane.smith@email.com', '555-0102', '2019-03-22', 'Engineering Manager', 120000, NULL, 101, 35, 'New York', 'Female', 'NY');
+INSERT INTO employees VALUES (3, 'Bob', 'Johnson', 'bob.j@email.com', '555-0103', '2021-06-01', 'Sales Exec', 60000, 2, 102, 32, 'Chicago', 'Male', 'IL');
+INSERT INTO employees VALUES (4, 'Alice', 'Williams', 'alice.w@email.com', '555-0104', '2018-11-12', 'Sales Director', 110000, NULL, 102, 40, 'Chicago', 'Female', 'IL');
+INSERT INTO employees VALUES (5, 'Charlie', 'Brown', 'charlie.b@email.com', '555-0105', '2022-02-10', 'Marketing Specialist', 55000, 4, 103, 25, 'San Francisco', 'Male', 'CA');
+INSERT INTO employees VALUES (6, 'Diana', 'Prince', 'diana.p@email.com', '555-0106', '2017-08-05', 'HR Lead', 75000, NULL, 104, 38, 'Boston', 'Female', 'MA');
+INSERT INTO employees VALUES (7, 'Eva', 'Green', 'eva.g@email.com', '555-0107', '2023-01-01', 'Software Engineer', 90000, 2, 101, 26, 'New York', 'Female', 'NY');
+INSERT INTO employees VALUES (8, 'Frank', 'Miller', 'frank.m@email.com', '555-0108', '2020-09-15', 'Financial Analyst', 70000, NULL, 105, 30, 'New York', 'Male', 'NY');
 
 -- Customers
 INSERT INTO customers VALUES (1, 'Alice', 'Smith', 'alice@gmail.com', 'New York', 'NY', 'USA', 29, 'VIP');
@@ -281,15 +280,16 @@ def execute_sql_in_sandbox(
     conn.set_progress_handler(timeout_check, 1000)
 
     try:
-        # Always load full standard schema and seed data so all tables (employees, sales, customers, etc.) exist
-        schema_sql = custom_schema or SAMPLE_SCHEMAS
-        data_sql = custom_data or SAMPLE_DATA
-        cursor.executescript(schema_sql)
-        cursor.executescript(data_sql)
-
-        # Apply user session dump or custom DDL on top if present
+        # Load database state: session_dump already contains everything (from iterdump),
+        # so only load base schema + data when there's no session dump
         if session_dump and session_dump.strip():
+            # Session dump from iterdump() includes all CREATE TABLE + INSERT statements
             cursor.executescript(session_dump)
+        else:
+            schema_sql = custom_schema or SAMPLE_SCHEMAS
+            data_sql = custom_data or SAMPLE_DATA
+            cursor.executescript(schema_sql)
+            cursor.executescript(data_sql)
 
         # Execute user SQL code
         cleaned_sql = user_sql.strip()

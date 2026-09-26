@@ -19,7 +19,6 @@ TABLE_DDL: Dict[str, str] = {
     salary REAL,
     manager_id INTEGER,
     department_id INTEGER,
-    department_name TEXT,
     age INTEGER,
     city TEXT,
     gender TEXT,
@@ -121,14 +120,14 @@ INSERT INTO departments VALUES (102, 'Sales', 'Chicago');
 INSERT INTO departments VALUES (103, 'Marketing', 'San Francisco');
 INSERT INTO departments VALUES (104, 'HR', 'Boston');
 INSERT INTO departments VALUES (105, 'Finance', 'New York');""",
-    "employees": """INSERT INTO employees VALUES (1, 'John', 'Doe', 'john.doe@email.com', '555-0101', '2020-01-15', 'Software Engineer', 85000, NULL, 101, 'Engineering', 28, 'New York', 'Male', 'NY');
-INSERT INTO employees VALUES (2, 'Jane', 'Smith', 'jane.smith@email.com', '555-0102', '2019-03-22', 'Engineering Manager', 120000, NULL, 101, 'Engineering', 35, 'New York', 'Female', 'NY');
-INSERT INTO employees VALUES (3, 'Bob', 'Johnson', 'bob.j@email.com', '555-0103', '2021-06-01', 'Sales Exec', 60000, 2, 102, 'Sales', 32, 'Chicago', 'Male', 'IL');
-INSERT INTO employees VALUES (4, 'Alice', 'Williams', 'alice.w@email.com', '555-0104', '2018-11-12', 'Sales Director', 110000, NULL, 102, 'Sales', 40, 'Chicago', 'Female', 'IL');
-INSERT INTO employees VALUES (5, 'Charlie', 'Brown', 'charlie.b@email.com', '555-0105', '2022-02-10', 'Marketing Specialist', 55000, 4, 103, 'Marketing', 25, 'San Francisco', 'Male', 'CA');
-INSERT INTO employees VALUES (6, 'Diana', 'Prince', 'diana.p@email.com', '555-0106', '2017-08-05', 'HR Lead', 75000, NULL, 104, 'HR', 38, 'Boston', 'Female', 'MA');
-INSERT INTO employees VALUES (7, 'Eva', 'Green', 'eva.g@email.com', '555-0107', '2023-01-01', 'Software Engineer', 90000, 2, 101, 'Engineering', 26, 'New York', 'Female', 'NY');
-INSERT INTO employees VALUES (8, 'Frank', 'Miller', 'frank.m@email.com', '555-0108', '2020-09-15', 'Financial Analyst', 70000, NULL, 105, 'Finance', 30, 'New York', 'Male', 'NY');""",
+    "employees": """INSERT INTO employees VALUES (1, 'John', 'Doe', 'john.doe@email.com', '555-0101', '2020-01-15', 'Software Engineer', 85000, NULL, 101, 28, 'New York', 'Male', 'NY');
+INSERT INTO employees VALUES (2, 'Jane', 'Smith', 'jane.smith@email.com', '555-0102', '2019-03-22', 'Engineering Manager', 120000, NULL, 101, 35, 'New York', 'Female', 'NY');
+INSERT INTO employees VALUES (3, 'Bob', 'Johnson', 'bob.j@email.com', '555-0103', '2021-06-01', 'Sales Exec', 60000, 2, 102, 32, 'Chicago', 'Male', 'IL');
+INSERT INTO employees VALUES (4, 'Alice', 'Williams', 'alice.w@email.com', '555-0104', '2018-11-12', 'Sales Director', 110000, NULL, 102, 40, 'Chicago', 'Female', 'IL');
+INSERT INTO employees VALUES (5, 'Charlie', 'Brown', 'charlie.b@email.com', '555-0105', '2022-02-10', 'Marketing Specialist', 55000, 4, 103, 25, 'San Francisco', 'Male', 'CA');
+INSERT INTO employees VALUES (6, 'Diana', 'Prince', 'diana.p@email.com', '555-0106', '2017-08-05', 'HR Lead', 75000, NULL, 104, 38, 'Boston', 'Female', 'MA');
+INSERT INTO employees VALUES (7, 'Eva', 'Green', 'eva.g@email.com', '555-0107', '2023-01-01', 'Software Engineer', 90000, 2, 101, 26, 'New York', 'Female', 'NY');
+INSERT INTO employees VALUES (8, 'Frank', 'Miller', 'frank.m@email.com', '555-0108', '2020-09-15', 'Financial Analyst', 70000, NULL, 105, 30, 'New York', 'Male', 'NY');""",
     "customers": """INSERT INTO customers VALUES (1, 'Alice', 'Smith', 'alice@gmail.com', 'New York', 'NY', 'USA', 29, 'VIP');
 INSERT INTO customers VALUES (2, 'Bob', 'Jones', 'bob@yahoo.com', 'Chicago', 'IL', 'USA', 42, 'Regular');
 INSERT INTO customers VALUES (3, 'Charlie', 'Day', 'charlie@gmail.com', 'New York', 'NY', 'USA', 35, 'Regular');
@@ -191,6 +190,8 @@ def get_relevant_tables_for_challenge(title: str, objective: str = "", starter_c
     
     if "having with sum" in combined or "from purchases" in combined:
         return ["purchases"]
+    if any(k in combined for k in ["highest profit", "sold more than 100 times"]):
+        return ["sales"]
     
     for tbl, kws in table_keywords.items():
         if any(kw in combined for kw in kws):
@@ -203,6 +204,45 @@ def get_relevant_tables_for_challenge(title: str, objective: str = "", starter_c
 
 def generate_setup_sql_for_challenge(title: str, objective: str = "", starter_code: str = "", story: str = "") -> str:
     combined_lower = f"{title} {objective} {starter_code} {story}".lower()
+    if any(term in combined_lower for term in ["branches with highest profit", "highest profit"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: sales
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    branch_name TEXT,
+    selling_price REAL,
+    cost_price REAL
+);
+
+-- Sample Data: sales
+INSERT INTO sales VALUES (1, 'Bangalore', 1000.0, 600.0);
+INSERT INTO sales VALUES (2, 'Delhi', 800.0, 450.0);
+INSERT INTO sales VALUES (3, 'Mumbai', 500.0, 400.0);
+"""
+
+    if any(term in combined_lower for term in ["products sold more than 100 times", "sold more than 100 times"]):
+        return """-- Step 1: Database Schema & Data Setup
+-- Run this script to create and populate the practice database tables.
+
+-- Table: sales
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    product_id INTEGER,
+    product_name TEXT,
+    quantity INTEGER
+);
+
+-- Sample Data: sales
+INSERT INTO sales VALUES (1, 101, 'Laptop', 60);
+INSERT INTO sales VALUES (2, 101, 'Laptop', 50);
+INSERT INTO sales VALUES (3, 102, 'Mouse', 40);
+INSERT INTO sales VALUES (4, 103, 'Keyboard', 30);
+"""
+
     if any(term in combined_lower for term in ["triangle judgement", "triangle judgment", "table: triangle", "from triangle"]):
         return """-- Step 1: Database Schema & Data Setup
 -- Run this script to create and populate the practice database tables.
@@ -351,9 +391,9 @@ CREATE TABLE Person (
 );
 
 -- Sample Data: Person
-INSERT INTO Person VALUES (1, 'a@leetcode.com');
-INSERT INTO Person VALUES (2, 'b@leetcode.com');
-INSERT INTO Person VALUES (3, 'a@leetcode.com');
+INSERT INTO Person VALUES (1, 'a@example.com');
+INSERT INTO Person VALUES (2, 'b@example.com');
+INSERT INTO Person VALUES (3, 'a@example.com');
 """
 
     if any(term in combined_lower for term in ["combine two tables", "personid", "addressid"]):
@@ -702,9 +742,9 @@ CREATE TABLE Person (
 );
 
 -- Sample Data: Person
-INSERT INTO Person VALUES (1, 'a@leetcode.com');
-INSERT INTO Person VALUES (2, 'b@leetcode.com');
-INSERT INTO Person VALUES (3, 'a@leetcode.com');
+INSERT INTO Person VALUES (1, 'a@example.com');
+INSERT INTO Person VALUES (2, 'b@example.com');
+INSERT INTO Person VALUES (3, 'a@example.com');
 """
 
     tables = get_relevant_tables_for_challenge(title, objective, starter_code, story)
@@ -790,7 +830,7 @@ INSERT INTO courses VALUES (103, 'Java');
 """)
                 continue
 
-            if any(term in (title + " " + objective).lower() for term in ["multiple table joins", "department and city"]):
+            if "multiple table joins" in (title + " " + objective).lower():
                 if tbl == "employees":
                     parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
@@ -892,7 +932,7 @@ INSERT INTO products VALUES (503, 'Mouse', 800);
 """)
                 continue
 
-            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["multiple case conditions", "age_category", "salary_category", "generate two new columns"]):
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["multiple case conditions", "generate two new columns"]):
                 parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
@@ -943,7 +983,7 @@ INSERT INTO employees VALUES (4, 'David', 30000);
 """)
                 continue
 
-            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["salary bands", "salary band", "classify employees into salary bands"]):
+            if tbl == "employees" and any(term in title.lower() for term in ["salary bands", "salary band"]):
                 parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
@@ -1108,7 +1148,54 @@ INSERT INTO students VALUES (6, 'Sneha', '10C', 90);
 """)
                 continue
                 
-            if tbl in ["employees", "departments"] and any(term in (title + " " + objective).lower() for term in ["inner join", "left join", "right join", "full join", "cross join", "department name", "department names"]):
+            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in [
+                "group employees by department",
+                "count employees per department",
+                "departments having more than 5 employees",
+                "more than 5 employees",
+                "average salary greater than"
+            ]):
+                dept_emp_extra = ""
+                if "more than 5 employees" in (title + " " + objective).lower():
+                    dept_emp_extra = """
+INSERT INTO employees VALUES (9, 'Chris', 'Evans', 'chris.e@email.com', '555-0109', '2021-02-15', 'HR Recruiter', 65000, 6, 104, 'HR', 31, 'Boston', 'Male', 'MA');
+INSERT INTO employees VALUES (10, 'Mike', 'Ross', 'mike.r@email.com', '555-0110', '2022-05-10', 'HR Associate', 58000, 6, 104, 'HR', 27, 'Boston', 'Male', 'MA');
+INSERT INTO employees VALUES (11, 'Kevin', 'Hart', 'kevin.h@email.com', '555-0111', '2020-11-20', 'HR Generalist', 62000, 6, 104, 'HR', 34, 'Boston', 'Male', 'MA');
+INSERT INTO employees VALUES (12, 'Sophia', 'Loren', 'sophia.l@email.com', '555-0112', '2019-08-14', 'HR Specialist', 71000, 6, 104, 'HR', 36, 'Boston', 'Female', 'MA');
+INSERT INTO employees VALUES (13, 'Tom', 'Hanks', 'tom.h@email.com', '555-0113', '2018-04-18', 'HR Director', 95000, NULL, 104, 'HR', 45, 'Boston', 'Male', 'MA');"""
+                parts.append(f"""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    first_name TEXT,
+    last_name TEXT,
+    email TEXT,
+    phone_number TEXT,
+    hire_date DATE,
+    job_title TEXT,
+    salary REAL,
+    manager_id INTEGER,
+    department_id INTEGER,
+    department_name TEXT,
+    age INTEGER,
+    city TEXT,
+    gender TEXT,
+    state TEXT
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 'Doe', 'john.doe@email.com', '555-0101', '2020-01-15', 'Software Engineer', 85000, NULL, 101, 'Engineering', 28, 'New York', 'Male', 'NY');
+INSERT INTO employees VALUES (2, 'Jane', 'Smith', 'jane.smith@email.com', '555-0102', '2019-03-22', 'Engineering Manager', 120000, NULL, 101, 'Engineering', 35, 'New York', 'Female', 'NY');
+INSERT INTO employees VALUES (3, 'Bob', 'Johnson', 'bob.j@email.com', '555-0103', '2021-06-01', 'Sales Exec', 60000, 2, 102, 'Sales', 32, 'Chicago', 'Male', 'IL');
+INSERT INTO employees VALUES (4, 'Alice', 'Williams', 'alice.w@email.com', '555-0104', '2018-11-12', 'Sales Director', 110000, NULL, 102, 'Sales', 40, 'Chicago', 'Female', 'IL');
+INSERT INTO employees VALUES (5, 'Charlie', 'Brown', 'charlie.b@email.com', '555-0105', '2022-02-10', 'Marketing Specialist', 55000, 4, 103, 'Marketing', 25, 'San Francisco', 'Male', 'CA');
+INSERT INTO employees VALUES (6, 'Diana', 'Prince', 'diana.p@email.com', '555-0106', '2017-08-05', 'HR Lead', 75000, NULL, 104, 'HR', 38, 'Boston', 'Female', 'MA');
+INSERT INTO employees VALUES (7, 'Eva', 'Green', 'eva.g@email.com', '555-0107', '2023-01-01', 'Software Engineer', 90000, 2, 101, 'Engineering', 26, 'New York', 'Female', 'NY');
+INSERT INTO employees VALUES (8, 'Frank', 'Miller', 'frank.m@email.com', '555-0108', '2020-09-15', 'Financial Analyst', 70000, NULL, 105, 'Finance', 30, 'New York', 'Male', 'NY');{dept_emp_extra}
+""")
+                continue
+
+            if tbl in ["employees", "departments"] and not title.lower().startswith("retrieve") and "self join" not in (title + " " + objective).lower() and any(term in (title + " " + objective).lower() for term in ["inner join", "left join", "right join", "full join", "cross join", "department name", "department names"]):
                 if tbl == "employees":
                     parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
@@ -1157,27 +1244,8 @@ INSERT INTO departments VALUES (102, 'IT');
 INSERT INTO departments VALUES (103, 'Finance');
 INSERT INTO departments VALUES (104, 'Marketing');""")
                 continue
-                
-            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["without managers", "do not have a manager", "no manager"]):
-                parts.append("""-- Table: employees
-DROP TABLE IF EXISTS employees;
-CREATE TABLE employees (
-    employee_id INTEGER PRIMARY KEY,
-    first_name TEXT,
-    employee_name TEXT,
-    manager_id INTEGER
-);
 
--- Sample Data: employees
-INSERT INTO employees VALUES (1, 'John', 'John', NULL);
-INSERT INTO employees VALUES (2, 'Alice', 'Alice', 1);
-INSERT INTO employees VALUES (3, 'Bob', 'Bob', 1);
-INSERT INTO employees VALUES (4, 'David', 'David', 2);
-INSERT INTO employees VALUES (5, 'Emma', 'Emma', NULL);
-""")
-                continue
-
-            if tbl == "employees" and any(term in (title + " " + objective).lower() for term in ["manager and employee names", "along with their manager's name"]):
+            if tbl == "employees" and "manager and employee names" in title.lower():
                 parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
@@ -1196,7 +1264,26 @@ INSERT INTO employees VALUES (5, 'Emma', 'Emma', 2);
 """)
                 continue
 
-            if tbl == "employees" and "self join" in (title + " " + objective).lower():
+            if tbl == "employees" and any(term in title.lower() for term in ["without managers", "no manager"]):
+                parts.append("""-- Table: employees
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    first_name TEXT,
+    employee_name TEXT,
+    manager_id INTEGER
+);
+
+-- Sample Data: employees
+INSERT INTO employees VALUES (1, 'John', 'John', NULL);
+INSERT INTO employees VALUES (2, 'Alice', 'Alice', 1);
+INSERT INTO employees VALUES (3, 'Bob', 'Bob', 1);
+INSERT INTO employees VALUES (4, 'David', 'David', 2);
+INSERT INTO employees VALUES (5, 'Emma', 'Emma', NULL);
+""")
+                continue
+
+            if tbl == "employees" and title.strip().lower() == "self join":
                 parts.append("""-- Table: employees
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
@@ -1442,15 +1529,6 @@ INSERT INTO sales VALUES (6, 'Footwear', 4000);
                 parts.append(ddl)
             if seed:
                 parts.append(f"\n-- Sample Data: {tbl}\n{seed}\n")
-                if tbl == "employees" and "more than 5 employees" in (title + " " + objective).lower():
-                    extra_employees = """
-INSERT INTO employees VALUES (9, 'Chris', 'Evans', 'chris.e@email.com', '555-0109', '2021-02-15', 'HR Recruiter', 65000, 6, 104, 'HR', 31, 'Boston', 'Male', 'MA');
-INSERT INTO employees VALUES (10, 'Mike', 'Ross', 'mike.r@email.com', '555-0110', '2022-05-10', 'HR Associate', 58000, 6, 104, 'HR', 27, 'Boston', 'Male', 'MA');
-INSERT INTO employees VALUES (11, 'Kevin', 'Hart', 'kevin.h@email.com', '555-0111', '2020-11-20', 'HR Generalist', 62000, 6, 104, 'HR', 34, 'Boston', 'Male', 'MA');
-INSERT INTO employees VALUES (12, 'Sophia', 'Loren', 'sophia.l@email.com', '555-0112', '2019-08-14', 'HR Specialist', 71000, 6, 104, 'HR', 36, 'Boston', 'Female', 'MA');
-INSERT INTO employees VALUES (13, 'Tom', 'Hanks', 'tom.h@email.com', '555-0113', '2018-04-18', 'HR Director', 95000, NULL, 104, 'HR', 45, 'Boston', 'Male', 'MA');
-"""
-                    parts.append(f"-- Additional Department Records for Headcount Practice:\n{extra_employees}\n")
                 if tbl == "customers" and "more than 10 customers" in (title + " " + objective).lower():
                     extra_cust_lines = []
                     cid = 6
