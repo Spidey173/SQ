@@ -1,5 +1,5 @@
-// Single Canonical Solution & Interview Breakdown for all 500 SQL Problems
-// Keyed by both code_id (e.g. "Basics-001", "SQL-001", "001") and numeric problem ID
+// Single Canonical Solution & Interview Breakdown for all 100 SQL Problems
+// Keyed by both code_id (e.g. "Basics-001", "SQL-001", "ASQL-001", "Pro-001") and numeric problem ID
 
 export interface ProblemSolution {
   code_id: string;
@@ -3067,15 +3067,15 @@ const BASE_RANKED_MAP: Record<string, any> = {
     "code_id": "SQL-016",
     "numeric_id": 51,
     "title": "Lowest salary department",
-    "code": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "simplestExplanation": "Direct declarative ANSI SQL query for Lowest salary department.",
+    "code": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nORDER BY average_salary ASC\nLIMIT 1;",
+    "timeComplexity": "O(N + G log G)",
+    "spaceComplexity": "O(G)",
+    "simplestExplanation": "Calculates the average salary for each department, sorts them in ascending order, and limits to the first record.",
     "mentalModel": "Filter -> Group -> Project relation pipeline",
     "lineByLine": [
       {
-        "line": "SELECT * FROM employees;",
-        "explanation": "Executes optimized database execution plan."
+        "line": "SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name ORDER BY average_salary ASC LIMIT 1;",
+        "explanation": "Aggregates department average salary and isolates the lowest with ORDER BY ASC LIMIT 1."
       }
     ],
     "beginnerTraps": [
@@ -5347,7 +5347,7 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "Q5. What is the time complexity? O(N) linear table scan without indexes, or O(log N + K) with B-tree indexes."
     ],
     "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• Why did LeetCode discuss UNION vs OR performance for this problem? (In older MySQL versions without index merge, OR forced a full table scan, while UNION allowed two separate index seeks)\n• Why is UNION ALL dangerous here if used carelessly? (Countries satisfying both area >= 3M and population >= 25M would be duplicated!)\n• What type should GDP be stored as? (BIGINT to avoid 32-bit integer overflow for trillion-dollar economies)"
+      "⭐ Questions Interviewers Will Ask:\n• How does UNION vs OR compare for performance here? (In older MySQL versions without index merge, OR forced a full table scan, while UNION allowed two separate index seeks)\n• Why is UNION ALL dangerous here if used carelessly? (Countries satisfying both area >= 3M and population >= 25M would be duplicated!)\n• What type should GDP be stored as? (BIGINT to avoid 32-bit integer overflow for trillion-dollar economies)"
     ]
   },
   "Pro-009": {
@@ -5391,7 +5391,7 @@ const BASE_RANKED_MAP: Record<string, any> = {
       "Q5. Can this be written with a subquery? Yes: `SELECT class FROM (SELECT class, COUNT(student) cnt FROM Courses GROUP BY class) t WHERE cnt >= 5;`."
     ],
     "interviewCons": [
-      "⭐ Questions Interviewers Will Ask:\n• What was the historical trick with COUNT(DISTINCT student) on LeetCode? (Earlier problem definitions didn't have (student, class) as primary key, making COUNT(DISTINCT student) necessary)\n• How does the execution pipeline flow? (FROM -> GROUP BY -> AGGREGATION -> HAVING -> SELECT)\n• What index optimizes this query? (An index on `Courses(class, student)` enables loose/stream aggregation directly from index leaves)"
+      "⭐ Questions Interviewers Will Ask:\n• What is the importance of COUNT(DISTINCT student) vs COUNT(student)? (If the schema doesn't enforce (student, class) uniqueness, COUNT(DISTINCT student) is required)\n• How does the execution pipeline flow? (FROM -> GROUP BY -> AGGREGATION -> HAVING -> SELECT)\n• What index optimizes this query? (An index on `Courses(class, student)` enables loose/stream aggregation directly from index leaves)"
     ]
   },
   "Pro-010": {

@@ -1,4 +1,4 @@
-// 500 Job-Focused SQL Canonical Reference Solutions
+// 100 Job-Focused SQL Canonical Reference Solutions
 export interface ProblemSolutionRecord {
   code_id: string;
   levelNumber: number;
@@ -515,11 +515,11 @@ const BASE_SOLUTIONS_MAP: Record<string, any> = {
     "code_id": "SQL-016",
     "levelNumber": 51,
     "title": "Lowest salary department",
-    "optimalCode": "SELECT * FROM employees;",
-    "timeComplexity": "O(N)",
-    "spaceComplexity": "O(N)",
-    "explanation": "The query executes standard ANSI SQL operations for 'Lowest salary department' using SQLite execution planner.",
-    "keyTakeaway": "Mastering Lowest salary department is essential for database query optimization and relational data analysis."
+    "optimalCode": "SELECT department_name,\n       ROUND(AVG(salary), 2) AS average_salary\nFROM employees\nGROUP BY department_name\nORDER BY average_salary ASC\nLIMIT 1;",
+    "timeComplexity": "O(N + G log G)",
+    "spaceComplexity": "O(G)",
+    "explanation": "Executes SELECT department_name, ROUND(AVG(salary), 2) AS average_salary FROM employees GROUP BY department_name ORDER BY average_salary ASC LIMIT 1, aggregating average compensation per department, sorting the groups ascending by average salary, and returning the single lowest-earning department.",
+    "keyTakeaway": "Combining GROUP BY with AVG(), ORDER BY ASC, and LIMIT 1 isolates the group with the lowest average metric."
   },
   "SQL-017": {
     "code_id": "SQL-017",
