@@ -6,28 +6,8 @@ const nextConfig: NextConfig = {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'https://sql-quest-backend.vercel.app';
     return [
       {
-        source: '/api/auth/:path*',
-        destination: `${backendUrl}/api/auth/:path*`,
-      },
-      {
-        source: '/api/challenges/:path*',
-        destination: `${backendUrl}/api/challenges/:path*`,
-      },
-      {
-        source: '/api/execution/:path*',
-        destination: `${backendUrl}/api/execution/:path*`,
-      },
-      {
-        source: '/api/gamification/:path*',
-        destination: `${backendUrl}/api/gamification/:path*`,
-      },
-      {
-        source: '/api/profile/:path*',
-        destination: `${backendUrl}/api/profile/:path*`,
-      },
-      {
-        source: '/api/admin/:path*',
-        destination: `${backendUrl}/api/admin/:path*`,
+        source: '/api/:path*',
+        destination: `${backendUrl}/api/:path*`,
       },
     ];
   },

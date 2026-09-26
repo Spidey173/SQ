@@ -35,6 +35,8 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
+        "https://sql-quest-frontend.vercel.app",
+        "https://sql-quest-backend.vercel.app",
     ],
     allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
@@ -52,14 +54,18 @@ app.include_router(admin.router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")
+@app.get("/api")
+@app.get("/api/")
 async def root():
     return {
         "app": "SQL Quest API",
         "status": "online",
+        "version": settings.VERSION,
         "docs": f"{settings.API_V1_STR}/docs"
     }
 
 
+@app.get("/health")
 @app.get("/api/health")
 async def health_check():
     from app.database import AsyncSessionLocal
@@ -72,3 +78,15 @@ async def health_check():
     except Exception as e:
         db_status = f"error: {str(e)[:100]}"
     return {"status": "healthy", "version": settings.VERSION, "database": db_status}
+
+
+@app.get("/docs")
+async def docs_redirect():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url=f"{settings.API_V1_STR}/docs")
+
+
+@app.get("/openapi.json")
+async def openapi_redirect():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url=f"{settings.API_V1_STR}/openapi.json")
