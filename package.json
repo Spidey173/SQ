@@ -1,7 +1,0 @@
-{
-  "name": "sql-quest-workspace",
-  "private": true,
-  "scripts": {
-    "build": "cd frontend && npm install && npm run build"
-  }
-}
