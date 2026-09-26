@@ -5,7 +5,10 @@ import {
   SchemaSetupResponse, SchemaTableInfo
 } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') ? 'https://sql-quest-backend.vercel.app' : '');
+const API_BASE = rawApiUrl
+  ? (rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, '')}/api`)
+  : '/api';
 
 function getAuthHeader(): Record<string, string> {
   if (typeof window === 'undefined') return {};
