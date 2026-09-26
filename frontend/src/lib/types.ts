@@ -7,10 +7,6 @@ export interface User {
   avatar: string;
   theme: string;
   created_at: string;
-  xp?: number;
-  coins?: number;
-  level?: number;
-  lives?: number;
 }
 
 export interface TestCase {
@@ -124,13 +120,6 @@ export interface CodeSubmitResponse {
   success: boolean;
   passed_all: boolean;
   stars_earned: number;
-  xp_earned?: number;
-  coins_earned?: number;
-  combo_bonus?: number;
-  speed_bonus?: number;
-  lives_remaining?: number;
-  level_up?: boolean;
-  new_level?: number;
   test_results: TestCaseResult[];
   columns?: string[];
   rows?: any[][];

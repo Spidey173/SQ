@@ -30,11 +30,6 @@ class UserResponse(BaseModel):
     avatar: str
     theme: str
     created_at: datetime
-    xp: int = 0
-    coins: int = 0
-    level: int = 1
-    lives: int = 5
-    streak: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 
