@@ -21,11 +21,8 @@ const MODULE_ICONS: Record<number, React.ElementType> = {
   5: Zap,
   6: Activity,
   7: Terminal,
-  8: Zap,
-  9: Terminal,
-  10: Clock,
-  11: Filter,
-  12: Layers,
+  8: Clock,
+  9: Layers,
 };
 
 function getSqlConceptTag(problem: ChallengeSummary): { label: string; variant: 'copper' | 'gold' | 'emerald' | 'crimson' | 'steel' } {
@@ -49,20 +46,22 @@ function CurriculumExplorerContent() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const initialModNum = initialModule ? parseInt(initialModule, 10) : null;
-  const defaultTrack = (initialTrack as 'all' | 'master' | 'core' | 'advanced' | 'fundamentals') ||
+  const defaultTrack = (initialTrack as 'all' | 'fundamentals' | 'core' | 'advanced' | 'master') ||
     (initialModNum
-      ? initialModNum <= 2
+      ? initialModNum <= 4
         ? 'fundamentals'
-        : initialModNum <= 7
+        : initialModNum <= 6
           ? 'core'
-          : initialModNum <= 12
+          : initialModNum === 7
             ? 'advanced'
-            : 'master'
-      : 'core');
+            : initialModNum <= 9
+              ? 'master'
+              : 'all'
+      : 'all');
 
   const [chapters, setChapters] = useState<ChapterGroup[]>([]);
   const [solvedIds, setSolvedIds] = useState<number[]>([]);
-  const [activeTrack, setActiveTrack] = useState<'all' | 'master' | 'core' | 'advanced' | 'fundamentals'>(defaultTrack);
+  const [activeTrack, setActiveTrack] = useState<'all' | 'fundamentals' | 'core' | 'advanced' | 'master'>(defaultTrack);
   const [selectedModule, setSelectedModule] = useState<number | 'all'>(
     initialModNum ? initialModNum : 'all'
   );
@@ -124,32 +123,37 @@ function CurriculumExplorerContent() {
 
   const trackChapters = useMemo(() => {
     if (activeTrack === 'master') {
-      return chapters.filter((c) => (c.chapter_id >= 13 && c.chapter_id <= 22) || c.levels?.some((l) => l.track === 'master' || l.code_id?.startsWith('Pro-')));
+      return chapters.filter((c) => (c.chapter_id === 8 || c.chapter_id === 9) || c.levels?.some((l) => l.track === 'master' || l.code_id?.startsWith('Pro-')));
     }
     if (activeTrack === 'fundamentals') {
-      // Module 1 & 2: Beginner Fundamentals (Basics-001 to Basics-035, 35 problems)
-      return chapters.filter((c) => c.chapter_id <= 2);
+      return chapters.filter((c) => (c.chapter_id >= 1 && c.chapter_id <= 4) || c.levels?.some((l) => l.track === 'fundamentals' || l.code_id?.startsWith('Basics-')));
     }
     if (activeTrack === 'core') {
-      // Module 3 through 7: Core SQL (SQL-001 to SQL-120, 120 problems)
-      return chapters.filter((c) => c.chapter_id >= 3 && c.chapter_id <= 7);
+      return chapters.filter((c) => (c.chapter_id === 5 || c.chapter_id === 6) || c.levels?.some((l) => l.track === 'core' || (l.code_id?.startsWith('SQL-') && !l.code_id?.startsWith('ASQL-'))));
     }
     if (activeTrack === 'advanced') {
-      // Module 8 through 12: Advanced SQL & Production Analytics (SQL-121 to SQL-215, 95 problems)
-      return chapters.filter((c) => (c.chapter_id >= 8 && c.chapter_id <= 12) && !c.levels?.every((l) => l.track === 'master' || l.code_id?.startsWith('Pro-')));
+      return chapters.filter((c) => c.chapter_id === 7 || c.levels?.some((l) => l.track === 'advanced' || l.code_id?.startsWith('ASQL-')));
     }
     return chapters;
   }, [chapters, activeTrack]);
 
-  // Ensure selectedModule belongs to activeTrack, otherwise reset to 'all'
+  // Ensure selectedModule belongs to activeTrack, otherwise sync activeTrack or reset
   useEffect(() => {
-    if (selectedModule !== 'all' && trackChapters.length > 0) {
-      const exists = trackChapters.some((c) => c.chapter_id === selectedModule);
-      if (!exists) {
+    if (selectedModule !== 'all' && chapters.length > 0) {
+      const targetChap = chapters.find((c) => c.chapter_id === selectedModule);
+      if (targetChap) {
+        const belongsToCurrent = trackChapters.some((c) => c.chapter_id === selectedModule);
+        if (!belongsToCurrent) {
+          if (targetChap.chapter_id <= 4) setActiveTrack('fundamentals');
+          else if (targetChap.chapter_id <= 6) setActiveTrack('core');
+          else if (targetChap.chapter_id === 7) setActiveTrack('advanced');
+          else if (targetChap.chapter_id <= 9) setActiveTrack('master');
+        }
+      } else {
         setSelectedModule('all');
       }
     }
-  }, [trackChapters, selectedModule]);
+  }, [chapters, trackChapters, selectedModule]);
 
   const trackProblems = useMemo(() => {
     return trackChapters.flatMap((c) => c.levels || []);
@@ -226,6 +230,32 @@ function CurriculumExplorerContent() {
           <div className="flex items-center p-0.5 bg-[#0E0E0E] border border-[#242424] rounded-[4px] gap-0.5">
             <button
               onClick={() => {
+                setActiveTrack('all');
+                setSelectedModule('all');
+              }}
+              className={`px-3 py-1 font-mono text-xs transition-all duration-[120ms] rounded-[2px] ${activeTrack === 'all'
+                  ? 'bg-[#222222] text-[#F5F5F5] font-bold border border-[#3A3A3A]'
+                  : 'text-[#888888] hover:text-[#D4D4D4]'
+                }`}
+              title="All 100 SQL Challenges"
+            >
+              ALL TRACKS (100)
+            </button>
+            <button
+              onClick={() => {
+                setActiveTrack('fundamentals');
+                setSelectedModule('all');
+              }}
+              className={`px-3 py-1 font-mono text-xs transition-all duration-[120ms] rounded-[2px] ${activeTrack === 'fundamentals'
+                  ? 'bg-[#222222] text-[#48BB78] font-bold border border-[#3A3A3A]'
+                  : 'text-[#888888] hover:text-[#D4D4D4]'
+                }`}
+              title="Fundamentals: Basic SQL (Basics-001 through Basics-035)"
+            >
+              FUNDAMENTALS (35)
+            </button>
+            <button
+              onClick={() => {
                 setActiveTrack('core');
                 setSelectedModule('all');
               }}
@@ -233,9 +263,9 @@ function CurriculumExplorerContent() {
                   ? 'bg-[#222222] text-[#FF6B00] font-bold border border-[#3A3A3A]'
                   : 'text-[#888888] hover:text-[#D4D4D4]'
                 }`}
-              title="Core SQL: Joins, Aggregations, Window Functions, CTEs"
+              title="Core SQL: Joins, Aggregations, Analytics (SQL-001 through SQL-035)"
             >
-              CORE SQL
+              CORE SQL (35)
             </button>
             <button
               onClick={() => {
@@ -246,22 +276,9 @@ function CurriculumExplorerContent() {
                   ? 'bg-[#222222] text-[#A855F7] font-bold border border-[#3A3A3A]'
                   : 'text-[#888888] hover:text-[#D4D4D4]'
                 }`}
-              title="Advanced SQL: CASE, String, Date/Time, Deduplication, Analytics"
+              title="Advanced SQL: CASE, Conditional Formatting & Logic (ASQL-001 through ASQL-010)"
             >
-              ADVANCED SQL
-            </button>
-            <button
-              onClick={() => {
-                setActiveTrack('fundamentals');
-                setSelectedModule('all');
-              }}
-              className={`px-3 py-1 font-mono text-xs transition-all duration-[120ms] rounded-[2px] ${activeTrack === 'fundamentals'
-                  ? 'bg-[#222222] text-[#48BB78] font-bold border border-[#3A3A3A]'
-                  : 'text-[#777777] hover:text-[#D4D4D4]'
-                }`}
-              title="Beginner Fundamentals: Modules 1 & 2 (Basics-001 through Basics-035)"
-            >
-              FUNDAMENTALS
+              ADVANCED SQL (10)
             </button>
             <button
               onClick={() => {
@@ -272,9 +289,9 @@ function CurriculumExplorerContent() {
                   ? 'bg-[#222222] text-[#38BDF8] font-bold border border-[#3A3A3A]'
                   : 'text-[#888888] hover:text-[#D4D4D4]'
                 }`}
-              title="Master Section: Top SQL Masterclass Challenges"
+              title="Master Track: Production Relational Engineering & Temporal Analysis (Pro-001 through Pro-020)"
             >
-              MASTER
+              MASTER (20)
             </button>
           </div>
 
@@ -486,9 +503,9 @@ function CurriculumExplorerContent() {
                         filteredProblems.map((problem) => {
                           const isSolved = isProblemSolved(problem, solvedIds, trackProblems);
                           const problemCode = problem.code_id || (problem.chapter_id <= 2 ? `Basics-${String(problem.level_number).padStart(3, '0')}` : `SQL-${String(problem.level_number).padStart(3, '0')}`);
-                          const isMaster = problem.track === 'master' || problem.chapter_id >= 13 || problemCode.startsWith('Pro-');
+                          const isMaster = problem.track === 'master' || problem.chapter_id === 8 || problem.chapter_id === 9 || problemCode.startsWith('Pro-');
                           const isBasics = problemCode.startsWith('Basics');
-                          const isAdvanced = (problem.chapter_id >= 8 && problem.chapter_id <= 12) || problem.track === 'advanced';
+                          const isAdvanced = problem.chapter_id === 7 || problem.track === 'advanced' || problemCode.startsWith('ASQL-');
                           const idColorClass = isMaster
                             ? 'text-[#38BDF8]'
                             : isBasics

@@ -21,18 +21,15 @@ import {
 } from 'lucide-react';
 
 const MODULE_DEFINITIONS = [
-  { id: 1, title: 'Basic SQL Projections & Filters', total: 20 },
-  { id: 2, title: 'Aggregate Functions & Metrics', total: 15 },
-  { id: 3, title: 'GROUP BY & Threshold Filtering', total: 20 },
-  { id: 4, title: 'Relational Multi-Table Joins', total: 35 },
-  { id: 5, title: 'Scalar & Correlated Subqueries', total: 20 },
-  { id: 6, title: 'Analytical Window Functions', total: 30 },
-  { id: 7, title: 'Common Table Expressions (CTEs)', total: 15 },
-  { id: 8, title: 'CASE & Conditional Expressions', total: 10 },
-  { id: 9, title: 'String Manipulation & Parsing', total: 20 },
-  { id: 10, title: 'Date & Timestamp Arithmetic', total: 20 },
-  { id: 11, title: 'Deduplication & Set Operations', total: 10 },
-  { id: 12, title: 'Advanced Relational Analytics', total: 35 },
+  { id: 1, title: 'Projections & Filtering', total: 8 },
+  { id: 2, title: 'Aggregations & Grouping', total: 7 },
+  { id: 3, title: 'Basic Joins & Set Operations', total: 7 },
+  { id: 4, title: 'Predicates & Built-in Functions', total: 13 },
+  { id: 5, title: 'Business Aggregations & Thresholds', total: 20 },
+  { id: 6, title: 'Relational Joins & Data Integrity', total: 15 },
+  { id: 7, title: 'Conditional Logic & Transformations', total: 10 },
+  { id: 8, title: 'Temporal Analysis & Subquery Aggregations', total: 10 },
+  { id: 9, title: 'Hierarchical Relational Joins & Set Algebra', total: 10 },
 ];
 
 export default function DashboardPage() {
@@ -95,7 +92,7 @@ export default function DashboardPage() {
   }, [user]);
 
   const allProblems = useMemo(() => chapters.flatMap((c) => c.levels || []), [chapters]);
-  const totalCount = allProblems.length || 250;
+  const totalCount = allProblems.length || 100;
 
   const canonicalSolvedSet = useMemo(() => {
     const set = new Set<string>();

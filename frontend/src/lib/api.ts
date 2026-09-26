@@ -81,7 +81,7 @@ export const api = {
     return request('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
-    }, 12000);
+    }, 15000);
   },
 
   async register(username: string, email: string, password: string): Promise<{ access_token: string; user: User }> {
@@ -89,7 +89,7 @@ export const api = {
     return request('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ username, email, password }),
-    }, 12000);
+    }, 15000);
   },
 
   async getMe(): Promise<User> {
@@ -104,7 +104,7 @@ export const api = {
     if (_chaptersPromise) {
       return _chaptersPromise;
     }
-    _chaptersPromise = request<ChapterGroup[]>('/challenges/chapters')
+    _chaptersPromise = request<ChapterGroup[]>('/challenges/chapters', {}, 15000)
       .then((data) => {
         _chaptersCache = data;
         _chaptersPromise = null;

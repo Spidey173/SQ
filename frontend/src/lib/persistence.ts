@@ -368,10 +368,10 @@ export function createDebouncedSaver(
 }
 
 /**
- * Resolves any problem identifier or summary to a canonical problem database primary key (1..250).
+ * Resolves any problem identifier or summary to a canonical problem database primary key (1..100).
  * Handles:
- * - Direct primary key numbers (1..250)
- * - Code ID strings ("Basis-001".."Basis-035" -> 1..35, "SQL-001".."SQL-215" -> 36..250)
+ * - Direct primary key numbers (1..100)
+ * - Code ID strings ("Basics-001".."Basics-035" -> 1..35, "SQL-001".."SQL-035" -> 36..70, "ASQL-001".."ASQL-010" -> 71..80, "Pro-001".."Pro-020" -> 81..100)
  * - Problem objects ({ id, code_id, ... })
  */
 export function getCanonicalProblemId(
@@ -393,10 +393,26 @@ export function getCanonicalProblemId(
   if (typeof item === 'string') {
     const s = item.trim().toUpperCase();
 
-    // Check "SQL-001" .. "SQL-215" -> 36..250
+    // Check "ASQL-001" .. "ASQL-010" -> 71..80
+    if (s.startsWith('ASQL-') || s.startsWith('ASQL_')) {
+      const num = parseInt(s.replace(/[^0-9]/g, ''), 10);
+      if (!isNaN(num) && num >= 1 && num <= 10) {
+        return num + 70;
+      }
+    }
+
+    // Check "PRO-001" .. "PRO-020" -> 81..100
+    if (s.startsWith('PRO-') || s.startsWith('PRO_')) {
+      const num = parseInt(s.replace(/[^0-9]/g, ''), 10);
+      if (!isNaN(num) && num >= 1 && num <= 20) {
+        return num + 80;
+      }
+    }
+
+    // Check "SQL-001" .. "SQL-035" -> 36..70
     if (s.startsWith('SQL-') || s.startsWith('SQL_')) {
       const num = parseInt(s.replace(/[^0-9]/g, ''), 10);
-      if (!isNaN(num) && num >= 1 && num <= 215) {
+      if (!isNaN(num) && num >= 1 && num <= 70) {
         return num + 35;
       }
     }
@@ -484,8 +500,14 @@ export function getCanonicalCodeId(
     if (item >= 1 && item <= 35) {
       return `Basics-${String(item).padStart(3, '0')}`;
     }
-    if (item >= 36 && item <= 250) {
+    if (item >= 36 && item <= 70) {
       return `SQL-${String(item - 35).padStart(3, '0')}`;
+    }
+    if (item >= 71 && item <= 80) {
+      return `ASQL-${String(item - 70).padStart(3, '0')}`;
+    }
+    if (item >= 81 && item <= 100) {
+      return `Pro-${String(item - 80).padStart(3, '0')}`;
     }
     if (allProblems && allProblems.length > 0) {
       const found = allProblems.find((p) => p.id === item);

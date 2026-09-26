@@ -104,7 +104,7 @@ export default function TelemetryPage() {
         const sourceSolved = user ? backendSolved : Array.from(new Set([...backendSolved, ...localSolved]));
         for (const rawId of sourceSolved) {
           const canonical = getCanonicalProblemId(rawId, flatLevels);
-          if (canonical >= 1 && canonical <= 250) {
+          if (canonical >= 1 && canonical <= 100) {
             solvedCanonicalSet.add(canonical);
           }
         }
@@ -139,7 +139,7 @@ export default function TelemetryPage() {
   }, [user]);
 
   const allProblems = useMemo(() => chapters.flatMap((c) => c.levels), [chapters]);
-  const totalProblems = allProblems.length || 250;
+  const totalProblems = allProblems.length || 100;
   const solvedCount = solvedIds.length;
   const overallPercent = totalProblems > 0 ? Math.round((solvedCount / totalProblems) * 100) : 0;
   const remainingCount = Math.max(0, totalProblems - solvedCount);

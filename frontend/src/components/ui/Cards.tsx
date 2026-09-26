@@ -40,9 +40,9 @@ export function MachinedPanel({
 export function TelemetryConsoleRibbon({
   latencyMs = 1.2,
   streakDays = 0,
-  totalModules = 12,
+  totalModules = 9,
   solvedCount = 0,
-  totalCount = 250,
+  totalCount = 100,
 }: {
   latencyMs?: number;
   streakDays?: number;
@@ -169,7 +169,7 @@ export function TelemetryConsoleRibbon({
  */
 export function JourneyHero({
   solvedCount,
-  totalCount = 250,
+  totalCount = 100,
   streakDays = 0,
   nextProblemId = 'SQL-001',
   nextProblemTitle,
@@ -290,18 +290,15 @@ export function RelationalCatalogMatrix({
   onSelectModule: (id: number) => void;
 }) {
   const conceptTags: Record<number, { concept: string; diff: 'Easy' | 'Medium' | 'Hard' }> = {
-    1: { concept: 'WHERE • AND/OR • LIKE', diff: 'Easy' },
-    2: { concept: 'COUNT • SUM • AVG • MIN/MAX', diff: 'Easy' },
-    3: { concept: 'GROUP BY • HAVING • THRESHOLDS', diff: 'Easy' },
-    4: { concept: 'INNER • LEFT • MULTI-WAY • SELF', diff: 'Medium' },
-    5: { concept: 'CORRELATED • SCALAR • EXISTS', diff: 'Medium' },
-    6: { concept: 'ROW_NUMBER • RANK • LEAD • LAG', diff: 'Medium' },
-    7: { concept: 'WITH • RECURSIVE HIERARCHY', diff: 'Hard' },
-    8: { concept: 'CASE WHEN • CONDITIONAL PIVOTS', diff: 'Easy' },
-    9: { concept: 'SUBSTR • INSTR • TRIM • CONCAT', diff: 'Medium' },
-    10: { concept: 'DATE DIFF • TIMESTAMPS • EPOCH', diff: 'Medium' },
-    11: { concept: 'DEDUPLICATION • DENSE_RANK', diff: 'Medium' },
-    12: { concept: 'GAPS & ISLANDS • COHORT • CHURN', diff: 'Hard' },
+    1: { concept: 'SELECT • WHERE • AND/OR • ORDER BY • LIMIT • DISTINCT', diff: 'Easy' },
+    2: { concept: 'COUNT • MAX • MIN • SUM • AVG • GROUP BY • HAVING', diff: 'Easy' },
+    3: { concept: 'INNER JOIN • LEFT JOIN • RIGHT JOIN • FULL JOIN • SELF JOIN • UNION', diff: 'Easy' },
+    4: { concept: 'LIKE • IN • BETWEEN • IS NULL • CASE • ROUND • STRING/DATE', diff: 'Easy' },
+    5: { concept: 'DEPARTMENT ANALYTICS • SALES METRICS • THRESHOLD FILTERS', diff: 'Easy' },
+    6: { concept: 'MULTI-TABLE JOINS • ANTI-JOINS • ORPHAN CHECKS • MANAGER RELATIONS', diff: 'Medium' },
+    7: { concept: 'CASE WHEN • SALARY BANDS • DEMOGRAPHIC COHORTS • STATUS FLAGS', diff: 'Medium' },
+    8: { concept: 'TEMPORAL ARITHMETIC • DATEDIFF • CORRELATED SUBQUERIES • COHORT ANALYSIS', diff: 'Hard' },
+    9: { concept: 'HIERARCHICAL SELF-JOINS • SET ALGEBRA • ANTI-JOINS • GEOMETRIC PREDICATES', diff: 'Hard' },
   };
 
   return (

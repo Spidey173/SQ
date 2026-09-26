@@ -36,7 +36,7 @@ export default function Navbar() {
         const sourceList = user ? backendSolved : Array.from(new Set([...backendSolved, ...localSolved]));
         for (const rawId of sourceList) {
           const canonical = getCanonicalProblemId(rawId, flatLevels);
-          if (canonical >= 1 && canonical <= 250) solvedSet.add(canonical);
+          if (canonical >= 1 && canonical <= 100) solvedSet.add(canonical);
         }
         setSolvedCount(solvedSet.size);
       } catch {
@@ -47,7 +47,7 @@ export default function Navbar() {
           const fallbackSet = new Set<number>();
           for (const rawId of solved) {
             const canonical = getCanonicalProblemId(rawId);
-            if (canonical >= 1 && canonical <= 250) fallbackSet.add(canonical);
+            if (canonical >= 1 && canonical <= 100) fallbackSet.add(canonical);
           }
           setSolvedCount(fallbackSet.size);
         }

@@ -1,4 +1,4 @@
-// 250 SQL Job Placement Interview Dataset (Execution Tracing, Deep Q&A, Common Mistakes)
+// 100 SQL Job Placement Interview Dataset (Execution Tracing, Deep Q&A, Common Mistakes)
 // Tailored for SQL Engineers & Freshers
 
 export interface TraceStep {
@@ -20824,7 +20824,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
                       "Phase": "GROUP BY email",
                       "Action": "Group identical emails"
                   },
-                  "explanation": "Grouping results: 'a@leetcode.com' -> count: 2; 'b@leetcode.com' -> count: 1."
+                  "explanation": "Grouping results: 'a@example.com' -> count: 2; 'b@example.com' -> count: 1."
               },
               {
                   "step": 2,
@@ -20833,7 +20833,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
                       "Phase": "HAVING COUNT(*) > 1",
                       "Action": "Filter duplicate groups"
                   },
-                  "explanation": "2 > 1 (TRUE ✅, keep 'a@leetcode.com'); 1 > 1 (FALSE ❌, drop 'b@leetcode.com')."
+                  "explanation": "2 > 1 (TRUE ✅, keep 'a@example.com'); 1 > 1 (FALSE ❌, drop 'b@example.com')."
               },
               {
                   "step": 3,
@@ -20842,7 +20842,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
                       "Phase": "SELECT email",
                       "Action": "Emit final email list"
                   },
-                  "explanation": "Output: ['a@leetcode.com']."
+                  "explanation": "Output: ['a@example.com']."
               }
           ]
       },
@@ -20926,7 +20926,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
                       "Phase": "GROUP BY email",
                       "Action": "Group identical emails"
                   },
-                  "explanation": "Grouping results: 'a@leetcode.com' -> count: 2; 'b@leetcode.com' -> count: 1."
+                  "explanation": "Grouping results: 'a@example.com' -> count: 2; 'b@example.com' -> count: 1."
               },
               {
                   "step": 2,
@@ -20935,7 +20935,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
                       "Phase": "HAVING COUNT(*) > 1",
                       "Action": "Filter duplicate groups"
                   },
-                  "explanation": "2 > 1 (TRUE ✅, keep 'a@leetcode.com'); 1 > 1 (FALSE ❌, drop 'b@leetcode.com')."
+                  "explanation": "2 > 1 (TRUE ✅, keep 'a@example.com'); 1 > 1 (FALSE ❌, drop 'b@example.com')."
               },
               {
                   "step": 3,
@@ -20944,7 +20944,7 @@ export const ALL_50_INTERVIEW_DATA: Record<string, any> = {
                       "Phase": "SELECT email",
                       "Action": "Emit final email list"
                   },
-                  "explanation": "Output: ['a@leetcode.com']."
+                  "explanation": "Output: ['a@example.com']."
               }
           ]
       },
