@@ -38,19 +38,14 @@ async def list_chapters(
             cache.load_from_json_fallback()
             challenges = cache.get_all_challenges()
 
-    # Fetch user progress if user logged in
+    # Fetch user progress if user logged in (direct from DB to ensure immediate consistency)
     user_progress_map = {}
     if current_user:
-        cached_prog = cache.get_cached_progress(current_user.id)
-        if cached_prog is not None:
-            user_progress_map = cached_prog
-        else:
-            prog_res = await db.execute(
-                select(UserProgress).where(UserProgress.user_id == current_user.id)
-            )
-            for p in prog_res.scalars().all():
-                user_progress_map[p.challenge_id] = p
-            cache.set_cached_progress(current_user.id, user_progress_map)
+        prog_res = await db.execute(
+            select(UserProgress).where(UserProgress.user_id == current_user.id)
+        )
+        for p in prog_res.scalars().all():
+            user_progress_map[p.challenge_id] = p
 
     # Group by chapter
     chapters_dict = {}

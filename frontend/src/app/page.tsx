@@ -43,10 +43,10 @@ export default function DashboardPage() {
   const [submissions, setSubmissions] = useState<SubmissionLogEntry[]>([]);
 
   useEffect(() => {
-    async function loadData() {
+    async function loadData(forceRefresh = false) {
       try {
         const [chaps, localSolved, lastId, subs] = await Promise.all([
-          api.getChapters().catch(() => [] as ChapterGroup[]),
+          api.getChapters(forceRefresh).catch(() => [] as ChapterGroup[]),
           persistence.getSolvedIds().catch(() => [] as Array<number | string>),
           persistence.getLastActiveProblemId().catch(() => 'Basics-001'),
           persistence.getSubmissions().catch(() => [] as SubmissionLogEntry[]),
@@ -54,13 +54,9 @@ export default function DashboardPage() {
         const flatLevels = (chaps || []).flatMap((c) => c.levels || []);
         const backendSolved = flatLevels.filter((l) => l.passed).map((l) => l.code_id || l.id);
 
-        
-        // When user is logged in, backend is the source of truth for solved status.
-        // When not logged in, cross-validate localStorage solved IDs against actual
-        // passed submissions to prevent phantom solved entries.
         let resolvedSolved: Array<number | string>;
         if (user) {
-          resolvedSolved = backendSolved;
+          resolvedSolved = Array.from(new Set([...backendSolved, ...localSolved]));
         } else {
           // Only trust localStorage solved IDs that have a matching passed submission
           const passedSubmissionIds = new Set(
@@ -80,7 +76,7 @@ export default function DashboardPage() {
     }
     loadData();
 
-    const handleRefresh = () => loadData();
+    const handleRefresh = () => loadData(true);
     window.addEventListener('sqlquest_auth_logout', handleRefresh);
     window.addEventListener('sqlquest_auth_login', handleRefresh);
     window.addEventListener('sqlquest_problem_solved', handleRefresh);

@@ -933,6 +933,30 @@ export default function WorkspacePage({ params }: { params: Promise<{ id: string
     }
   };
 
+  // Solve Again: resets solution.sql code to clean starter, clears output dock, restarts timer, and focuses problem spec
+  const handleSolveAgain = () => {
+    setIsPracticingAgain(true);
+    setActiveTab('spec');
+    setActiveEditorTab('solution');
+    setMobileTab('code');
+
+    const cleanStarter = (problem?.starter_code || '')
+      .split('\n')
+      .filter((line) => line.trim().startsWith('--') || line.trim() === '')
+      .join('\n');
+    const defaultSolutionCode = cleanStarter.trim() !== ''
+      ? cleanStarter
+      : (problem ? `-- Problem #${problem.code_id || problemParam}: ${problem.title}\n-- Write your SQL query below\n\n` : '-- Write your SQL query below\n\n');
+
+    setCode(defaultSolutionCode);
+    setRunResponse(null);
+    setElapsedSeconds(0);
+    startTimer();
+
+    const targetCodeId = problem?.code_id || problemParam;
+    persistence.saveDraft(targetCodeId, defaultSolutionCode, 'solution');
+  };
+
   // Keyboard Shortcuts
   useEffect(() => {
     const unregister = registerGlobalShortcuts({
@@ -1031,7 +1055,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ id: string
         <button
           type="button"
           onClick={() => {
-            if (isCurrentProblemSolved) return;
+            if (isCurrentProblemSolved && !isPracticingAgain) return;
             if (isTimerRunning) {
               stopTimer();
             } else {
@@ -1039,14 +1063,14 @@ export default function WorkspacePage({ params }: { params: Promise<{ id: string
             }
           }}
           className={`hidden md:flex items-center gap-2 px-3 py-1 rounded-[4px] border text-xs font-mono transition-all duration-[120ms] ${
-            isCurrentProblemSolved
+            isCurrentProblemSolved && !isPracticingAgain
               ? 'border-[#2E4A35] bg-[#0E1A12] text-[#48BB78]'
               : !isTimerRunning
               ? 'border-[#4A3018] bg-[#1A120B] text-[#FF9B42] hover:bg-[#24170D] cursor-pointer'
               : 'border-[#262626] bg-[#0E0E0E] text-[#888888] hover:border-[#383838] cursor-pointer'
           }`}
           title={
-            isCurrentProblemSolved
+            isCurrentProblemSolved && !isPracticingAgain
               ? 'Problem Completed'
               : isTimerRunning
               ? 'Timer running — Click to pause'
@@ -1054,14 +1078,14 @@ export default function WorkspacePage({ params }: { params: Promise<{ id: string
           }
         >
           <Clock className={`h-3.5 w-3.5 ${
-            isCurrentProblemSolved
+            isCurrentProblemSolved && !isPracticingAgain
               ? 'text-[#38A169]'
               : !isTimerRunning
               ? 'text-[#FF9B42]'
               : 'text-[#888888]'
           }`} />
           <span>{formatTimer(elapsedSeconds)}</span>
-          {isCurrentProblemSolved ? (
+          {isCurrentProblemSolved && !isPracticingAgain ? (
             <span className="text-[10px] font-mono font-bold text-[#48BB78] uppercase ml-0.5">
               DONE
             </span>
@@ -1120,15 +1144,10 @@ export default function WorkspacePage({ params }: { params: Promise<{ id: string
               {isCurrentProblemSolved && !isPracticingAgain ? (
                 <>
                   <button
-                    onClick={() => {
-                      setIsPracticingAgain(true);
-                      setActiveTab('spec');
-                      setActiveEditorTab('solution');
-                      handleRunCode();
-                    }}
+                    onClick={handleSolveAgain}
                     disabled={isRunning || isSubmitting}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#1A1A1A] hover:bg-[#242424] border border-[#333333] text-xs font-mono font-medium text-[#CCCCCC] hover:text-white transition-all duration-[120ms] disabled:opacity-50 cursor-pointer active:scale-[0.98]"
-                    title="Solve again / Edit & re-verify (Ctrl+Enter)"
+                    title="Solve again / Reset solution & re-verify (Ctrl+Enter)"
                   >
                     {isRunning ? (
                       <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#FF6B00]" />
@@ -1741,12 +1760,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ id: string
                   {isCurrentProblemSolved && !isPracticingAgain ? (
                     <>
                       <button
-                        onClick={() => {
-                          setIsPracticingAgain(true);
-                          setMobileTab('code');
-                          setActiveEditorTab('solution');
-                          handleRunTestCases();
-                        }}
+                        onClick={handleSolveAgain}
                         disabled={isRunning || isSubmitting}
                         className="flex-1 py-3 px-3.5 rounded-xl border border-[#30363D] bg-[#21262D] hover:bg-[#30363D] active:scale-[0.98] text-xs font-bold text-[#E6EDF3] flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shadow-sm"
                       >

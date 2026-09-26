@@ -90,10 +90,10 @@ export default function TelemetryPage() {
   const [submissions, setSubmissions] = useState<SubmissionLogEntry[]>([]);
 
   useEffect(() => {
-    async function loadData() {
+    async function loadData(forceRefresh = false) {
       try {
         const [chaps, localSolved, localSubs, remoteSubs] = await Promise.all([
-          api.getChapters().catch(() => [] as ChapterGroup[]),
+          api.getChapters(forceRefresh).catch(() => [] as ChapterGroup[]),
           persistence.getSolvedIds().catch(() => [] as any[]),
           persistence.getSubmissions().catch(() => [] as SubmissionLogEntry[]),
           user ? api.getUserSubmissions().catch(() => [] as SubmissionLogEntry[]) : Promise.resolve([] as SubmissionLogEntry[]),
@@ -101,7 +101,7 @@ export default function TelemetryPage() {
         const flatLevels = (chaps || []).flatMap((c) => c.levels || []);
         const backendSolved = flatLevels.filter((l) => l.passed).map((l) => l.id);
         const solvedCanonicalSet = new Set<number>();
-        const sourceSolved = user ? backendSolved : Array.from(new Set([...backendSolved, ...localSolved]));
+        const sourceSolved = Array.from(new Set([...backendSolved, ...localSolved]));
         for (const rawId of sourceSolved) {
           const canonical = getCanonicalProblemId(rawId, flatLevels);
           if (canonical >= 1 && canonical <= 100) {
@@ -126,7 +126,7 @@ export default function TelemetryPage() {
     loadData();
 
     const handleRefresh = () => {
-      loadData();
+      loadData(true);
     };
     window.addEventListener('sqlquest_auth_logout', handleRefresh);
     window.addEventListener('sqlquest_auth_login', handleRefresh);

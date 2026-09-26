@@ -81,10 +81,10 @@ function CurriculumExplorerContent() {
     }
 
 
-    async function loadData() {
+    async function loadData(forceRefresh = false) {
       try {
         const [chaps, localSolved] = await Promise.all([
-          api.getChapters().catch(() => [] as ChapterGroup[]),
+          api.getChapters(forceRefresh).catch(() => [] as ChapterGroup[]),
           persistence.getSolvedIds().catch(() => [] as number[]),
         ]);
         if (Array.isArray(chaps) && chaps.length > 0) {
@@ -96,10 +96,7 @@ function CurriculumExplorerContent() {
         }
         const flatLevels = (chaps || []).flatMap((c) => c.levels || []);
         const backendSolved = flatLevels.filter((l) => l.passed).map((l) => l.id);
-        // Trust backend as source of truth when logged in
-        const merged = user
-          ? backendSolved
-          : Array.from(new Set([...backendSolved, ...localSolved]));
+        const merged = Array.from(new Set([...backendSolved, ...localSolved]));
         setChapters(chaps);
         setSolvedIds(merged);
       } catch (err) {
@@ -110,7 +107,7 @@ function CurriculumExplorerContent() {
     }
     loadData();
 
-    const handleRefresh = () => loadData();
+    const handleRefresh = () => loadData(true);
     window.addEventListener('sqlquest_auth_logout', handleRefresh);
     window.addEventListener('sqlquest_auth_login', handleRefresh);
     window.addEventListener('sqlquest_problem_solved', handleRefresh);

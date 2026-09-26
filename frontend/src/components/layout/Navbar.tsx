@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
@@ -22,47 +22,68 @@ export default function Navbar() {
   const [authTab, setAuthTab] = useState<'signin' | 'signup'>('signin');
   const [solvedCount, setSolvedCount] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const solvedSetRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
-    async function loadSolved() {
+    async function loadSolved(forceRefresh = false) {
       try {
         const [localSolved, chaps] = await Promise.all([
           persistence.getSolvedIds().catch(() => [] as any[]),
-          api.getChapters().catch(() => [] as ChapterGroup[]),
+          api.getChapters(forceRefresh).catch(() => [] as ChapterGroup[]),
         ]);
         const flatLevels = (chaps as ChapterGroup[]).flatMap((c: ChapterGroup) => c.levels || []);
         const backendSolved = flatLevels.filter((l) => l.passed).map((l) => l.id);
-        const solvedSet = new Set<number>();
-        const sourceList = user ? backendSolved : Array.from(new Set([...backendSolved, ...localSolved]));
+        const sourceList = Array.from(new Set([...backendSolved, ...localSolved]));
         for (const rawId of sourceList) {
           const canonical = getCanonicalProblemId(rawId, flatLevels);
-          if (canonical >= 1 && canonical <= 100) solvedSet.add(canonical);
-        }
-        setSolvedCount(solvedSet.size);
-      } catch {
-        if (user) {
-          setSolvedCount(0);
-        } else {
-          const solved = await persistence.getSolvedIds().catch(() => [] as any[]);
-          const fallbackSet = new Set<number>();
-          for (const rawId of solved) {
-            const canonical = getCanonicalProblemId(rawId);
-            if (canonical >= 1 && canonical <= 100) fallbackSet.add(canonical);
+          if (canonical >= 1 && canonical <= 100) {
+            solvedSetRef.current.add(canonical);
           }
-          setSolvedCount(fallbackSet.size);
         }
+        setSolvedCount(solvedSetRef.current.size);
+      } catch {
+        const solved = await persistence.getSolvedIds().catch(() => [] as any[]);
+        for (const rawId of solved) {
+          const canonical = getCanonicalProblemId(rawId);
+          if (canonical >= 1 && canonical <= 100) {
+            solvedSetRef.current.add(canonical);
+          }
+        }
+        setSolvedCount(solvedSetRef.current.size);
       }
     }
     loadSolved();
 
-    const handleRefresh = () => loadSolved();
-    window.addEventListener('sqlquest_auth_logout', handleRefresh);
-    window.addEventListener('sqlquest_auth_login', handleRefresh);
-    window.addEventListener('sqlquest_problem_solved', handleRefresh);
+    const handleProblemSolved = (e?: Event) => {
+      const ce = e as CustomEvent<{ problemId?: number | string }>;
+      if (ce?.detail?.problemId) {
+        const canonical = getCanonicalProblemId(ce.detail.problemId);
+        if (canonical >= 1 && canonical <= 100) {
+          solvedSetRef.current.add(canonical);
+          setSolvedCount(solvedSetRef.current.size);
+        }
+      }
+      loadSolved(true);
+    };
+
+    const handleAuthLogout = () => {
+      solvedSetRef.current.clear();
+      setSolvedCount(0);
+      loadSolved(true);
+    };
+
+    const handleAuthLogin = () => {
+      solvedSetRef.current.clear();
+      loadSolved(true);
+    };
+
+    window.addEventListener('sqlquest_auth_logout', handleAuthLogout);
+    window.addEventListener('sqlquest_auth_login', handleAuthLogin);
+    window.addEventListener('sqlquest_problem_solved', handleProblemSolved);
     return () => {
-      window.removeEventListener('sqlquest_auth_logout', handleRefresh);
-      window.removeEventListener('sqlquest_auth_login', handleRefresh);
-      window.removeEventListener('sqlquest_problem_solved', handleRefresh);
+      window.removeEventListener('sqlquest_auth_logout', handleAuthLogout);
+      window.removeEventListener('sqlquest_auth_login', handleAuthLogin);
+      window.removeEventListener('sqlquest_problem_solved', handleProblemSolved);
     };
   }, [pathname, user]);
 

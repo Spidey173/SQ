@@ -106,7 +106,10 @@ export const api = {
 
   // Challenges
   async getChapters(forceRefresh = false): Promise<ChapterGroup[]> {
-    if (!forceRefresh && _chaptersCache) {
+    if (forceRefresh) {
+      _chaptersCache = null;
+      _chaptersPromise = null;
+    } else if (_chaptersCache) {
       return _chaptersCache;
     }
     if (_chaptersPromise) {
@@ -170,6 +173,7 @@ export const api = {
     });
     _challengeCache.delete(String(challengeId));
     _chaptersCache = null;
+    _chaptersPromise = null;
     return res;
   },
 
