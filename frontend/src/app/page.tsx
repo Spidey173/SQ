@@ -32,6 +32,22 @@ const MODULE_DEFINITIONS = [
   { id: 9, title: 'Hierarchical Relational Joins & Set Algebra', total: 10 },
 ];
 
+function formatExecutionTime(timestamp: number | string): string {
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) return '';
+  const now = Date.now();
+  const diffMs = now - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  return `${date.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -41,6 +57,20 @@ export default function DashboardPage() {
   const [solvedIds, setSolvedIds] = useState<Array<number | string>>([]);
   const [lastActiveId, setLastActiveId] = useState<number | string>('Basics-001');
   const [submissions, setSubmissions] = useState<SubmissionLogEntry[]>([]);
+  const [showAllStream, setShowAllStream] = useState<boolean>(false);
+
+  // Sort submissions so the LATEST query execution is always at the top (timestamp DESC)
+  const sortedSubmissions = useMemo(() => {
+    return [...submissions].sort((a, b) => {
+      const tA = typeof a.timestamp === 'number' ? a.timestamp : new Date(a.timestamp).getTime();
+      const tB = typeof b.timestamp === 'number' ? b.timestamp : new Date(b.timestamp).getTime();
+      return tB - tA;
+    });
+  }, [submissions]);
+
+  const visibleSubmissions = useMemo(() => {
+    return showAllStream ? sortedSubmissions : sortedSubmissions.slice(0, 10);
+  }, [sortedSubmissions, showAllStream]);
 
   // Instant hydration from local storage on mount (0ms render like localhost)
   useEffect(() => {
@@ -197,12 +227,17 @@ export default function DashboardPage() {
 
         {/* SECTION 4: Active Session Execution Stream */}
         <div className="rounded-[6px] border border-[#242424] bg-[#121212] p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Terminal className="h-3.5 w-3.5 text-[#FF6B00]" />
               <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-[#F5F5F5]">
                 Recent Query Execution Stream
               </h2>
+              {sortedSubmissions.length > 0 && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1C1C1C] border border-[#2A2A2A] text-[#888888]">
+                  Latest First • {sortedSubmissions.length} Total
+                </span>
+              )}
             </div>
             <Link
               href="/quest"
@@ -213,7 +248,7 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          {submissions.length === 0 ? (
+          {sortedSubmissions.length === 0 ? (
             <div className="rounded-[4px] border border-[#1F1F1F] bg-[#0E0E0E] p-8 text-center">
               <p className="font-mono text-xs text-[#777777]">
                 No executions recorded in this session.
@@ -233,55 +268,72 @@ export default function DashboardPage() {
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left font-mono text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-[#242424] text-[#777777]">
-                    <th className="py-2.5 px-3 font-semibold text-[10px] uppercase">STATUS</th>
-                    <th className="py-2.5 px-3 font-semibold text-[10px] uppercase">COORDINATE</th>
-                    <th className="py-2.5 px-3 font-semibold text-[10px] uppercase">QUERY TITLE</th>
-                    <th className="py-2.5 px-3 font-semibold text-[10px] uppercase text-right">RUNTIME</th>
-                    <th className="py-2.5 px-3 font-semibold text-[10px] uppercase text-right">TIMESTAMP</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#1C1C1C]">
-                  {submissions.slice(-5).reverse().map((sub, idx) => {
-                    const subProblemId = typeof sub.problemId === 'string'
-                      ? sub.problemId
-                      : `SQL-${String(sub.problemId).padStart(3, '0')}`;
-                    const isBasics = subProblemId.startsWith('Basic');
-                    return (
-                      <tr
-                        key={idx}
-                        onClick={() => {
-                          if (!user) {
-                            setAuthModalOpen(true);
-                          } else {
-                            router.push(`/quest/${subProblemId}`);
-                          }
-                        }}
-                        className="hover:bg-[#161616] cursor-pointer transition-colors duration-[120ms]"
-                      >
-                        <td className="py-2.5 px-3">
-                          <ApertureStatus status={sub.passed ? 'passed' : 'failed'} />
-                        </td>
-                        <td className={`py-2.5 px-3 font-mono font-bold ${isBasics ? 'text-[#48BB78]' : 'text-[#FF6B00]'}`}>
-                          {subProblemId}
-                        </td>
-                        <td className="py-2.5 px-3 font-sans font-medium text-[#D4D4D4]">
-                          {sub.problemTitle || `Problem #${sub.problemId}`}
-                        </td>
-                        <td className="py-2.5 px-3 font-mono text-[#888888] text-right">
-                          {sub.runtimeMs ? `${sub.runtimeMs} ms` : '1.2 ms'}
-                        </td>
-                        <td className="py-2.5 px-3 font-mono text-[#666666] text-right">
-                          {new Date(sub.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <div className="space-y-3">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left font-mono text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-[#242424] text-[#777777]">
+                      <th className="py-2.5 px-3 font-semibold text-[10px] uppercase">STATUS</th>
+                      <th className="py-2.5 px-3 font-semibold text-[10px] uppercase">COORDINATE</th>
+                      <th className="py-2.5 px-3 font-semibold text-[10px] uppercase">QUERY TITLE</th>
+                      <th className="py-2.5 px-3 font-semibold text-[10px] uppercase text-right">RUNTIME</th>
+                      <th className="py-2.5 px-3 font-semibold text-[10px] uppercase text-right">TIMESTAMP</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#1C1C1C]">
+                    {visibleSubmissions.map((sub, idx) => {
+                      const subProblemId = typeof sub.problemId === 'string'
+                        ? sub.problemId
+                        : `SQL-${String(sub.problemId).padStart(3, '0')}`;
+                      const isBasics = subProblemId.startsWith('Basic');
+                      return (
+                        <tr
+                          key={sub.id || idx}
+                          onClick={() => {
+                            if (!user) {
+                              setAuthModalOpen(true);
+                            } else {
+                              router.push(`/quest/${subProblemId}`);
+                            }
+                          }}
+                          className="hover:bg-[#161616] cursor-pointer transition-colors duration-[120ms]"
+                        >
+                          <td className="py-2.5 px-3">
+                            <ApertureStatus status={sub.passed ? 'passed' : 'failed'} />
+                          </td>
+                          <td className={`py-2.5 px-3 font-mono font-bold ${isBasics ? 'text-[#48BB78]' : 'text-[#FF6B00]'}`}>
+                            {subProblemId}
+                          </td>
+                          <td className="py-2.5 px-3 font-sans font-medium text-[#D4D4D4]">
+                            {sub.problemTitle || `Problem #${sub.problemId}`}
+                          </td>
+                          <td className="py-2.5 px-3 font-mono text-[#888888] text-right">
+                            {sub.runtimeMs ? `${sub.runtimeMs} ms` : '22 ms'}
+                          </td>
+                          <td className="py-2.5 px-3 font-mono text-[#888888] text-right" title={new Date(sub.timestamp).toLocaleString()}>
+                            {formatExecutionTime(sub.timestamp)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Show More / Show Less Toggle Bar */}
+              {sortedSubmissions.length > 10 && (
+                <div className="pt-2 flex items-center justify-between border-t border-[#1C1C1C] text-xs font-mono">
+                  <span className="text-[#666666] text-[11px]">
+                    Showing {visibleSubmissions.length} of {sortedSubmissions.length} executions (latest on top)
+                  </span>
+                  <button
+                    onClick={() => setShowAllStream(!showAllStream)}
+                    className="px-3 py-1 rounded-[4px] bg-[#1A1A1A] hover:bg-[#222222] border border-[#2E2E2E] hover:border-[#3E3E3E] text-[#D4D4D4] hover:text-white transition-colors text-xs font-medium cursor-pointer"
+                  >
+                    {showAllStream ? 'Show Recent 10' : `View All ${sortedSubmissions.length} Executions`}
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
